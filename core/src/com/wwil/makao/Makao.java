@@ -15,12 +15,16 @@ public class Makao extends Game {
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
-		gameplayScreen = new GameplayScreen();
+		gameplayScreen = new GameplayScreen(this);
 		setScreen(gameplayScreen);
 	}
 
 	@Override
 	public void dispose() {
 		batch.dispose();
+	}
+
+	public SpriteBatch getBatch() {
+		return batch;
 	}
 }
