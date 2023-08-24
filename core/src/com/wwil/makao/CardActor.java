@@ -10,7 +10,7 @@ public class CardActor extends Actor {
 
     public CardActor(Texture texture) {
         this.texture = texture;
-        setBounds(50,50,GUIparams.CARD_WIDTH,GUIparams.CARD_HEIGHT);
+        setBounds(0,0,GUIparams.CARD_WIDTH,GUIparams.CARD_HEIGHT);
 
     }
 

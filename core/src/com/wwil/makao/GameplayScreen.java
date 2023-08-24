@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -20,8 +21,23 @@ public class GameplayScreen implements Screen {
         camera.setToOrtho(false, GUIparams.WIDTH, GUIparams.HEIGHT);
         stage = new Stage(new ScreenViewport(camera), makao.getBatch());
         Gdx.input.setInputProcessor(stage);
-        CardActor cardActor = new CardActor(new Texture(Gdx.files.internal("Cards/Diamonds/D8.png")));
-        stage.addActor(cardActor);
+        CardActor cardActor = new CardActor(new Texture(Gdx.files.internal("Cards/Clubs/CQ.png")));
+        CardActor cardActor2 = new CardActor(new Texture(Gdx.files.internal("Cards/Diamonds/D5.png")));
+        CardActor cardActor3 = new CardActor(new Texture(Gdx.files.internal("Cards/Diamonds/D9.png")));
+        CardActor cardActor4 = new CardActor(new Texture(Gdx.files.internal("Cards/Red Hearts/H3.png")));
+        CardActor cardActor5 = new CardActor(new Texture(Gdx.files.internal("Cards/Black Hearts/HJ.png")));
+
+        PlayerHandGroup playerHandGroup = new PlayerHandGroup();
+        stage.addActor(playerHandGroup);
+        playerHandGroup.setPosition(300,50);
+
+        playerHandGroup.addActor(cardActor);
+        playerHandGroup.addActor(cardActor2);
+        playerHandGroup.addActor(cardActor3);
+        playerHandGroup.addActor(cardActor4);
+        playerHandGroup.addActor(cardActor5);
+
+
     }
 
     @Override
