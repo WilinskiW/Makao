@@ -20,7 +20,7 @@ public class GameplayScreen implements Screen {
         camera.setToOrtho(false, GUIparams.WIDTH, GUIparams.HEIGHT);
         stage = new Stage(new ScreenViewport(camera), makao.getBatch());
         Gdx.input.setInputProcessor(stage);
-        CardActor cardActor = new CardActor(new Texture(Gdx.files.internal("Karta.png")));
+        CardActor cardActor = new CardActor(new Texture(Gdx.files.internal("Cards/Diamonds/D8.png")));
         stage.addActor(cardActor);
     }
 
