@@ -10,6 +10,9 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setTitle("Makao");
 		config.setWindowedMode(GUIparams.WIDTH,GUIparams.HEIGHT);
+		config.setMaximized(true);
+
+
 		new Lwjgl3Application(new Makao(), config);
 	}
 }

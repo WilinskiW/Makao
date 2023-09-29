@@ -1,8 +1,8 @@
 package com.wwil.makao;
 
 public class GUIparams {
-   public static final int WIDTH = 1360;
-   public static final int HEIGHT = 768;
-   public static final int CARD_WIDTH = 250;
-   public static final int CARD_HEIGHT = 300;
+   public static int WIDTH = 1680;
+   public static int HEIGHT = 768;
+   public static final int CARD_WIDTH = 176;
+   public static final int CARD_HEIGHT = 256;
 }
