@@ -84,7 +84,7 @@ public class GameplayScreen implements Screen {
         playerHandGroupNorth.addActor(back4);
         playerHandGroupNorth.addActor(back5);
 
-        playerHandGroupEast.setPosition(GUIparams.WIDTH+GUIparams.CARD_HEIGHT-15, GUIparams.HEIGHT/2.0f-(GUIparams.CARD_HEIGHT/2f));
+        playerHandGroupEast.setPosition(GUIparams.WIDTH+GUIparams.CARD_HEIGHT-15, GUIparams.HEIGHT/2.0f-(GUIparams.CARD_HEIGHT/2f)+45);
         playerHandGroupEast.addActor(back6);
         playerHandGroupEast.addActor(back7);
         playerHandGroupEast.addActor(back8);
@@ -145,6 +145,7 @@ public class GameplayScreen implements Screen {
 
     private void prepareDragAndDrop(final CardActor card, DragAndDrop.Target target, final Group sourceGroup){
         final Vector2 cardPos = new Vector2(card.getX(),card.getY());
+        final int cardZ = card.getZIndex();
 
 
         final DragAndDrop dragAndDrop = new DragAndDrop();
@@ -162,8 +163,10 @@ public class GameplayScreen implements Screen {
             @Override
             public void dragStop(InputEvent event, float x, float y, int pointer, DragAndDrop.Payload payload, DragAndDrop.Target target) {
                 if(target == null){
+                    sourceGroup.addActor(card);
                     Action move = Actions.moveTo(cardPos.x,cardPos.y, 0);
                     card.addAction(move);
+                    card.setZIndex(cardZ);
                 }
                 super.dragStop(event, x, y, pointer, payload, target);
             }
