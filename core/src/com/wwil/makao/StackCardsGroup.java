@@ -4,8 +4,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 
-import java.util.Random;
-
 public class StackCardsGroup extends Group {
     @Override
     public void addActor(Actor actor) {

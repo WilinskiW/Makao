@@ -17,6 +17,9 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import javax.smartcardio.Card;
+import java.util.*;
+
 public class GameplayScreen implements Screen {
     private Makao makao;
     private final OrthographicCamera camera;
@@ -31,35 +34,20 @@ public class GameplayScreen implements Screen {
 
         //Display players cards
         Gdx.input.setInputProcessor(stage);
-        final CardActor blankCard = new CardActor(new Texture(Gdx.files.internal(blankCardPath)));
-        final CardActor blankCard2 = new CardActor(new Texture(Gdx.files.internal(blankCardPath)));
-        final CardActor blankCard3 = new CardActor(new Texture(Gdx.files.internal(blankCardPath)));
-        CardActor blankCard4 = new CardActor(new Texture(Gdx.files.internal(blankCardPath)));
-        CardActor blankCard5 = new CardActor(new Texture(Gdx.files.internal(blankCardPath)));
+
+        CardActorFactory cardActorFactory = new CardActorFactory();
+        List<CardActor> cards= cardActorFactory.createCardActors();
+        Collections.shuffle((List<?>) cards);
+
+
 
         final PlayerHandGroup playerHandGroupSouth = new PlayerHandGroup();
+        for (int i = 0; i < 5; i++) {
+            playerHandGroupSouth.addActor(cards.remove(0));
+        }
         PlayerHandGroup playerHandGroupNorth = new PlayerHandGroup();
         PlayerHandGroup playerHandGroupEast = new PlayerHandGroup();
         PlayerHandGroup playerHandGroupWest = new PlayerHandGroup();
-
-        final CardActor back = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-        CardActor back2 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-        CardActor back3 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-        CardActor back4 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-        CardActor back5 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-
-        CardActor back6 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-        CardActor back7 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-        CardActor back8 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-        CardActor back9 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-        CardActor back10 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-
-        CardActor back11 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-        CardActor back12 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-        CardActor back13 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-        CardActor back14 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-        CardActor back15 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-
 
 
         stage.addActor(playerHandGroupSouth);
@@ -67,10 +55,14 @@ public class GameplayScreen implements Screen {
         stage.addActor(playerHandGroupEast);
         stage.addActor(playerHandGroupWest);
 
+
+
         playerHandGroupEast.setRotation(90);
         playerHandGroupWest.setRotation(90);
 
+
         playerHandGroupSouth.setPosition(GUIparams.WIDTH/2f-(GUIparams.CARD_WIDTH/2f),0);
+        playerHandGroupSouth.addActors(card);
         playerHandGroupSouth.addActor(blankCard2);
         playerHandGroupSouth.addActor(blankCard3);
         playerHandGroupSouth.addActor(blankCard4);
@@ -135,18 +127,19 @@ public class GameplayScreen implements Screen {
 
         };
 
-        prepareDragAndDrop(blankCard,target,playerHandGroupSouth);
-        prepareDragAndDrop(blankCard2,target,playerHandGroupSouth);
-        prepareDragAndDrop(blankCard3,target,playerHandGroupSouth);
-        prepareDragAndDrop(blankCard4,target,playerHandGroupSouth);
-        prepareDragAndDrop(blankCard5,target,playerHandGroupSouth);
+//        prepareDragAndDrop(blankCard,target,playerHandGroupSouth);
+//        prepareDragAndDrop(blankCard2,target,playerHandGroupSouth);
+//        prepareDragAndDrop(blankCard3,target,playerHandGroupSouth);
+//        prepareDragAndDrop(blankCard4,target,playerHandGroupSouth);
+//        prepareDragAndDrop(blankCard5,target,playerHandGroupSouth);
 
     }
+
+    
 
     private void prepareDragAndDrop(final CardActor card, DragAndDrop.Target target, final Group sourceGroup){
         final Vector2 cardPos = new Vector2(card.getX(),card.getY());
         final int cardZ = card.getZIndex();
-
 
         final DragAndDrop dragAndDrop = new DragAndDrop();
         dragAndDrop.setDragActorPosition(GUIparams.CARD_WIDTH/2f , -GUIparams.CARD_HEIGHT/2f);
@@ -167,6 +160,7 @@ public class GameplayScreen implements Screen {
                     Action move = Actions.moveTo(cardPos.x,cardPos.y, 0);
                     card.addAction(move);
                     card.setZIndex(cardZ);
+                    System.out.println(cardZ);
                 }
                 super.dragStop(event, x, y, pointer, payload, target);
             }
