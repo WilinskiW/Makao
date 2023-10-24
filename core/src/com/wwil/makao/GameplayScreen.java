@@ -26,6 +26,8 @@ public class GameplayScreen implements Screen {
     private Stage stage;
     private String backCardPath = "Cards/backCard.png";
     private String blankCardPath = "Cards/BlankCard.png";
+    private List<CardActor> playerHand = new ArrayList<>();
+
     public GameplayScreen(Makao makao) {
         this.makao = makao;
         camera = new OrthographicCamera();
@@ -36,59 +38,8 @@ public class GameplayScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         CardActorFactory cardActorFactory = new CardActorFactory();
-        List<CardActor> cards= cardActorFactory.createCardActors();
-        Collections.shuffle((List<?>) cards);
-
-
-
-        final PlayerHandGroup playerHandGroupSouth = new PlayerHandGroup();
-        for (int i = 0; i < 5; i++) {
-            playerHandGroupSouth.addActor(cards.remove(0));
-        }
-        PlayerHandGroup playerHandGroupNorth = new PlayerHandGroup();
-        PlayerHandGroup playerHandGroupEast = new PlayerHandGroup();
-        PlayerHandGroup playerHandGroupWest = new PlayerHandGroup();
-
-
-        stage.addActor(playerHandGroupSouth);
-        stage.addActor(playerHandGroupNorth);
-        stage.addActor(playerHandGroupEast);
-        stage.addActor(playerHandGroupWest);
-
-
-
-        playerHandGroupEast.setRotation(90);
-        playerHandGroupWest.setRotation(90);
-
-
-        playerHandGroupSouth.setPosition(GUIparams.WIDTH/2f-(GUIparams.CARD_WIDTH/2f),0);
-        playerHandGroupSouth.addActors(card);
-        playerHandGroupSouth.addActor(blankCard2);
-        playerHandGroupSouth.addActor(blankCard3);
-        playerHandGroupSouth.addActor(blankCard4);
-        playerHandGroupSouth.addActor(blankCard5);
-        playerHandGroupSouth.addActor(blankCard);
-
-        playerHandGroupNorth.setPosition(GUIparams.WIDTH/2.0f-(GUIparams.CARD_WIDTH/2f), GUIparams.HEIGHT-15);
-        playerHandGroupNorth.addActor(back);
-        playerHandGroupNorth.addActor(back2);
-        playerHandGroupNorth.addActor(back3);
-        playerHandGroupNorth.addActor(back4);
-        playerHandGroupNorth.addActor(back5);
-
-        playerHandGroupEast.setPosition(GUIparams.WIDTH+GUIparams.CARD_HEIGHT-15, GUIparams.HEIGHT/2.0f-(GUIparams.CARD_HEIGHT/2f)+45);
-        playerHandGroupEast.addActor(back6);
-        playerHandGroupEast.addActor(back7);
-        playerHandGroupEast.addActor(back8);
-        playerHandGroupEast.addActor(back9);
-        playerHandGroupEast.addActor(back10);
-
-        playerHandGroupWest.setPosition(GUIparams.CARD_HEIGHT,GUIparams.HEIGHT/2f-GUIparams.CARD_WIDTH/2f);
-        playerHandGroupWest.addActor(back11);
-        playerHandGroupWest.addActor(back12);
-        playerHandGroupWest.addActor(back13);
-        playerHandGroupWest.addActor(back14);
-        playerHandGroupWest.addActor(back15);
+        List<CardActor> cards = cardActorFactory.createCardActors();
+        Collections.shuffle(cards);
 
         //Display board deck
         BoardDeckGroup boardDeckGroup = new BoardDeckGroup();
@@ -97,20 +48,20 @@ public class GameplayScreen implements Screen {
         CardActor blankCard8 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
         stage.addActor(boardDeckGroup);
 
-        boardDeckGroup.setPosition(GUIparams.WIDTH/2f-350,GUIparams.HEIGHT/2f);
+        boardDeckGroup.setPosition(GUIparams.WIDTH / 2f - 350, GUIparams.HEIGHT / 2f);
         boardDeckGroup.addActor(blankCard6);
         boardDeckGroup.addActor(blankCard7);
         boardDeckGroup.addActor(blankCard8);
 
-        System.out.println(playerHandGroupWest.getX());
-        System.out.println(playerHandGroupWest.getY());
 
         //Display stack deck
         final StackCardsGroup stackCardsGroup = new StackCardsGroup();
-        final CardActor stackCard = new CardActor(new Texture(Gdx.files.internal(blankCardPath)));
+        final CardActor stackCard = new CardActor(cards.get(0).getFrontSide());
+        stackCard.setUpSideDown(false);
+        cards.remove(0);
         stackCardsGroup.addActor(stackCard);
         stage.addActor(stackCardsGroup);
-        stackCard.setPosition(GUIparams.WIDTH/2f,GUIparams.HEIGHT/2f);
+        stackCard.setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
 
         //Drag
         final DragAndDrop.Target target = new DragAndDrop.Target(stackCardsGroup) {
@@ -127,7 +78,52 @@ public class GameplayScreen implements Screen {
 
         };
 
-//        prepareDragAndDrop(blankCard,target,playerHandGroupSouth);
+
+        PlayerHandGroup playerHandGroupSouth = new PlayerHandGroup();
+        List<CardActor> playerCards = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            cards.get(0).setUpSideDown(false);
+            playerCards.add(cards.get(0));
+            playerHandGroupSouth.addActor(cards.remove(0));
+        }
+
+        for (CardActor card : playerCards) {
+            prepareDragAndDrop(card,target,playerHandGroupSouth);
+        }
+
+
+        final PlayerHandGroup playerHandGroupNorth = new PlayerHandGroup();
+        for (int i = 0; i < 5; i++) {
+            playerHandGroupNorth.addActor(cards.remove(0));
+        }
+
+        final PlayerHandGroup playerHandGroupEast = new PlayerHandGroup();
+        for (int i = 0; i < 5; i++) {
+            playerHandGroupEast.addActor(cards.remove(0));
+        }
+
+        final PlayerHandGroup playerHandGroupWest = new PlayerHandGroup();
+        for (int i = 0; i < 5; i++) {
+            playerHandGroupWest.addActor(cards.remove(0));
+        }
+
+        stage.addActor(playerHandGroupSouth);
+        stage.addActor(playerHandGroupNorth);
+        stage.addActor(playerHandGroupEast);
+        stage.addActor(playerHandGroupWest);
+
+
+        playerHandGroupEast.setRotation(90);
+        playerHandGroupWest.setRotation(90);
+
+        //Set handGroup position
+        playerHandGroupSouth.setPosition(GUIparams.WIDTH / 2f - (GUIparams.CARD_WIDTH / 2f), 0);
+        playerHandGroupNorth.setPosition(GUIparams.WIDTH / 2.0f - (GUIparams.CARD_WIDTH / 2f), GUIparams.HEIGHT - 15);
+        playerHandGroupEast.setPosition(GUIparams.WIDTH + GUIparams.CARD_HEIGHT - 15, GUIparams.HEIGHT / 2.0f - (GUIparams.CARD_HEIGHT / 2f) + 45);
+        playerHandGroupWest.setPosition(GUIparams.CARD_HEIGHT, GUIparams.HEIGHT / 2f - GUIparams.CARD_WIDTH / 2f);
+
+
+//
 //        prepareDragAndDrop(blankCard2,target,playerHandGroupSouth);
 //        prepareDragAndDrop(blankCard3,target,playerHandGroupSouth);
 //        prepareDragAndDrop(blankCard4,target,playerHandGroupSouth);
@@ -135,14 +131,13 @@ public class GameplayScreen implements Screen {
 
     }
 
-    
 
-    private void prepareDragAndDrop(final CardActor card, DragAndDrop.Target target, final Group sourceGroup){
-        final Vector2 cardPos = new Vector2(card.getX(),card.getY());
+    private void prepareDragAndDrop(final CardActor card, DragAndDrop.Target target, final Group sourceGroup) {
+        final Vector2 cardPos = new Vector2(card.getX(), card.getY());
         final int cardZ = card.getZIndex();
 
         final DragAndDrop dragAndDrop = new DragAndDrop();
-        dragAndDrop.setDragActorPosition(GUIparams.CARD_WIDTH/2f , -GUIparams.CARD_HEIGHT/2f);
+        dragAndDrop.setDragActorPosition(GUIparams.CARD_WIDTH / 2f, -GUIparams.CARD_HEIGHT / 2f);
         DragAndDrop.Source dropSource = new DragAndDrop.Source(card) {
             @Override
             public DragAndDrop.Payload dragStart(InputEvent event, float x, float y, int pointer) {
@@ -155,9 +150,9 @@ public class GameplayScreen implements Screen {
 
             @Override
             public void dragStop(InputEvent event, float x, float y, int pointer, DragAndDrop.Payload payload, DragAndDrop.Target target) {
-                if(target == null){
+                if (target == null) {
                     sourceGroup.addActor(card);
-                    Action move = Actions.moveTo(cardPos.x,cardPos.y, 0);
+                    Action move = Actions.moveTo(cardPos.x, cardPos.y, 0);
                     card.addAction(move);
                     card.setZIndex(cardZ);
                     System.out.println(cardZ);
@@ -180,14 +175,14 @@ public class GameplayScreen implements Screen {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(Color.WHITE);
-       // makao.getBatch().setProjectionMatrix(camera.combined);
+        // makao.getBatch().setProjectionMatrix(camera.combined);
         stage.act(delta);
         stage.draw();
     }
 
     @Override
     public void resize(int width, int height) {
-        stage.getViewport().update(width,height,true);
+        stage.getViewport().update(width, height, true);
     }
 
     @Override

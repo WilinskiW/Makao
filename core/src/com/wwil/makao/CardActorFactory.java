@@ -24,12 +24,15 @@ public class CardActorFactory {
     private List<CardActor> createCardActors(String color) {
         List<CardActor> cards = new ArrayList<>();
 
+        //2-10
         for (int i = 2; i <= 10; i++) {
-            cards.add(new CardActor(new Texture(Gdx.files.internal(color + i + ".png"))));
+            cards.add(new CardActor(new Texture(Gdx.files.internal("assets/Cards/" + color + "/" + color + i + ".png"))));
         }
 
+        //specjalne
         for (int i = 0; i < symbols.length; i++) {
-            cards.add(new CardActor(new Texture(Gdx.files.internal("pik" + symbols[i] + ".png"))));
+            cards.add(new CardActor(new Texture(Gdx.files.internal("assets/Cards/" + color + "/" + color + symbols[i] + ".png"))));
+
         }
 
 
