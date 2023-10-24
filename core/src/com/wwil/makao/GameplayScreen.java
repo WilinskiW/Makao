@@ -25,8 +25,7 @@ public class GameplayScreen implements Screen {
     private final OrthographicCamera camera;
     private Stage stage;
     private String backCardPath = "Cards/backCard.png";
-    private String blankCardPath = "Cards/BlankCard.png";
-    private List<CardActor> playerHand = new ArrayList<>();
+    private List<PlayerHandGroup> handGroups = new ArrayList<>();
 
     public GameplayScreen(Makao makao) {
         this.makao = makao;
@@ -41,27 +40,9 @@ public class GameplayScreen implements Screen {
         List<CardActor> cards = cardActorFactory.createCardActors();
         Collections.shuffle(cards);
 
-        //Display board deck
-        BoardDeckGroup boardDeckGroup = new BoardDeckGroup();
-        CardActor blankCard6 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-        CardActor blankCard7 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-        CardActor blankCard8 = new CardActor(new Texture(Gdx.files.internal(backCardPath)));
-        stage.addActor(boardDeckGroup);
-
-        boardDeckGroup.setPosition(GUIparams.WIDTH / 2f - 350, GUIparams.HEIGHT / 2f);
-        boardDeckGroup.addActor(blankCard6);
-        boardDeckGroup.addActor(blankCard7);
-        boardDeckGroup.addActor(blankCard8);
-
-
         //Display stack deck
         final StackCardsGroup stackCardsGroup = new StackCardsGroup();
-        final CardActor stackCard = new CardActor(cards.get(0).getFrontSide());
-        stackCard.setUpSideDown(false);
-        cards.remove(0);
-        stackCardsGroup.addActor(stackCard);
-        stage.addActor(stackCardsGroup);
-        stackCard.setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
+        prepareStack(stackCardsGroup,cards);
 
         //Drag
         final DragAndDrop.Target target = new DragAndDrop.Target(stackCardsGroup) {
@@ -74,63 +55,84 @@ public class GameplayScreen implements Screen {
             public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
                 stackCardsGroup.addActor(source.getActor());
             }
-
-
         };
-
+        //Display Player hand group
 
         PlayerHandGroup playerHandGroupSouth = new PlayerHandGroup();
+        createPlayerStartingDeck(cards,playerHandGroupSouth,true,target);
+        handGroups.add(playerHandGroupSouth);
+
+        PlayerHandGroup playerHandGroupNorth = new PlayerHandGroup();
+        createPlayerStartingDeck(cards,playerHandGroupNorth,false,null);
+        handGroups.add(playerHandGroupNorth);
+
+        PlayerHandGroup playerHandGroupEast = new PlayerHandGroup();
+        createPlayerStartingDeck(cards,playerHandGroupEast,false,null);
+        handGroups.add(playerHandGroupEast);
+
+        PlayerHandGroup playerHandGroupWest = new PlayerHandGroup();
+        createPlayerStartingDeck(cards,playerHandGroupWest,false,null);
+        handGroups.add(playerHandGroupWest);
+
+        prepareHandGroups();
+
+        //Display board deck
+        BoardDeckGroup boardDeckGroup = new BoardDeckGroup();
+        prepareBoardDeck(boardDeckGroup,cards);
+    }
+
+    private void prepareStack(StackCardsGroup stackCardsGroup, List<CardActor> cards){
+        CardActor stackCard = new CardActor(cards.get(0).getFrontSide());
+        stackCard.setUpSideDown(false);
+        cards.remove(0);
+        stackCardsGroup.addActor(stackCard);
+        stage.addActor(stackCardsGroup);
+        stackCard.setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
+    }
+
+    private void createPlayerStartingDeck(List<CardActor> cards, PlayerHandGroup playerHandGroup, boolean isHumanPlayer, DragAndDrop.Target target){
         List<CardActor> playerCards = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            cards.get(0).setUpSideDown(false);
-            playerCards.add(cards.get(0));
-            playerHandGroupSouth.addActor(cards.remove(0));
+            if(isHumanPlayer) {
+                cards.get(0).setUpSideDown(false);
+                playerCards.add(cards.get(0));
+            }
+            playerHandGroup.addActor(cards.remove(0));
         }
 
-        for (CardActor card : playerCards) {
-            prepareDragAndDrop(card,target,playerHandGroupSouth);
+        if(isHumanPlayer) {
+            for (CardActor card : playerCards) {
+                prepareDragAndDrop(card, target, playerHandGroup);
+            }
+        }
+    }
+
+    private void prepareHandGroups(){
+        for(PlayerHandGroup handGroup : handGroups){
+            stage.addActor(handGroup);
         }
 
 
-        final PlayerHandGroup playerHandGroupNorth = new PlayerHandGroup();
-        for (int i = 0; i < 5; i++) {
-            playerHandGroupNorth.addActor(cards.remove(0));
-        }
-
-        final PlayerHandGroup playerHandGroupEast = new PlayerHandGroup();
-        for (int i = 0; i < 5; i++) {
-            playerHandGroupEast.addActor(cards.remove(0));
-        }
-
-        final PlayerHandGroup playerHandGroupWest = new PlayerHandGroup();
-        for (int i = 0; i < 5; i++) {
-            playerHandGroupWest.addActor(cards.remove(0));
-        }
-
-        stage.addActor(playerHandGroupSouth);
-        stage.addActor(playerHandGroupNorth);
-        stage.addActor(playerHandGroupEast);
-        stage.addActor(playerHandGroupWest);
-
-
-        playerHandGroupEast.setRotation(90);
-        playerHandGroupWest.setRotation(90);
+        handGroups.get(2).setRotation(90);
+        handGroups.get(3).setRotation(90);
 
         //Set handGroup position
-        playerHandGroupSouth.setPosition(GUIparams.WIDTH / 2f - (GUIparams.CARD_WIDTH / 2f), 0);
-        playerHandGroupNorth.setPosition(GUIparams.WIDTH / 2.0f - (GUIparams.CARD_WIDTH / 2f), GUIparams.HEIGHT - 15);
-        playerHandGroupEast.setPosition(GUIparams.WIDTH + GUIparams.CARD_HEIGHT - 15, GUIparams.HEIGHT / 2.0f - (GUIparams.CARD_HEIGHT / 2f) + 45);
-        playerHandGroupWest.setPosition(GUIparams.CARD_HEIGHT, GUIparams.HEIGHT / 2f - GUIparams.CARD_WIDTH / 2f);
-
-
-//
-//        prepareDragAndDrop(blankCard2,target,playerHandGroupSouth);
-//        prepareDragAndDrop(blankCard3,target,playerHandGroupSouth);
-//        prepareDragAndDrop(blankCard4,target,playerHandGroupSouth);
-//        prepareDragAndDrop(blankCard5,target,playerHandGroupSouth);
+        handGroups.get(0).setPosition(GUIparams.WIDTH / 2f - (GUIparams.CARD_WIDTH / 2f), 0);
+        handGroups.get(1).setPosition(GUIparams.WIDTH / 2.0f - (GUIparams.CARD_WIDTH / 2f), GUIparams.HEIGHT - 15);
+        handGroups.get(2).setPosition(GUIparams.WIDTH + GUIparams.CARD_HEIGHT - 15, GUIparams.HEIGHT / 2.0f - (GUIparams.CARD_HEIGHT / 2f) + 45);
+        handGroups.get(3).setPosition(GUIparams.CARD_HEIGHT, GUIparams.HEIGHT / 2f - GUIparams.CARD_WIDTH / 2f);
 
     }
 
+    private void prepareBoardDeck(BoardDeckGroup boardDeckGroup,List<CardActor> cards){
+        stage.addActor(boardDeckGroup);
+
+        boardDeckGroup.setPosition(GUIparams.WIDTH / 2f - 350, GUIparams.HEIGHT / 2f);
+
+        for (CardActor card : cards) {
+            boardDeckGroup.addActor(card);
+        }
+    }
 
     private void prepareDragAndDrop(final CardActor card, DragAndDrop.Target target, final Group sourceGroup) {
         final Vector2 cardPos = new Vector2(card.getX(), card.getY());
@@ -159,8 +161,6 @@ public class GameplayScreen implements Screen {
                 }
                 super.dragStop(event, x, y, pointer, payload, target);
             }
-
-
         };
 
         dragAndDrop.addSource(dropSource);

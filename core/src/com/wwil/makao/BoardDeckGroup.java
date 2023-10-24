@@ -8,7 +8,7 @@ public class BoardDeckGroup extends Group {
     public void addActor(Actor actor) {
         if(!getChildren().isEmpty()) {
             float lastActorX = getChildren().get(getChildren().size - 1).getX();
-            actor.setX(lastActorX + 10);
+            actor.setX(lastActorX);
         }
 
         super.addActor(actor);
