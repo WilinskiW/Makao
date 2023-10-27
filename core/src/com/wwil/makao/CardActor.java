@@ -8,14 +8,17 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import org.w3c.dom.Text;
 
 public class CardActor extends Actor {
-
+    private final Rank rank;
+    private Suits suit;
     private Texture frontSide;
     private Texture backSide = new Texture(Gdx.files.internal("Cards/backCard.png"));
     private boolean isUpSideDown = true;
 
 
-    public CardActor(Texture frontSide) {
+    public CardActor(Texture frontSide, Rank rank, Suits suit) {
         this.frontSide = frontSide;
+        this.rank = rank;
+        this.suit = suit;
         setBounds(0,0,GUIparams.CARD_WIDTH,GUIparams.CARD_HEIGHT);
     }
 
@@ -47,5 +50,13 @@ public class CardActor extends Actor {
 
     public Texture getBackSide() {
         return backSide;
+    }
+
+    public Rank getRank() {
+        return rank;
+    }
+
+    public Suits getSuit() {
+        return suit;
     }
 }

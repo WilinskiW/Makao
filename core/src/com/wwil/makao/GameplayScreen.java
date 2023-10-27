@@ -24,7 +24,6 @@ public class GameplayScreen implements Screen {
     private Makao makao;
     private final OrthographicCamera camera;
     private Stage stage;
-    private String backCardPath = "Cards/backCard.png";
     private List<PlayerHandGroup> handGroups = new ArrayList<>();
 
     public GameplayScreen(Makao makao) {
@@ -40,9 +39,13 @@ public class GameplayScreen implements Screen {
         List<CardActor> cards = cardActorFactory.createCardActors();
         Collections.shuffle(cards);
 
+        //Display board deck
+        BoardDeckGroup boardDeckGroup = new BoardDeckGroup();
+        prepareBoardDeck(boardDeckGroup,cards);
+
         //Display stack deck
         final StackCardsGroup stackCardsGroup = new StackCardsGroup();
-        prepareStack(stackCardsGroup,cards);
+        prepareStack(stackCardsGroup,cards.remove(0));
 
         //Drag
         final DragAndDrop.Target target = new DragAndDrop.Target(stackCardsGroup) {
@@ -56,8 +59,8 @@ public class GameplayScreen implements Screen {
                 stackCardsGroup.addActor(source.getActor());
             }
         };
-        //Display Player hand group
 
+        //Display Players hand group
         PlayerHandGroup playerHandGroupSouth = new PlayerHandGroup();
         createPlayerStartingDeck(cards,playerHandGroupSouth,true,target);
         handGroups.add(playerHandGroupSouth);
@@ -76,15 +79,22 @@ public class GameplayScreen implements Screen {
 
         prepareHandGroups();
 
-        //Display board deck
-        BoardDeckGroup boardDeckGroup = new BoardDeckGroup();
-        prepareBoardDeck(boardDeckGroup,cards);
     }
 
-    private void prepareStack(StackCardsGroup stackCardsGroup, List<CardActor> cards){
-        CardActor stackCard = new CardActor(cards.get(0).getFrontSide());
+    private void prepareBoardDeck(BoardDeckGroup boardDeckGroup,List<CardActor> cards){
+        stage.addActor(boardDeckGroup);
+
+        boardDeckGroup.setPosition(GUIparams.WIDTH / 2f - 350, GUIparams.HEIGHT / 2f);
+
+        for (CardActor card : cards) {
+            boardDeckGroup.addActor(card);
+        }
+    }
+
+    // TODO: 25.10.2023 Niech boardDeck dostaje na Start wszystkie karty. Reszta grupy kart biorą od niego
+    private void prepareStack(StackCardsGroup stackCardsGroup, CardActor card){
+        CardActor stackCard = new CardActor(card.getFrontSide(),card.getRank(),card.getSuit());
         stackCard.setUpSideDown(false);
-        cards.remove(0);
         stackCardsGroup.addActor(stackCard);
         stage.addActor(stackCardsGroup);
         stackCard.setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
@@ -118,21 +128,12 @@ public class GameplayScreen implements Screen {
 
         //Set handGroup position
         handGroups.get(0).setPosition(GUIparams.WIDTH / 2f - (GUIparams.CARD_WIDTH / 2f), 0);
-        handGroups.get(1).setPosition(GUIparams.WIDTH / 2.0f - (GUIparams.CARD_WIDTH / 2f), GUIparams.HEIGHT - 15);
+        handGroups.get(1).setPosition(GUIparams.WIDTH / 2.0f - (GUIparams.CARD_WIDTH / 2f), GUIparams.HEIGHT - 30);
         handGroups.get(2).setPosition(GUIparams.WIDTH + GUIparams.CARD_HEIGHT - 15, GUIparams.HEIGHT / 2.0f - (GUIparams.CARD_HEIGHT / 2f) + 45);
         handGroups.get(3).setPosition(GUIparams.CARD_HEIGHT, GUIparams.HEIGHT / 2f - GUIparams.CARD_WIDTH / 2f);
 
     }
 
-    private void prepareBoardDeck(BoardDeckGroup boardDeckGroup,List<CardActor> cards){
-        stage.addActor(boardDeckGroup);
-
-        boardDeckGroup.setPosition(GUIparams.WIDTH / 2f - 350, GUIparams.HEIGHT / 2f);
-
-        for (CardActor card : cards) {
-            boardDeckGroup.addActor(card);
-        }
-    }
 
     private void prepareDragAndDrop(final CardActor card, DragAndDrop.Target target, final Group sourceGroup) {
         final Vector2 cardPos = new Vector2(card.getX(), card.getY());
@@ -157,7 +158,8 @@ public class GameplayScreen implements Screen {
                     Action move = Actions.moveTo(cardPos.x, cardPos.y, 0);
                     card.addAction(move);
                     card.setZIndex(cardZ);
-                    System.out.println(cardZ);
+                    System.out.println(card.getRank());
+                    System.out.println(card.getSuit());
                 }
                 super.dragStop(event, x, y, pointer, payload, target);
             }
