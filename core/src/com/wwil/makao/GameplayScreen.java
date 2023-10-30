@@ -4,20 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import javax.smartcardio.Card;
 import java.util.*;
 
 public class GameplayScreen implements Screen {
@@ -35,17 +28,14 @@ public class GameplayScreen implements Screen {
         //Display players cards
         Gdx.input.setInputProcessor(stage);
 
-        CardActorFactory cardActorFactory = new CardActorFactory();
-        List<CardActor> cards = cardActorFactory.createCardActors();
-        Collections.shuffle(cards);
 
         //Display board deck
         BoardDeckGroup boardDeckGroup = new BoardDeckGroup();
-        prepareBoardDeck(boardDeckGroup,cards);
+        prepareBoardDeck(boardDeckGroup,prepareCardsForBoardDeck());
 
         //Display stack deck
         final StackCardsGroup stackCardsGroup = new StackCardsGroup();
-        prepareStack(stackCardsGroup,cards.remove(0));
+        prepareStack(stackCardsGroup,takeCardsFromBoardDeck(boardDeckGroup,1).get(0));
 
         //Drag
         final DragAndDrop.Target target = new DragAndDrop.Target(stackCardsGroup) {
@@ -62,36 +52,50 @@ public class GameplayScreen implements Screen {
 
         //Display Players hand group
         PlayerHandGroup playerHandGroupSouth = new PlayerHandGroup();
-        createPlayerStartingDeck(cards,playerHandGroupSouth,true,target);
+        createPlayerStartingDeck(takeCardsFromBoardDeck(boardDeckGroup,5),playerHandGroupSouth,true,target);
         handGroups.add(playerHandGroupSouth);
 
         PlayerHandGroup playerHandGroupNorth = new PlayerHandGroup();
-        createPlayerStartingDeck(cards,playerHandGroupNorth,false,null);
+        createPlayerStartingDeck(takeCardsFromBoardDeck(boardDeckGroup,5),playerHandGroupNorth,false,null);
         handGroups.add(playerHandGroupNorth);
 
         PlayerHandGroup playerHandGroupEast = new PlayerHandGroup();
-        createPlayerStartingDeck(cards,playerHandGroupEast,false,null);
+        createPlayerStartingDeck(takeCardsFromBoardDeck(boardDeckGroup,5),playerHandGroupEast,false,null);
         handGroups.add(playerHandGroupEast);
 
         PlayerHandGroup playerHandGroupWest = new PlayerHandGroup();
-        createPlayerStartingDeck(cards,playerHandGroupWest,false,null);
+        createPlayerStartingDeck(takeCardsFromBoardDeck(boardDeckGroup,5),playerHandGroupWest,false,null);
         handGroups.add(playerHandGroupWest);
 
         prepareHandGroups();
+    }
 
+    private List<CardActor> prepareCardsForBoardDeck(){
+        CardActorFactory cardActorFactory = new CardActorFactory();
+        List<CardActor> cards = cardActorFactory.createCardActors();
+        Collections.shuffle(cards);
+        return cards;
     }
 
     private void prepareBoardDeck(BoardDeckGroup boardDeckGroup,List<CardActor> cards){
         stage.addActor(boardDeckGroup);
 
         boardDeckGroup.setPosition(GUIparams.WIDTH / 2f - 350, GUIparams.HEIGHT / 2f);
-
-        for (CardActor card : cards) {
+        for(CardActor card : cards){
             boardDeckGroup.addActor(card);
         }
     }
 
-    // TODO: 25.10.2023 Niech boardDeck dostaje na Start wszystkie karty. Reszta grupy kart biorą od niego
+    private List<CardActor> takeCardsFromBoardDeck(BoardDeckGroup boardDeck, int amount){
+        List<CardActor> cards = new ArrayList<>();
+        for(int i = 0; i < amount; i++){
+           CardActor cardActor = (CardActor) boardDeck.getChild(i);
+           cards.add(cardActor);
+           cardActor.remove();
+        }
+        return cards;
+    }
+
     private void prepareStack(StackCardsGroup stackCardsGroup, CardActor card){
         CardActor stackCard = new CardActor(card.getFrontSide(),card.getRank(),card.getSuit());
         stackCard.setUpSideDown(false);
@@ -158,8 +162,6 @@ public class GameplayScreen implements Screen {
                     Action move = Actions.moveTo(cardPos.x, cardPos.y, 0);
                     card.addAction(move);
                     card.setZIndex(cardZ);
-                    System.out.println(card.getRank());
-                    System.out.println(card.getSuit());
                 }
                 super.dragStop(event, x, y, pointer, payload, target);
             }

@@ -14,4 +14,5 @@ public class StackCardsGroup extends Group {
 
         super.addActor(actor);
     }
+
 }
