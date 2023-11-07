@@ -1,4 +1,4 @@
-package com.wwil.makao;
+package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.wwil.makao.backend.MakaoBackend;
 
 import java.util.*;
 
@@ -18,7 +19,9 @@ public class GameplayScreen implements Screen {
     private final OrthographicCamera camera;
     private Stage stage;
     private List<PlayerHandGroup> handGroups = new ArrayList<>();
+    private MakaoBackend backend;
 
+    // TODO: 30.10.2023 Karty można położyć jedynie na zgodną karte
     public GameplayScreen(Makao makao) {
         this.makao = makao;
         camera = new OrthographicCamera();
@@ -28,6 +31,7 @@ public class GameplayScreen implements Screen {
         //Display players cards
         Gdx.input.setInputProcessor(stage);
 
+        //GameController
 
         //Display board deck
         BoardDeckGroup boardDeckGroup = new BoardDeckGroup();
@@ -97,7 +101,7 @@ public class GameplayScreen implements Screen {
     }
 
     private void prepareStack(StackCardsGroup stackCardsGroup, CardActor card){
-        CardActor stackCard = new CardActor(card.getFrontSide(),card.getRank(),card.getSuit());
+        CardActor stackCard = new CardActor(card.getFrontSide(),card.getRank(),card.getSuit());//todo refactor
         stackCard.setUpSideDown(false);
         stackCardsGroup.addActor(stackCard);
         stage.addActor(stackCardsGroup);

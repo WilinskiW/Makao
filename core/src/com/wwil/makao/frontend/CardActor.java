@@ -1,24 +1,24 @@
-package com.wwil.makao;
+package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import org.w3c.dom.Text;
+import com.wwil.makao.backend.Card;
+import com.wwil.makao.backend.Rank;
+import com.wwil.makao.backend.Suit;
 
-public class CardActor extends Actor {
-    private final Rank rank;
-    private Suits suit;
+public class CardActor extends Actor { //todo klasa z logiką i grafiką
+    private Card card;
     private Texture frontSide;
-    private Texture backSide = new Texture(Gdx.files.internal("Cards/backCard.png"));
+    private Texture backSide = new Texture(Gdx.files.internal("Cards/backCard.png")); // TODO: 02.11.2023 Do dyskusji
     private boolean isUpSideDown = true;
 
 
-    public CardActor(Texture frontSide, Rank rank, Suits suit) {
+    public CardActor(Texture frontSide, Card card) {
         this.frontSide = frontSide;
-        this.rank = rank;
-        this.suit = suit;
+        this.card = card;
         setBounds(0,0,GUIparams.CARD_WIDTH,GUIparams.CARD_HEIGHT);
     }
 
@@ -56,7 +56,7 @@ public class CardActor extends Actor {
         return rank;
     }
 
-    public Suits getSuit() {
+    public Suit getSuit() {
         return suit;
     }
 }

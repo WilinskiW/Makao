@@ -1,4 +1,4 @@
-package com.wwil.makao;
+package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
