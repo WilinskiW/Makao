@@ -6,15 +6,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.wwil.makao.backend.Card;
-import com.wwil.makao.backend.Rank;
-import com.wwil.makao.backend.Suit;
 
 public class CardActor extends Actor { //todo klasa z logiką i grafiką
     private Card card;
     private Texture frontSide;
     private Texture backSide = new Texture(Gdx.files.internal("Cards/backCard.png")); // TODO: 02.11.2023 Do dyskusji
     private boolean isUpSideDown = true;
+    private int lastPosZ;
 
+    //todo
 
     public CardActor(Texture frontSide, Card card) {
         this.frontSide = frontSide;
@@ -48,15 +48,18 @@ public class CardActor extends Actor { //todo klasa z logiką i grafiką
         return frontSide;
     }
 
-    public Texture getBackSide() {
-        return backSide;
+    public Card getCard() {
+        return card;
     }
 
-    public Rank getRank() {
-        return rank;
+    public void savePosZ() { //todo refactor kiedyś
+        this.lastPosZ = getZIndex();
     }
 
-    public Suit getSuit() {
-        return suit;
+    public void loadPosZ(){
+        setZIndex(lastPosZ);
     }
+
+
 }
+
