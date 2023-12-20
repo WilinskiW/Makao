@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.wwil.makao.backend.Card;
 
 public class CardActor extends Actor { //todo klasa z logiką i grafiką
@@ -12,7 +13,10 @@ public class CardActor extends Actor { //todo klasa z logiką i grafiką
     private Texture frontSide;
     private Texture backSide = new Texture(Gdx.files.internal("Cards/backCard.png")); // TODO: 02.11.2023 Do dyskusji
     private boolean isUpSideDown = true;
+    private float lastPosX;
+    private float lastPosY;
     private int lastPosZ;
+    private Group lastParent;
 
     //todo
 
@@ -52,12 +56,43 @@ public class CardActor extends Actor { //todo klasa z logiką i grafiką
         return card;
     }
 
-    public void savePosZ() { //todo refactor kiedyś
+
+    public void saveLocation() {
+        savePosition();
+        savePosZ();
+        saveGroup();
+    }
+
+    private void saveGroup() {
+        lastParent = getParent();
+    }
+    private void savePosition() { //todo refactor kiedyś
+        this.lastPosX = getX();
+        this.lastPosY = getY();
+    }
+
+    private void savePosZ() { //todo refactor kiedyś
         this.lastPosZ = getZIndex();
     }
 
-    public void loadPosZ(){
+
+    private void loadX(){
+        setX(lastPosX);
+    }
+
+    private void loadY(){
+        setY(lastPosY);
+    }
+
+    private void loadPosZ(){
         setZIndex(lastPosZ);
+    }
+
+    public void backToPreviousLocation() {
+        lastParent.addActor(this);
+        loadX();
+        loadY();
+        loadPosZ();
     }
 
 

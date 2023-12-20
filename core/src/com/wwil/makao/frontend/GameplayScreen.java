@@ -4,15 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.wwil.makao.backend.Card;
 import com.wwil.makao.backend.MakaoBackend;
-import com.wwil.makao.backend.PlayerHand;
 
 import java.util.*;
 
@@ -32,6 +29,8 @@ public class GameplayScreen implements Screen {
         prepareGameComponents();
     }
 
+    /////////////////////////////////////////////////////////////////////////////////
+
     private void prepareGraphicComponents() {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, GUIparams.WIDTH, GUIparams.HEIGHT);
@@ -41,34 +40,13 @@ public class GameplayScreen implements Screen {
 
     private void prepareGameComponents() {
         //BoardDeckGroup boardDeckGroup = new BoardDeckGroup();
-
         final StackCardsGroup stackCardsGroup = new StackCardsGroup();
         prepareStack(stackCardsGroup, backend.getCard());
-
-        DragAndDrop.Target target = prepareDragAndDrop(stackCardsGroup);
-
+        DragAndDrop.Target target = prepareTarget(stackCardsGroup);
         preparePlayers(target);
     }
 
-    private DragAndDrop.Target prepareDragAndDrop(StackCardsGroup stackCardsGroup){
-        final DragAndDrop.Target target = new DragAndDrop.Target(stackCardsGroup) {
-            @Override
-            public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-                return true;
-            }
-
-            @Override
-            public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-                //  stackCardsGroup.addActor(source.getActor());
-                CardActor card = (CardActor) source.getActor();
-                //sourceGroup.addActor(card);
-                Action move = Actions.moveTo(card.getX(), card.getY(), 0);
-                card.addAction(move);
-                card.loadPosZ();
-            }
-        };
-        return target;
-    }
+    // TODO: 16.12.2023 Karta się klei do Stacka nawet jeśli jest nieprawidłowa
 
     private void prepareStack(StackCardsGroup stackCardsGroup, Card card) {
         CardActor stackCard = cardActorFactory.createCardActor(card);//todo refactor
@@ -78,46 +56,34 @@ public class GameplayScreen implements Screen {
         stackCard.setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
     }
 
-    private void preparePlayers(DragAndDrop.Target target){
-        PlayerHandGroup playerHandGroupSouth = new PlayerHandGroup();
+    private void preparePlayers(DragAndDrop.Target target) {
+        for (int i = 0; i < 4; i++) {
+            handGroups.add(new PlayerHandGroup());
+        }
 
-        createPlayerStartingDeck(cardActorFactory.createCardActors(backend.getPlayers().get(0).getCards()),
-                playerHandGroupSouth, true, target);
-        handGroups.add(playerHandGroupSouth);
+        createHumanStartingDeck(cardActorFactory.createCardActors(backend.getPlayers().get(0).getCards()), target);
+        createPlayerStartingDeck(cardActorFactory.createCardActors(backend.getPlayers().get(1).getCards()),handGroups.get(1));
+        createPlayerStartingDeck(cardActorFactory.createCardActors(backend.getPlayers().get(2).getCards()),handGroups.get(2));
+        createPlayerStartingDeck(cardActorFactory.createCardActors(backend.getPlayers().get(3).getCards()), handGroups.get(3));
 
-        PlayerHandGroup playerHandGroupNorth = new PlayerHandGroup();
-        createPlayerStartingDeck(cardActorFactory.createCardActors(backend.getPlayers().get(1).getCards()),
-                playerHandGroupNorth, true, null);
-        handGroups.add(playerHandGroupNorth);
-
-        PlayerHandGroup playerHandGroupEast = new PlayerHandGroup();
-        createPlayerStartingDeck(cardActorFactory.createCardActors(backend.getPlayers().get(2).getCards()),
-                playerHandGroupEast, true, null);
-        handGroups.add(playerHandGroupEast);
-
-        PlayerHandGroup playerHandGroupWest = new PlayerHandGroup();
-        createPlayerStartingDeck(cardActorFactory.createCardActors(backend.getPlayers().get(3).getCards()),
-                playerHandGroupWest, true, null);
-        handGroups.add(playerHandGroupWest);
 
         prepareHandGroups();
     }
 
-    private void createPlayerStartingDeck(List<CardActor> cards, PlayerHandGroup playerHandGroup, boolean isHumanPlayer, DragAndDrop.Target target) {
-        List<CardActor> playerCards = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            if (isHumanPlayer) {
-                cards.get(0).setUpSideDown(false);
-                playerCards.add(cards.get(0));
-            }
-            playerHandGroup.addActor(cards.remove(0));
+    private void createPlayerStartingDeck(List<CardActor> cards, PlayerHandGroup handGroup) {
+        for (CardActor card : cards) {
+            handGroup.addActor(card);
         }
+    }
 
-        if (isHumanPlayer) {
-            for (CardActor card : playerCards) {
-                prepareDragAndDrop(card, target, playerHandGroup);
-            }
+    private PlayerHandGroup createHumanStartingDeck(List<CardActor> cards, DragAndDrop.Target target) {
+        PlayerHandGroup group = getHumanHand();
+        createPlayerStartingDeck(cards, group);
+        for (CardActor card : cards) {
+            card.setUpSideDown(false);
+            prepareDragAndDrop(card, target);
         }
+        return group;
     }
 
     private void prepareHandGroups() {
@@ -138,18 +104,23 @@ public class GameplayScreen implements Screen {
     }
 
 
-    private void prepareDragAndDrop(final CardActor card, DragAndDrop.Target target, final Group sourceGroup) {
-        final Vector2 cardPos = new Vector2(card.getX(), card.getY());
-
+    private void prepareDragAndDrop(final CardActor card, DragAndDrop.Target target) {
         final DragAndDrop dragAndDrop = new DragAndDrop();
         dragAndDrop.setDragActorPosition(GUIparams.CARD_WIDTH / 2f, -GUIparams.CARD_HEIGHT / 2f);
+        DragAndDrop.Source dropSource = prepareSource(card);
+        dragAndDrop.addSource(dropSource);
+        dragAndDrop.addTarget(target);
+    }
+
+    private DragAndDrop.Source prepareSource(final CardActor card) {
+
         DragAndDrop.Source dropSource = new DragAndDrop.Source(card) {
             @Override
             public DragAndDrop.Payload dragStart(InputEvent event, float x, float y, int pointer) {
                 DragAndDrop.Payload payload = new DragAndDrop.Payload();
                 payload.setDragActor(card);
                 payload.setObject(card);
-                card.savePosZ();
+                card.saveLocation();
                 stage.addActor(card);
                 return payload;
             }
@@ -157,21 +128,48 @@ public class GameplayScreen implements Screen {
             @Override
             public void dragStop(InputEvent event, float x, float y, int pointer, DragAndDrop.Payload payload, DragAndDrop.Target target) {
                 if (target == null) {
-                    moveCardToPreviousLocation();
+                    card.backToPreviousLocation();
                 }
                 super.dragStop(event, x, y, pointer, payload, target);
             }
+        };
+        return dropSource;
+    }
 
-            private void moveCardToPreviousLocation() {
-                sourceGroup.addActor(card);
-                Action move = Actions.moveTo(cardPos.x, cardPos.y, 0);
-                card.addAction(move);
-                card.loadPosZ();
+    private DragAndDrop.Target prepareTarget(final StackCardsGroup stackCardsGroup) { // stack - target
+        //Target
+        final DragAndDrop.Target target = new DragAndDrop.Target(stackCardsGroup) {
+            @Override
+            public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) { // SOURCE - CARD
+                source.getActor().setColor(Color.RED);
+                return true;
+            }
+
+            @Override
+            public void reset(DragAndDrop.Source source, DragAndDrop.Payload payload) {
+                source.getActor().setColor(Color.WHITE);
+                super.reset(source, payload);
+            }
+
+            @Override
+            public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+
+                boolean cardCorrect = false;
+                //Przy true działa normalnie, ale pozycja Z przy powrocie do talii jest źle przepisana
+                CardActor card = (CardActor) source.getActor();
+
+                if (cardCorrect) {
+                    stackCardsGroup.addActor(source.getActor());
+                } else {
+                    card.backToPreviousLocation();
+                }
             }
         };
+        return target;
+    }
 
-        dragAndDrop.addSource(dropSource);
-        dragAndDrop.addTarget(target);
+    private PlayerHandGroup getHumanHand() {
+        return handGroups.get(0);
     }
 
 
@@ -213,3 +211,4 @@ public class GameplayScreen implements Screen {
         stage.dispose();
     }
 }
+
