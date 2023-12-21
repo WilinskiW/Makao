@@ -32,6 +32,19 @@ public class MakaoBackend {
         return startingCards;
     }
 
+    public boolean isCorrectCard(Card stackCard, Card chosenCard) {
+
+        if (stackCard.getRank().name().equals("Q") || chosenCard.getRank().name().equals("Q") || chosenCard.getRank().name().equals("JOKER")) {
+            return true;
+        }
+
+        return compareCards(chosenCard, stackCard);
+    }
+
+    private boolean compareCards(Card card1, Card card2) {
+        return card1.getSuit() == card2.getSuit() || card1.getRank() == card2.getRank();
+    }
+
 
     public Card getCard(){
         return cards.remove(0);

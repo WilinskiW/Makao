@@ -10,8 +10,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.wwil.makao.backend.Card;
 import com.wwil.makao.backend.MakaoBackend;
-
 import java.util.*;
+import java.util.List;
 
 public class GameplayScreen implements Screen {
     private Makao makao;
@@ -21,12 +21,17 @@ public class GameplayScreen implements Screen {
     private MakaoBackend backend = new MakaoBackend();
     private CardActorFactory cardActorFactory = new CardActorFactory();
 
-    // TODO: 30.10.2023 Karty można położyć jedynie na zgodną karte
+    // TODO: 20.12.2023 Przycisk Dobierania karty. ~ TERAZ ROZWIJANE
+    // TODO: 20.12.2023 Komputer może kłaść karty - główna pętla gry
+    // TODO: 20.12.2023 Aktywacja specjalnych zdolności kart
+    // TODO: 20.12.2023 Restart użytych kart 
+
     //tworzy główny ekran gry pod względem grafiki
     public GameplayScreen(Makao makao) {
         this.makao = makao;
         prepareGraphicComponents();
         prepareGameComponents();
+
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -39,22 +44,21 @@ public class GameplayScreen implements Screen {
     }
 
     private void prepareGameComponents() {
-        //BoardDeckGroup boardDeckGroup = new BoardDeckGroup();
         final StackCardsGroup stackCardsGroup = new StackCardsGroup();
         prepareStack(stackCardsGroup, backend.getCard());
         DragAndDrop.Target target = prepareTarget(stackCardsGroup);
         preparePlayers(target);
     }
 
-    // TODO: 16.12.2023 Karta się klei do Stacka nawet jeśli jest nieprawidłowa
 
     private void prepareStack(StackCardsGroup stackCardsGroup, Card card) {
-        CardActor stackCard = cardActorFactory.createCardActor(card);//todo refactor
+        CardActor stackCard = cardActorFactory.createCardActor(card);
         stackCard.setUpSideDown(false);
         stackCardsGroup.addActor(stackCard);
         stage.addActor(stackCardsGroup);
         stackCard.setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
     }
+
 
     private void preparePlayers(DragAndDrop.Target target) {
         for (int i = 0; i < 4; i++) {
@@ -102,6 +106,45 @@ public class GameplayScreen implements Screen {
         handGroups.get(3).setPosition(GUIparams.CARD_HEIGHT, GUIparams.HEIGHT / 2f - GUIparams.CARD_WIDTH / 2f);
 
     }
+    private DragAndDrop.Target prepareTarget(final StackCardsGroup stackCardsGroup) { // stack - target
+        //Target
+        final DragAndDrop.Target target = new DragAndDrop.Target(stackCardsGroup) {
+            @Override
+            public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) { // SOURCE - CARD
+                if(isCardActorCorrect(source,stackCardsGroup)){
+                    source.getActor().setColor(Color.LIME);
+                }
+                else {
+                    source.getActor().setColor(Color.RED);
+                }
+                return true;
+            }
+
+            @Override
+            public void reset(DragAndDrop.Source source, DragAndDrop.Payload payload) {
+                source.getActor().setColor(Color.WHITE);
+                super.reset(source, payload);
+            }
+
+            @Override
+            public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+                if (isCardActorCorrect(source,stackCardsGroup)) {
+                    stackCardsGroup.addActor(source.getActor());
+                } else {
+                    CardActor chosenCard = (CardActor) source.getActor();
+                    chosenCard.backToPreviousLocation();
+                }
+            }
+        };
+        return target;
+    }
+
+    private boolean isCardActorCorrect(DragAndDrop.Source source, StackCardsGroup stackCardsGroup){
+        CardActor chosenCard = (CardActor) source.getActor();
+        CardActor stackCard = (CardActor) stackCardsGroup.getChildren().peek();
+
+        return backend.isCorrectCard(stackCard.getCard(),chosenCard.getCard());
+    }
 
 
     private void prepareDragAndDrop(final CardActor card, DragAndDrop.Target target) {
@@ -136,37 +179,6 @@ public class GameplayScreen implements Screen {
         return dropSource;
     }
 
-    private DragAndDrop.Target prepareTarget(final StackCardsGroup stackCardsGroup) { // stack - target
-        //Target
-        final DragAndDrop.Target target = new DragAndDrop.Target(stackCardsGroup) {
-            @Override
-            public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) { // SOURCE - CARD
-                source.getActor().setColor(Color.RED);
-                return true;
-            }
-
-            @Override
-            public void reset(DragAndDrop.Source source, DragAndDrop.Payload payload) {
-                source.getActor().setColor(Color.WHITE);
-                super.reset(source, payload);
-            }
-
-            @Override
-            public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-
-                boolean cardCorrect = false;
-                //Przy true działa normalnie, ale pozycja Z przy powrocie do talii jest źle przepisana
-                CardActor card = (CardActor) source.getActor();
-
-                if (cardCorrect) {
-                    stackCardsGroup.addActor(source.getActor());
-                } else {
-                    card.backToPreviousLocation();
-                }
-            }
-        };
-        return target;
-    }
 
     private PlayerHandGroup getHumanHand() {
         return handGroups.get(0);
