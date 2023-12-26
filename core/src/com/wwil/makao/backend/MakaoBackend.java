@@ -32,6 +32,10 @@ public class MakaoBackend {
         return startingCards;
     }
 
+    public Card giveCard(){
+        return getCard();
+    }
+
     public boolean isCorrectCard(Card stackCard, Card chosenCard) {
 
         if (stackCard.getRank().name().equals("Q") || chosenCard.getRank().name().equals("Q") || chosenCard.getRank().name().equals("JOKER")) {

@@ -7,19 +7,24 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.wwil.makao.backend.Card;
 import com.wwil.makao.backend.MakaoBackend;
+
 import java.util.*;
 import java.util.List;
 
 public class GameplayScreen implements Screen {
-    private Makao makao;
+    private final Makao makao;
     private OrthographicCamera camera;
     private Stage stage;
-    private List<PlayerHandGroup> handGroups = new ArrayList<>();
-    private MakaoBackend backend = new MakaoBackend();
-    private CardActorFactory cardActorFactory = new CardActorFactory();
+    private final List<PlayerHandGroup> handGroups = new ArrayList<>();
+    private final MakaoBackend backend = new MakaoBackend();
+    private final CardActorFactory cardActorFactory = new CardActorFactory();
+    private PullButtonActor pullButtonActor;
+    private FitViewport viewport;
+    private DragAndDrop.Target dragTarget;
 
     // TODO: 20.12.2023 Przycisk Dobierania karty. ~ TERAZ ROZWIJANE
     // TODO: 20.12.2023 Komputer może kłaść karty - główna pętla gry
@@ -31,7 +36,6 @@ public class GameplayScreen implements Screen {
         this.makao = makao;
         prepareGraphicComponents();
         prepareGameComponents();
-
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -39,15 +43,17 @@ public class GameplayScreen implements Screen {
     private void prepareGraphicComponents() {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, GUIparams.WIDTH, GUIparams.HEIGHT);
-        stage = new Stage(new ScreenViewport(camera), makao.getBatch());
+        this.viewport = new FitViewport(0, 0, camera);
+        stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
     }
 
     private void prepareGameComponents() {
         final StackCardsGroup stackCardsGroup = new StackCardsGroup();
         prepareStack(stackCardsGroup, backend.getCard());
-        DragAndDrop.Target target = prepareTarget(stackCardsGroup);
-        preparePlayers(target);
+        preparePullButton();
+        this.dragTarget = prepareTarget(stackCardsGroup);
+        preparePlayers(dragTarget);
     }
 
 
@@ -57,6 +63,13 @@ public class GameplayScreen implements Screen {
         stackCardsGroup.addActor(stackCard);
         stage.addActor(stackCardsGroup);
         stackCard.setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
+    }
+
+    private void preparePullButton(){
+        PullButtonActor pullButton = new PullButtonActor();
+        stage.addActor(pullButton);
+        pullButton.setPosition(GUIparams.WIDTH / 2f - 300, GUIparams.HEIGHT / 2f - 100);
+        this.pullButtonActor = pullButton;
     }
 
 
@@ -193,13 +206,42 @@ public class GameplayScreen implements Screen {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(Color.WHITE);
-        // makao.getBatch().setProjectionMatrix(camera.combined);
+        makao.getBatch().setProjectionMatrix(camera.combined);
         stage.act(delta);
         stage.draw();
-    }
+        int graphicsY = viewport.getScreenHeight() - Gdx.input.getY();
+            if(pullButtonActor.checkIfButtonIsClick(graphicsY)){
+                performPullButtonClick();
+            }
+        }
+
+        private void performPullButtonClick(){
+            humanPullCard();
+            pullButtonActor.setClick(true);
+            performButtonAnimation();
+        }
+
+        private void humanPullCard(){
+            CardActor cardActor = cardActorFactory.createCardActor(backend.giveCard());
+            prepareDragAndDrop(cardActor, dragTarget);
+            cardActor.setUpSideDown(false);
+            handGroups.get(0).addActor(cardActor);
+        }
+
+        private void performButtonAnimation(){
+            Timer.Task undoClick = new com.badlogic.gdx.utils.Timer.Task() {
+                @Override
+                public void run() {
+                    pullButtonActor.setClick(false);
+                }
+            };
+            Timer.schedule(undoClick,0.5f);
+        }
 
     @Override
     public void resize(int width, int height) {
+        viewport.setWorldSize(width, height);
+        camera.setToOrtho(false, width, height);
         stage.getViewport().update(width, height, true);
     }
 
