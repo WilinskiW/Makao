@@ -12,9 +12,14 @@ public class PlayerHandGroup extends Group {
             addActor(cardActor);
         }
     }
+
+    // FIXME: 05.01.2024 Karty się przesuwają po dodaniu, ale nie powradzają do początkowej pozycji po usunięcia
     @Override
     public void addActor(Actor actor) {
         if(!getChildren().isEmpty()) {
+            if(getChildren().size > 5){
+                setPosition(getX()-25,getY());
+            }
             float lastActorX = getChildren().get(getChildren().size - 1).getX();
             actor.setX(lastActorX + 50);
         }

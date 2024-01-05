@@ -9,6 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.wwil.makao.backend.Card;
 import com.wwil.makao.backend.MakaoBackend;
 
@@ -26,8 +28,7 @@ public class GameplayScreen implements Screen {
     private FitViewport viewport;
     private DragAndDrop.Target dragTarget;
 
-    // TODO: 20.12.2023 Przycisk Dobierania karty. ~ TERAZ ROZWIJANE
-    // TODO: 20.12.2023 Komputer może kłaść karty - główna pętla gry
+    // TODO: 20.12.2023 Komputer może kłaść karty - główna pętla gry ~ TERAZ ROZWIJANE
     // TODO: 20.12.2023 Aktywacja specjalnych zdolności kart
     // TODO: 20.12.2023 Restart użytych kart 
 
@@ -51,7 +52,9 @@ public class GameplayScreen implements Screen {
     private void prepareGameComponents() {
         final StackCardsGroup stackCardsGroup = new StackCardsGroup();
         prepareStack(stackCardsGroup, backend.getCard());
+
         preparePullButton();
+
         this.dragTarget = prepareTarget(stackCardsGroup);
         preparePlayers(dragTarget);
     }
@@ -65,7 +68,7 @@ public class GameplayScreen implements Screen {
         stackCard.setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
     }
 
-    private void preparePullButton(){
+    private void preparePullButton() {
         PullButtonActor pullButton = new PullButtonActor();
         stage.addActor(pullButton);
         pullButton.setPosition(GUIparams.WIDTH / 2f - 300, GUIparams.HEIGHT / 2f - 100);
@@ -79,10 +82,9 @@ public class GameplayScreen implements Screen {
         }
 
         createHumanStartingDeck(cardActorFactory.createCardActors(backend.getPlayers().get(0).getCards()), target);
-        createPlayerStartingDeck(cardActorFactory.createCardActors(backend.getPlayers().get(1).getCards()),handGroups.get(1));
-        createPlayerStartingDeck(cardActorFactory.createCardActors(backend.getPlayers().get(2).getCards()),handGroups.get(2));
+        createPlayerStartingDeck(cardActorFactory.createCardActors(backend.getPlayers().get(1).getCards()), handGroups.get(1));
+        createPlayerStartingDeck(cardActorFactory.createCardActors(backend.getPlayers().get(2).getCards()), handGroups.get(2));
         createPlayerStartingDeck(cardActorFactory.createCardActors(backend.getPlayers().get(3).getCards()), handGroups.get(3));
-
 
         prepareHandGroups();
     }
@@ -108,27 +110,35 @@ public class GameplayScreen implements Screen {
             stage.addActor(handGroup);
         }
 
-
+        handGroups.get(1).setRotation(180);
         handGroups.get(2).setRotation(90);
-        handGroups.get(3).setRotation(90);
+        handGroups.get(3).setRotation(-90);
 
         //Set handGroup position
-        handGroups.get(0).setPosition(GUIparams.WIDTH / 2f - (GUIparams.CARD_WIDTH / 2f), 0);
-        handGroups.get(1).setPosition(GUIparams.WIDTH / 2.0f - (GUIparams.CARD_WIDTH / 2f), GUIparams.HEIGHT - 30);
-        handGroups.get(2).setPosition(GUIparams.WIDTH + GUIparams.CARD_HEIGHT - 15, GUIparams.HEIGHT / 2.0f - (GUIparams.CARD_HEIGHT / 2f) + 45);
-        handGroups.get(3).setPosition(GUIparams.CARD_HEIGHT, GUIparams.HEIGHT / 2f - GUIparams.CARD_WIDTH / 2f);
+        handGroups.get(0).setPosition
+                (GUIparams.WIDTH / 2f - (GUIparams.CARD_WIDTH / 2f),
+                0);
+
+        handGroups.get(1).setPosition(GUIparams.WIDTH - GUIparams.WIDTH/3.05f,
+                GUIparams.HEIGHT+GUIparams.CARD_HEIGHT-25);
+
+        handGroups.get(2).setPosition(GUIparams.WIDTH + GUIparams.CARD_HEIGHT - 10,
+                GUIparams.HEIGHT / 2.0f - (GUIparams.CARD_HEIGHT / 2f) + 45);
+
+        handGroups.get(3).setPosition(GUIparams.CARD_WIDTH/5f-30,
+                GUIparams.HEIGHT-100);
 
     }
+
     private DragAndDrop.Target prepareTarget(final StackCardsGroup stackCardsGroup) { // stack - target
         //Target
         final DragAndDrop.Target target = new DragAndDrop.Target(stackCardsGroup) {
             @Override
             public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) { // SOURCE - CARD
-                if(isCardActorCorrect(source,stackCardsGroup)){
+                if (isCardActorCorrect(source, stackCardsGroup)) {
                     source.getActor().setColor(Color.LIME);
-                }
-                else {
-                    source.getActor().setColor(Color.RED);
+                } else {
+                    source.getActor().setColor(Color.SCARLET);
                 }
                 return true;
             }
@@ -141,7 +151,7 @@ public class GameplayScreen implements Screen {
 
             @Override
             public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-                if (isCardActorCorrect(source,stackCardsGroup)) {
+                if (isCardActorCorrect(source, stackCardsGroup)) {
                     stackCardsGroup.addActor(source.getActor());
                 } else {
                     CardActor chosenCard = (CardActor) source.getActor();
@@ -152,11 +162,11 @@ public class GameplayScreen implements Screen {
         return target;
     }
 
-    private boolean isCardActorCorrect(DragAndDrop.Source source, StackCardsGroup stackCardsGroup){
+    private boolean isCardActorCorrect(DragAndDrop.Source source, StackCardsGroup stackCardsGroup) {
         CardActor chosenCard = (CardActor) source.getActor();
         CardActor stackCard = (CardActor) stackCardsGroup.getChildren().peek();
 
-        return backend.isCorrectCard(stackCard.getCard(),chosenCard.getCard());
+        return backend.isCorrectCard(stackCard.getCard(), chosenCard.getCard());
     }
 
 
@@ -209,34 +219,35 @@ public class GameplayScreen implements Screen {
         makao.getBatch().setProjectionMatrix(camera.combined);
         stage.act(delta);
         stage.draw();
+
         int graphicsY = viewport.getScreenHeight() - Gdx.input.getY();
-            if(pullButtonActor.checkIfButtonIsClick(graphicsY)){
-                performPullButtonClick();
+        if (pullButtonActor.checkIfButtonIsClick(graphicsY)) {
+            performPullButtonClick();
+        }
+    }
+
+    private void performPullButtonClick() {
+        humanPullCard();
+        pullButtonActor.setClick(true);
+        performButtonAnimation();
+    }
+
+    private void humanPullCard() {
+        CardActor cardActor = cardActorFactory.createCardActor(backend.giveCard());
+        prepareDragAndDrop(cardActor, dragTarget);
+        cardActor.setUpSideDown(false);
+        handGroups.get(0).addActor(cardActor);
+    }
+
+    private void performButtonAnimation() {
+        Timer.Task undoClick = new com.badlogic.gdx.utils.Timer.Task() {
+            @Override
+            public void run() {
+                pullButtonActor.setClick(false);
             }
-        }
-
-        private void performPullButtonClick(){
-            humanPullCard();
-            pullButtonActor.setClick(true);
-            performButtonAnimation();
-        }
-
-        private void humanPullCard(){
-            CardActor cardActor = cardActorFactory.createCardActor(backend.giveCard());
-            prepareDragAndDrop(cardActor, dragTarget);
-            cardActor.setUpSideDown(false);
-            handGroups.get(0).addActor(cardActor);
-        }
-
-        private void performButtonAnimation(){
-            Timer.Task undoClick = new com.badlogic.gdx.utils.Timer.Task() {
-                @Override
-                public void run() {
-                    pullButtonActor.setClick(false);
-                }
-            };
-            Timer.schedule(undoClick,0.5f);
-        }
+        };
+        Timer.schedule(undoClick, 0.5f);
+    }
 
     @Override
     public void resize(int width, int height) {

@@ -2,6 +2,10 @@ package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.ObjectSet;
 import com.wwil.makao.backend.Card;
 
 import java.util.ArrayList;
@@ -11,9 +15,13 @@ public class CardActorFactory {
     public CardActor createCardActor(Card card) {
         String suit = card.getSuit().getName();
         String rank = card.getRank().getName();
-        String suitPath = "assets/Cards/" + suit + "/";
-        Texture frontSide = new Texture(Gdx.files.internal(suitPath + suit + rank + ".png"));
-        return new CardActor(frontSide,card);
+        TextureAtlas textureAtlas = new TextureAtlas("newCards/classicFrontCard.atlas");
+
+        List<TextureRegion> textureRegions = new ArrayList<>();
+        textureRegions.add(textureAtlas.findRegion(suit+rank));
+        textureRegions.add(textureAtlas.findRegion("blanckCardGray"));
+
+        return new CardActor(textureRegions,card);
     }
 
     public List<CardActor> createCardActors(List<Card> cards){
