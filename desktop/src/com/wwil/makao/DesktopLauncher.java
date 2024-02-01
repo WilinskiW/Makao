@@ -14,7 +14,6 @@ public class DesktopLauncher {
 		config.setWindowedMode(GUIparams.WIDTH,GUIparams.HEIGHT);
 		config.setMaximized(true);
 
-
 		new Lwjgl3Application(new Makao(), config);
 	}
 }

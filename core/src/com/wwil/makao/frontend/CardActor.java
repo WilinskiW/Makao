@@ -19,7 +19,6 @@ public class CardActor extends Actor { //todo klasa z logiką i grafiką
     private int lastPosZ;
     private Group lastParent;
 
-
     public CardActor(List<TextureRegion> textureRegions, Card card) {
         this.frontSide = textureRegions.get(0);
         this.backSide = textureRegions.get(1);
@@ -47,17 +46,10 @@ public class CardActor extends Actor { //todo klasa z logiką i grafiką
     public void setUpSideDown(boolean upSideDown) {
         isUpSideDown = upSideDown;
     }
-    /*
-    public Texture getFrontSide() {
-        return frontSide;
-    }
-
-     */
 
     public Card getCard() {
         return card;
     }
-
 
     public void saveLocation() {
         savePosition();
@@ -78,7 +70,6 @@ public class CardActor extends Actor { //todo klasa z logiką i grafiką
         this.lastPosZ = getZIndex();
     }
 
-
     private void loadX() {
         setX(lastPosX);
     }
@@ -98,6 +89,9 @@ public class CardActor extends Actor { //todo klasa z logiką i grafiką
         loadPosZ();
     }
 
-
+    @Override
+    public String toString() {
+        return String.format("CardActor{x=%.1f,y=%.1f}",getX(),getY());
+    }
 }
 

@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import java.util.List;
 
 public class PlayerHandGroup extends Group {
+    private List<CardActor> cardActors;
 
     public void addActors(List<CardActor> cards){
         for(CardActor cardActor : cards){
@@ -18,10 +19,10 @@ public class PlayerHandGroup extends Group {
     public void addActor(Actor actor) {
         if(!getChildren().isEmpty()) {
             if(getChildren().size > 5){
-                setPosition(getX()-25,getY());
+                setPosition(getX()-34,getY());
             }
             float lastActorX = getChildren().get(getChildren().size - 1).getX();
-            actor.setX(lastActorX + 50);
+            actor.setX(lastActorX + 65);
         }
 
         super.addActor(actor);

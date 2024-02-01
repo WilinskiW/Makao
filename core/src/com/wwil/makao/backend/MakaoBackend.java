@@ -9,6 +9,9 @@ public class MakaoBackend {
     private int STARTING_CARDS = 5;
     private int AMOUNT_OF_PLAYERS = 4;
     private List<PlayerHand> players = new ArrayList<>();
+    private boolean inputBlock = false;
+
+    //Konstruktor tworzy karty i graczy.
     public MakaoBackend() {
         List<Card> cards = new CardFactory().createCards();
         Collections.shuffle(cards);
@@ -16,24 +19,28 @@ public class MakaoBackend {
         createPlayers();
     }
 
-    private void createPlayers(){
-        for(int i = 0; i < AMOUNT_OF_PLAYERS; i++){
+    private void createPlayers() {
+        for (int i = 0; i < AMOUNT_OF_PLAYERS; i++) {
             PlayerHand playerHand = new PlayerHand(giveStartingCards());
             players.add(playerHand);
         }
     }
 
 
-    private List<Card> giveStartingCards(){
+    private List<Card> giveStartingCards() {
         List<Card> startingCards = new ArrayList<>();
-        for(int i = 0; i < STARTING_CARDS; i++){
+        for (int i = 0; i < STARTING_CARDS; i++) {
             startingCards.add(getCard()); //todo może się skończyć
         }
         return startingCards;
     }
 
-    public Card giveCard(){
+    public Card giveCard() {
         return getCard();
+    }
+
+    public void endHumanTurn(){
+        inputBlock = true;
     }
 
     public boolean isCorrectCard(Card stackCard, Card chosenCard) {
@@ -50,7 +57,7 @@ public class MakaoBackend {
     }
 
 
-    public Card getCard(){
+    public Card getCard() {
         return cards.remove(0);
     }
 
@@ -60,6 +67,14 @@ public class MakaoBackend {
 
     public List<PlayerHand> getPlayers() {
         return players;
+    }
+
+    public boolean isInputBlock() {
+        return inputBlock;
+    }
+
+    public void setInputBlock(boolean inputBlock) {
+        this.inputBlock = inputBlock;
     }
 }
 
