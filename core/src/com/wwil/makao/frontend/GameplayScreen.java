@@ -27,10 +27,10 @@ public class GameplayScreen implements Screen {
     private FitViewport viewport;
     private DragAndDrop.Target dragTarget;
     private StackCardsGroup stackCardsGroup;
-    // TODO: Auto wyrówanie handGroups: ~ROZWIJANE
+    // TODO: Auto wyrówanie handGroups: ~ PRZERWANE
     // -Uzupełnienie pustych miejsc ZROBIONE
     // -Wyrówanie talii względem środka
-    // TODO: Aktywacja specjalnych zdolności kart
+    // TODO: Aktywacja specjalnych zdolności kart ~ Rozwijane
     // TODO: Warunek zwycięstwa
     // TODO: Obrona
     // TODO: Komunikaty akcji graczy
@@ -141,16 +141,17 @@ public class GameplayScreen implements Screen {
     }
 
     private void setPositionOfHandGroups() {
+        //South
         handGroups.get(0).setPosition
                 (GUIparams.WIDTH / 2f - (GUIparams.CARD_WIDTH / 2f),
                         0);
-
+        //East
         handGroups.get(1).setPosition(GUIparams.WIDTH + GUIparams.CARD_HEIGHT - 10,
                 GUIparams.HEIGHT / 2.0f - (GUIparams.CARD_HEIGHT / 2f) + 45);
-
+        //North
         handGroups.get(2).setPosition(GUIparams.WIDTH - GUIparams.WIDTH / 3.05f,
                 GUIparams.HEIGHT + GUIparams.CARD_HEIGHT - 25);
-
+        //West
         handGroups.get(3).setPosition(GUIparams.CARD_WIDTH / 5f - 30,
                 GUIparams.HEIGHT - 100);
     }
@@ -193,6 +194,8 @@ public class GameplayScreen implements Screen {
     private void executeDropAction(CardActor chosenCard, CardActor stackCard){
         if (isCardActorCorrect(chosenCard, stackCard)) {
             stackCardsGroup.addActor(chosenCard);
+            PlayerHandGroup human = handGroups.get(0);
+            human.setPosition(human.getX()+GUIparams.DISTANCE_BETWEEN_CARDS/2f,human.getY());
             computerTurns();
         } else {
             chosenCard.beLastInGroup();
