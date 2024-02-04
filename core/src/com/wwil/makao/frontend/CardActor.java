@@ -14,9 +14,6 @@ public class CardActor extends Actor { //todo klasa z logiką i grafiką
     private final TextureRegion frontSide;
     private final TextureRegion backSide;
     private boolean isUpSideDown = true;
-    private float lastPosX;
-    private float lastPosY;
-    private int lastPosZ;
     private Group lastParent;
 
     public CardActor(List<TextureRegion> textureRegions, Card card) {
@@ -50,48 +47,21 @@ public class CardActor extends Actor { //todo klasa z logiką i grafiką
     public Card getCard() {
         return card;
     }
-
-    public void saveLocation() {
-        savePosition();
-        savePosZ();
-        saveGroup();
-    }
-
-    private void saveGroup() {
+    public void saveGroup() {
         lastParent = getParent();
     }
 
-    private void savePosition() { //todo refactor kiedyś
-        this.lastPosX = getX();
-        this.lastPosY = getY();
-    }
-
-    private void savePosZ() { //todo refactor kiedyś
-        this.lastPosZ = getZIndex();
-    }
-
-    private void loadX() {
-        setX(lastPosX);
-    }
-
-    private void loadY() {
-        setY(lastPosY);
-    }
-
-    private void loadPosZ() {
-        setZIndex(lastPosZ);
-    }
-
-    public void backToPreviousLocation() {
-        lastParent.addActor(this);
-        loadX();
-        loadY();
-        loadPosZ();
+    public void beLastInGroup(){
+       Actor lastActor = lastParent.getChildren().peek();
+       lastParent.addActorAfter(lastActor,this);
+       this.setX(lastActor.getX() + GUIparams.DISTANCE_BETWEEN_CARDS);
+       this.setY(lastActor.getY());
+       this.setZIndex(lastActor.getZIndex()+1);;
     }
 
     @Override
     public String toString() {
-        return String.format("CardActor{x=%.1f,y=%.1f}",getX(),getY());
+        return String.format("CardActor{x=%.1f,y=%.1f,z=%x}",getX(),getY(),getZIndex());
     }
 }
 

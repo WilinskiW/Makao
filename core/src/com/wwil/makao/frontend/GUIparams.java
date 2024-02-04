@@ -7,6 +7,7 @@ public class GUIparams {
    public static final int CARD_HEIGHT = 248;
    public static final int PULL_BUTTON_WIDTH = 128;
    public static final int PULL_BUTTON_HEIGHT = 64;
+   public static final int DISTANCE_BETWEEN_CARDS = 65;
 
 
 }

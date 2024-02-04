@@ -27,11 +27,16 @@ public class GameplayScreen implements Screen {
     private FitViewport viewport;
     private DragAndDrop.Target dragTarget;
     private StackCardsGroup stackCardsGroup;
-    private int currentPlayerIndex = 0;
-    // TODO: 20.12.2023 Komputer może kłaść karty - główna pętla gry ~ TERAZ ROZWIJANE
-    // TODO: 20.12.2023 Aktywacja specjalnych zdolności kart
-    // TODO: 20.12.2023 Restart użytych kart 
-
+    // TODO: Auto wyrówanie handGroups: ~ROZWIJANE
+    // -Uzupełnienie pustych miejsc ZROBIONE
+    // -Wyrówanie talii względem środka
+    // TODO: Aktywacja specjalnych zdolności kart
+    // TODO: Warunek zwycięstwa
+    // TODO: Obrona
+    // TODO: Komunikaty akcji graczy
+    // TODO: JOKERY
+    // TODO: Restart użytych kart
+    // TODO: Główne menu
     //tworzy główny ekran gry pod względem grafiki
     public GameplayScreen(Makao makao) {
         this.makao = makao;
@@ -188,16 +193,19 @@ public class GameplayScreen implements Screen {
     private void executeDropAction(CardActor chosenCard, CardActor stackCard){
         if (isCardActorCorrect(chosenCard, stackCard)) {
             stackCardsGroup.addActor(chosenCard);
-            turnOffHumanInput();
-            executeComputersTurn();
-            turnOnHumanInput();
+            computerTurns();
         } else {
-            chosenCard.backToPreviousLocation();
+            chosenCard.beLastInGroup();
         }
     }
 
     private boolean isCardActorCorrect(CardActor chosenCard, CardActor stackCard) {
         return backend.isCorrectCard(stackCard.getCard(), chosenCard.getCard());
+    }
+
+    private void computerTurns(){
+       // turnOffHumanInput();
+        executeComputersTurn();
     }
 
     private void turnOffHumanInput() {
@@ -219,6 +227,13 @@ public class GameplayScreen implements Screen {
                     }
                 }
             }, i * 1f); // Opóźnienie względem indeksu
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    turnOnHumanInput();
+                }
+            }, (handGroups.size() - 1) * 1f);
         }
     }
 
@@ -267,7 +282,7 @@ public class GameplayScreen implements Screen {
                 DragAndDrop.Payload payload = new DragAndDrop.Payload();
                 payload.setDragActor(card);
                 payload.setObject(card);
-                card.saveLocation();
+                card.saveGroup();
                 stage.addActor(card);
                 return payload;
             }
@@ -275,7 +290,7 @@ public class GameplayScreen implements Screen {
             @Override
             public void dragStop(InputEvent event, float x, float y, int pointer, DragAndDrop.Payload payload, DragAndDrop.Target target) {
                 if (target == null) {
-                    card.backToPreviousLocation();
+                    card.beLastInGroup();
                 }
                 super.dragStop(event, x, y, pointer, payload, target);
             }
@@ -311,6 +326,7 @@ public class GameplayScreen implements Screen {
         humanPullCard();
         pullButtonActor.setClick(true);
         performButtonAnimation();
+        computerTurns();
     }
 
     private void humanPullCard() {

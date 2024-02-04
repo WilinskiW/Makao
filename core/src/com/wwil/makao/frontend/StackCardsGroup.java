@@ -15,7 +15,6 @@ public class StackCardsGroup extends Group {
         }
 
         super.addActor(actor);
-        System.out.println(actor);
     }
 
 }
