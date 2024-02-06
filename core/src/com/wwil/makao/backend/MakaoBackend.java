@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class MakaoBackend {
-    public List<Card> cards;
+    public static List<Card> cardsStorage;
     private final int STARTING_CARDS = 5;
     private final int AMOUNT_OF_PLAYERS = 4;
     private List<PlayerHand> players = new ArrayList<>();
@@ -15,7 +15,7 @@ public class MakaoBackend {
     public MakaoBackend() {
         List<Card> cards = new CardFactory().createCards();
         Collections.shuffle(cards);
-        this.cards = cards;
+        this.cardsStorage = cards;
         createPlayers();
     }
 
@@ -58,11 +58,7 @@ public class MakaoBackend {
 
 
     public Card getCard() {
-        return cards.remove(0);
-    }
-
-    public List<Card> getCards() {
-        return cards;
+        return cardsStorage.remove(0);
     }
 
     public List<PlayerHand> getPlayers() {
