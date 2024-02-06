@@ -28,7 +28,8 @@ public class GameplayScreen implements Screen {
     private DragAndDrop.Target dragTarget;
     private StackCardsGroup stackCardsGroup;
 
-    // TODO: Aktywacja specjalnych zdolności kart ~ Rozwijane
+    // TODO: Reset talii
+    // TODO: Aktywacja specjalnych zdolności kart
     // TODO: Warunek zwycięstwa
     // TODO: Obrona
     // TODO: Komunikaty akcji graczy
@@ -147,7 +148,7 @@ public class GameplayScreen implements Screen {
     }
 
     private void setPositionOfHandGroups() {
-        // FIXME: 05.02.2024 Poprawić ustawianie grupy
+        // TODO: 05.02.2024 Poprawić ustawianie grupy
         //South
         handGroups.get(0).setPosition
                 (GUIparams.WIDTH / 2f,
