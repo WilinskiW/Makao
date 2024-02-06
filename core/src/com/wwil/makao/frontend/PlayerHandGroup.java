@@ -4,18 +4,39 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 
 public class PlayerHandGroup extends Group {
-
-    // FIXME: 05.01.2024 Karty się przesuwają po dodaniu, ale nie powradzają do początkowej pozycji po usunięcia
+    private CardsAligmentParams cardsAligment;
 
     @Override
     public void addActor(Actor actor) {
-        //Działa, dla gracza 1
         if (!getChildren().isEmpty()) {
-            setPosition(getX() - GUIparams.DISTANCE_BETWEEN_CARDS/2f, getY());
-            float lastActorX = getChildren().get(getChildren().size - 1).getX();
-            actor.setX(lastActorX + GUIparams.DISTANCE_BETWEEN_CARDS);
+            chooseWhereCardShouldBe(actor);
         }
         super.addActor(actor);
+    }
+
+    private void chooseWhereCardShouldBe(Actor actor){
+        if (getChildren().size % 2 == 1) {
+            placeCardAsFirst(actor);
+        } else {
+            placeCardAsLast(actor);
+        }
+    }
+
+    private void placeCardAsLast(Actor actor){
+        float lastActorX = getChildren().peek().getX();
+        actor.setX(lastActorX + GUIparams.DISTANCE_BETWEEN_CARDS);
+        setPosition(getX() - cardsAligment.xMove, getY() - cardsAligment.yMove);
+    }
+
+    private void placeCardAsFirst(Actor actor){
+        float firstActorX = getChildren().first().getX();
+        actor.setX(firstActorX - GUIparams.DISTANCE_BETWEEN_CARDS);
+        addActorAt(0, actor);
+        repositionGroup();
+    }
+
+    public void repositionGroup() {
+        this.setPosition(this.getX() + cardsAligment.xMove, this.getY() + cardsAligment.yMove);
     }
 
     @Override
@@ -29,5 +50,7 @@ public class PlayerHandGroup extends Group {
         return super.removeActor(actor, unfocus);
     }
 
-
+    public void setCardsAligment(CardsAligmentParams cardsAligment) {
+        this.cardsAligment = cardsAligment;
+    }
 }
