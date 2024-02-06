@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.SnapshotArray;
@@ -14,7 +15,6 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.wwil.makao.backend.Card;
 import com.wwil.makao.backend.MakaoBackend;
-import com.wwil.makao.backend.PlayerHand;
 
 import java.util.*;
 import java.util.List;
@@ -31,7 +31,6 @@ public class GameplayScreen implements Screen {
     private DragAndDrop.Target dragTarget;
     private StackCardsGroup stackCardsGroup;
 
-    // TODO: Warunek zwycięstwa
     // TODO: Animacje rzucania kart przez boty
     // TODO: Aktywacja specjalnych zdolności kart
     // TODO: Obrona
@@ -95,13 +94,13 @@ public class GameplayScreen implements Screen {
         for (int i = 0; i < 4; i++) {
             handGroups.add(new PlayerHandGroup());
         }
-        setPlayersCardAligmentParams();
+        setPlayersCardAlignmentParams();
         createHumanStartingDeck(cardActorFactory.createCardActors(backend.getPlayers().get(0).getCards()), target);
         createComputersStaringDeck();
         prepareHandGroups();
     }
 
-    private void setPlayersCardAligmentParams() {
+    private void setPlayersCardAlignmentParams() {
         handGroups.get(0).setCardsAligment(CardsAligmentParams.SOUTH);
         handGroups.get(1).setCardsAligment(CardsAligmentParams.EAST);
         handGroups.get(2).setCardsAligment(CardsAligmentParams.NORTH);
@@ -210,22 +209,22 @@ public class GameplayScreen implements Screen {
             human.moveCloserToStartingPosition();
             computerTurns();
         } else {
-           positionCardInGroup(human,chosenCard);
+            positionCardInGroup(human, chosenCard);
         }
     }
 
-    private void moveCardBackToHumanGroup(PlayerHandGroup humanGroup,CardActor card){
+    private void moveCardBackToHumanGroup(PlayerHandGroup humanGroup, CardActor card) {
         humanGroup.addActor(card);
         card.setX(card.getLastPositionBeforeRemove().x);
         card.setY(card.getLastPositionBeforeRemove().y);
         card.setZIndex((int) card.getLastPositionBeforeRemove().z);
     }
 
-    private void positionCardInGroup(PlayerHandGroup human,CardActor chosenCard){
+    private void positionCardInGroup(PlayerHandGroup human, CardActor chosenCard) {
         if (!human.getChildren().isEmpty()) {
             chosenCard.beLastInGroup();
         } else {
-            moveCardBackToHumanGroup(human,chosenCard);
+            moveCardBackToHumanGroup(human, chosenCard);
         }
     }
 
@@ -238,7 +237,7 @@ public class GameplayScreen implements Screen {
         executeComputersTurn();
     }
 
-    private void endIfHumanWin(){
+    private void endIfHumanWin() {
         if (handGroups.get(0).checkIsPlayerHasNoCards()) {
             System.out.println("You win!");
             Gdx.app.exit();
@@ -282,13 +281,14 @@ public class GameplayScreen implements Screen {
         stackCardsGroup.addActor(cardActor);
     }
 
-    private void endIfComputerWin(int playerIndex){
+    private void endIfComputerWin(int playerIndex) {
         PlayerHandGroup currentHandGroup = handGroups.get(playerIndex);
         if (currentHandGroup.checkIsPlayerHasNoCards()) {
-            System.out.println("Player " + (playerIndex+1) + " won!");
+            System.out.println("Player " + (playerIndex + 1) + " won!");
             Gdx.app.exit();
         }
     }
+
     private void turnOnHumanInput() {
         Gdx.input.setInputProcessor(stage);
         backend.setInputBlock(false);
@@ -328,10 +328,14 @@ public class GameplayScreen implements Screen {
                 DragAndDrop.Payload payload = new DragAndDrop.Payload();
                 payload.setDragActor(card);
                 payload.setObject(card);
+                prepareCardToStage();
+                return payload;
+            }
+
+            private void prepareCardToStage() {
                 card.saveGroup();
                 card.setLastPositionBeforeRemove(new Vector3(card.getX(), card.getY(), card.getZIndex()));
                 stage.addActor(card);
-                return payload;
             }
 
             @Override
@@ -349,7 +353,7 @@ public class GameplayScreen implements Screen {
         if (!humanGroup.getChildren().isEmpty()) {
             card.beLastInGroup();
         } else {
-            moveCardBackToHumanGroup(humanGroup,card);
+            moveCardBackToHumanGroup(humanGroup, card);
         }
     }
 
@@ -375,12 +379,6 @@ public class GameplayScreen implements Screen {
             performPullButtonClick();
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
-            for (PlayerHandGroup handGroup : handGroups) {
-                System.out.println(handGroup.getChildren().size);
-                System.out.println("----");
-            }
-        }
     }
 
     private void performPullButtonClick() {

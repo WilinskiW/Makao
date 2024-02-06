@@ -6,7 +6,7 @@ import java.util.List;
 
 public class MakaoBackend {
     public static List<Card> cardsStorage;
-    private final int STARTING_CARDS = 1;
+    private final int STARTING_CARDS = 5;
     private final int AMOUNT_OF_PLAYERS = 4;
     private List<PlayerHand> players = new ArrayList<>();
     private boolean inputBlock = false;
