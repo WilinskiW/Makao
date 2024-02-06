@@ -3,6 +3,7 @@ package com.wwil.makao.frontend;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.wwil.makao.backend.Card;
@@ -15,6 +16,7 @@ public class CardActor extends Actor { //todo klasa z logiką i grafiką
     private final TextureRegion backSide;
     private boolean isUpSideDown = true;
     private Group lastParent;
+    private Vector3 lastPositionBeforeRemove = null;
 
     public CardActor(List<TextureRegion> textureRegions, Card card) {
         this.frontSide = textureRegions.get(0);
@@ -51,12 +53,20 @@ public class CardActor extends Actor { //todo klasa z logiką i grafiką
         lastParent = getParent();
     }
 
+    public void setLastPositionBeforeRemove(Vector3 lastPositionBeforeRemove) {
+        this.lastPositionBeforeRemove = lastPositionBeforeRemove;
+    }
+
+    public Vector3 getLastPositionBeforeRemove() {
+        return lastPositionBeforeRemove;
+    }
+
     public void beLastInGroup(){
        Actor lastActor = lastParent.getChildren().peek();
        lastParent.addActorAfter(lastActor,this);
        this.setX(lastActor.getX() + GUIparams.DISTANCE_BETWEEN_CARDS);
        this.setY(lastActor.getY());
-       this.setZIndex(lastActor.getZIndex()+1);;
+       this.setZIndex(lastActor.getZIndex()+1);
     }
 
     @Override

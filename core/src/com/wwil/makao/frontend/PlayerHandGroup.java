@@ -32,22 +32,30 @@ public class PlayerHandGroup extends Group {
         float firstActorX = getChildren().first().getX();
         actor.setX(firstActorX - GUIparams.DISTANCE_BETWEEN_CARDS);
         addActorAt(0, actor);
-        repositionGroup();
+        moveCloserToStartingPosition();
     }
 
-    public void repositionGroup() {
+    public void moveCloserToStartingPosition() {
         this.setPosition(this.getX() + cardsAligment.xMove, this.getY() + cardsAligment.yMove);
     }
 
     @Override
     public boolean removeActor(Actor actor, boolean unfocus) {
+        moveActorsToFillEmptySpace(actor);
+        return super.removeActor(actor, unfocus);
+    }
+
+    private void moveActorsToFillEmptySpace(Actor actor){
         int cardIndex = actor.getZIndex();
         for (int i = cardIndex + 1; i < getChildren().size; i++) {
             Actor currentActor = getChildren().get(i);
             currentActor.setZIndex(i - 1);
             currentActor.setX(currentActor.getX() - GUIparams.DISTANCE_BETWEEN_CARDS);
         }
-        return super.removeActor(actor, unfocus);
+    }
+
+    public boolean checkIsPlayerHasNoCards(){
+        return getChildren().isEmpty();
     }
 
     public void setCardsAligment(CardsAligmentParams cardsAligment) {

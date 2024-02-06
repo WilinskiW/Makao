@@ -6,16 +6,17 @@ import java.util.List;
 
 public class MakaoBackend {
     public static List<Card> cardsStorage;
-    private final int STARTING_CARDS = 5;
+    private final int STARTING_CARDS = 1;
     private final int AMOUNT_OF_PLAYERS = 4;
     private List<PlayerHand> players = new ArrayList<>();
     private boolean inputBlock = false;
+
 
     //Konstruktor tworzy karty i graczy.
     public MakaoBackend() {
         List<Card> cards = new CardFactory().createCards();
         Collections.shuffle(cards);
-        this.cardsStorage = cards;
+        cardsStorage = cards;
         createPlayers();
     }
 
@@ -39,10 +40,6 @@ public class MakaoBackend {
         return getCard();
     }
 
-    public void endHumanTurn(){
-        inputBlock = true;
-    }
-
     public boolean isCorrectCard(Card stackCard, Card chosenCard) {
 
         if (stackCard.getRank().name().equals("Q") || chosenCard.getRank().name().equals("Q") || chosenCard.getRank().name().equals("JOKER")) {
@@ -55,7 +52,6 @@ public class MakaoBackend {
     private boolean compareCards(Card card1, Card card2) {
         return card1.getSuit() == card2.getSuit() || card1.getRank() == card2.getRank();
     }
-
 
     public Card getCard() {
         return cardsStorage.remove(0);
