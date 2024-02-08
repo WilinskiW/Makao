@@ -1,14 +1,9 @@
-package com.wwil.makao.frontend;
+package com.wwil.makao.frontend.entities;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.utils.SnapshotArray;
-import com.wwil.makao.backend.Card;
 import com.wwil.makao.backend.MakaoBackend;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class StackCardsGroup extends Group {
     @Override

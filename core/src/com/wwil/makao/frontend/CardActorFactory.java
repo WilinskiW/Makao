@@ -1,12 +1,9 @@
 package com.wwil.makao.frontend;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.ObjectSet;
 import com.wwil.makao.backend.Card;
+import com.wwil.makao.frontend.entities.CardActor;
 
 import java.util.ArrayList;
 import java.util.List;

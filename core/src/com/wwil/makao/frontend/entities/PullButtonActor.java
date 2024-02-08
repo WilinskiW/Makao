@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend;
+package com.wwil.makao.frontend.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.wwil.makao.frontend.parameters.GUIparams;
 
 public class PullButtonActor extends Actor {
     private final Texture unclickTexture;

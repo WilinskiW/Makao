@@ -1,7 +1,9 @@
-package com.wwil.makao.frontend;
+package com.wwil.makao.frontend.entities;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.wwil.makao.frontend.parameters.CardsAligmentParams;
+import com.wwil.makao.frontend.parameters.GUIparams;
 
 public class PlayerHandGroup extends Group {
     private CardsAligmentParams cardsAligment;
