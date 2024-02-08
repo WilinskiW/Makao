@@ -35,11 +35,11 @@ public class PullButtonActor extends Actor {
     }
 
     public boolean checkIfButtonIsClick(int graphicsY) {
-        return checkBoundries(graphicsY) && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT);
+        return checkBoundaries(graphicsY) && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT);
 
     }
 
-    private boolean checkBoundries(int graphicsY) {
+    private boolean checkBoundaries(int graphicsY) {
         return Gdx.input.getX() > this.getX()
                 && Gdx.input.getX() < this.getWidth() + this.getX()
                 && graphicsY > this.getY()

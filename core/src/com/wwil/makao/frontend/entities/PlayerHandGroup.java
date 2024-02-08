@@ -6,7 +6,7 @@ import com.wwil.makao.frontend.parameters.CardsAligmentParams;
 import com.wwil.makao.frontend.parameters.GUIparams;
 
 public class PlayerHandGroup extends Group {
-    private CardsAligmentParams cardsAligment;
+    private CardsAligmentParams cardsAlignment;
 
     @Override
     public void addActor(Actor actor) {
@@ -27,7 +27,7 @@ public class PlayerHandGroup extends Group {
     private void placeCardAsLast(Actor actor){
         float lastActorX = getChildren().peek().getX();
         actor.setX(lastActorX + GUIparams.DISTANCE_BETWEEN_CARDS);
-        setPosition(getX() - cardsAligment.xMove, getY() - cardsAligment.yMove);
+        setPosition(getX() - cardsAlignment.xMove, getY() - cardsAlignment.yMove);
     }
 
     private void placeCardAsFirst(Actor actor){
@@ -38,7 +38,7 @@ public class PlayerHandGroup extends Group {
     }
 
     public void moveCloserToStartingPosition() {
-        this.setPosition(this.getX() + cardsAligment.xMove, this.getY() + cardsAligment.yMove);
+        this.setPosition(this.getX() + cardsAlignment.xMove, this.getY() + cardsAlignment.yMove);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class PlayerHandGroup extends Group {
         return getChildren().isEmpty();
     }
 
-    public void setCardsAligment(CardsAligmentParams cardsAligment) {
-        this.cardsAligment = cardsAligment;
+    public void setCardsAlignment(CardsAligmentParams cardsAlignment) {
+        this.cardsAlignment = cardsAlignment;
     }
 }

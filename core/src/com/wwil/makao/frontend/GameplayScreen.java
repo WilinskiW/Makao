@@ -105,10 +105,10 @@ public class GameplayScreen implements Screen {
     }
 
     private void setPlayersCardAlignmentParams() {
-        handGroups.get(0).setCardsAligment(CardsAligmentParams.SOUTH);
-        handGroups.get(1).setCardsAligment(CardsAligmentParams.EAST);
-        handGroups.get(2).setCardsAligment(CardsAligmentParams.NORTH);
-        handGroups.get(3).setCardsAligment(CardsAligmentParams.WEST);
+        handGroups.get(0).setCardsAlignment(CardsAligmentParams.SOUTH);
+        handGroups.get(1).setCardsAlignment(CardsAligmentParams.EAST);
+        handGroups.get(2).setCardsAlignment(CardsAligmentParams.NORTH);
+        handGroups.get(3).setCardsAlignment(CardsAligmentParams.WEST);
     }
 
     private void createComputersStaringDeck() {
