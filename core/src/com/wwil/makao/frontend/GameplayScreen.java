@@ -13,10 +13,10 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.wwil.makao.backend.Card;
 import com.wwil.makao.backend.MakaoBackend;
-import com.wwil.makao.frontend.entities.CardActor;
-import com.wwil.makao.frontend.entities.PlayerHandGroup;
-import com.wwil.makao.frontend.entities.PullButtonActor;
-import com.wwil.makao.frontend.entities.StackCardsGroup;
+import com.wwil.makao.frontend.gameComponents.CardActor;
+import com.wwil.makao.frontend.gameComponents.PlayerHandGroup;
+import com.wwil.makao.frontend.gameComponents.PullButtonActor;
+import com.wwil.makao.frontend.gameComponents.StackCardsGroup;
 import com.wwil.makao.frontend.parameters.CardsAligmentParams;
 import com.wwil.makao.frontend.parameters.GUIparams;
 

@@ -3,7 +3,7 @@ package com.wwil.makao.frontend;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.wwil.makao.backend.Card;
-import com.wwil.makao.frontend.entities.CardActor;
+import com.wwil.makao.frontend.gameComponents.CardActor;
 
 import java.util.ArrayList;
 import java.util.List;

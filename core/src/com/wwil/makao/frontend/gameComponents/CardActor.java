@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend.entities;
+package com.wwil.makao.frontend.gameComponents;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
