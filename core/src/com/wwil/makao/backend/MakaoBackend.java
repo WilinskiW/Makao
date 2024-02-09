@@ -5,19 +5,24 @@ import java.util.Collections;
 import java.util.List;
 
 public class MakaoBackend {
-    public static List<Card> cardsStorage;
     private final int STARTING_CARDS = 5;
     private final int AMOUNT_OF_PLAYERS = 4;
+    public static List<Card> gameDeck;
+    private Stack stack = new Stack();
     private final List<PlayerHand> players = new ArrayList<>();
     private boolean inputBlock = false;
 
 
     //Konstruktor tworzy karty i graczy.
     public MakaoBackend() {
+        createCardsToGameDeck();
+        createPlayers();
+    }
+
+    private void createCardsToGameDeck(){
         List<Card> cards = new CardFactory().createCards();
         Collections.shuffle(cards);
-        cardsStorage = cards;
-        createPlayers();
+        gameDeck = cards;
     }
 
     private void createPlayers() {
@@ -31,30 +36,50 @@ public class MakaoBackend {
     private List<Card> giveStartingCards() {
         List<Card> startingCards = new ArrayList<>();
         for (int i = 0; i < STARTING_CARDS; i++) {
-            startingCards.add(getCard()); //todo może się skończyć
+            startingCards.add(getCard());
         }
         return startingCards;
     }
 
-    public Card giveCard() {
+
+    public Card getCardFromGameDeck() {
         return getCard();
     }
 
-    public boolean isCorrectCard(Card stackCard, Card chosenCard) {
-
-        if (stackCard.getRank().name().equals("Q") || chosenCard.getRank().name().equals("Q") || chosenCard.getRank().name().equals("JOKER")) {
+    private List<Card> giveCards(int amount){
+        List<Card> cards = new ArrayList<>();
+        for(int i = 0; i < amount; i++){
+            cards.add(getCardFromGameDeck());
+        }
+        return cards;
+    }
+//TODO: JOKER
+    public boolean isCorrectCard(Card chosenCard) {
+        Card stackCard = peekCardFromStack();
+        if (stackCard.getRank().name().equals("Q") || chosenCard.getRank().name().equals("Q")
+            /*|| chosenCard.getRank().name().equals("JOKER")*/) {
             return true;
         }
 
         return compareCards(chosenCard, stackCard);
     }
 
+    private Card peekCardFromStack(){
+        List<Card> stackCards = stack.getCards();
+        int lastIndexOfStack = stackCards.size()-1;
+        return stack.getCards().get(lastIndexOfStack);
+    }
+
     private boolean compareCards(Card card1, Card card2) {
         return card1.getSuit() == card2.getSuit() || card1.getRank() == card2.getRank();
     }
 
+    public Stack getStack() {
+        return stack;
+    }
+
     public Card getCard() {
-        return cardsStorage.remove(0);
+        return gameDeck.remove(0);
     }
 
     public List<PlayerHand> getPlayers() {

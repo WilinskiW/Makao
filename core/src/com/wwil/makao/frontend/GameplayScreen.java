@@ -27,20 +27,19 @@ public class GameplayScreen implements Screen {
     private final Makao makao;
     private OrthographicCamera camera;
     private Stage stage;
-    private final List<PlayerHandGroup> handGroups = new ArrayList<>();
     private final MakaoBackend backend = new MakaoBackend();
+    private final List<PlayerHandGroup> handGroups = new ArrayList<>();
     private final CardActorFactory cardActorFactory = new CardActorFactory();
     private PullButtonActor pullButtonActor;
     private FitViewport viewport;
     private DragAndDrop.Target dragTarget;
-    private StackCardsGroup stackCardsGroup;
+    private final StackCardsGroup stackCardsGroup = new StackCardsGroup(backend.getStack());
 
     // TODO: Animacje rzucania kart przez boty
-    // TODO: Aktywacja specjalnych zdolności kart
+    // TODO: Aktywacja specjalnych zdolności kart ~ Specjalne zdolności
     // TODO: Obrona
     // TODO: Komunikaty akcji graczy
     // TODO: JOKERY
-    // TODO: Restart użytych kart
     // TODO: Główne menu
     //tworzy główny ekran gry pod względem grafiki
     public GameplayScreen(Makao makao) {
@@ -62,9 +61,7 @@ public class GameplayScreen implements Screen {
     }
 
     private void prepareGameComponents() {
-        final StackCardsGroup stackCardsGroup = new StackCardsGroup();
-        prepareStack(stackCardsGroup, backend.getCard());
-
+        prepareStackCardsGroup(backend.getCard());
         preparePullButton();
 
         this.dragTarget = prepareTarget(stackCardsGroup);
@@ -72,18 +69,20 @@ public class GameplayScreen implements Screen {
     }
 
 
-    private void prepareStack(StackCardsGroup stackCardsGroup, Card card) {
-        this.stackCardsGroup = stackCardsGroup;
+    private void prepareStackCardsGroup(Card card) {
         CardActor stackCard = cardActorFactory.createCardActor(card);
-        addStackGroupToStage(stackCard);
+        addCardActorToStack(stackCard);
+        stage.addActor(stackCardsGroup);
         stackCard.setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
     }
 
 
-    private void addStackGroupToStage(CardActor cardActor) {
+
+    private void addCardActorToStack(CardActor cardActor) {
+        stage.addActor(cardActor);
+        backend.getStack().addCardToStack(cardActor.getCard());
         cardActor.setUpSideDown(false);
         stackCardsGroup.addActor(cardActor);
-        stage.addActor(stackCardsGroup);
     }
 
     private void preparePullButton() {
@@ -111,24 +110,24 @@ public class GameplayScreen implements Screen {
         handGroups.get(3).setCardsAlignment(CardsAligmentParams.WEST);
     }
 
-    private void createComputersStaringDeck() {
-        for (int i = 1; i < handGroups.size(); i++) {
-            List<Card> playerCards = backend.getPlayers().get(i).getCards();
-            PlayerHandGroup currentHandGroup = handGroups.get(i);
-            createComputerStartingDeck(cardActorFactory.createCardActors(playerCards), currentHandGroup);
-        }
-    }
-
     private void createHumanStartingDeck(List<CardActor> cards, DragAndDrop.Target target) {
         PlayerHandGroup group = getHumanHand();
-        createComputerStartingDeck(cards, group);
+        createPlayerStartingDeck(cards, group);
         for (CardActor card : cards) {
             card.setUpSideDown(false);
             prepareDragAndDrop(card, target);
         }
     }
 
-    private void createComputerStartingDeck(List<CardActor> cards, PlayerHandGroup handGroup) {
+    private void createComputersStaringDeck() {
+        for (int i = 1; i < handGroups.size(); i++) {
+            List<Card> playerCards = backend.getPlayers().get(i).getCards();
+            PlayerHandGroup currentHandGroup = handGroups.get(i);
+            createPlayerStartingDeck(cardActorFactory.createCardActors(playerCards), currentHandGroup);
+        }
+    }
+
+    private void createPlayerStartingDeck(List<CardActor> cards, PlayerHandGroup handGroup) {
         for (CardActor card : cards) {
             card.setUpSideDown(GUIparams.HIDE_COMPUTER_CARD);
             handGroup.addActor(card);
@@ -176,8 +175,7 @@ public class GameplayScreen implements Screen {
             @Override
             public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) { // SOURCE - CARD
                 CardActor chosenCard = (CardActor) source.getActor();
-                CardActor stackCard = (CardActor) stackCardsGroup.getChildren().peek();
-                executeDragAction(chosenCard, stackCard);
+                executeDragAction(chosenCard);
                 return true;
             }
 
@@ -190,24 +188,24 @@ public class GameplayScreen implements Screen {
             @Override
             public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
                 CardActor chosenCard = (CardActor) source.getActor();
-                CardActor stackCard = (CardActor) stackCardsGroup.getChildren().peek();
-                executeDropAction(chosenCard, stackCard);
+                executeDropAction(chosenCard);
             }
 
         };
     }
 
-    private void executeDragAction(CardActor chosenCard, CardActor stackCard) {
-        if (isCardActorCorrect(chosenCard, stackCard)) {
+    private void executeDragAction(CardActor chosenCard) {
+        if (isCardActorCorrect(chosenCard)) {
             chosenCard.setColor(Color.LIME);
         } else {
             chosenCard.setColor(Color.SCARLET);
         }
     }
 
-    private void executeDropAction(CardActor chosenCard, CardActor stackCard) {
+    private void executeDropAction(CardActor chosenCard) {
         PlayerHandGroup human = handGroups.get(0);
-        if (isCardActorCorrect(chosenCard, stackCard)) {
+        if (isCardActorCorrect(chosenCard)) {
+            backend.getStack().addCardToStack(chosenCard.getCard());
             stackCardsGroup.addActor(chosenCard);
             endIfHumanWin();
             human.moveCloserToStartingPosition();
@@ -232,8 +230,8 @@ public class GameplayScreen implements Screen {
         }
     }
 
-    private boolean isCardActorCorrect(CardActor chosenCard, CardActor stackCard) {
-        return backend.isCorrectCard(stackCard.getCard(), chosenCard.getCard());
+    private boolean isCardActorCorrect(CardActor chosenCard) {
+        return backend.isCorrectCard(chosenCard.getCard());
     }
 
     private void computerTurns() {
@@ -241,6 +239,7 @@ public class GameplayScreen implements Screen {
         executeComputersTurn();
     }
 
+    //TODO To powinnien robić BACKEND
     private void endIfHumanWin() {
         if (handGroups.get(0).checkIsPlayerHasNoCards()) {
             System.out.println("You win!");
@@ -279,12 +278,6 @@ public class GameplayScreen implements Screen {
         }
     }
 
-    private void addCardActorToStack(CardActor cardActor) {
-        stage.addActor(cardActor);
-        cardActor.setUpSideDown(false);
-        stackCardsGroup.addActor(cardActor);
-    }
-
     private void endIfComputerWin(int playerIndex) {
         PlayerHandGroup currentHandGroup = handGroups.get(playerIndex);
         if (currentHandGroup.checkIsPlayerHasNoCards()) {
@@ -302,8 +295,7 @@ public class GameplayScreen implements Screen {
         SnapshotArray<Actor> playerCards = handGroups.get(index).getChildren();
         for (int i = 0; i < playerCards.size; i++) {
             CardActor card = (CardActor) playerCards.get(i);
-            CardActor stackCard = (CardActor) stackCardsGroup.getChildren().peek();
-            if (isCardActorCorrect(card, stackCard)) {
+            if (isCardActorCorrect(card)) {
                 return card;
             }
         }
@@ -311,7 +303,7 @@ public class GameplayScreen implements Screen {
     }
 
     private void computerPullCard(int playerIndex) {
-        CardActor cardActor = cardActorFactory.createCardActor(backend.giveCard());
+        CardActor cardActor = cardActorFactory.createCardActor(backend.getCardFromGameDeck());
         cardActor.setUpSideDown(GUIparams.HIDE_COMPUTER_CARD);
         handGroups.get(playerIndex).addActor(cardActor);
     }
@@ -393,7 +385,7 @@ public class GameplayScreen implements Screen {
     }
 
     private void humanPullCard() {
-        CardActor cardActor = cardActorFactory.createCardActor(backend.giveCard());
+        CardActor cardActor = cardActorFactory.createCardActor(backend.getCardFromGameDeck());
         prepareDragAndDrop(cardActor, dragTarget);
         cardActor.setUpSideDown(false);
         handGroups.get(0).addActor(cardActor);
