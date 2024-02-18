@@ -27,18 +27,9 @@ public class MakaoBackend {
 
     private void createPlayers() {
         for (int i = 0; i < AMOUNT_OF_PLAYERS; i++) {
-            PlayerHand playerHand = new PlayerHand(giveStartingCards());
+            PlayerHand playerHand = new PlayerHand(giveCards(STARTING_CARDS));
             players.add(playerHand);
         }
-    }
-
-
-    private List<Card> giveStartingCards() {
-        List<Card> startingCards = new ArrayList<>();
-        for (int i = 0; i < STARTING_CARDS; i++) {
-            startingCards.add(takeCardFromGameDeck());
-        }
-        return startingCards;
     }
 
     public Card takeCardFromGameDeck() {
