@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.SnapshotArray;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.wwil.makao.backend.Card;
+import com.wwil.makao.backend.cardComponents.Card;
 import com.wwil.makao.backend.MakaoBackend;
 import com.wwil.makao.frontend.gameComponents.CardActor;
 import com.wwil.makao.frontend.gameComponents.PlayerHandGroup;
@@ -48,7 +48,6 @@ public class GameplayScreen implements Screen {
         prepareGraphicComponents();
         prepareGameComponents();
     }
-
     /////////////////////////////////////////////////////////////////////////////////
 
     private void prepareGraphicComponents() {
@@ -62,7 +61,7 @@ public class GameplayScreen implements Screen {
     }
 
     private void prepareGameComponents() {
-        prepareStackCardsGroup(backend.takeCardFromGameDeck());
+        prepareStackCardsGroup();
         preparePullButton();
 
         this.dragTarget = prepareTarget(stackCardsGroup);
@@ -70,8 +69,8 @@ public class GameplayScreen implements Screen {
     }
 
 
-    private void prepareStackCardsGroup(Card card) {
-        CardActor stackCard = cardActorFactory.createCardActor(card);
+    private void prepareStackCardsGroup() {
+        CardActor stackCard = cardActorFactory.createCardActor(backend.getStack().peekCard());
         addCardActorToStack(stackCard);
         stage.addActor(stackCardsGroup);
         stackCard.setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
@@ -81,7 +80,6 @@ public class GameplayScreen implements Screen {
 
     private void addCardActorToStack(CardActor cardActor) {
         stage.addActor(cardActor);
-        backend.getStack().addCardToStack(cardActor.getCard());
         cardActor.setUpSideDown(false);
         stackCardsGroup.addActor(cardActor);
     }
@@ -206,8 +204,7 @@ public class GameplayScreen implements Screen {
     private void executeDropAction(CardActor chosenCardActor) {
         PlayerHandGroup human = handGroups.get(0);
         if (isCardActorCorrect(chosenCardActor)) {
-            backend.getStack().addCardToStack(chosenCardActor.getCard());
-            backend.getPlayers().get(0).removeCardFromHand(chosenCardActor.getCard());
+            updateBackendAfterPuttingCardOnStack(chosenCardActor,0);
             stackCardsGroup.addActor(chosenCardActor);
             endIfHumanWin();
             human.moveCloserToStartingPosition();
@@ -215,6 +212,12 @@ public class GameplayScreen implements Screen {
         } else {
             positionCardInGroup(human, chosenCardActor);
         }
+    }
+
+    private void updateBackendAfterPuttingCardOnStack(CardActor chosenCardActor, int playerIndex){
+        backend.useCardAbility(chosenCardActor.getCard(),playerIndex);
+        backend.getStack().addCardToStack(chosenCardActor.getCard());
+        backend.getPlayers().get(playerIndex).removeCardFromHand(chosenCardActor.getCard());
     }
 
     private void moveCardBackToHumanGroup(PlayerHandGroup humanGroup, CardActor card) {
@@ -263,7 +266,7 @@ public class GameplayScreen implements Screen {
                     CardActor cardActorToPlay = preparePlayableCard(playerIndex);
                     if (cardActorToPlay != null) {
                         addCardActorToStack(cardActorToPlay);
-                        backend.getPlayers().get(playerIndex).removeCardFromHand(cardActorToPlay.getCard());
+                        updateBackendAfterPuttingCardOnStack(cardActorToPlay,playerIndex);
                         endIfComputerWin(playerIndex);
                         handGroups.get(playerIndex).moveCloserToStartingPosition();
                     } else {
@@ -389,10 +392,10 @@ public class GameplayScreen implements Screen {
     }
 
     private void humanPullCard() {
+        backend.playerPullCard(0);
         CardActor cardActor = cardActorFactory.createCardActor(backend.takeCardFromGameDeck());
         prepareDragAndDrop(cardActor, dragTarget);
         cardActor.setUpSideDown(false);
-        backend.getPlayers().get(0).addCardToHand(cardActor.getCard());
         handGroups.get(0).addActor(cardActor);
     }
 

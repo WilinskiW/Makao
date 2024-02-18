@@ -1,4 +1,4 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.cardComponents;
 
 public enum Rank {
     AS(Ability.CHANGE_SUIT, "AS"), TWO(Ability.PLUS_2, "2"), THREE(Ability.PLUS_3, "3"),

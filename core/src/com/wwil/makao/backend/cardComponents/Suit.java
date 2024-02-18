@@ -1,4 +1,4 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.cardComponents;
 
 public enum Suit {
     HEART("kier"), DIAMOND("karo"), CLUB("trefl"), SPADE("pik");

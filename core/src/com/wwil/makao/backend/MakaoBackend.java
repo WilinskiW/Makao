@@ -1,5 +1,8 @@
 package com.wwil.makao.backend;
 
+import com.wwil.makao.backend.cardComponents.Card;
+import com.wwil.makao.backend.cardComponents.CardFactory;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +19,7 @@ public class MakaoBackend {
     //Konstruktor tworzy karty i graczy.
     public MakaoBackend() {
         createCardsToGameDeck();
+        stack.addCardToStack(takeCardFromGameDeck());
         createPlayers();
     }
 
@@ -24,6 +28,7 @@ public class MakaoBackend {
         Collections.shuffle(cards);
         gameDeck = cards;
     }
+
 
     private void createPlayers() {
         for (int i = 0; i < AMOUNT_OF_PLAYERS; i++) {
@@ -42,6 +47,41 @@ public class MakaoBackend {
             cards.add(takeCardFromGameDeck());
         }
         return cards;
+    }
+
+    public void playerPullCard(int playerIndex){
+        players.get(playerIndex).addCardToHand(takeCardFromGameDeck());
+    }
+
+    public void useCardAbility(Card card, int currentPlayerIndex) {
+        switch (card.getRank()) {
+            case TWO:
+                useTwoAbility(currentPlayerIndex);
+                break;
+            case THREE:
+                useThreeAbility(currentPlayerIndex);
+                break;
+            default:
+                System.out.println("Nie two i three");
+        }
+    }
+
+    private void useTwoAbility(int playerIndex) {
+        int lastIndex = players.size() - 1;
+        if (playerIndex != lastIndex) {
+            players.get(playerIndex+1).addCardsToHand(giveCards(2));
+        } else {
+            players.get(0).addCardsToHand(giveCards(2));
+        }
+    }
+
+    private void useThreeAbility(int playerIndex){
+        int lastIndex = players.size() - 1;
+        if (playerIndex != lastIndex) {
+            players.get(playerIndex+1).addCardsToHand(giveCards(3));
+        } else {
+            players.get(0).addCardsToHand(giveCards(3));
+        }
     }
 
     //TODO: JOKER

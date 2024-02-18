@@ -1,4 +1,4 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.cardComponents;
 
 public enum Ability {
     CHANGE_SUIT, PLUS_2, PLUS_3, WAIT, ON_EVERYTHING, DEMAND, KING_EXCEPTION, WILD_CARD

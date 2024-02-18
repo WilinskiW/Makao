@@ -8,6 +8,8 @@ import com.wwil.makao.frontend.parameters.GUIparams;
 public class PlayerHandGroup extends Group {
     private CardsAligmentParams cardsAlignment;
 
+
+
     @Override
     public void addActor(Actor actor) {
         if (!getChildren().isEmpty()) {

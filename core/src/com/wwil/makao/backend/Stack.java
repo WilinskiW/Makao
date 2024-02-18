@@ -1,5 +1,7 @@
 package com.wwil.makao.backend;
 
+import com.wwil.makao.backend.cardComponents.Card;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +10,10 @@ public class Stack {
 
     public void addCardToStack(Card card){
         cards.add(card);
+    }
+
+    public Card peekCard(){
+        return cards.get(getCards().size()-1);
     }
 
     public boolean isRefreshNeeded(){
