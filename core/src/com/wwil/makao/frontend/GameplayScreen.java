@@ -38,10 +38,11 @@ public class GameplayScreen implements Screen {
     // TODO: Animacje rzucania kart przez boty
     // TODO: Aktywacja specjalnych zdolności kart ~ Specjalne zdolności
     // TODO: Obrona
-    // TODO: Komunikaty akcji graczy
-    // TODO: JOKERY
+    // TODO: Komunikaty kcji graczy
     // TODO: Główne menu
-    //tworzy główny ekran gry pod względem grafiki
+    // TODO: Dźwięk i muzyk
+    // TODO: Możliwość zmiany skinów do kart
+    //tworzy główny ekran gry
     public GameplayScreen(Makao makao) {
         this.makao = makao;
         prepareGraphicComponents();
@@ -61,7 +62,7 @@ public class GameplayScreen implements Screen {
     }
 
     private void prepareGameComponents() {
-        prepareStackCardsGroup(backend.getCard());
+        prepareStackCardsGroup(backend.takeCardFromGameDeck());
         preparePullButton();
 
         this.dragTarget = prepareTarget(stackCardsGroup);
@@ -303,7 +304,7 @@ public class GameplayScreen implements Screen {
     }
 
     private void computerPullCard(int playerIndex) {
-        CardActor cardActor = cardActorFactory.createCardActor(backend.getCardFromGameDeck());
+        CardActor cardActor = cardActorFactory.createCardActor(backend.takeCardFromGameDeck());
         cardActor.setUpSideDown(GUIparams.HIDE_COMPUTER_CARD);
         handGroups.get(playerIndex).addActor(cardActor);
     }
@@ -385,7 +386,7 @@ public class GameplayScreen implements Screen {
     }
 
     private void humanPullCard() {
-        CardActor cardActor = cardActorFactory.createCardActor(backend.getCardFromGameDeck());
+        CardActor cardActor = cardActorFactory.createCardActor(backend.takeCardFromGameDeck());
         prepareDragAndDrop(cardActor, dragTarget);
         cardActor.setUpSideDown(false);
         handGroups.get(0).addActor(cardActor);

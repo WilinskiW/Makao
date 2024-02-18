@@ -8,7 +8,7 @@ public class MakaoBackend {
     private final int STARTING_CARDS = 5;
     private final int AMOUNT_OF_PLAYERS = 4;
     public static List<Card> gameDeck;
-    private Stack stack = new Stack();
+    private final Stack stack = new Stack();
     private final List<PlayerHand> players = new ArrayList<>();
     private boolean inputBlock = false;
 
@@ -19,7 +19,7 @@ public class MakaoBackend {
         createPlayers();
     }
 
-    private void createCardsToGameDeck(){
+    private void createCardsToGameDeck() {
         List<Card> cards = new CardFactory().createCards();
         Collections.shuffle(cards);
         gameDeck = cards;
@@ -36,24 +36,24 @@ public class MakaoBackend {
     private List<Card> giveStartingCards() {
         List<Card> startingCards = new ArrayList<>();
         for (int i = 0; i < STARTING_CARDS; i++) {
-            startingCards.add(getCard());
+            startingCards.add(takeCardFromGameDeck());
         }
         return startingCards;
     }
 
-
-    public Card getCardFromGameDeck() {
-        return getCard();
+    public Card takeCardFromGameDeck() {
+        return gameDeck.remove(0);
     }
 
-    private List<Card> giveCards(int amount){
+    private List<Card> giveCards(int amount) {
         List<Card> cards = new ArrayList<>();
-        for(int i = 0; i < amount; i++){
-            cards.add(getCardFromGameDeck());
+        for (int i = 0; i < amount; i++) {
+            cards.add(takeCardFromGameDeck());
         }
         return cards;
     }
-//TODO: JOKER
+
+    //TODO: JOKER
     public boolean isCorrectCard(Card chosenCard) {
         Card stackCard = peekCardFromStack();
         if (stackCard.getRank().name().equals("Q") || chosenCard.getRank().name().equals("Q")
@@ -64,9 +64,9 @@ public class MakaoBackend {
         return compareCards(chosenCard, stackCard);
     }
 
-    private Card peekCardFromStack(){
+    private Card peekCardFromStack() {
         List<Card> stackCards = stack.getCards();
-        int lastIndexOfStack = stackCards.size()-1;
+        int lastIndexOfStack = stackCards.size() - 1;
         return stack.getCards().get(lastIndexOfStack);
     }
 
@@ -76,10 +76,6 @@ public class MakaoBackend {
 
     public Stack getStack() {
         return stack;
-    }
-
-    public Card getCard() {
-        return gameDeck.remove(0);
     }
 
     public List<PlayerHand> getPlayers() {

@@ -12,7 +12,7 @@ public class CardActorFactory {
     public CardActor createCardActor(Card card) {
         String suit = card.getSuit().getName();
         String rank = card.getRank().getName();
-        TextureAtlas textureAtlas = new TextureAtlas("newCards/classicFrontCard.atlas");
+        TextureAtlas textureAtlas = new TextureAtlas("cards/classicFrontCard.atlas");
 
         List<TextureRegion> textureRegions = new ArrayList<>();
         textureRegions.add(textureAtlas.findRegion(suit+rank));
