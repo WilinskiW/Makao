@@ -17,7 +17,7 @@ import com.wwil.makao.frontend.gameComponents.CardActor;
 import com.wwil.makao.frontend.gameComponents.PlayerHandGroup;
 import com.wwil.makao.frontend.gameComponents.PullButtonActor;
 import com.wwil.makao.frontend.gameComponents.StackCardsGroup;
-import com.wwil.makao.frontend.parameters.CardsAligmentParams;
+import com.wwil.makao.frontend.parameters.CardsAlignmentParams;
 import com.wwil.makao.frontend.parameters.GUIparams;
 
 import java.util.*;
@@ -95,13 +95,13 @@ public class GameplayScreen implements Screen {
     }
 
 
-    private void createAllPlayersCardsActorsThatWereNotDrew(){
+    private void createAllPlayersCardsActorsThatWereNotDrew() {
         for (int i = 0; i < handGroups.size(); i++) {
             createAllPlayerCardsActorsThatWereNotDrew(i);
         }
     }
 
-    private void createHandGroups(){
+    private void createHandGroups() {
         for (int i = 0; i < 4; i++) {
             handGroups.add(new PlayerHandGroup(backend.getPlayers().get(i)));
         }
@@ -109,11 +109,10 @@ public class GameplayScreen implements Screen {
     }
 
     private void setPlayersCardActorsAlignmentParams() {
-        // TODO: 18.02.2024 Poprawić for loopem przy pomocy value
-        handGroups.get(0).setCardsAlignment(CardsAligmentParams.SOUTH);
-        handGroups.get(1).setCardsAlignment(CardsAligmentParams.EAST);
-        handGroups.get(2).setCardsAlignment(CardsAligmentParams.NORTH);
-        handGroups.get(3).setCardsAlignment(CardsAligmentParams.WEST);
+        handGroups.get(0).setCardsAlignment(CardsAlignmentParams.SOUTH);
+        handGroups.get(1).setCardsAlignment(CardsAlignmentParams.EAST);
+        handGroups.get(2).setCardsAlignment(CardsAlignmentParams.NORTH);
+        handGroups.get(3).setCardsAlignment(CardsAlignmentParams.WEST);
     }
 
     private void createAllPlayerCardsActorsThatWereNotDrew(int playerIndex) {
@@ -122,13 +121,12 @@ public class GameplayScreen implements Screen {
                 handGroups.get(playerIndex).addActor(cardActorFactory.createCardActor(card));
             }
         }
-
-        if(playerIndex == 0){
+        if (playerIndex == 0) {
             adjustHumanCards(dragTarget);
         }
     }
 
-    private void adjustHumanCards(DragAndDrop.Target target){
+    private void adjustHumanCards(DragAndDrop.Target target) {
         PlayerHandGroup group = getHumanHand();
         for (CardActor card : group.getCardActors()) {
             card.setUpSideDown(false);
@@ -202,18 +200,20 @@ public class GameplayScreen implements Screen {
 
     private void executeDropAction(CardActor chosenCardActor) {
         PlayerHandGroup human = handGroups.get(0);
+        createAllPlayersCardsActorsThatWereNotDrew();
         if (isCardActorCorrect(chosenCardActor)) {
             updateBackendAfterPuttingCardOnStack(chosenCardActor, 0);
             stackCardsGroup.addActor(chosenCardActor);
+            backend.endIfPlayerWon(0);
             createAllPlayersCardsActorsThatWereNotDrew();
-            endIfHumanWin();
             human.moveCloserToStartingPosition();
             computerTurns();
         } else {
             positionCardInGroup(human, chosenCardActor);
         }
     }
-//todo Do refactora
+
+    //todo Do refactora
     private void updateBackendAfterPuttingCardOnStack(CardActor chosenCardActor, int playerIndex) {
         backend.useCardAbility(chosenCardActor.getCard(), playerIndex);
         backend.getStack().addCardToStack(chosenCardActor.getCard());
@@ -244,64 +244,51 @@ public class GameplayScreen implements Screen {
         executeComputersTurn();
     }
 
-    //TODO To powinnien robić BACKEND
-    private void endIfHumanWin() {
-        if (handGroups.get(0).checkIsPlayerHasNoCards()) {
-            System.out.println("You win!");
-            Gdx.app.exit();
-        }
-    }
-
     private void turnOffHumanInput() {
         backend.setInputBlock(true);
         Gdx.input.setInputProcessor(null);
     }
 
+    //todo do refactora
     private void executeComputersTurn() {
         for (int i = 1; i < handGroups.size(); i++) {
             final int playerIndex = i;
+            float delta = 1.5f;
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
-                    if(!handGroups.get(playerIndex).getPlayerHand().isWaiting()) {
+                    if (!handGroups.get(playerIndex).getPlayerHand().isWaiting()) {
                         CardActor cardActorToPlay = preparePlayableCard(playerIndex);
                         if (cardActorToPlay != null) {
                             addCardActorToStack(cardActorToPlay);
                             updateBackendAfterPuttingCardOnStack(cardActorToPlay, playerIndex);
                             createAllPlayersCardsActorsThatWereNotDrew();
-                            endIfComputerWin(playerIndex);
+                            backend.endIfPlayerWon(playerIndex);
                             handGroups.get(playerIndex).moveCloserToStartingPosition();
                         } else {
-                            computerPullCard(playerIndex);
+                            backend.playerPullCard(playerIndex);
+                            createAllPlayersCardsActorsThatWereNotDrew();
                         }
                     }
                     handGroups.get(playerIndex).getPlayerHand().setWaiting(false);
                 }
-            }, i * 1f); // Opóźnienie względem indeksu
+            }, i * delta); // Opóźnienie względem indeksu
 
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
-                    if(!getHumanHand().getPlayerHand().isWaiting()) {
+                    if (!getHumanHand().getPlayerHand().isWaiting()) {
                         turnOnHumanInput();
-                    }
-                    else {
+                    } else {
                         getHumanHand().getPlayerHand().setWaiting(false);
                     }
                 }
-            }, (handGroups.size() - 1) * 1f);
-        }
-    }
-
-    private void endIfComputerWin(int playerIndex) {
-        PlayerHandGroup currentHandGroup = handGroups.get(playerIndex);
-        if (currentHandGroup.checkIsPlayerHasNoCards()) {
-            System.out.println("Player " + (playerIndex + 1) + " won!");
-            Gdx.app.exit();
+            }, (handGroups.size() - 1) * delta);
         }
     }
 
     private void turnOnHumanInput() {
+        createAllPlayersCardsActorsThatWereNotDrew();
         Gdx.input.setInputProcessor(stage);
         backend.setInputBlock(false);
     }
@@ -309,20 +296,14 @@ public class GameplayScreen implements Screen {
     private CardActor preparePlayableCard(int index) {
         SnapshotArray<Actor> playerCards = handGroups.get(index).getChildren();
         for (int i = 0; i < playerCards.size; i++) {
-            CardActor card = (CardActor) playerCards.get(i);
-            if (isCardActorCorrect(card)) {
-                return card;
+            CardActor currentCardActor = (CardActor) playerCards.get(i);
+            if (isCardActorCorrect(currentCardActor)) {
+                return currentCardActor;
             }
         }
         return null;
     }
 
-    private void computerPullCard(int playerIndex) {
-        CardActor cardActor = cardActorFactory.createCardActor(backend.takeCardFromGameDeck());
-        cardActor.setUpSideDown(GUIparams.HIDE_COMPUTER_CARD);
-        backend.getPlayers().get(playerIndex).addCardToHand(cardActor.getCard());
-        handGroups.get(playerIndex).addActor(cardActor);
-    }
 
     private void prepareDragAndDrop(final CardActor card, DragAndDrop.Target target) {
         final DragAndDrop dragAndDrop = new DragAndDrop();
@@ -385,28 +366,24 @@ public class GameplayScreen implements Screen {
         makao.getBatch().setProjectionMatrix(camera.combined);
         stage.act(delta);
         stage.draw();
+        handlePullButtonInput();
+    }
 
+    private void handlePullButtonInput() {
         int graphicsY = viewport.getScreenHeight() - Gdx.input.getY();
         if (pullButtonActor.checkIfButtonIsClick(graphicsY) && !backend.isInputBlock()) {
             performPullButtonClick();
         }
-
     }
 
     private void performPullButtonClick() {
-        humanPullCard();
+        backend.playerPullCard(0);
+        createAllPlayersCardsActorsThatWereNotDrew();
         pullButtonActor.setClick(true);
         performButtonAnimation();
         computerTurns();
     }
 
-    private void humanPullCard() {
-        backend.playerPullCard(0);
-        CardActor cardActor = cardActorFactory.createCardActor(backend.takeCardFromGameDeck());
-        prepareDragAndDrop(cardActor, dragTarget);
-        cardActor.setUpSideDown(false);
-        handGroups.get(0).addActor(cardActor);
-    }
 
     private void performButtonAnimation() {
         Timer.Task undoClick = new com.badlogic.gdx.utils.Timer.Task() {

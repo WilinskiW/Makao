@@ -1,5 +1,6 @@
 package com.wwil.makao.backend;
 
+import com.badlogic.gdx.Gdx;
 import com.wwil.makao.backend.cardComponents.Card;
 import com.wwil.makao.backend.cardComponents.CardFactory;
 
@@ -63,6 +64,7 @@ public class MakaoBackend {
                 break;
             case FOUR:
                 useFourAbility(currentPlayerIndex);
+                break;
             case K:
                 useKingAbility(card,currentPlayerIndex);
                 break;
@@ -105,6 +107,14 @@ public class MakaoBackend {
             players.get(lastIndex).addCardsToHand(giveCards(5));
         }
     }
+
+    public void endIfPlayerWon(int playerIndex){
+        if(players.get(playerIndex).checkIfPlayerHaveNoCards()){
+            System.out.printf("Player %d won!",playerIndex+1);
+            Gdx.app.exit();
+        }
+    }
+
     //TODO: JOKER
     public boolean isCorrectCard(Card chosenCard) {
         Card stackCard = peekCardFromStack();

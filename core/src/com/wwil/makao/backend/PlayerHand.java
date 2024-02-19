@@ -24,6 +24,9 @@ public class PlayerHand {
         cards.remove(card);
     }
 
+    public boolean checkIfPlayerHaveNoCards(){
+        return cards.isEmpty();
+    }
     public List<Card> getCards() {
         return cards;
     }
