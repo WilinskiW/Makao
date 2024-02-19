@@ -205,6 +205,7 @@ public class GameplayScreen implements Screen {
         if (isCardActorCorrect(chosenCardActor)) {
             updateBackendAfterPuttingCardOnStack(chosenCardActor, 0);
             stackCardsGroup.addActor(chosenCardActor);
+            createAllPlayersCardsActorsThatWereNotDrew();
             endIfHumanWin();
             human.moveCloserToStartingPosition();
             computerTurns();
@@ -212,7 +213,7 @@ public class GameplayScreen implements Screen {
             positionCardInGroup(human, chosenCardActor);
         }
     }
-
+//todo Do refactora
     private void updateBackendAfterPuttingCardOnStack(CardActor chosenCardActor, int playerIndex) {
         backend.useCardAbility(chosenCardActor.getCard(), playerIndex);
         backend.getStack().addCardToStack(chosenCardActor.getCard());
@@ -266,6 +267,7 @@ public class GameplayScreen implements Screen {
                     if (cardActorToPlay != null) {
                         addCardActorToStack(cardActorToPlay);
                         updateBackendAfterPuttingCardOnStack(cardActorToPlay, playerIndex);
+                        createAllPlayersCardsActorsThatWereNotDrew();
                         endIfComputerWin(playerIndex);
                         handGroups.get(playerIndex).moveCloserToStartingPosition();
                     } else {
