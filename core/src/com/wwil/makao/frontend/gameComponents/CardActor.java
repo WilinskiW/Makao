@@ -15,7 +15,7 @@ public class CardActor extends Actor { //todo klasa z logiką i grafiką
     private final Card card;
     private final TextureRegion frontSide;
     private final TextureRegion backSide;
-    private boolean isUpSideDown = true;
+    private boolean isUpSideDown = GUIparams.HIDE_COMPUTER_CARD;
     private Group lastParent;
     private Vector3 lastPositionBeforeRemove = null;
 

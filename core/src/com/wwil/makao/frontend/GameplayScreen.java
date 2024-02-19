@@ -63,19 +63,16 @@ public class GameplayScreen implements Screen {
     private void prepareGameComponents() {
         prepareStackCardsGroup();
         preparePullButton();
-
         this.dragTarget = prepareTarget(stackCardsGroup);
-        preparePlayers(dragTarget);
+        prepareHandGroups();
     }
-
 
     private void prepareStackCardsGroup() {
         CardActor stackCard = cardActorFactory.createCardActor(backend.getStack().peekCard());
         addCardActorToStack(stackCard);
         stage.addActor(stackCardsGroup);
-        stackCard.setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
+        stackCardsGroup.setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
     }
-
 
 
     private void addCardActorToStack(CardActor cardActor) {
@@ -91,58 +88,60 @@ public class GameplayScreen implements Screen {
         this.pullButtonActor = pullButton;
     }
 
-
-    private void preparePlayers(DragAndDrop.Target target) {
-        for (int i = 0; i < 4; i++) {
-            handGroups.add(new PlayerHandGroup());
-        }
-        setPlayersCardAlignmentParams();
-        createHumanStartingDeck(cardActorFactory.createCardActors(backend.getPlayers().get(0).getCards()), target);
-        createComputersStaringDeck();
-        prepareHandGroups();
+    private void prepareHandGroups() {
+        createHandGroups();
+        createAllPlayersCardsActorsThatWereNotDrew();
+        positionHandGroupsOnStage();
     }
 
-    private void setPlayersCardAlignmentParams() {
+
+    private void createAllPlayersCardsActorsThatWereNotDrew(){
+        for (int i = 0; i < handGroups.size(); i++) {
+            createAllPlayerCardsActorsThatWereNotDrew(i);
+        }
+    }
+
+    private void createHandGroups(){
+        for (int i = 0; i < 4; i++) {
+            handGroups.add(new PlayerHandGroup(backend.getPlayers().get(i)));
+        }
+        setPlayersCardActorsAlignmentParams();
+    }
+
+    private void setPlayersCardActorsAlignmentParams() {
+        // TODO: 18.02.2024 Poprawić for loopem przy pomocy value
         handGroups.get(0).setCardsAlignment(CardsAligmentParams.SOUTH);
         handGroups.get(1).setCardsAlignment(CardsAligmentParams.EAST);
         handGroups.get(2).setCardsAlignment(CardsAligmentParams.NORTH);
         handGroups.get(3).setCardsAlignment(CardsAligmentParams.WEST);
     }
 
-    private void createHumanStartingDeck(List<CardActor> cards, DragAndDrop.Target target) {
+    private void createAllPlayerCardsActorsThatWereNotDrew(int playerIndex) {
+        for (Card card : backend.getPlayers().get(playerIndex).getCards()) {
+            if (card.isDrawn()) {
+                handGroups.get(playerIndex).addActor(cardActorFactory.createCardActor(card));
+            }
+        }
+
+        if(playerIndex == 0){
+            adjustHumanCards(dragTarget);
+        }
+    }
+
+    private void adjustHumanCards(DragAndDrop.Target target){
         PlayerHandGroup group = getHumanHand();
-        createPlayerStartingDeck(cards, group);
-        for (CardActor card : cards) {
+        for (CardActor card : group.getCardActors()) {
             card.setUpSideDown(false);
             prepareDragAndDrop(card, target);
         }
     }
 
-    private void createComputersStaringDeck() {
-        for (int i = 1; i < handGroups.size(); i++) {
-            List<Card> playerCards = backend.getPlayers().get(i).getCards();
-            PlayerHandGroup currentHandGroup = handGroups.get(i);
-            createPlayerStartingDeck(cardActorFactory.createCardActors(playerCards), currentHandGroup);
-        }
-    }
-
-    private void createPlayerStartingDeck(List<CardActor> cards, PlayerHandGroup handGroup) {
-        for (CardActor card : cards) {
-            card.setUpSideDown(GUIparams.HIDE_COMPUTER_CARD);
-            handGroup.addActor(card);
-        }
-    }
-
-    private void prepareHandGroups() {
-        addHandGroupsToStage();
-        setRotationOfHandGroups();
-        setPositionOfHandGroups();
-    }
-
-    private void addHandGroupsToStage() {
+    private void positionHandGroupsOnStage() {
         for (PlayerHandGroup handGroup : handGroups) {
             stage.addActor(handGroup);
         }
+        setRotationOfHandGroups();
+        setPositionOfHandGroups();
     }
 
     private void setRotationOfHandGroups() {
@@ -204,7 +203,7 @@ public class GameplayScreen implements Screen {
     private void executeDropAction(CardActor chosenCardActor) {
         PlayerHandGroup human = handGroups.get(0);
         if (isCardActorCorrect(chosenCardActor)) {
-            updateBackendAfterPuttingCardOnStack(chosenCardActor,0);
+            updateBackendAfterPuttingCardOnStack(chosenCardActor, 0);
             stackCardsGroup.addActor(chosenCardActor);
             endIfHumanWin();
             human.moveCloserToStartingPosition();
@@ -214,8 +213,8 @@ public class GameplayScreen implements Screen {
         }
     }
 
-    private void updateBackendAfterPuttingCardOnStack(CardActor chosenCardActor, int playerIndex){
-        backend.useCardAbility(chosenCardActor.getCard(),playerIndex);
+    private void updateBackendAfterPuttingCardOnStack(CardActor chosenCardActor, int playerIndex) {
+        backend.useCardAbility(chosenCardActor.getCard(), playerIndex);
         backend.getStack().addCardToStack(chosenCardActor.getCard());
         backend.getPlayers().get(playerIndex).removeCardFromHand(chosenCardActor.getCard());
     }
@@ -266,7 +265,7 @@ public class GameplayScreen implements Screen {
                     CardActor cardActorToPlay = preparePlayableCard(playerIndex);
                     if (cardActorToPlay != null) {
                         addCardActorToStack(cardActorToPlay);
-                        updateBackendAfterPuttingCardOnStack(cardActorToPlay,playerIndex);
+                        updateBackendAfterPuttingCardOnStack(cardActorToPlay, playerIndex);
                         endIfComputerWin(playerIndex);
                         handGroups.get(playerIndex).moveCloserToStartingPosition();
                     } else {
