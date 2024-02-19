@@ -1,64 +1,155 @@
 package com.wwil.makao.backend;
 
+import com.badlogic.gdx.Gdx;
+import com.wwil.makao.backend.cardComponents.Card;
+import com.wwil.makao.backend.cardComponents.CardFactory;
+import com.wwil.makao.backend.cardComponents.Rank;
+import com.wwil.makao.backend.cardComponents.Suit;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class MakaoBackend {
-    public static List<Card> cardsStorage;
     private final int STARTING_CARDS = 5;
     private final int AMOUNT_OF_PLAYERS = 4;
-    private List<PlayerHand> players = new ArrayList<>();
+    public static List<Card> gameDeck;
+    private final Stack stack = new Stack();
+    private final List<PlayerHand> players = new ArrayList<>();
     private boolean inputBlock = false;
+
 
     //Konstruktor tworzy karty i graczy.
     public MakaoBackend() {
+        createCardsToGameDeck();
+        stack.addCardToStack(takeCardFromGameDeck());
+        createPlayers();
+        giveTestCards();
+    }
+
+    private void createCardsToGameDeck() {
         List<Card> cards = new CardFactory().createCards();
         Collections.shuffle(cards);
-        this.cardsStorage = cards;
-        createPlayers();
+        gameDeck = cards;
     }
+    ///TEST///
+    private void giveTestCards(){
+        players.get(3).getCards().clear();
+        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.CLUB));
+        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.DIAMOND));
+        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.SPADE));
+        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.HEART));
+    }
+
 
     private void createPlayers() {
         for (int i = 0; i < AMOUNT_OF_PLAYERS; i++) {
-            PlayerHand playerHand = new PlayerHand(giveStartingCards());
+            PlayerHand playerHand = new PlayerHand(giveCards(STARTING_CARDS));
             players.add(playerHand);
         }
+        giveTestCards();
     }
 
+    public Card takeCardFromGameDeck() {
+        return gameDeck.remove(0);
+    }
 
-    private List<Card> giveStartingCards() {
-        List<Card> startingCards = new ArrayList<>();
-        for (int i = 0; i < STARTING_CARDS; i++) {
-            startingCards.add(getCard()); //todo może się skończyć
+    private List<Card> giveCards(int amount) {
+        List<Card> cards = new ArrayList<>();
+        for (int i = 0; i < amount; i++) {
+            cards.add(takeCardFromGameDeck());
         }
-        return startingCards;
+        return cards;
     }
 
-    public Card giveCard() {
-        return getCard();
+    public void playerPullCard(int playerIndex){
+        players.get(playerIndex).addCardToHand(takeCardFromGameDeck());
     }
 
-    public void endHumanTurn(){
-        inputBlock = true;
+    public void useCardAbility(Card card, int currentPlayerIndex) {
+        switch (card.getRank()) {
+            case TWO:
+                usePlusNextPlayerAbility(currentPlayerIndex,2);
+                break;
+            case THREE:
+                usePlusNextPlayerAbility(currentPlayerIndex,3);
+                break;
+            case FOUR:
+                useFourAbility(currentPlayerIndex);
+                break;
+            case K:
+                useKingAbility(card,currentPlayerIndex);
+                break;
+        }
     }
 
-    public boolean isCorrectCard(Card stackCard, Card chosenCard) {
+    private void usePlusNextPlayerAbility(int playerIndex, int amountOfCards){
+        int lastIndex = players.size() - 1;
+        if (playerIndex != lastIndex) {
+            players.get(playerIndex+1).addCardsToHand(giveCards(amountOfCards));
+        } else {
+            players.get(0).addCardsToHand(giveCards(amountOfCards));
+        }
+    }
 
-        if (stackCard.getRank().name().equals("Q") || chosenCard.getRank().name().equals("Q") || chosenCard.getRank().name().equals("JOKER")) {
+    private void useFourAbility(int playerIndex){
+        int lastIndex = players.size() - 1;
+        if (lastIndex != playerIndex) {
+            players.get(playerIndex + 1).setWaiting(true);
+        } else {
+            players.get(0).setWaiting(true);
+        }
+    }
+
+    public void useKingAbility(Card card, int currentPlayerIndex){
+        switch (card.getSuit()){
+            case HEART:
+                usePlusNextPlayerAbility(currentPlayerIndex,5);
+                break;
+            case SPADE:
+                usePlusPreviousPlayerAbility(currentPlayerIndex);
+        }
+    }
+
+    private void usePlusPreviousPlayerAbility(int playerIndex){
+        int lastIndex = players.size() - 1;
+        if (playerIndex != 0) {
+            players.get(playerIndex-1).addCardsToHand(giveCards(5));
+        } else {
+            players.get(lastIndex).addCardsToHand(giveCards(5));
+        }
+    }
+
+    public void endIfPlayerWon(int playerIndex){
+        if(players.get(playerIndex).checkIfPlayerHaveNoCards()){
+            System.out.printf("Player %d won!",playerIndex+1);
+            Gdx.app.exit();
+        }
+    }
+
+    //TODO: JOKER
+    public boolean isCorrectCard(Card chosenCard) {
+        Card stackCard = peekCardFromStack();
+        if (stackCard.getRank().name().equals("Q") || chosenCard.getRank().name().equals("Q")
+            /*|| chosenCard.getRank().name().equals("JOKER")*/) {
             return true;
         }
 
         return compareCards(chosenCard, stackCard);
     }
 
+    private Card peekCardFromStack() {
+        List<Card> stackCards = stack.getCards();
+        int lastIndexOfStack = stackCards.size() - 1;
+        return stack.getCards().get(lastIndexOfStack);
+    }
+
     private boolean compareCards(Card card1, Card card2) {
         return card1.getSuit() == card2.getSuit() || card1.getRank() == card2.getRank();
     }
 
-
-    public Card getCard() {
-        return cardsStorage.remove(0);
+    public Stack getStack() {
+        return stack;
     }
 
     public List<PlayerHand> getPlayers() {
