@@ -34,6 +34,10 @@ public class PullButtonActor extends Actor {
         batch.setColor(Color.WHITE);
     }
 
+    public void changeTransparency(float transparency){
+        setColor(getColor().r,getColor().g,getColor().b,transparency);
+    }
+
     public boolean checkIfButtonIsClick(int graphicsY) {
         return checkBoundaries(graphicsY) && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT);
 

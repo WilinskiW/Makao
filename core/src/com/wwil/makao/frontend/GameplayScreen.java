@@ -249,6 +249,7 @@ public class GameplayScreen implements Screen {
 
     private void turnOffHumanInput() {
         backend.setInputBlock(true);
+        pullButtonActor.changeTransparency(0.5f);
         Gdx.input.setInputProcessor(null);
     }
 
@@ -292,6 +293,7 @@ public class GameplayScreen implements Screen {
 
     private void turnOnHumanInput() {
         createAllPlayersCardsActorsThatWereNotDrew();
+        pullButtonActor.changeTransparency(1);
         Gdx.input.setInputProcessor(stage);
         backend.setInputBlock(false);
     }
