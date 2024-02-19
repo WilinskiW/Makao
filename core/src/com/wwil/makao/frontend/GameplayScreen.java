@@ -263,23 +263,31 @@ public class GameplayScreen implements Screen {
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
-                    CardActor cardActorToPlay = preparePlayableCard(playerIndex);
-                    if (cardActorToPlay != null) {
-                        addCardActorToStack(cardActorToPlay);
-                        updateBackendAfterPuttingCardOnStack(cardActorToPlay, playerIndex);
-                        createAllPlayersCardsActorsThatWereNotDrew();
-                        endIfComputerWin(playerIndex);
-                        handGroups.get(playerIndex).moveCloserToStartingPosition();
-                    } else {
-                        computerPullCard(playerIndex);
+                    if(!handGroups.get(playerIndex).getPlayerHand().isWaiting()) {
+                        CardActor cardActorToPlay = preparePlayableCard(playerIndex);
+                        if (cardActorToPlay != null) {
+                            addCardActorToStack(cardActorToPlay);
+                            updateBackendAfterPuttingCardOnStack(cardActorToPlay, playerIndex);
+                            createAllPlayersCardsActorsThatWereNotDrew();
+                            endIfComputerWin(playerIndex);
+                            handGroups.get(playerIndex).moveCloserToStartingPosition();
+                        } else {
+                            computerPullCard(playerIndex);
+                        }
                     }
+                    handGroups.get(playerIndex).getPlayerHand().setWaiting(false);
                 }
             }, i * 1f); // Opóźnienie względem indeksu
 
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
-                    turnOnHumanInput();
+                    if(!getHumanHand().getPlayerHand().isWaiting()) {
+                        turnOnHumanInput();
+                    }
+                    else {
+                        getHumanHand().getPlayerHand().setWaiting(false);
+                    }
                 }
             }, (handGroups.size() - 1) * 1f);
         }

@@ -56,34 +56,35 @@ public class MakaoBackend {
     public void useCardAbility(Card card, int currentPlayerIndex) {
         switch (card.getRank()) {
             case TWO:
-                useTwoAbility(currentPlayerIndex);
+                usePlusAbility(currentPlayerIndex,2);
                 break;
             case THREE:
-                useThreeAbility(currentPlayerIndex);
+                usePlusAbility(currentPlayerIndex,3);
                 break;
+            case FOUR:
+                useFourAbility(currentPlayerIndex);
             default:
                 System.out.println("Nie two i three");
         }
     }
 
-    private void useTwoAbility(int playerIndex) {
+    private void usePlusAbility(int playerIndex, int amountOfCards){
         int lastIndex = players.size() - 1;
         if (playerIndex != lastIndex) {
-            players.get(playerIndex+1).addCardsToHand(giveCards(2));
+            players.get(playerIndex+1).addCardsToHand(giveCards(amountOfCards));
         } else {
-            players.get(0).addCardsToHand(giveCards(2));
+            players.get(0).addCardsToHand(giveCards(amountOfCards));
         }
     }
 
-    private void useThreeAbility(int playerIndex){
+    private void useFourAbility(int playerIndex){
         int lastIndex = players.size() - 1;
-        if (playerIndex != lastIndex) {
-            players.get(playerIndex+1).addCardsToHand(giveCards(3));
+        if (lastIndex != playerIndex) {
+            players.get(playerIndex + 1).setWaiting(true);
         } else {
-            players.get(0).addCardsToHand(giveCards(3));
+            players.get(0).setWaiting(true);
         }
     }
-
     //TODO: JOKER
     public boolean isCorrectCard(Card chosenCard) {
         Card stackCard = peekCardFromStack();
