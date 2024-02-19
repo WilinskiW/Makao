@@ -24,7 +24,7 @@ public class MakaoBackend {
         createCardsToGameDeck();
         stack.addCardToStack(takeCardFromGameDeck());
         createPlayers();
-        giveTestCards();
+        //giveTestCards();
     }
 
     private void createCardsToGameDeck() {
@@ -47,7 +47,6 @@ public class MakaoBackend {
             PlayerHand playerHand = new PlayerHand(giveCards(STARTING_CARDS));
             players.add(playerHand);
         }
-        giveTestCards();
     }
 
     public Card takeCardFromGameDeck() {
