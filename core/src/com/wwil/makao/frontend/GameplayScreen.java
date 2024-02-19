@@ -202,18 +202,21 @@ public class GameplayScreen implements Screen {
         PlayerHandGroup human = handGroups.get(0);
         createAllPlayersCardsActorsThatWereNotDrew();
         if (isCardActorCorrect(chosenCardActor)) {
-            updateBackendAfterPuttingCardOnStack(chosenCardActor, 0);
-            stackCardsGroup.addActor(chosenCardActor);
-            backend.endIfPlayerWon(0);
-            createAllPlayersCardsActorsThatWereNotDrew();
-            human.moveCloserToStartingPosition();
+            putCardOnStack(chosenCardActor,0);
             computerTurns();
         } else {
             positionCardInGroup(human, chosenCardActor);
         }
     }
 
-    //todo Do refactora
+    private void putCardOnStack(CardActor cardActor, int currentPlayerIndex){
+        updateBackendAfterPuttingCardOnStack(cardActor,currentPlayerIndex);
+        addCardActorToStack(cardActor);
+        createAllPlayersCardsActorsThatWereNotDrew();
+        backend.endIfPlayerWon(currentPlayerIndex);
+        handGroups.get(currentPlayerIndex).moveCloserToStartingPosition();
+    }
+
     private void updateBackendAfterPuttingCardOnStack(CardActor chosenCardActor, int playerIndex) {
         backend.useCardAbility(chosenCardActor.getCard(), playerIndex);
         backend.getStack().addCardToStack(chosenCardActor.getCard());
@@ -253,37 +256,37 @@ public class GameplayScreen implements Screen {
     private void executeComputersTurn() {
         for (int i = 1; i < handGroups.size(); i++) {
             final int playerIndex = i;
-            float delta = 1.5f;
+            final float delta = 1.5f;
+
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
                     if (!handGroups.get(playerIndex).getPlayerHand().isWaiting()) {
                         CardActor cardActorToPlay = preparePlayableCard(playerIndex);
                         if (cardActorToPlay != null) {
-                            addCardActorToStack(cardActorToPlay);
-                            updateBackendAfterPuttingCardOnStack(cardActorToPlay, playerIndex);
-                            createAllPlayersCardsActorsThatWereNotDrew();
-                            backend.endIfPlayerWon(playerIndex);
-                            handGroups.get(playerIndex).moveCloserToStartingPosition();
+                            putCardOnStack(cardActorToPlay,playerIndex);
                         } else {
                             backend.playerPullCard(playerIndex);
                             createAllPlayersCardsActorsThatWereNotDrew();
                         }
                     }
                     handGroups.get(playerIndex).getPlayerHand().setWaiting(false);
+                    checkAndHandleHumanTurn(playerIndex);
                 }
             }, i * delta); // Opóźnienie względem indeksu
+        }
+    }
 
-            Timer.schedule(new Timer.Task() {
-                @Override
-                public void run() {
-                    if (!getHumanHand().getPlayerHand().isWaiting()) {
-                        turnOnHumanInput();
-                    } else {
-                        getHumanHand().getPlayerHand().setWaiting(false);
-                    }
-                }
-            }, (handGroups.size() - 1) * delta);
+
+    private void checkAndHandleHumanTurn(int playerIndex) {
+        int lastIndex = handGroups.size() - 1;
+        if (lastIndex == playerIndex) {
+            if (!getHumanHand().getPlayerHand().isWaiting()) {
+                turnOnHumanInput();
+            } else {
+                getHumanHand().getPlayerHand().setWaiting(false);
+                executeComputersTurn();
+            }
         }
     }
 

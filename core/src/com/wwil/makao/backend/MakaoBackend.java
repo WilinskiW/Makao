@@ -3,6 +3,8 @@ package com.wwil.makao.backend;
 import com.badlogic.gdx.Gdx;
 import com.wwil.makao.backend.cardComponents.Card;
 import com.wwil.makao.backend.cardComponents.CardFactory;
+import com.wwil.makao.backend.cardComponents.Rank;
+import com.wwil.makao.backend.cardComponents.Suit;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,12 +24,21 @@ public class MakaoBackend {
         createCardsToGameDeck();
         stack.addCardToStack(takeCardFromGameDeck());
         createPlayers();
+        giveTestCards();
     }
 
     private void createCardsToGameDeck() {
         List<Card> cards = new CardFactory().createCards();
         Collections.shuffle(cards);
         gameDeck = cards;
+    }
+    ///TEST///
+    private void giveTestCards(){
+        players.get(3).getCards().clear();
+        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.CLUB));
+        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.DIAMOND));
+        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.SPADE));
+        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.HEART));
     }
 
 
@@ -36,6 +47,7 @@ public class MakaoBackend {
             PlayerHand playerHand = new PlayerHand(giveCards(STARTING_CARDS));
             players.add(playerHand);
         }
+        giveTestCards();
     }
 
     public Card takeCardFromGameDeck() {
