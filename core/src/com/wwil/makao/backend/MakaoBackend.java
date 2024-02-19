@@ -56,19 +56,20 @@ public class MakaoBackend {
     public void useCardAbility(Card card, int currentPlayerIndex) {
         switch (card.getRank()) {
             case TWO:
-                usePlusAbility(currentPlayerIndex,2);
+                usePlusNextPlayerAbility(currentPlayerIndex,2);
                 break;
             case THREE:
-                usePlusAbility(currentPlayerIndex,3);
+                usePlusNextPlayerAbility(currentPlayerIndex,3);
                 break;
             case FOUR:
                 useFourAbility(currentPlayerIndex);
-            default:
-                System.out.println("Nie two i three");
+            case K:
+                useKingAbility(card,currentPlayerIndex);
+                break;
         }
     }
 
-    private void usePlusAbility(int playerIndex, int amountOfCards){
+    private void usePlusNextPlayerAbility(int playerIndex, int amountOfCards){
         int lastIndex = players.size() - 1;
         if (playerIndex != lastIndex) {
             players.get(playerIndex+1).addCardsToHand(giveCards(amountOfCards));
@@ -83,6 +84,25 @@ public class MakaoBackend {
             players.get(playerIndex + 1).setWaiting(true);
         } else {
             players.get(0).setWaiting(true);
+        }
+    }
+
+    public void useKingAbility(Card card, int currentPlayerIndex){
+        switch (card.getSuit()){
+            case HEART:
+                usePlusNextPlayerAbility(currentPlayerIndex,5);
+                break;
+            case SPADE:
+                usePlusPreviousPlayerAbility(currentPlayerIndex);
+        }
+    }
+
+    private void usePlusPreviousPlayerAbility(int playerIndex){
+        int lastIndex = players.size() - 1;
+        if (playerIndex != 0) {
+            players.get(playerIndex-1).addCardsToHand(giveCards(5));
+        } else {
+            players.get(lastIndex).addCardsToHand(giveCards(5));
         }
     }
     //TODO: JOKER
