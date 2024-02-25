@@ -61,8 +61,10 @@ public class MakaoBackend {
         return cards;
     }
 
-    public void playerPullCard(int playerIndex){
-        players.get(playerIndex).addCardToHand(takeCardFromGameDeck());
+    public Card playerPullCard(int playerIndex){
+        Card card = takeCardFromGameDeck();
+        players.get(playerIndex).addCardToHand(card);
+        return card;
     }
 
     public void useCardAbility(Card card, int currentPlayerIndex) {

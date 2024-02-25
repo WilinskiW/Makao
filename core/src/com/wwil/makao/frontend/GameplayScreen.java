@@ -1,39 +1,42 @@
 package com.wwil.makao.frontend;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.wwil.makao.frontend.parameters.GUIparams;
 
 public class GameplayScreen implements Screen {
     private final Makao makao;
     private OrthographicCamera camera;
     private Stage stage;
     private FitViewport viewport;
-    private final GameController gameController;
+    private final GameController controller;
 
-    // TODO: INPUT Raport
-    // TODO: Animacje rzucania kart przez boty
-    // TODO: Aktywacja specjalnych zdolności kart ~ Specjalne zdolności
-    // TODO: Obrona
-    // TODO: Komunikaty kcji graczy
-    // TODO: Główne menu
-    // TODO: Dźwięk i muzyk
-    // TODO: Możliwość zmiany skinów do kart
     //tworzy główny ekran gry
     public GameplayScreen(Makao makao) {
         this.makao = makao;
-        this.gameController = new GameController(this);
-        GameplayScreenPreparer screenPreparer = new GameplayScreenPreparer(this, gameController);
-        screenPreparer.prepareGraphicComponents();
-        screenPreparer.prepareGameComponents();
+        this.controller = new GameController(this);
+        setGraphicComponents();
+        GameComponentsPreparer gameComponentsPreparer = new GameComponentsPreparer(this, controller);
+        gameComponentsPreparer.prepare();
+    }
+
+    private void setGraphicComponents() {
+        this.camera = new OrthographicCamera();
+        camera.setToOrtho(false, GUIparams.WIDTH, GUIparams.HEIGHT);
+
+        this.viewport = new FitViewport(0, 0, camera);
+        this.stage = new Stage(viewport);
+
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
     public void show() {
-
     }
 
     @Override
@@ -42,7 +45,7 @@ public class GameplayScreen implements Screen {
         makao.getBatch().setProjectionMatrix(camera.combined);
         stage.act(delta);
         stage.draw();
-        gameController.handlePullButtonInput();
+        controller.handlePullButtonInput();
     }
 
     @Override
@@ -54,17 +57,14 @@ public class GameplayScreen implements Screen {
 
     @Override
     public void pause() {
-
     }
 
     @Override
     public void resume() {
-
     }
 
     @Override
     public void hide() {
-
     }
 
     @Override
@@ -72,24 +72,8 @@ public class GameplayScreen implements Screen {
         stage.dispose();
     }
 
-    public OrthographicCamera getCamera() {
-        return camera;
-    }
-
-    public void setCamera(OrthographicCamera camera) {
-        this.camera = camera;
-    }
-
     public FitViewport getViewport() {
         return viewport;
-    }
-
-    public void setViewport(FitViewport viewport) {
-        this.viewport = viewport;
-    }
-
-    public void setStage(Stage stage) {
-        this.stage = stage;
     }
 
     public Stage getStage() {

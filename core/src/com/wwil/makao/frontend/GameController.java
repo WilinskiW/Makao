@@ -3,26 +3,29 @@ package com.wwil.makao.frontend;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
+
 import com.badlogic.gdx.utils.SnapshotArray;
 import com.badlogic.gdx.utils.Timer;
 import com.wwil.makao.backend.MakaoBackend;
+import com.wwil.makao.backend.cardComponents.Card;
 import com.wwil.makao.frontend.gameComponents.CardActor;
 import com.wwil.makao.frontend.gameComponents.PlayerHandGroup;
 import com.wwil.makao.frontend.gameComponents.PullButtonActor;
 import com.wwil.makao.frontend.gameComponents.StackCardsGroup;
+import com.wwil.makao.frontend.parameters.CardsAlignmentParams;
 
 import java.util.ArrayList;
 import java.util.List;
 
+//Komunikacja miedzy backendem a frontendem
 public class GameController {
     private final GameplayScreen gameplayScreen;
     private final MakaoBackend backend = new MakaoBackend();
-    private final List<PlayerHandGroup> handGroups = new ArrayList<>();
     private final CardActorFactory cardActorFactory = new CardActorFactory();
-    private PullButtonActor pullButtonActor;
-    private DragAndDrop.Target dragTarget;
+    private final List<PlayerHandGroup> handGroups = new ArrayList<>();
     private final StackCardsGroup stackCardsGroup = new StackCardsGroup(backend.getStack());
+    private PullButtonActor pullButtonActor;
+    private final DragAndDropManager dragAndDropManager = new DragAndDropManager(this);
 
     public GameController(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
@@ -32,6 +35,27 @@ public class GameController {
         gameplayScreen.getStage().addActor(cardActor);
         cardActor.setUpSideDown(false);
         getStackCardsGroup().addActor(cardActor);
+    }
+
+
+    public void createHandGroups() {
+        for (int i = 0; i < 4; i++) {
+            handGroups.add(new PlayerHandGroup(getBackend().getPlayers().get(i)));
+        }
+        setPlayersCardActorsAlignmentParams();
+        for(PlayerHandGroup handGroup : handGroups){
+            for(Card card : handGroup.getPlayerHand().getCards()){
+                CardActor cardActor = cardActorFactory.createCardActor(card);
+                handGroup.addActor(cardActor);
+            }
+        }
+    }
+
+    private void setPlayersCardActorsAlignmentParams() {
+        getHandGroups().get(0).setCardsAlignment(CardsAlignmentParams.SOUTH);
+        getHandGroups().get(1).setCardsAlignment(CardsAlignmentParams.EAST);
+        getHandGroups().get(2).setCardsAlignment(CardsAlignmentParams.NORTH);
+        getHandGroups().get(3).setCardsAlignment(CardsAlignmentParams.WEST);
     }
 
     public CardActor createStartingCardActorForStackGroup(){
@@ -49,7 +73,6 @@ public class GameController {
 
     public void executeDropAction(CardActor chosenCardActor) {
         PlayerHandGroup human = handGroups.get(0);
-        //createAllPlayersCardsActorsThatWereNotDrew();
         if (isCardActorCorrect(chosenCardActor)) {
             putPlayerCardOnStack(chosenCardActor,0);
             computerTurns();
@@ -61,7 +84,6 @@ public class GameController {
     private void putPlayerCardOnStack(CardActor cardActor, int currentPlayerIndex){
         updateBackendAfterPuttingCardOnStack(cardActor,currentPlayerIndex);
         addCardActorToStackGroup(cardActor);
-        //createAllPlayersCardsActorsThatWereNotDrew();
         backend.endIfPlayerWon(currentPlayerIndex);
         handGroups.get(currentPlayerIndex).moveCloserToStartingPosition();
     }
@@ -112,18 +134,28 @@ public class GameController {
                 @Override
                 public void run() {
                     if (!handGroups.get(playerIndex).getPlayerHand().isWaiting()) {
-                        CardActor cardActorToPlay = preparePlayableCard(playerIndex);
+                        CardActor cardActorToPlay = getPlayableCard(playerIndex);
                         if (cardActorToPlay != null) {
                             putPlayerCardOnStack(cardActorToPlay,playerIndex);
                         } else {
                             backend.playerPullCard(playerIndex);
-                            //createAllPlayersCardsActorsThatWereNotDrew();
+                            playerPullCardActor(playerIndex);
                         }
                     }
                     handGroups.get(playerIndex).getPlayerHand().setWaiting(false);
                     checkAndHandleHumanTurn(playerIndex);
                 }
             }, i * delta); // Opóźnienie względem indeksu
+        }
+    }
+
+    private void playerPullCardActor(int playerIndex){
+        CardActor cardActor = cardActorFactory.createCardActor(backend.playerPullCard(playerIndex));
+        gameplayScreen.getStage().addActor(cardActor);
+        handGroups.get(playerIndex).addActor(cardActor);
+        if(playerIndex == 0){
+            cardActor.setUpSideDown(false);
+            dragAndDropManager.prepareDragAndDrop(cardActor, dragAndDropManager.getTarget());
         }
     }
 
@@ -141,13 +173,12 @@ public class GameController {
     }
 
     private void turnOnHumanInput() {
-        //createAllPlayersCardsActorsThatWereNotDrew();
         pullButtonActor.changeTransparency(1);
         Gdx.input.setInputProcessor(gameplayScreen.getStage());
         backend.setInputBlock(false);
     }
 
-    private CardActor preparePlayableCard(int index) {
+    private CardActor getPlayableCard(int index) {
         SnapshotArray<Actor> playerCards = handGroups.get(index).getChildren();
         for (int i = 0; i < playerCards.size; i++) {
             CardActor currentCardActor = (CardActor) playerCards.get(i);
@@ -180,8 +211,7 @@ public class GameController {
     }
 
     private void performPullButtonClick() {
-        backend.playerPullCard(0);
-        //createAllPlayersCardsActorsThatWereNotDrew();
+        playerPullCardActor(0);
         pullButtonActor.setClick(true);
         performButtonAnimation();
         computerTurns();
@@ -214,15 +244,11 @@ public class GameController {
         return backend;
     }
 
-    public CardActorFactory getCardActorFactory() {
-        return cardActorFactory;
+    public DragAndDropManager getDragAndDropManager() {
+        return dragAndDropManager;
     }
 
-    public DragAndDrop.Target getDragTarget() {
-        return dragTarget;
-    }
-
-    public void setDragTarget(DragAndDrop.Target dragTarget) {
-        this.dragTarget = dragTarget;
+    public GameplayScreen getGameplayScreen() {
+        return gameplayScreen;
     }
 }

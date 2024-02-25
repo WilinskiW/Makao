@@ -1,0 +1,8 @@
+INPUT Raport
+Animacje rzucania kart przez boty
+Aktywacja specjalnych zdolności kart ~ Specjalne zdolności
+Obrona
+Komunikaty akcji graczy
+Główne menu
+Dźwięk i muzyka
+Możliwość zmiany skinów do kart

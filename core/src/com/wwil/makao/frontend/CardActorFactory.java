@@ -17,7 +17,6 @@ public class CardActorFactory {
         List<TextureRegion> textureRegions = new ArrayList<>();
         textureRegions.add(textureAtlas.findRegion(suit+rank));
         textureRegions.add(textureAtlas.findRegion("blanckCardGray"));
-        card.setDrawn(false);
         return new CardActor(textureRegions,card);
     }
 
