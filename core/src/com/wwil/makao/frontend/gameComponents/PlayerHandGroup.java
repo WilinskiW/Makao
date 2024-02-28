@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerHandGroup extends Group {
-    private final PlayerHand playerHand;
+    private final PlayerHand playerHand; //
     private CardsAlignmentParams cardsAlignment;
 
     public PlayerHandGroup(PlayerHand playerHand) {

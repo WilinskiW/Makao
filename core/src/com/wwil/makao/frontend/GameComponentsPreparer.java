@@ -18,7 +18,6 @@ public class GameComponentsPreparer {
     public void prepare() {
         prepareStackCardsGroup();
         preparePullButton();
-
         prepareHandGroups();
     }
 

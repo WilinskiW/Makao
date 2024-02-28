@@ -4,9 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.SnapshotArray;
 import com.badlogic.gdx.utils.Timer;
 import com.wwil.makao.backend.MakaoBackend;
+import com.wwil.makao.backend.Play;
+import com.wwil.makao.backend.RoundReport;
 import com.wwil.makao.backend.cardComponents.Card;
 import com.wwil.makao.frontend.gameComponents.CardActor;
 import com.wwil.makao.frontend.gameComponents.PlayerHandGroup;
@@ -26,15 +29,32 @@ public class GameController {
     private final StackCardsGroup stackCardsGroup = new StackCardsGroup(backend.getStack());
     private PullButtonActor pullButtonActor;
     private final DragAndDropManager dragAndDropManager = new DragAndDropManager(this);
+    private Stage stage;
+
+    //Frontend może jedynie odczytywać. Jedynie może wykonywać w executeDropAction
 
     public GameController(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
+        stage = gameplayScreen.getStage();
     }
 
+    public void executeDropAction(CardActor chosenCardActor) {
+        RoundReport report= backend.playCard(new Play(chosenCardActor.getCard(),false)); //przycisk też tu sprowadzimy i damy wtedy true
+        PlayerHandGroup human = handGroups.get(0);
+        if (!report.isCorrect()) {
+            positionCardInGroup(human, chosenCardActor);
+        }
+
+        addCardActorToStackGroup(chosenCardActor); //polozyc aktora
+        handGroups.get(0).moveCloserToStartingPosition(); //autowyrównanie todo: też było używane dla komputera! (current)
+        //  computerTurns(); //KOMPUTERY -> todo: na danych z raportu
+    }
+
+
     public void addCardActorToStackGroup(CardActor cardActor) {
-        gameplayScreen.getStage().addActor(cardActor);
+        stage.addActor(cardActor);
         cardActor.setUpSideDown(false);
-        getStackCardsGroup().addActor(cardActor);
+        stackCardsGroup.addActor(cardActor);
     }
 
 
@@ -71,28 +91,7 @@ public class GameController {
         }
     }
 
-    public void executeDropAction(CardActor chosenCardActor) {
-        PlayerHandGroup human = handGroups.get(0);
-        if (isCardActorCorrect(chosenCardActor)) {
-            putPlayerCardOnStack(chosenCardActor,0);
-            computerTurns();
-        } else {
-            positionCardInGroup(human, chosenCardActor);
-        }
-    }
 
-    private void putPlayerCardOnStack(CardActor cardActor, int currentPlayerIndex){
-        updateBackendAfterPuttingCardOnStack(cardActor,currentPlayerIndex);
-        addCardActorToStackGroup(cardActor);
-        backend.endIfPlayerWon(currentPlayerIndex);
-        handGroups.get(currentPlayerIndex).moveCloserToStartingPosition();
-    }
-
-    private void updateBackendAfterPuttingCardOnStack(CardActor chosenCardActor, int playerIndex) {
-        backend.useCardAbility(chosenCardActor.getCard(), playerIndex);
-        backend.getStack().addCardToStack(chosenCardActor.getCard());
-        backend.getPlayers().get(playerIndex).removeCardFromHand(chosenCardActor.getCard());
-    }
 
     private void moveCardBackToHumanGroup(PlayerHandGroup humanGroup, CardActor card) {
         humanGroup.addActor(card);
@@ -109,16 +108,12 @@ public class GameController {
         }
     }
 
-    private boolean isCardActorCorrect(CardActor chosenCard) {
-        return backend.isCorrectCard(chosenCard.getCard());
-    }
-
     private void computerTurns() {
-        turnOffHumanInput();
+         turnOffHumanInput();
         executeComputersTurn();
     }
 
-    private void turnOffHumanInput() {
+    private void turnOffHumanInput() { //todo na razie nie używane - przyda się na czas animowania
         backend.setInputBlock(true);
         pullButtonActor.changeTransparency(0.5f);
         Gdx.input.setInputProcessor(null);
@@ -176,17 +171,6 @@ public class GameController {
         pullButtonActor.changeTransparency(1);
         Gdx.input.setInputProcessor(gameplayScreen.getStage());
         backend.setInputBlock(false);
-    }
-
-    private CardActor getPlayableCard(int index) {
-        SnapshotArray<Actor> playerCards = handGroups.get(index).getChildren();
-        for (int i = 0; i < playerCards.size; i++) {
-            CardActor currentCardActor = (CardActor) playerCards.get(i);
-            if (isCardActorCorrect(currentCardActor)) {
-                return currentCardActor;
-            }
-        }
-        return null;
     }
 
 
