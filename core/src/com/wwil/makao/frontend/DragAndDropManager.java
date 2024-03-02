@@ -36,12 +36,12 @@ public class DragAndDropManager {
         @Override
         public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
             CardActor chosenCardActor = (CardActor) source.getActor();
-            gameController.executeDropAction(chosenCardActor);
+            gameController.executeHumanAction(chosenCardActor);
         }
     };
 }
 
-    public void prepareDragAndDrop(final CardActor card, DragAndDrop.Target target) {
+    public void prepareDragAndDrop(final CardActor card) {
         final DragAndDrop dragAndDrop = new DragAndDrop();
         dragAndDrop.setDragActorPosition(GUIparams.CARD_WIDTH / 2f, -GUIparams.CARD_HEIGHT / 2f);
         DragAndDrop.Source dropSource = prepareSource(card);
@@ -75,9 +75,5 @@ public class DragAndDropManager {
                 super.dragStop(event, x, y, pointer, payload, target);
             }
         };
-    }
-
-    public DragAndDrop.Target getTarget() {
-        return target;
     }
 }

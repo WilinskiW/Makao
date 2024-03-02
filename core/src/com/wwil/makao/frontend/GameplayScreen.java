@@ -14,13 +14,12 @@ public class GameplayScreen implements Screen {
     private OrthographicCamera camera;
     private Stage stage;
     private FitViewport viewport;
-    private final GameController controller;
 
     //tworzy główny ekran gry
     public GameplayScreen(Makao makao) {
         this.makao = makao;
         setGraphicComponents();
-        this.controller = new GameController(this);
+        GameController controller = new GameController(this);
         GameComponentsPreparer gameComponentsPreparer = new GameComponentsPreparer(this, controller);
         gameComponentsPreparer.prepare();
     }
@@ -45,7 +44,6 @@ public class GameplayScreen implements Screen {
         makao.getBatch().setProjectionMatrix(camera.combined);
         stage.act(delta);
         stage.draw();
-        controller.handlePullButtonInput();
     }
 
     @Override
@@ -70,10 +68,6 @@ public class GameplayScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-    }
-
-    public FitViewport getViewport() {
-        return viewport;
     }
 
     public Stage getStage() {

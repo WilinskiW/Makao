@@ -1,10 +1,6 @@
 package com.wwil.makao.backend;
-
-import com.badlogic.gdx.Gdx;
 import com.wwil.makao.backend.cardComponents.Card;
 import com.wwil.makao.backend.cardComponents.CardFactory;
-import com.wwil.makao.frontend.gameComponents.CardActor;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,24 +11,21 @@ public class MakaoBackend {
     public static List<Card> gameDeck;
     private final Stack stack = new Stack();
     private final List<PlayerHand> players = new ArrayList<>();
-    private boolean inputBlock = false;
     private int currentPlayerIndex = 0;
     private RoundReport roundReport;
-//fixme specjalne umiejetnosci i przycisk
+//fixme specjalne umiejetnosci
 
-    //Konstruktor tworzy karty i graczy.
     public MakaoBackend() {
         createCardsToGameDeck();
         stack.addCardToStack(takeCardFromGameDeck());
         createPlayers();
-        //giveTestCards();
     }
 
     //Jedyna publiczna metoda (zbiera informacje i wysyła)
     public RoundReport executeAction(Play humanPlay) {
         roundReport = new RoundReport();
 
-        if (!isCorrectCard(humanPlay.getCardPlayed())) {
+        if (!humanPlay.wantsToDraw() && !isCorrectCard(humanPlay.getCardPlayed())) {
             roundReport.setIncorrect();
             return roundReport;
         }
@@ -40,16 +33,6 @@ public class MakaoBackend {
 
         return roundReport;
     }
-
-//    private void playerPullCardActor(int playerIndex) {
-//        CardActor cardActor = cardActorFactory.createCardActor(backend.playerPullCard(playerIndex));
-//        gameplayScreen.getStage().addActor(cardActor);
-//        handGroups.get(playerIndex).addActor(cardActor);
-//        if (playerIndex == 0) {
-//            cardActor.setUpSideDown(false);
-//            dragAndDropManager.prepareDragAndDrop(cardActor, dragAndDropManager.getTarget());
-//        }
-//    }
 
     private void playRound(Play humanPlay) {
         roundReport.addPlay(executePlay(humanPlay));
@@ -96,7 +79,6 @@ public class MakaoBackend {
         useCardAbility(cardPlayed);
         getStack().addCardToStack(cardPlayed);
         currentPlayer().removeCardFromHand(cardPlayed);
-        endIfPlayerWon();
     }
 
     private boolean isCorrectCard(Card chosenCard) {
@@ -131,17 +113,6 @@ public class MakaoBackend {
         Collections.shuffle(cards);
         gameDeck = cards;
     }
-
-    ///TEST///
-
-//    private void giveTestCards() {
-//        players.get(3).getCards().clear();
-//        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.CLUB));
-//        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.DIAMOND));
-//        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.SPADE));
-//        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.HEART));
-//    }
-
 
     private void createPlayers() {
         for (int i = 0; i < AMOUNT_OF_PLAYERS; i++) {
@@ -199,13 +170,6 @@ public class MakaoBackend {
             players.get(lastIndex).addCardsToHand(giveCards(5));
         }
     }
-
-    private void endIfPlayerWon() { //todo refactor -> bardziej na front
-        if (currentPlayer().checkIfPlayerHaveNoCards()) {
-            System.out.printf("Player %d won!", currentPlayerIndex + 1);
-            Gdx.app.exit();
-        }
-    }
     //TODO: JOKER
 
     private Card peekCardFromStack() {
@@ -225,14 +189,4 @@ public class MakaoBackend {
     public List<PlayerHand> getPlayers() {
         return players;
     }
-
-    private boolean isInputBlock() {
-        return inputBlock;
-    }
-
-    private void setInputBlock(boolean inputBlock) {
-        this.inputBlock = inputBlock;
-    }
 }
-
-//Sama logika

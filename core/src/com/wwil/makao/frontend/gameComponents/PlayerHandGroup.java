@@ -70,18 +70,18 @@ public class PlayerHandGroup extends Group {
         return playerHand;
     }
 
-    public CardActor findCardActor(Card card){
-        for(CardActor cardActor : getCardActors()){
-            if(cardActor.getCard().equals(card)){
+    public CardActor findCardActor(Card card) {
+        for (CardActor cardActor : getCardActors()) {
+            if (cardActor.getCard().equals(card)) {
                 return cardActor;
             }
         }
         return null;
     }
 
-    public List<CardActor> getCardActors(){
+    public List<CardActor> getCardActors() {
         List<CardActor> cardActors = new ArrayList<>();
-        for(Actor actor : getChildren()){
+        for (Actor actor : getChildren()) {
             CardActor cardActor = (CardActor) actor;
             cardActors.add(cardActor);
         }
