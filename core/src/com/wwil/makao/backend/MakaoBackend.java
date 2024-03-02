@@ -1,13 +1,8 @@
 package com.wwil.makao.backend;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.utils.SnapshotArray;
 import com.wwil.makao.backend.cardComponents.Card;
 import com.wwil.makao.backend.cardComponents.CardFactory;
-import com.wwil.makao.backend.cardComponents.Rank;
-import com.wwil.makao.backend.cardComponents.Suit;
-import com.wwil.makao.frontend.gameComponents.CardActor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,14 +30,17 @@ public class MakaoBackend {
     //Jedyna publiczna metoda (zbiera informacje i wysyła)
     public RoundReport playCard(Play humanPlay) {
         roundReport = new RoundReport();
+        //todo przycisk
         if (humanPlay.wantsToDraw()) {
             throw new UnsupportedOperationException("Dodamy potem");
         }
-        if ( !isCorrectCard(humanPlay.getCardPlayed())) {
+        if (!isCorrectCard(humanPlay.getCardPlayed())) {
             roundReport.setIncorrect();
             return roundReport;
         }
+        setInputBlock(true);
         playRound(humanPlay);
+        setInputBlock(false);
 
         return roundReport;
     }
@@ -63,6 +61,7 @@ public class MakaoBackend {
         }
         return new Play(null, true);
     }
+
 
     private PlayReport executePlay(Play play) { //todo nie uwzględnia jeszcze że ktoś chce dobrać
         Card cardPlayed = play.getCardPlayed();
@@ -95,16 +94,16 @@ public class MakaoBackend {
     private void useCardAbility(Card card) {
         switch (card.getRank()) {
             case TWO:
-                usePlusNextPlayerAbility(currentPlayerIndex, 2);
+                usePlusNextPlayerAbility(2);
                 break;
             case THREE:
-                usePlusNextPlayerAbility(currentPlayerIndex, 3);
+                usePlusNextPlayerAbility(3);
                 break;
             case FOUR:
-                useFourAbility(currentPlayerIndex);
+                useFourAbility();
                 break;
             case K:
-                useKingAbility(card, currentPlayerIndex);
+                useKingAbility(card);
                 break;
         }
     }
@@ -117,13 +116,13 @@ public class MakaoBackend {
 
     ///TEST///
 
-    private void giveTestCards() {
-        players.get(3).getCards().clear();
-        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.CLUB));
-        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.DIAMOND));
-        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.SPADE));
-        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.HEART));
-    }
+//    private void giveTestCards() {
+//        players.get(3).getCards().clear();
+//        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.CLUB));
+//        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.DIAMOND));
+//        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.SPADE));
+//        players.get(3).addCardToHand(new Card(Rank.FOUR, Suit.HEART));
+//    }
 
 
     private void createPlayers() {
@@ -151,38 +150,38 @@ public class MakaoBackend {
         return card;
     }
 
-    private void usePlusNextPlayerAbility(int playerIndex, int amountOfCards) {
+    private void usePlusNextPlayerAbility(int amountOfCards) {
         int lastIndex = players.size() - 1;
-        if (playerIndex != lastIndex) {
-            players.get(playerIndex + 1).addCardsToHand(giveCards(amountOfCards));
+        if (currentPlayerIndex != lastIndex) {
+            players.get(currentPlayerIndex + 1).addCardsToHand(giveCards(amountOfCards));
         } else {
             players.get(0).addCardsToHand(giveCards(amountOfCards));
         }
     }
 
-    private void useFourAbility(int playerIndex) {
+    private void useFourAbility() {
         int lastIndex = players.size() - 1;
-        if (lastIndex != playerIndex) {
-            players.get(playerIndex + 1).setWaiting(true);
+        if (lastIndex != currentPlayerIndex) {
+            players.get(currentPlayerIndex + 1).setWaiting(true);
         } else {
             players.get(0).setWaiting(true);
         }
     }
 
-    private void useKingAbility(Card card, int currentPlayerIndex) {
+    private void useKingAbility(Card card) {
         switch (card.getSuit()) {
             case HEART:
-                usePlusNextPlayerAbility(currentPlayerIndex, 5);
+                usePlusNextPlayerAbility(5);
                 break;
             case SPADE:
-                usePlusPreviousPlayerAbility(currentPlayerIndex);
+                usePlusFiveAbilityToPreviousPlayer();
         }
     }
 
-    private void usePlusPreviousPlayerAbility(int playerIndex) {
+    private void usePlusFiveAbilityToPreviousPlayer() {
         int lastIndex = players.size() - 1;
-        if (playerIndex != 0) {
-            players.get(playerIndex - 1).addCardsToHand(giveCards(5));
+        if (currentPlayerIndex != 0) {
+            players.get(currentPlayerIndex - 1).addCardsToHand(giveCards(5));
         } else {
             players.get(lastIndex).addCardsToHand(giveCards(5));
         }
@@ -206,11 +205,11 @@ public class MakaoBackend {
         return card1.getSuit() == card2.getSuit() || card1.getRank() == card2.getRank();
     }
 
-    private Stack getStack() {
+    public Stack getStack() {
         return stack;
     }
 
-    private List<PlayerHand> getPlayers() {
+    public List<PlayerHand> getPlayers() {
         return players;
     }
 

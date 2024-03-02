@@ -3,6 +3,7 @@ package com.wwil.makao.frontend.gameComponents;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.wwil.makao.backend.PlayerHand;
+import com.wwil.makao.backend.cardComponents.Card;
 import com.wwil.makao.frontend.parameters.CardsAlignmentParams;
 import com.wwil.makao.frontend.parameters.GUIparams;
 
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerHandGroup extends Group {
-    private final PlayerHand playerHand; //
+    private final PlayerHand playerHand;
     private CardsAlignmentParams cardsAlignment;
 
     public PlayerHandGroup(PlayerHand playerHand) {
@@ -67,6 +68,15 @@ public class PlayerHandGroup extends Group {
 
     public PlayerHand getPlayerHand() {
         return playerHand;
+    }
+
+    public CardActor findCardActor(Card card){
+        for(CardActor cardActor : getCardActors()){
+            if(cardActor.getCard().equals(card)){
+                return cardActor;
+            }
+        }
+        return null;
     }
 
     public List<CardActor> getCardActors(){

@@ -1,7 +1,7 @@
 package com.wwil.makao.backend;
 
 import com.wwil.makao.backend.cardComponents.Card;
-
+//Informacje jakie przekazuje frontend -> backendowi
 public class Play {
     private Card cardPlayed;
     private boolean draw;

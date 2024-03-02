@@ -19,8 +19,8 @@ public class GameplayScreen implements Screen {
     //tworzy główny ekran gry
     public GameplayScreen(Makao makao) {
         this.makao = makao;
-        this.controller = new GameController(this);
         setGraphicComponents();
+        this.controller = new GameController(this);
         GameComponentsPreparer gameComponentsPreparer = new GameComponentsPreparer(this, controller);
         gameComponentsPreparer.prepare();
     }

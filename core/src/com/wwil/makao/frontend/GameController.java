@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.SnapshotArray;
 import com.badlogic.gdx.utils.Timer;
 import com.wwil.makao.backend.MakaoBackend;
 import com.wwil.makao.backend.Play;
+import com.wwil.makao.backend.PlayReport;
 import com.wwil.makao.backend.RoundReport;
 import com.wwil.makao.backend.cardComponents.Card;
 import com.wwil.makao.frontend.gameComponents.CardActor;
@@ -29,33 +30,32 @@ public class GameController {
     private final StackCardsGroup stackCardsGroup = new StackCardsGroup(backend.getStack());
     private PullButtonActor pullButtonActor;
     private final DragAndDropManager dragAndDropManager = new DragAndDropManager(this);
-    private Stage stage;
+    private final Stage stage;
 
     //Frontend może jedynie odczytywać. Jedynie może wykonywać w executeDropAction
-
+    //Zrobic zeby dzialalo
     public GameController(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
-        stage = gameplayScreen.getStage();
+        this.stage = gameplayScreen.getStage();
     }
-
+//Skupic się na jednej metodzie. (Rozbudowac inne)
     public void executeDropAction(CardActor chosenCardActor) {
-        RoundReport report= backend.playCard(new Play(chosenCardActor.getCard(),false)); //przycisk też tu sprowadzimy i damy wtedy true
+        RoundReport report = backend.playCard(new Play(chosenCardActor.getCard(),false)); //przycisk też tu sprowadzimy i damy wtedy true
         PlayerHandGroup human = handGroups.get(0);
         if (!report.isCorrect()) {
             positionCardInGroup(human, chosenCardActor);
         }
-
         addCardActorToStackGroup(chosenCardActor); //polozyc aktora
-        handGroups.get(0).moveCloserToStartingPosition(); //autowyrównanie todo: też było używane dla komputera! (current)
-        //  computerTurns(); //KOMPUTERY -> todo: na danych z raportu
+        human.moveCloserToStartingPosition(); //autowyrównanie todo: też było używane dla komputera! (current)
+        computerTurns(report); //KOMPUTERY -> todo: na danych z raportu
     }
-
 
     public void addCardActorToStackGroup(CardActor cardActor) {
         stage.addActor(cardActor);
         cardActor.setUpSideDown(false);
         stackCardsGroup.addActor(cardActor);
     }
+
 
 
     public void createHandGroups() {
@@ -82,14 +82,15 @@ public class GameController {
         return cardActorFactory.createCardActor(backend.getStack().peekCard());
     }
 
+//todo Zmiana koloru przy Drag
 
-    public void executeDragAction(CardActor chosenCardActor) {
-        if (isCardActorCorrect(chosenCardActor)) {
-            chosenCardActor.setColor(Color.LIME);
-        } else {
-            chosenCardActor.setColor(Color.SCARLET);
-        }
-    }
+//    public void executeDragAction(CardActor chosenCardActor) {
+//        if (isCardActorCorrect(chosenCardActor)) {
+//            chosenCardActor.setColor(Color.LIME);
+//        } else {
+//            chosenCardActor.setColor(Color.SCARLET);
+//        }
+//    }
 
 
 
@@ -108,51 +109,59 @@ public class GameController {
         }
     }
 
-    private void computerTurns() {
-         turnOffHumanInput();
-        executeComputersTurn();
+    private void computerTurns(RoundReport roundReport) {
+        turnOffHumanInput();
+        executeComputersTurn(roundReport);
     }
 
     private void turnOffHumanInput() { //todo na razie nie używane - przyda się na czas animowania
-        backend.setInputBlock(true);
         pullButtonActor.changeTransparency(0.5f);
         Gdx.input.setInputProcessor(null);
     }
 
     //todo do refactora
-    private void executeComputersTurn() {
+    //Logika będzie wykonywana w backendzie. Backend przygotuje juz szybciej dane
+    //Frontend bedzie dodawał do sceny i wykonywał delay
+    private void executeComputersTurn(final RoundReport roundReport) {
         for (int i = 1; i < handGroups.size(); i++) {
             final int playerIndex = i;
+            final PlayReport currentPlay = roundReport.getPlays().get(playerIndex);
             final float delta = 1.5f;
 
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
-                    if (!handGroups.get(playerIndex).getPlayerHand().isWaiting()) {
-                        CardActor cardActorToPlay = getPlayableCard(playerIndex);
-                        if (cardActorToPlay != null) {
-                            putPlayerCardOnStack(cardActorToPlay,playerIndex);
-                        } else {
-                            backend.playerPullCard(playerIndex);
-                            playerPullCardActor(playerIndex);
-                        }
+                    if(!currentPlay.isWaiting()){
+                        //potrzebny CardActor
+                        CardActor cardActor = handGroups.get(playerIndex).findCardActor(currentPlay.getPlayed());
+                        addCardActorToStackGroup(cardActor);
                     }
-                    handGroups.get(playerIndex).getPlayerHand().setWaiting(false);
-                    checkAndHandleHumanTurn(playerIndex);
+//                    if (!handGroups.get(playerIndex).getPlayerHand().isWaiting()) {
+//                        CardActor cardActorToPlay = getPlayableCard(playerIndex);
+//                        if (cardActorToPlay != null) {
+//                            putPlayerCardOnStack(cardActorToPlay,playerIndex);
+//                        } else {
+//                            backend.playerPullCard(playerIndex);
+//                            playerPullCardActor(playerIndex);
+//                        }
+//                    }
+//                    handGroups.get(playerIndex).getPlayerHand().setWaiting(false);
+//                    checkAndHandleHumanTurn(playerIndex);
                 }
             }, i * delta); // Opóźnienie względem indeksu
         }
     }
+//todo Pullbutton
 
-    private void playerPullCardActor(int playerIndex){
-        CardActor cardActor = cardActorFactory.createCardActor(backend.playerPullCard(playerIndex));
-        gameplayScreen.getStage().addActor(cardActor);
-        handGroups.get(playerIndex).addActor(cardActor);
-        if(playerIndex == 0){
-            cardActor.setUpSideDown(false);
-            dragAndDropManager.prepareDragAndDrop(cardActor, dragAndDropManager.getTarget());
-        }
-    }
+//    private void playerPullCardActor(int playerIndex){
+//        CardActor cardActor = cardActorFactory.createCardActor(backend.playerPullCard(playerIndex));
+//        gameplayScreen.getStage().addActor(cardActor);
+//        handGroups.get(playerIndex).addActor(cardActor);
+//        if(playerIndex == 0){
+//            cardActor.setUpSideDown(false);
+//            dragAndDropManager.prepareDragAndDrop(cardActor, dragAndDropManager.getTarget());
+//        }
+//    }
 
 
     private void checkAndHandleHumanTurn(int playerIndex) {
@@ -162,7 +171,7 @@ public class GameController {
                 turnOnHumanInput();
             } else {
                 getHumanHand().getPlayerHand().setWaiting(false);
-                executeComputersTurn();
+                //executeComputersTurn();
             }
         }
     }
@@ -170,7 +179,6 @@ public class GameController {
     private void turnOnHumanInput() {
         pullButtonActor.changeTransparency(1);
         Gdx.input.setInputProcessor(gameplayScreen.getStage());
-        backend.setInputBlock(false);
     }
 
 
@@ -189,17 +197,17 @@ public class GameController {
 
     public void handlePullButtonInput() {
         int graphicsY = gameplayScreen.getViewport().getScreenHeight() - Gdx.input.getY();
-        if (pullButtonActor.checkIfButtonIsClick(graphicsY) && !backend.isInputBlock()) {
-            performPullButtonClick();
+        if (pullButtonActor.checkIfButtonIsClick(graphicsY) ) { //todo Zrobić input blocka
+            //performPullButtonClick();
         }
     }
 
-    private void performPullButtonClick() {
-        playerPullCardActor(0);
-        pullButtonActor.setClick(true);
-        performButtonAnimation();
-        computerTurns();
-    }
+//    private void performPullButtonClick() {
+//        //playerPullCardActor(0);
+//        pullButtonActor.setClick(true);
+//        performButtonAnimation();
+//        computerTurns();
+//    }
 
 
     private void performButtonAnimation() {
