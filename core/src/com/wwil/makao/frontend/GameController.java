@@ -1,11 +1,8 @@
 package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.SnapshotArray;
 import com.badlogic.gdx.utils.Timer;
 import com.wwil.makao.backend.MakaoBackend;
 import com.wwil.makao.backend.Play;
@@ -39,15 +36,22 @@ public class GameController {
         this.stage = gameplayScreen.getStage();
     }
 //Skupic się na jednej metodzie. (Rozbudowac inne)
+
     public void executeDropAction(CardActor chosenCardActor) {
-        RoundReport report = backend.playCard(new Play(chosenCardActor.getCard(),false)); //przycisk też tu sprowadzimy i damy wtedy true
+        RoundReport report = backend.executeAction(new Play(chosenCardActor.getCard(),false)); //przycisk też tu sprowadzimy i damy wtedy true
         PlayerHandGroup human = handGroups.get(0);
         if (!report.isCorrect()) {
             positionCardInGroup(human, chosenCardActor);
         }
-        addCardActorToStackGroup(chosenCardActor); //polozyc aktora
-        human.moveCloserToStartingPosition(); //autowyrównanie todo: też było używane dla komputera! (current)
-        computerTurns(report); //KOMPUTERY -> todo: na danych z raportu
+        else {
+            putCard(chosenCardActor,human);
+            computerTurns(report);
+        }
+    }
+
+    private void putCard(CardActor cardToPlay, PlayerHandGroup player){
+        addCardActorToStackGroup(cardToPlay); //polozyc aktora
+        player.moveCloserToStartingPosition(); //autowyrównanie
     }
 
     public void addCardActorToStackGroup(CardActor cardActor) {
@@ -112,6 +116,7 @@ public class GameController {
     private void computerTurns(RoundReport roundReport) {
         turnOffHumanInput();
         executeComputersTurn(roundReport);
+        turnOnHumanInput();
     }
 
     private void turnOffHumanInput() { //todo na razie nie używane - przyda się na czas animowania
@@ -119,34 +124,27 @@ public class GameController {
         Gdx.input.setInputProcessor(null);
     }
 
-    //todo do refactora
     //Logika będzie wykonywana w backendzie. Backend przygotuje juz szybciej dane
     //Frontend bedzie dodawał do sceny i wykonywał delay
     private void executeComputersTurn(final RoundReport roundReport) {
         for (int i = 1; i < handGroups.size(); i++) {
-            final int playerIndex = i;
-            final PlayReport currentPlay = roundReport.getPlays().get(playerIndex);
+            final PlayerHandGroup currentHandGroup = handGroups.get(i);
+            final PlayReport currentPlay = roundReport.getPlays().get(i);
             final float delta = 1.5f;
 
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
                     if(!currentPlay.isWaiting()){
-                        //potrzebny CardActor
-                        CardActor cardActor = handGroups.get(playerIndex).findCardActor(currentPlay.getPlayed());
-                        addCardActorToStackGroup(cardActor);
+                        if(currentPlay.getPlayed() != null) {
+                            CardActor cardToPlay = currentHandGroup.findCardActor(currentPlay.getPlayed());
+                            putCard(cardToPlay,currentHandGroup);
+                        }
+                        else{
+                            CardActor drawnCard = cardActorFactory.createCardActor(currentPlay.getDrawn());
+                            currentHandGroup.addActor(drawnCard);
+                        }
                     }
-//                    if (!handGroups.get(playerIndex).getPlayerHand().isWaiting()) {
-//                        CardActor cardActorToPlay = getPlayableCard(playerIndex);
-//                        if (cardActorToPlay != null) {
-//                            putPlayerCardOnStack(cardActorToPlay,playerIndex);
-//                        } else {
-//                            backend.playerPullCard(playerIndex);
-//                            playerPullCardActor(playerIndex);
-//                        }
-//                    }
-//                    handGroups.get(playerIndex).getPlayerHand().setWaiting(false);
-//                    checkAndHandleHumanTurn(playerIndex);
                 }
             }, i * delta); // Opóźnienie względem indeksu
         }
@@ -162,19 +160,6 @@ public class GameController {
 //            dragAndDropManager.prepareDragAndDrop(cardActor, dragAndDropManager.getTarget());
 //        }
 //    }
-
-
-    private void checkAndHandleHumanTurn(int playerIndex) {
-        int lastIndex = handGroups.size() - 1;
-        if (lastIndex == playerIndex) {
-            if (!getHumanHand().getPlayerHand().isWaiting()) {
-                turnOnHumanInput();
-            } else {
-                getHumanHand().getPlayerHand().setWaiting(false);
-                //executeComputersTurn();
-            }
-        }
-    }
 
     private void turnOnHumanInput() {
         pullButtonActor.changeTransparency(1);
@@ -198,16 +183,14 @@ public class GameController {
     public void handlePullButtonInput() {
         int graphicsY = gameplayScreen.getViewport().getScreenHeight() - Gdx.input.getY();
         if (pullButtonActor.checkIfButtonIsClick(graphicsY) ) { //todo Zrobić input blocka
-            //performPullButtonClick();
+            performPullButtonClick();
         }
     }
 
-//    private void performPullButtonClick() {
-//        //playerPullCardActor(0);
-//        pullButtonActor.setClick(true);
-//        performButtonAnimation();
-//        computerTurns();
-//    }
+    private void performPullButtonClick() {
+        pullButtonActor.setClick(true);
+        performButtonAnimation();
+    }
 
 
     private void performButtonAnimation() {

@@ -2,7 +2,7 @@ package com.wwil.makao.backend;
 
 import java.util.ArrayList;
 import java.util.List;
-//Zebranie wszystkich ruchów w gracza w jedną klase.
+//Zebranie wszystkich ruchów graczy w jeden obiekt
 public class RoundReport {
     private boolean correct = true; //czy położono dobrą karte
     private final List<PlayReport> plays = new ArrayList<>();
