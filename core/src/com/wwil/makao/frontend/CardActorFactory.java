@@ -16,15 +16,7 @@ public class CardActorFactory {
 
         List<TextureRegion> textureRegions = new ArrayList<>();
         textureRegions.add(textureAtlas.findRegion(suit+rank));
-        textureRegions.add(textureAtlas.findRegion("blanckCardGray"));
+        textureRegions.add(textureAtlas.findRegion("blankCardGray"));
         return new CardActor(textureRegions,card);
-    }
-
-    public List<CardActor> createCardActors(List<Card> cards){
-        List<CardActor> cardActors = new ArrayList<>();
-        for (Card card : cards) {
-            cardActors.add(createCardActor(card));
-        }
-        return cardActors;
     }
 }

@@ -17,8 +17,6 @@ public class MakaoBackend {
     private int currentPlayerIndex = 0;
     private RoundReport roundReport;
 
-    //fixme specjalne umiejetnosci
-    //Przygotowanie backendu:
     public MakaoBackend() {
         createCardsToGameDeck();
         stack.addCardToStack(takeCardFromGameDeck());
@@ -49,13 +47,10 @@ public class MakaoBackend {
         }
         return cards;
     }
-
-    //////
     //////////// Logika:
     //Jedyna publiczna metoda (odbiera informacje, wykonuje działanie i wysyła)
     public RoundReport executeAction(Play humanPlay) {
         roundReport = new RoundReport();
-        //Opcja, gdy gracz jeszcze nie polozyl karty
         if (!humanPlay.isDropped() && !humanPlay.wantsToDraw()) {
             roundReport.addPlay(new PlayReport(currentPlayer(),
                     null, humanPlay, null, isCorrectCard(humanPlay.getCardPlayed())));

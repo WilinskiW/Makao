@@ -11,7 +11,7 @@ import com.wwil.makao.frontend.parameters.GUIparams;
 
 import java.util.List;
 
-//Przygotowanie elementow graficznych ekranu
+//Przygotowanie elementów graficznych ekranu
 public class GameComponentsPreparer {
     private final GameplayScreen gameplayScreen;
     private final GameController controller;

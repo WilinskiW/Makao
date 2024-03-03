@@ -11,25 +11,6 @@ public enum Suit {
     public String getName() {
         return name;
     }
-
-    public static Suit giveSuit(String color) {
-        String danaUpper = color.toUpperCase();
-
-        if ("KIER".equals(danaUpper)) {
-            return Suit.HEART;
-        } else if ("KARO".equals(danaUpper)) {
-            return Suit.DIAMOND;
-        } else if ("TREFL".equals(danaUpper)) {
-            return Suit.CLUB;
-        } else if ("PIK".equals(danaUpper)) {
-            return Suit.SPADE;
-        } else {
-            return null;
-        }
-
-    }
-
-
 }
 
  /*

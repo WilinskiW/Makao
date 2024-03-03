@@ -13,9 +13,9 @@ import com.wwil.makao.frontend.gameComponents.PullButtonActor;
 import com.wwil.makao.frontend.gameComponents.StackCardsGroup;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.concurrent.atomic.AtomicInteger;
 
-//Komunikacja miedzy backendem a frontendem
+//Komunikacja miedzy back endem a front endem
 public class GameController {
     private final GameplayScreen gameplayScreen;
     private final MakaoBackend backend = new MakaoBackend();
@@ -27,14 +27,12 @@ public class GameController {
     private final Stage stage;
     private boolean inputBlockActive = false;
 
-    //Frontend może jedynie odczytywać. Jedynie może wykonywać w executeDropAction
-    //Zrobic zeby dzialalo
+    //Frontend może jedynie odczytywać.
     public GameController(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
         this.stage = gameplayScreen.getStage();
     }
 
-    //Skupic się na jednej metodzie. (Rozbudowac inne)
     public void executeHumanAction(CardActor cardPlayed, boolean isDropped) {
         RoundReport report;
         PlayerHandGroup human = handGroups.get(0);
@@ -51,6 +49,7 @@ public class GameController {
 
         if (report.isCorrect()) {
             pullDemandedCards(report.getPlayReports().get(0));
+            turnOffHumanInput();
             executeComputersTurn(report);
         }
     }
@@ -96,7 +95,7 @@ public class GameController {
 
 
     private void putCard(CardActor cardToPlay, PlayerHandGroup player) {
-        addCardActorToStackGroup(cardToPlay); //polozyc aktora
+        addCardActorToStackGroup(cardToPlay); //położyć aktora
         endIfPlayerWon(player);
         player.moveCloserToStartingPosition(); //autowyrównanie
     }
@@ -109,7 +108,7 @@ public class GameController {
 
     private void endIfPlayerWon(PlayerHandGroup playerHandGroup) {
         if (playerHandGroup.getPlayerHand().checkIfPlayerHaveNoCards()) {
-            System.out.println("Ktos wygral");
+            System.out.println("Ktoś wygrał");
             Gdx.app.exit();
         }
     }
@@ -151,13 +150,17 @@ public class GameController {
         }
     }
 
-    public void turnOffHumanInput() { //todo na razie nie używane - przyda się na czas animowania
+    public void turnOffHumanInput() {
+        pullButtonActor.changeTransparency(0.5f);
         Gdx.input.setInputProcessor(null);
         setInputBlockActive(true);
     }
 
     private void executeComputersTurn(final RoundReport roundReport) {
         float delta = 1.5f;
+        final int numberOfComputers = handGroups.size() - 1;
+        final AtomicInteger completedComputers = new AtomicInteger(0);
+
         for (int i = 1; i < handGroups.size(); i++) {
             final PlayerHandGroup currentHandGroup = handGroups.get(i);
             final PlayReport currentPlayReport = roundReport.getPlayReports().get(i);
@@ -167,7 +170,7 @@ public class GameController {
                 public void run() {
                     //Stwórz kart aktorów z pull request
                     pullDemandedCards(currentPlayReport);
-                    if(!currentPlayReport.getPlayerHand().isWaiting()) {
+                    if (!currentPlayReport.getPlayerHand().isWaiting()) {
                         Card cardToPlay = currentPlayReport.getPlay().getCardPlayed();
                         if (cardToPlay != null) {
                             putCard(currentHandGroup.findCardActor(cardToPlay), currentHandGroup);
@@ -177,6 +180,11 @@ public class GameController {
                         }
                     }
                     currentPlayReport.getPlayerHand().setWaiting(false);
+
+                    // Sprawdź, czy to był ostatni ruch komputera
+                    if (completedComputers.incrementAndGet() == numberOfComputers) {
+                        turnOnHumanInput();
+                    }
                 }
             }, i * delta); // Opóźnienie względem indeksu
         }

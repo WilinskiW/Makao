@@ -1,14 +1,13 @@
 package com.wwil.makao.backend;
 
 import com.wwil.makao.backend.cardComponents.Card;
-//Raport karty którą zagrał gracz lub dobrania
+//Raport karty, którą zagrał gracz lub dobrania
 public class PlayReport {
     private final PlayerHand playerHand;
     private final PullDemander pullDemander;
     private final Play play;
     private final Card drawn;
     private final boolean isCardCorrect;
-    private boolean waiting;
 
     public PlayReport(PlayerHand playerHand, PullDemander pullDemander, Play play, Card drawn, boolean isCardCorrect) {
         this.playerHand = playerHand;
@@ -38,7 +37,4 @@ public class PlayReport {
         return isCardCorrect;
     }
 
-    public boolean isWaiting() {
-        return waiting;
-    }
 }
