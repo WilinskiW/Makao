@@ -1,4 +1,5 @@
 package com.wwil.makao.backend;
+
 import com.wwil.makao.backend.cardComponents.Card;
 import com.wwil.makao.backend.cardComponents.CardFactory;
 import com.wwil.makao.backend.cardComponents.Rank;
@@ -16,13 +17,14 @@ public class MakaoBackend {
     private int currentPlayerIndex = 0;
     private RoundReport roundReport;
 
-//fixme specjalne umiejetnosci
+    //fixme specjalne umiejetnosci
     //Przygotowanie backendu:
     public MakaoBackend() {
         createCardsToGameDeck();
         stack.addCardToStack(takeCardFromGameDeck());
         createPlayers();
     }
+
     private void createCardsToGameDeck() {
         List<Card> cards = new CardFactory().createCards();
         Collections.shuffle(cards);
@@ -39,6 +41,7 @@ public class MakaoBackend {
             players.add(playerHand);
         }
     }
+
     private List<Card> giveCards(int amount) {
         List<Card> cards = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
@@ -46,11 +49,19 @@ public class MakaoBackend {
         }
         return cards;
     }
-    ////
-    //Jedyna publiczna metoda (zbiera informacje i wysyła)
 
+    //////
+    //////////// Logika:
+    //Jedyna publiczna metoda (odbiera informacje, wykonuje działanie i wysyła)
     public RoundReport executeAction(Play humanPlay) {
         roundReport = new RoundReport();
+        //Opcja, gdy gracz jeszcze nie polozyl karty
+        if (!humanPlay.isDropped() && !humanPlay.wantsToDraw()) {
+            boolean isCardCorrect = isCorrectCard(humanPlay.getCardPlayed());
+            roundReport.addPlay(new PlayReport(currentPlayer(), humanPlay, null, isCardCorrect));
+            roundReport.setIncorrect();
+            return roundReport;
+        }
 
         if (!humanPlay.wantsToDraw() && !isCorrectCard(humanPlay.getCardPlayed())) {
             roundReport.setIncorrect();
@@ -61,12 +72,8 @@ public class MakaoBackend {
         return roundReport;
     }
 
-    private boolean compareCards(Card card1, Card card2) {
-        return card1.getSuit() == card2.getSuit() || card1.getRank() == card2.getRank();
-    }
-
     private boolean isCorrectCard(Card chosenCard) {
-        Card stackCard = peekCardFromStack();
+        Card stackCard = stack.peekCard();
         if (stackCard.getRank().equals(Rank.Q) || chosenCard.getRank().equals(Rank.Q)
             /*|| chosenCard.getRank().name().equals("JOKER")*/) {
             return true;
@@ -75,10 +82,8 @@ public class MakaoBackend {
         return compareCards(chosenCard, stackCard);
     }
 
-    private Card peekCardFromStack() {
-        List<Card> stackCards = stack.getCards();
-        int lastIndexOfStack = stackCards.size() - 1;
-        return stack.getCards().get(lastIndexOfStack);
+    private boolean compareCards(Card card1, Card card2) {
+        return card1.getSuit() == card2.getSuit() || card1.getRank() == card2.getRank();
     }
 
     private void playRound(Play humanPlay) {
@@ -91,23 +96,23 @@ public class MakaoBackend {
     }
 
     private PlayReport executePlay(Play play) {
-        if(play.wantsToDraw()) {
+        if (play.wantsToDraw()) {
             Card drawn = takeCardFromGameDeck();
             players.get(currentPlayerIndex).addCardToHand(drawn);
-            return new PlayReport(currentPlayer(), null, drawn);
+            return new PlayReport(currentPlayer(), play, drawn, false);
         }
         putCard(play.getCardPlayed());
-        return new PlayReport(currentPlayer(), play.getCardPlayed(),null);
+        return new PlayReport(currentPlayer(), play, null, true);
     }
 
-    private void nextPlayer(){
+    private void nextPlayer() {
         currentPlayerIndex++;
         if (currentPlayerIndex == AMOUNT_OF_PLAYERS) {
             currentPlayerIndex = 0;
         }
     }
 
-    private void putCard(Card cardPlayed){
+    private void putCard(Card cardPlayed) {
         useCardAbility(cardPlayed);
         getStack().addCardToStack(cardPlayed);
         currentPlayer().removeCardFromHand(cardPlayed);
@@ -117,10 +122,10 @@ public class MakaoBackend {
         PlayerHand playerHand = currentPlayer();
         for (Card card : playerHand.getCards()) {
             if (isCorrectCard(card)) {
-                return new Play(card, false);
+                return new Play(card, false, true);
             }
         }
-        return new Play(null, true);
+        return new Play(null, true, false);
     }
 
 
@@ -169,6 +174,7 @@ public class MakaoBackend {
                 usePlusFiveAbilityToPreviousPlayer();
         }
     }
+
     private void usePlusFiveAbilityToPreviousPlayer() {
         int lastIndex = players.size() - 1;
         if (currentPlayerIndex != 0) {

@@ -23,7 +23,7 @@ public class DragAndDropManager {
         @Override
         public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) { // SOURCE - CARD
             CardActor chosenCardActor = (CardActor) source.getActor();
-            //gameController.executeDragAction(chosenCardActor);
+            gameController.executeHumanAction(chosenCardActor, false);
             return true;
         }
 
@@ -36,7 +36,7 @@ public class DragAndDropManager {
         @Override
         public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
             CardActor chosenCardActor = (CardActor) source.getActor();
-            gameController.executeHumanAction(chosenCardActor);
+            gameController.executeHumanAction(chosenCardActor, true);
         }
     };
 }

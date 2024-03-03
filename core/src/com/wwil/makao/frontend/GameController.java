@@ -29,6 +29,7 @@ public class GameController {
     private final DragAndDropManager dragAndDropManager = new DragAndDropManager(this);
     private final Stage stage;
     private boolean inputBlockActive = false;
+    //fixme Znaleźć błąd: Cannot read field "parent" because "actor" is null.
 
     //Frontend może jedynie odczytywać. Jedynie może wykonywać w executeDropAction
     //Zrobic zeby dzialalo
@@ -37,38 +38,31 @@ public class GameController {
         this.stage = gameplayScreen.getStage();
     }
 //Skupic się na jednej metodzie. (Rozbudowac inne)
+public void executeHumanAction(CardActor cardPlayed, boolean isDropped) {
+    RoundReport report;
+    PlayerHandGroup human = handGroups.get(0);
 
-    public void executeHumanAction(CardActor cardPlayed) {
-        RoundReport report;
-        PlayerHandGroup human = handGroups.get(0);
-
-        if (pullButtonActor.isClick()) {
-            report = backend.executeAction(new Play(null, true));
-            pullCard(report.getPlays().get(0).getDrawn(), human);
-        } else {
-            report = backend.executeAction(new Play(cardPlayed.getCard(), false));
-            putCard(cardPlayed, human);
+    if (pullButtonActor.isClick()) {
+        report = handlePullButtonAction(isDropped, human);
+    }
+    else {
+        if (!isDropped) {
+            report = handleDragAction(cardPlayed);
         }
-
-        if (report.isCorrect()) { //sprawdza czy wykonano poprawny ruch
-            executeComputersTurn(report);
-        } else {
-            positionCardInGroup(human, cardPlayed);
+        else {
+            report = handleCardDropAction(cardPlayed, human);
         }
     }
 
-
-    private void putCard(CardActor cardToPlay, PlayerHandGroup player) {
-        addCardActorToStackGroup(cardToPlay); //polozyc aktora
-        endIfPlayerWon(player);
-        player.moveCloserToStartingPosition(); //autowyrównanie
+    if (report.isCorrect()) {
+        executeComputersTurn(report);
     }
+}
 
-    private void endIfPlayerWon(PlayerHandGroup playerHandGroup) {
-        if (playerHandGroup.getPlayerHand().getCards().isEmpty()) {
-            System.out.println("Ktos wygral");
-            Gdx.app.exit();
-        }
+    private RoundReport handlePullButtonAction(boolean isDropped, PlayerHandGroup human) {
+        RoundReport report = backend.executeAction(new Play(null, true, isDropped));
+        pullCard(report.getPlays().get(0).getDrawn(), human);
+        return report;
     }
 
     private void pullCard(Card card, PlayerHandGroup player) {
@@ -80,21 +74,56 @@ public class GameController {
         player.addActor(drawnCard);
     }
 
+    private RoundReport handleDragAction(CardActor cardPlayed) {
+        RoundReport report = backend.executeAction(new Play(cardPlayed.getCard(), false, false));
+        changeCardColor(report.getPlays().get(0).isCardCorrect(), cardPlayed);
+        return report;
+    }
+
+    public void changeCardColor(boolean isCardCorrect, CardActor chosenCardActor) {
+        if (isCardCorrect) {
+            chosenCardActor.setColor(Color.LIME);
+        } else {
+            chosenCardActor.setColor(Color.SCARLET);
+        }
+    }
+
+    private RoundReport handleCardDropAction(CardActor cardPlayed, PlayerHandGroup human) {
+        RoundReport report = backend.executeAction(new Play(cardPlayed.getCard(), false, true));
+        if (report.isCorrect()) {
+            putCard(cardPlayed, human);
+        } else {
+            positionCardInGroup(human, cardPlayed);
+        }
+        return report;
+    }
+
+    private void putCard(CardActor cardToPlay, PlayerHandGroup player) {
+        addCardActorToStackGroup(cardToPlay); //polozyc aktora
+        endIfPlayerWon(player);
+        player.moveCloserToStartingPosition(); //autowyrównanie
+    }
+
     public void addCardActorToStackGroup(CardActor cardActor) {
         stage.addActor(cardActor);
         cardActor.setUpSideDown(false);
         stackCardsGroup.addActor(cardActor);
     }
 
-//todo Zmiana koloru przy Drag
+    private void endIfPlayerWon(PlayerHandGroup playerHandGroup) {
+        if (playerHandGroup.getPlayerHand().getCards().isEmpty()) {
+            System.out.println("Ktos wygral");
+            Gdx.app.exit();
+        }
+    }
 
-//    public void executeDragAction(CardActor chosenCardActor) {
-//        if (isCardActorCorrect(chosenCardActor)) {
-//            chosenCardActor.setColor(Color.LIME);
-//        } else {
-//            chosenCardActor.setColor(Color.SCARLET);
-//        }
-//    }
+    private void positionCardInGroup(PlayerHandGroup human, CardActor chosenCard) {
+        if (!human.getChildren().isEmpty()) {
+            chosenCard.beLastInGroup();
+        } else {
+            moveCardBackToHumanGroup(human, chosenCard);
+        }
+    }
 
     private void moveCardBackToHumanGroup(PlayerHandGroup humanGroup, CardActor card) {
         humanGroup.addActor(card);
@@ -103,11 +132,12 @@ public class GameController {
         card.setZIndex((int) card.getLastPositionBeforeRemove().z);
     }
 
-    private void positionCardInGroup(PlayerHandGroup human, CardActor chosenCard) {
-        if (!human.getChildren().isEmpty()) {
-            chosenCard.beLastInGroup();
+    public void executeDragStop(CardActor card) {
+        PlayerHandGroup humanGroup = handGroups.get(0);
+        if (!humanGroup.getChildren().isEmpty()) {
+            card.beLastInGroup();
         } else {
-            moveCardBackToHumanGroup(human, chosenCard);
+            moveCardBackToHumanGroup(humanGroup, card);
         }
     }
 
@@ -126,8 +156,8 @@ public class GameController {
                 @Override
                 public void run() {
                     if (!currentPlay.isWaiting()) {
-                        if (currentPlay.getPlayed() != null) {
-                            CardActor cardToPlay = currentHandGroup.findCardActor(currentPlay.getPlayed());
+                        if (currentPlay.getPlay().getCardPlayed() != null) {
+                            CardActor cardToPlay = currentHandGroup.findCardActor(currentPlay.getPlay().getCardPlayed());
                             putCard(cardToPlay, currentHandGroup);
                         } else {
                             CardActor drawnCard = cardActorFactory.createCardActor(currentPlay.getDrawn());
@@ -143,15 +173,6 @@ public class GameController {
         setInputBlockActive(false);
         pullButtonActor.changeTransparency(1);
         Gdx.input.setInputProcessor(gameplayScreen.getStage());
-    }
-
-    public void executeDragStop(CardActor card) {
-        PlayerHandGroup humanGroup = handGroups.get(0);
-        if (!humanGroup.getChildren().isEmpty()) {
-            card.beLastInGroup();
-        } else {
-            moveCardBackToHumanGroup(humanGroup, card);
-        }
     }
 
     public PlayerHandGroup getHumanHand() {

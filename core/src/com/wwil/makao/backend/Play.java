@@ -5,10 +5,16 @@ import com.wwil.makao.backend.cardComponents.Card;
 public class Play {
     private Card cardPlayed;
     private boolean draw;
+    private boolean dropped;
 
-    public Play(Card cardPlayed, boolean draw) {
+    public Play(Card cardPlayed, boolean draw, boolean dropped) {
         this.cardPlayed = cardPlayed;
         this.draw = draw;
+        this.dropped = dropped;
+    }
+
+    public boolean isDropped() {
+        return dropped;
     }
 
     public Card getCardPlayed() {

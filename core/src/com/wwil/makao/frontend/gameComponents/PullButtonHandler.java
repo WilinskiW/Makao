@@ -25,8 +25,8 @@ public class PullButtonHandler extends InputListener {
     private void performPullButtonClick() {
         pullButtonActor.setClick(true);
         pullButtonActor.changeTransparency(0.5f);
-        controller.turnOffHumanInput();
-        controller.executeHumanAction(null);
+        //controller.turnOffHumanInput();
+        controller.executeHumanAction(null,false);
         performButtonAnimation();
     }
 
