@@ -1,4 +1,4 @@
-package com.wwil.makao.backend.cardComponents;
+package com.wwil.makao.backend;
 
 import java.util.ArrayList;
 import java.util.List;

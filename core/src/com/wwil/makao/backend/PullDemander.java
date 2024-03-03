@@ -1,7 +1,5 @@
 package com.wwil.makao.backend;
 
-import com.wwil.makao.backend.cardComponents.Card;
-
 import java.util.List;
 
 public class PullDemander {

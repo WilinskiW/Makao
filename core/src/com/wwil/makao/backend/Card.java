@@ -1,4 +1,4 @@
-package com.wwil.makao.backend.cardComponents;
+package com.wwil.makao.backend;
 
 public class Card {
     private final Rank rank;

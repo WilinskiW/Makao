@@ -4,9 +4,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
-import com.wwil.makao.frontend.gameComponents.CardActor;
-import com.wwil.makao.frontend.gameComponents.StackCardsGroup;
-import com.wwil.makao.frontend.parameters.GUIparams;
 
 public class DragAndDropManager {
     private final GameController gameController;

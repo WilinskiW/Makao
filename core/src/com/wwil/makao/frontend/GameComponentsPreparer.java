@@ -1,13 +1,7 @@
 package com.wwil.makao.frontend;
 
 import com.wwil.makao.backend.MakaoBackend;
-import com.wwil.makao.backend.cardComponents.Card;
-import com.wwil.makao.frontend.gameComponents.CardActor;
-import com.wwil.makao.frontend.gameComponents.PlayerHandGroup;
-import com.wwil.makao.frontend.gameComponents.PullButtonActor;
-import com.wwil.makao.frontend.gameComponents.PullButtonHandler;
-import com.wwil.makao.frontend.parameters.CardsAlignmentParams;
-import com.wwil.makao.frontend.parameters.GUIparams;
+import com.wwil.makao.backend.Card;
 
 import java.util.List;
 

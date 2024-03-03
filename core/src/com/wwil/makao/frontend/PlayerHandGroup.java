@@ -1,11 +1,9 @@
-package com.wwil.makao.frontend.gameComponents;
+package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.wwil.makao.backend.PlayerHand;
-import com.wwil.makao.backend.cardComponents.Card;
-import com.wwil.makao.frontend.parameters.CardsAlignmentParams;
-import com.wwil.makao.frontend.parameters.GUIparams;
+import com.wwil.makao.backend.Card;
 
 import java.util.ArrayList;
 import java.util.List;

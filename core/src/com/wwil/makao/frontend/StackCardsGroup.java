@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend.gameComponents;
+package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;

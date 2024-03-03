@@ -1,9 +1,8 @@
-package com.wwil.makao.frontend.gameComponents;
+package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.Timer;
-import com.wwil.makao.frontend.GameController;
 
 public class PullButtonHandler extends InputListener {
     private final PullButtonActor pullButtonActor;

@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend.gameComponents;
+package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -6,8 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.wwil.makao.backend.cardComponents.Card;
-import com.wwil.makao.frontend.parameters.GUIparams;
+import com.wwil.makao.backend.Card;
 
 import java.util.List;
 

@@ -1,9 +1,5 @@
 package com.wwil.makao.backend;
 
-import com.wwil.makao.backend.cardComponents.Card;
-import com.wwil.makao.backend.cardComponents.CardFactory;
-import com.wwil.makao.backend.cardComponents.Rank;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

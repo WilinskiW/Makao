@@ -1,6 +1,5 @@
 package com.wwil.makao.backend;
 
-import com.wwil.makao.backend.cardComponents.Card;
 //Raport karty, którą zagrał gracz lub dobrania
 public class PlayReport {
     private final PlayerHand playerHand;
