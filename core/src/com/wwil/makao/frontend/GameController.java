@@ -13,6 +13,7 @@ import com.wwil.makao.frontend.gameComponents.PullButtonActor;
 import com.wwil.makao.frontend.gameComponents.StackCardsGroup;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 //Komunikacja miedzy backendem a frontendem
 public class GameController {
@@ -159,22 +160,23 @@ public class GameController {
         float delta = 1.5f;
         for (int i = 1; i < handGroups.size(); i++) {
             final PlayerHandGroup currentHandGroup = handGroups.get(i);
-            final PlayReport currentPlay = roundReport.getPlayReports().get(i);
+            final PlayReport currentPlayReport = roundReport.getPlayReports().get(i);
 
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
                     //Stwórz kart aktorów z pull request
-                    pullDemandedCards(currentPlay);
-
-                    if (currentPlay.getPlay().getCardPlayed() != null) {
-                        CardActor cardToPlay = currentHandGroup.findCardActor(currentPlay.getPlay().getCardPlayed());
-                        putCard(cardToPlay, currentHandGroup);
-                    } else {
-                        CardActor drawnCard = cardActorFactory.createCardActor(currentPlay.getDrawn());
-                        currentHandGroup.addActor(drawnCard);
+                    pullDemandedCards(currentPlayReport);
+                    if(!currentPlayReport.getPlayerHand().isWaiting()) {
+                        Card cardToPlay = currentPlayReport.getPlay().getCardPlayed();
+                        if (cardToPlay != null) {
+                            putCard(currentHandGroup.findCardActor(cardToPlay), currentHandGroup);
+                        } else {
+                            CardActor drawnCard = cardActorFactory.createCardActor(currentPlayReport.getDrawn());
+                            currentHandGroup.addActor(drawnCard);
+                        }
                     }
-
+                    currentPlayReport.getPlayerHand().setWaiting(false);
                 }
             }, i * delta); // Opóźnienie względem indeksu
         }
