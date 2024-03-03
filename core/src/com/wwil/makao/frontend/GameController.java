@@ -5,16 +5,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Timer;
-import com.wwil.makao.backend.MakaoBackend;
-import com.wwil.makao.backend.Play;
-import com.wwil.makao.backend.PlayReport;
-import com.wwil.makao.backend.RoundReport;
+import com.wwil.makao.backend.*;
 import com.wwil.makao.backend.cardComponents.Card;
 import com.wwil.makao.frontend.gameComponents.CardActor;
 import com.wwil.makao.frontend.gameComponents.PlayerHandGroup;
 import com.wwil.makao.frontend.gameComponents.PullButtonActor;
 import com.wwil.makao.frontend.gameComponents.StackCardsGroup;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +25,6 @@ public class GameController {
     private final DragAndDropManager dragAndDropManager = new DragAndDropManager(this);
     private final Stage stage;
     private boolean inputBlockActive = false;
-    //fixme Znaleźć błąd: Cannot read field "parent" because "actor" is null.
 
     //Frontend może jedynie odczytywać. Jedynie może wykonywać w executeDropAction
     //Zrobic zeby dzialalo
@@ -37,31 +32,31 @@ public class GameController {
         this.gameplayScreen = gameplayScreen;
         this.stage = gameplayScreen.getStage();
     }
-//Skupic się na jednej metodzie. (Rozbudowac inne)
-public void executeHumanAction(CardActor cardPlayed, boolean isDropped) {
-    RoundReport report;
-    PlayerHandGroup human = handGroups.get(0);
 
-    if (pullButtonActor.isClick()) {
-        report = handlePullButtonAction(isDropped, human);
-    }
-    else {
-        if (!isDropped) {
-            report = handleDragAction(cardPlayed);
-        }
-        else {
-            report = handleCardDropAction(cardPlayed, human);
-        }
-    }
+    //Skupic się na jednej metodzie. (Rozbudowac inne)
+    public void executeHumanAction(CardActor cardPlayed, boolean isDropped) {
+        RoundReport report;
+        PlayerHandGroup human = handGroups.get(0);
 
-    if (report.isCorrect()) {
-        executeComputersTurn(report);
+        if (pullButtonActor.isClick()) {
+            report = handlePullButtonAction(isDropped, human);
+        } else {
+            if (isDropped) {
+                report = handleCardDropAction(cardPlayed, human);
+            } else {
+                report = handleDragAction(cardPlayed);
+            }
+        }
+
+        if (report.isCorrect()) {
+            pullDemandedCards(report.getPlayReports().get(0));
+            executeComputersTurn(report);
+        }
     }
-}
 
     private RoundReport handlePullButtonAction(boolean isDropped, PlayerHandGroup human) {
         RoundReport report = backend.executeAction(new Play(null, true, isDropped));
-        pullCard(report.getPlays().get(0).getDrawn(), human);
+        pullCard(report.getPlayReports().get(0).getDrawn(), human);
         return report;
     }
 
@@ -76,7 +71,7 @@ public void executeHumanAction(CardActor cardPlayed, boolean isDropped) {
 
     private RoundReport handleDragAction(CardActor cardPlayed) {
         RoundReport report = backend.executeAction(new Play(cardPlayed.getCard(), false, false));
-        changeCardColor(report.getPlays().get(0).isCardCorrect(), cardPlayed);
+        changeCardColor(report.getPlayReports().get(0).isCardCorrect(), cardPlayed);
         return report;
     }
 
@@ -98,6 +93,7 @@ public void executeHumanAction(CardActor cardPlayed, boolean isDropped) {
         return report;
     }
 
+
     private void putCard(CardActor cardToPlay, PlayerHandGroup player) {
         addCardActorToStackGroup(cardToPlay); //polozyc aktora
         endIfPlayerWon(player);
@@ -111,7 +107,7 @@ public void executeHumanAction(CardActor cardPlayed, boolean isDropped) {
     }
 
     private void endIfPlayerWon(PlayerHandGroup playerHandGroup) {
-        if (playerHandGroup.getPlayerHand().getCards().isEmpty()) {
+        if (playerHandGroup.getPlayerHand().checkIfPlayerHaveNoCards()) {
             System.out.println("Ktos wygral");
             Gdx.app.exit();
         }
@@ -132,6 +128,19 @@ public void executeHumanAction(CardActor cardPlayed, boolean isDropped) {
         card.setZIndex((int) card.getLastPositionBeforeRemove().z);
     }
 
+    private void pullDemandedCards(PlayReport playReport) {
+        PullDemander pullDemander = playReport.getPullRequest();
+        if (pullDemander != null) {
+            pullCards(pullDemander.getCards(), handGroups.get(pullDemander.getPerformerIndex()));
+        }
+    }
+
+    private void pullCards(List<Card> cards, PlayerHandGroup player) {
+        for (Card card : cards) {
+            pullCard(card, player);
+        }
+    }
+
     public void executeDragStop(CardActor card) {
         PlayerHandGroup humanGroup = handGroups.get(0);
         if (!humanGroup.getChildren().isEmpty()) {
@@ -150,20 +159,22 @@ public void executeHumanAction(CardActor cardPlayed, boolean isDropped) {
         float delta = 1.5f;
         for (int i = 1; i < handGroups.size(); i++) {
             final PlayerHandGroup currentHandGroup = handGroups.get(i);
-            final PlayReport currentPlay = roundReport.getPlays().get(i);
+            final PlayReport currentPlay = roundReport.getPlayReports().get(i);
 
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
-                    if (!currentPlay.isWaiting()) {
-                        if (currentPlay.getPlay().getCardPlayed() != null) {
-                            CardActor cardToPlay = currentHandGroup.findCardActor(currentPlay.getPlay().getCardPlayed());
-                            putCard(cardToPlay, currentHandGroup);
-                        } else {
-                            CardActor drawnCard = cardActorFactory.createCardActor(currentPlay.getDrawn());
-                            currentHandGroup.addActor(drawnCard);
-                        }
+                    //Stwórz kart aktorów z pull request
+                    pullDemandedCards(currentPlay);
+
+                    if (currentPlay.getPlay().getCardPlayed() != null) {
+                        CardActor cardToPlay = currentHandGroup.findCardActor(currentPlay.getPlay().getCardPlayed());
+                        putCard(cardToPlay, currentHandGroup);
+                    } else {
+                        CardActor drawnCard = cardActorFactory.createCardActor(currentPlay.getDrawn());
+                        currentHandGroup.addActor(drawnCard);
                     }
+
                 }
             }, i * delta); // Opóźnienie względem indeksu
         }

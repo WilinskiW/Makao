@@ -3,9 +3,9 @@ package com.wwil.makao.backend;
 import com.wwil.makao.backend.cardComponents.Card;
 //Informacje jakie przekazuje frontend -> backendowi
 public class Play {
-    private Card cardPlayed;
-    private boolean draw;
-    private boolean dropped;
+    private final Card cardPlayed;
+    private final boolean draw;
+    private final boolean dropped;
 
     public Play(Card cardPlayed, boolean draw, boolean dropped) {
         this.cardPlayed = cardPlayed;

@@ -57,8 +57,8 @@ public class MakaoBackend {
         roundReport = new RoundReport();
         //Opcja, gdy gracz jeszcze nie polozyl karty
         if (!humanPlay.isDropped() && !humanPlay.wantsToDraw()) {
-            boolean isCardCorrect = isCorrectCard(humanPlay.getCardPlayed());
-            roundReport.addPlay(new PlayReport(currentPlayer(), humanPlay, null, isCardCorrect));
+            roundReport.addPlay(new PlayReport(currentPlayer(),
+                    null, humanPlay, null, isCorrectCard(humanPlay.getCardPlayed())));
             roundReport.setIncorrect();
             return roundReport;
         }
@@ -99,10 +99,10 @@ public class MakaoBackend {
         if (play.wantsToDraw()) {
             Card drawn = takeCardFromGameDeck();
             players.get(currentPlayerIndex).addCardToHand(drawn);
-            return new PlayReport(currentPlayer(), play, drawn, false);
+            return new PlayReport(currentPlayer(), null, play, drawn, false);
         }
-        putCard(play.getCardPlayed());
-        return new PlayReport(currentPlayer(), play, null, true);
+        PullDemander pullDemander = putCard(play.getCardPlayed());
+        return new PlayReport(currentPlayer(), pullDemander, play, null, true);
     }
 
     private void nextPlayer() {
@@ -112,10 +112,11 @@ public class MakaoBackend {
         }
     }
 
-    private void putCard(Card cardPlayed) {
-        useCardAbility(cardPlayed);
+    private PullDemander putCard(Card cardPlayed) {
+        PullDemander pullDemander = useCardAbility(cardPlayed);
         getStack().addCardToStack(cardPlayed);
         currentPlayer().removeCardFromHand(cardPlayed);
+        return pullDemander;
     }
 
     private Play executeComputerPlay() {
@@ -129,58 +130,67 @@ public class MakaoBackend {
     }
 
 
-    private void useCardAbility(Card card) {
+    private PullDemander useCardAbility(Card card) {
+        PullDemander pullDemander = null;
         switch (card.getRank()) {
             case TWO:
-                usePlusAbility(2);
+                pullDemander = usePlusAbility(2);
                 break;
             case THREE:
-                usePlusAbility(3);
+                pullDemander = usePlusAbility(3);
                 break;
             case FOUR:
                 useFourAbility();
                 break;
             case K:
-                useKingAbility(card);
+                pullDemander = useKingAbility(card,pullDemander);
                 break;
         }
+        return pullDemander;
     }
 
 
-    private void usePlusAbility(int amountOfCards) {
+    private PullDemander usePlusAbility(int amountOfCards) {
         int lastIndex = players.size() - 1;
+        List<Card> pulledCards = giveCards(amountOfCards);
         if (currentPlayerIndex != lastIndex) {
-            players.get(currentPlayerIndex + 1).addCardsToHand(giveCards(amountOfCards));
+            players.get(currentPlayerIndex + 1).addCardsToHand(pulledCards);
+            return new PullDemander(currentPlayerIndex+1, pulledCards);
         } else {
-            players.get(0).addCardsToHand(giveCards(amountOfCards));
+            players.get(0).addCardsToHand(pulledCards);
+            return new PullDemander(0, pulledCards);
         }
     }
 
     private void useFourAbility() {
         int lastIndex = players.size() - 1;
-        if (lastIndex != currentPlayerIndex) {
+        if (currentPlayerIndex != lastIndex) {
             players.get(currentPlayerIndex + 1).setWaiting(true);
         } else {
             players.get(0).setWaiting(true);
         }
     }
 
-    private void useKingAbility(Card card) {
+    private PullDemander useKingAbility(Card card, PullDemander pullDemander) {
         switch (card.getSuit()) {
             case HEART:
-                usePlusAbility(5);
+                pullDemander = usePlusAbility(5);
                 break;
             case SPADE:
-                usePlusFiveAbilityToPreviousPlayer();
+                pullDemander = usePlusFiveAbilityToPreviousPlayer();
         }
+        return pullDemander;
     }
 
-    private void usePlusFiveAbilityToPreviousPlayer() {
+    private PullDemander usePlusFiveAbilityToPreviousPlayer() {
         int lastIndex = players.size() - 1;
+        List<Card> pulledCards = giveCards(5);
         if (currentPlayerIndex != 0) {
-            players.get(currentPlayerIndex - 1).addCardsToHand(giveCards(5));
+            players.get(currentPlayerIndex - 1).addCardsToHand(pulledCards);
+            return new PullDemander(currentPlayerIndex - 1,pulledCards);
         } else {
-            players.get(lastIndex).addCardsToHand(giveCards(5));
+            players.get(lastIndex).addCardsToHand(pulledCards);
+            return new PullDemander(0,pulledCards);
         }
     }
 

@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 //Zebranie wszystkich ruchów graczy w jeden obiekt
 public class RoundReport {
-    private boolean correct = true; //czy położono dobrą karte
-    private final List<PlayReport> plays = new ArrayList<>();
+    private boolean correct = true;
+    private final List<PlayReport> playReports = new ArrayList<>();
 
     public void addPlay(PlayReport playReport) {
-        plays.add(playReport);
+        playReports.add(playReport);
     }
 
-    public List<PlayReport> getPlays() {
-        return plays;
+    public List<PlayReport> getPlayReports() {
+        return playReports;
     }
 
     public void setIncorrect() {
