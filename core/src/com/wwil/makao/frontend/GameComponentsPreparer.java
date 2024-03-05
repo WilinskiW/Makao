@@ -1,7 +1,10 @@
 package com.wwil.makao.frontend;
 
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.wwil.makao.backend.MakaoBackend;
 import com.wwil.makao.backend.Card;
+import com.wwil.makao.frontend.cardChooserWindow.ArrowButtonActor;
+import com.wwil.makao.frontend.cardChooserWindow.CardChooserWindow;
 
 import java.util.List;
 
@@ -12,24 +15,41 @@ public class GameComponentsPreparer {
     private final MakaoBackend backend;
     private final List<PlayerHandGroup> handGroups;
     private final CardActorFactory cardActorFactory;
+    private final Stage stage;
 
-    public GameComponentsPreparer(GameplayScreen gameplayScreen, GameController controller) {
+    public GameComponentsPreparer(GameplayScreen gameplayScreen, GameController controller, Stage stage) {
         this.gameplayScreen = gameplayScreen;
         this.controller = controller;
         this.backend = controller.getBackend();
         this.handGroups = controller.getHandGroups();
         this.cardActorFactory = controller.getCardActorFactory();
+        this.stage = stage;
     }
 
     public void prepare() {
         prepareStackCardsGroup();
         preparePullButton();
         prepareHandGroups();
+        showCardChooserWindow();
+    }
+    //todo tylko do testów
+    private void showCardChooserWindow(){
+        CardChooserWindow chooserWindow = new CardChooserWindow(controller);
+        stage.addActor(chooserWindow);
+        chooserWindow.setPosition(GUIparams.CHOOSER_WINDOW_X_POS,GUIparams.CHOOSER_WINDOW_Y_POS);
+
+        for(ArrowButtonActor button : chooserWindow.getButtons()){
+            button.setZIndex(3);
+            stage.addActor(button);
+            button.setRotation(button.getType().getRotation());
+        }
+        stage.addActor(chooserWindow.getCardActor());
+        //chooserWindow.show(true);
     }
 
     private void prepareStackCardsGroup() {
         controller.addCardActorToStackGroup(createStartingCardActorForStackGroup());
-        gameplayScreen.getStage().addActor(controller.getStackCardsGroup());
+        stage.addActor(controller.getStackCardsGroup());
         controller.getStackCardsGroup().setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
     }
 
@@ -40,7 +60,7 @@ public class GameComponentsPreparer {
     private void preparePullButton() {
         PullButtonActor pullButton = new PullButtonActor();
         pullButton.addListener(new PullButtonHandler(pullButton, controller));
-        gameplayScreen.getStage().addActor(pullButton);
+        stage.addActor(pullButton);
         pullButton.setPosition(GUIparams.WIDTH / 2f - 300, GUIparams.HEIGHT / 2f - 100);
         controller.setPullButtonActor(pullButton);
     }
@@ -82,7 +102,7 @@ public class GameComponentsPreparer {
 
     private void positionHandGroupsOnStage() {
         for (PlayerHandGroup handGroup : controller.getHandGroups()) {
-            gameplayScreen.getStage().addActor(handGroup);
+            stage.addActor(handGroup);
         }
         setRotationOfHandGroups();
         setPositionOfHandGroups();

@@ -3,6 +3,7 @@ package com.wwil.makao.frontend;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -11,9 +12,9 @@ import com.wwil.makao.backend.Card;
 import java.util.List;
 
 public class CardActor extends Actor { //todo klasa z logiką i grafiką
-    private final Card card;
+    private Card card;
     private final TextureRegion frontSide;
-    private final TextureRegion backSide;
+    private TextureRegion backSide;
     private boolean isUpSideDown = GUIparams.HIDE_COMPUTER_CARD;
     private Group lastParent;
     private Vector3 lastPositionBeforeRemove = null;
@@ -25,17 +26,23 @@ public class CardActor extends Actor { //todo klasa z logiką i grafiką
         setBounds(0, 0, GUIparams.CARD_WIDTH, GUIparams.CARD_HEIGHT);
     }
 
+    public CardActor(TextureRegion frontSide) {
+        this.frontSide = frontSide;
+        setBounds(0, 0, GUIparams.CARD_WIDTH, GUIparams.CARD_HEIGHT);
+    }
+
     @Override
     public void draw(Batch batch, float parentAlpha) {
         Color color = getColor();
         batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
 
         TextureRegion currentCardSide;
-        if (isUpSideDown) {
+        if (backSide != null && isUpSideDown) {
             currentCardSide = backSide;
         } else {
             currentCardSide = frontSide;
         }
+
 
         batch.draw(currentCardSide, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(),
                 getScaleX(), getScaleY(), getRotation(), true);
