@@ -11,13 +11,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.wwil.makao.frontend.GUIparams;
 
 public class PutButtonActor extends Actor {
-    private final CardChooserWindow cardChooserWindow;
+    private final CardChooserManager manager;
     private final CardChooserButtonParams type;
     private final TextureRegion texture;
 
 
-    public PutButtonActor(CardChooserWindow cardChooserWindow) {
-        this.cardChooserWindow = cardChooserWindow;
+    public PutButtonActor(CardChooserManager manager) {
+        this.manager = manager;
         this.type = CardChooserButtonParams.PUT;
         this.texture = new TextureRegion(new Texture(Gdx.files.internal("buttons/Put.png")));
         setBounds(type.getPosX(), type.getPosY(), type.getWidth(), type.getHeight());

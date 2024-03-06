@@ -1,24 +1,24 @@
 package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Timer;
 
-public class PullButtonHandler extends InputListener {
+public class PullButtonManager extends ClickListener {
     private final PullButtonActor pullButtonActor;
     private final GameController controller;
 
-    public PullButtonHandler(PullButtonActor pullButtonActor, GameController controller) {
+    public PullButtonManager(PullButtonActor pullButtonActor, GameController controller) {
         this.pullButtonActor = pullButtonActor;
         this.controller = controller;
     }
 
     @Override
-    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-        if(!controller.isInputBlockActive()){
+    public void clicked(InputEvent event, float x, float y) {
+        if(!controller.isInputBlockActive()) {
             performPullButtonClick();
         }
-        return super.touchDown(event, x, y, pointer, button);
+        super.clicked(event, x, y);
     }
 
     private void performPullButtonClick() {

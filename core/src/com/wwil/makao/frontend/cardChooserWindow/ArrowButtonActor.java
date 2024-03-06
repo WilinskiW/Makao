@@ -11,12 +11,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.wwil.makao.frontend.GUIparams;
 
 public class ArrowButtonActor extends Actor {
-    private final CardChooserWindow cardChooserWindow;
+    private final CardChooserManager chooserManager;
     private final CardChooserButtonParams type;
     private final TextureRegion texture;
 
-    public ArrowButtonActor(CardChooserWindow cardChooserWindow, CardChooserButtonParams type) {
-        this.cardChooserWindow = cardChooserWindow;
+    public ArrowButtonActor(CardChooserManager chooserManager, CardChooserButtonParams type) {
+        this.chooserManager = chooserManager;
         setBounds(type.getPosX(), type.getPosY(), type.getWidth(), type.getHeight());
         this.type = type;
         this.texture = new TextureRegion(new Texture(Gdx.files.internal("buttons/arrow.png")));
@@ -35,22 +35,20 @@ public class ArrowButtonActor extends Actor {
     private class ArrowListener extends ClickListener {
         @Override
         public void clicked(InputEvent event, float x, float y) {
-            //System.out.println(type.name()); //todo
             switch (type){
                 case UP_LEFT:
-                    cardChooserWindow.changeRank(-1);
+                    chooserManager.changeRank(-1);
                     break;
                 case UP_RIGHT:
-                    cardChooserWindow.changeRank(1);
+                    chooserManager.changeRank(1);
                     break;
                 case DOWN_LEFT:
-                    cardChooserWindow.changeSuit(-1);
+                    chooserManager.changeSuit(-1);
                     break;
                 case DOWN_RIGHT:
-                    cardChooserWindow.changeSuit(1);
+                    chooserManager.changeSuit(1);
                     break;
             }
-
             super.clicked(event, x, y);
         }
     }

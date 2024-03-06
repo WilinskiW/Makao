@@ -10,15 +10,13 @@ import java.util.List;
 
 //Przygotowanie elementów graficznych ekranu
 public class GameComponentsPreparer {
-    private final GameplayScreen gameplayScreen;
     private final GameController controller;
     private final MakaoBackend backend;
     private final List<PlayerHandGroup> handGroups;
     private final CardActorFactory cardActorFactory;
     private final Stage stage;
 
-    public GameComponentsPreparer(GameplayScreen gameplayScreen, GameController controller, Stage stage) {
-        this.gameplayScreen = gameplayScreen;
+    public GameComponentsPreparer(GameController controller, Stage stage) {
         this.controller = controller;
         this.backend = controller.getBackend();
         this.handGroups = controller.getHandGroups();
@@ -60,7 +58,7 @@ public class GameComponentsPreparer {
 
     private void preparePullButton() {
         PullButtonActor pullButton = new PullButtonActor();
-        pullButton.addListener(new PullButtonHandler(pullButton, controller));
+        pullButton.addListener(new PullButtonManager(pullButton, controller));
         stage.addActor(pullButton);
         pullButton.setPosition(GUIparams.WIDTH / 2f - 300, GUIparams.HEIGHT / 2f - 100);
         controller.setPullButtonActor(pullButton);

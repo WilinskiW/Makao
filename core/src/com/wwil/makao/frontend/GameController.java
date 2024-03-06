@@ -193,6 +193,10 @@ public class GameController {
         Gdx.input.setInputProcessor(gameplayScreen.getStage());
     }
 
+    public CardActor peekStackCardActor(){
+        return getStackCardsGroup().peekCardActor();
+    }
+
     public PlayerHandGroup getHumanHand() {
         return handGroups.get(0);
     }
