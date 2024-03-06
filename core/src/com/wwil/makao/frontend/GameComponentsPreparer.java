@@ -38,13 +38,14 @@ public class GameComponentsPreparer {
         stage.addActor(chooserWindow);
         chooserWindow.setPosition(GUIparams.CHOOSER_WINDOW_X_POS,GUIparams.CHOOSER_WINDOW_Y_POS);
 
-        for(ArrowButtonActor button : chooserWindow.getButtons()){
+        for(ArrowButtonActor button : chooserWindow.getArrowButtons()){
             button.setZIndex(3);
             stage.addActor(button);
             button.setRotation(button.getType().getRotation());
         }
-        stage.addActor(chooserWindow.getCardActor());
-        //chooserWindow.show(true);
+        stage.addActor(chooserWindow.getDisplayCard());
+        stage.addActor(chooserWindow.getPutButton());
+        chooserWindow.show(true);
     }
 
     private void prepareStackCardsGroup() {

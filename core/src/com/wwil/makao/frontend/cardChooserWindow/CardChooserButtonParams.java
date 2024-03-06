@@ -11,7 +11,7 @@ public enum CardChooserButtonParams {
             GUIparams.ARROW_BUTTON_WIDTH, GUIparams.ARROW_BUTTON_HEIGHT, 180),
     DOWN_RIGHT(GUIparams.CHOOSER_WINDOW_X_POS+242, GUIparams.CHOOSER_WINDOW_Y_POS+33,
             GUIparams.ARROW_BUTTON_WIDTH, GUIparams.ARROW_BUTTON_HEIGHT, 0),
-    PUT(GUIparams.PUT_X_POS,GUIparams.PUT_Y_POS,GUIparams.ARROW_BUTTON_WIDTH,GUIparams.ARROW_BUTTON_HEIGHT,0); //todo
+    PUT(GUIparams.PUT_X_POS,GUIparams.PUT_Y_POS,GUIparams.PUT_WIDTH,GUIparams.PUT_HEIGHT,0); //todo
     private final float posX;
     private final float posY;
     private final float width;

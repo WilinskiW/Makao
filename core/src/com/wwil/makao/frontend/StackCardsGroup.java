@@ -28,6 +28,10 @@ public class StackCardsGroup extends Group {
         super.addActor(actor);
     }
 
+    public CardActor peekCardActor(){
+        return (CardActor) getChildren().peek();
+    }
+
     private void dismantleCardActors(){
         for(int i = 0; i < getChildren().size-1; i++){
             CardActor cardActor = (CardActor) getChildren().removeIndex(i);

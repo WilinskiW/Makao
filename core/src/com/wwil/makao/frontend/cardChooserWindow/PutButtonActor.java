@@ -10,17 +10,18 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.wwil.makao.frontend.GUIparams;
 
-public class ArrowButtonActor extends Actor {
+public class PutButtonActor extends Actor {
     private final CardChooserWindow cardChooserWindow;
     private final CardChooserButtonParams type;
     private final TextureRegion texture;
 
-    public ArrowButtonActor(CardChooserWindow cardChooserWindow, CardChooserButtonParams type) {
+
+    public PutButtonActor(CardChooserWindow cardChooserWindow) {
         this.cardChooserWindow = cardChooserWindow;
+        this.type = CardChooserButtonParams.PUT;
+        this.texture = new TextureRegion(new Texture(Gdx.files.internal("buttons/Put.png")));
         setBounds(type.getPosX(), type.getPosY(), type.getWidth(), type.getHeight());
-        this.type = type;
-        this.texture = new TextureRegion(new Texture(Gdx.files.internal("buttons/arrow.png")));
-        addListener(new ArrowListener());
+        addListener(new PutListener());
     }
 
     @Override
@@ -28,35 +29,15 @@ public class ArrowButtonActor extends Actor {
         Color color = getColor();
         batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
         batch.draw(texture, type.getPosX(), type.getPosY(), getOriginX(), getOriginY(),
-                GUIparams.ARROW_BUTTON_WIDTH, GUIparams.ARROW_BUTTON_HEIGHT, getScaleX(), getScaleY(), type.getRotation());
+                GUIparams.PUT_WIDTH, GUIparams.PUT_HEIGHT, getScaleX(), getScaleY(), type.getRotation());
         batch.setColor(Color.WHITE);
     }
 
-    private class ArrowListener extends ClickListener {
+    private class PutListener extends ClickListener {
         @Override
         public void clicked(InputEvent event, float x, float y) {
-            //System.out.println(type.name()); //todo
-            switch (type){
-                case UP_LEFT:
-                    cardChooserWindow.changeRank(-1);
-                    break;
-                case UP_RIGHT:
-                    cardChooserWindow.changeRank(1);
-                    break;
-                case DOWN_LEFT:
-                    cardChooserWindow.changeSuit(-1);
-                    break;
-                case DOWN_RIGHT:
-                    cardChooserWindow.changeSuit(1);
-                    break;
-            }
-
+            System.out.println(type.name()); //todo
             super.clicked(event, x, y);
         }
     }
-
-    public CardChooserButtonParams getType() {
-        return type;
-    }
 }
-

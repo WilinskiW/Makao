@@ -13,15 +13,16 @@ import java.util.List;
 
 public class CardActor extends Actor { //todo klasa z logiką i grafiką
     private Card card;
-    private final TextureRegion frontSide;
+    private TextureRegion frontSide;
     private TextureRegion backSide;
-    private boolean isUpSideDown = GUIparams.HIDE_COMPUTER_CARD;
+    private boolean isUpSideDown;
     private Group lastParent;
     private Vector3 lastPositionBeforeRemove = null;
 
     public CardActor(List<TextureRegion> textureRegions, Card card) {
         this.frontSide = textureRegions.get(0);
         this.backSide = textureRegions.get(1);
+        this.isUpSideDown = GUIparams.HIDE_COMPUTER_CARD;
         this.card = card;
         setBounds(0, 0, GUIparams.CARD_WIDTH, GUIparams.CARD_HEIGHT);
     }
@@ -30,6 +31,7 @@ public class CardActor extends Actor { //todo klasa z logiką i grafiką
         this.frontSide = frontSide;
         setBounds(0, 0, GUIparams.CARD_WIDTH, GUIparams.CARD_HEIGHT);
     }
+
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
@@ -43,19 +45,31 @@ public class CardActor extends Actor { //todo klasa z logiką i grafiką
             currentCardSide = frontSide;
         }
 
-
         batch.draw(currentCardSide, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(),
                 getScaleX(), getScaleY(), getRotation(), true);
         batch.setColor(Color.WHITE);
+    }
+
+    public void changeFrontSide(TextureRegion textureRegion){
+        setFrontSide(textureRegion);
     }
 
     public void setUpSideDown(boolean upSideDown) {
         isUpSideDown = upSideDown;
     }
 
+    public void setFrontSide(TextureRegion frontSide) {
+        this.frontSide = frontSide;
+    }
+
     public Card getCard() {
         return card;
     }
+
+    public TextureRegion getFrontSide() {
+        return frontSide;
+    }
+
     public void saveGroup() {
         lastParent = getParent();
     }
