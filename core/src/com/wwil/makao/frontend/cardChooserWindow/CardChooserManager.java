@@ -15,7 +15,8 @@ public class CardChooserManager {
     private final SortedMap<Integer, String> rankMap;
     private final SortedMap<Integer, String> mapForJ;
     private final SortedMap<Integer, String> suitMap;
-    private int currentIndex = 1;
+    private int currentRankIndex = 1;
+    private int currentSuitIndex = 1;
 
     public CardChooserManager(CardChooserWindow window) {
         this.window = window;
@@ -60,28 +61,38 @@ public class CardChooserManager {
         else {
             map = rankMap;
         }
-        changeIndex(indexChanger,map);
-        String rank = map.get(currentIndex);
+        changeRankIndex(indexChanger,map);
+        String rank = map.get(currentRankIndex);
         setCurrentRankName(rank);
         window.getDisplayCard().changeFrontSide(cardAtlas.findRegion(currentSuitName +rank));
     }
 
-    private void changeIndex(int indexChanger, SortedMap<Integer,String> map){
-        currentIndex += indexChanger;
-        if(currentIndex > map.size()){
-            currentIndex = map.firstKey();
+    private void changeRankIndex(int indexChanger, SortedMap<Integer,String> map){
+        currentRankIndex += indexChanger;
+        if(currentRankIndex > map.size()){
+            currentRankIndex = map.firstKey();
         }
-        else if(currentIndex < map.firstKey()){
-            currentIndex = map.lastKey();
+        else if(currentRankIndex < map.firstKey()){
+            currentRankIndex = map.lastKey();
         }
     }
 
     public void changeSuit(int indexChanger) {
         //Dla AS
-        changeIndex(indexChanger,suitMap);
-        String suit = suitMap.get(currentIndex);
+        changeSuitIndex(indexChanger,suitMap);
+        String suit = suitMap.get(currentSuitIndex);
         setCurrentSuitName(suit);
         window.getDisplayCard().changeFrontSide(cardAtlas.findRegion(suit+currentRankName));
+    }
+
+    private void changeSuitIndex(int indexChanger, SortedMap<Integer,String> map){
+        currentSuitIndex += indexChanger;
+        if(currentSuitIndex > map.size()){
+            currentSuitIndex = map.firstKey();
+        }
+        else if(currentSuitIndex < map.firstKey()){
+            currentSuitIndex = map.lastKey();
+        }
     }
 
     public void setCurrentRankName(String currentRankName) {
