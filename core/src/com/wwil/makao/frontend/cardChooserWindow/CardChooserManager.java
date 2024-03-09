@@ -1,14 +1,16 @@
 package com.wwil.makao.frontend.cardChooserWindow;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.wwil.makao.backend.Card;
 import com.wwil.makao.backend.Rank;
 import com.wwil.makao.backend.Suit;
+import com.wwil.makao.frontend.CardActor;
 
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class CardChooserManager {
-    private final CardChooserWindow window;
+    private final CardChooserGroup cardChooser;
     private final TextureAtlas cardAtlas;
     private String currentRankName;
     private String currentSuitName;
@@ -18,8 +20,8 @@ public class CardChooserManager {
     private int currentRankIndex = 1;
     private int currentSuitIndex = 1;
 
-    public CardChooserManager(CardChooserWindow window) {
-        this.window = window;
+    public CardChooserManager(CardChooserGroup cardChooserGroup) {
+        this.cardChooser = cardChooserGroup;
         this.cardAtlas = new TextureAtlas("cards/classicFrontCard.atlas");
         this.rankMap = createRankMap();
         this.mapForJ = getMapForJ();
@@ -53,9 +55,9 @@ public class CardChooserManager {
     }
 
     public void changeRank(int indexChanger) {
-        //Dla J i Jokera
+        //Dla J
         SortedMap<Integer,String> map;
-        if(window.getGameController().peekStackCardActor().getCard().getRank().equals(Rank.J)){
+        if(cardChooser.getGameController().peekStackCardActor().getCard().getRank().equals(Rank.J)){
             map = mapForJ;
         }
         else {
@@ -64,7 +66,7 @@ public class CardChooserManager {
         changeRankIndex(indexChanger,map);
         String rank = map.get(currentRankIndex);
         setCurrentRankName(rank);
-        window.getDisplayCard().changeFrontSide(cardAtlas.findRegion(currentSuitName +rank));
+        cardChooser.getDisplayCard().changeFrontSide(cardAtlas.findRegion(currentSuitName +rank));
     }
 
     private void changeRankIndex(int indexChanger, SortedMap<Integer,String> map){
@@ -82,7 +84,7 @@ public class CardChooserManager {
         changeSuitIndex(indexChanger,suitMap);
         String suit = suitMap.get(currentSuitIndex);
         setCurrentSuitName(suit);
-        window.getDisplayCard().changeFrontSide(cardAtlas.findRegion(suit+currentRankName));
+        cardChooser.getDisplayCard().changeFrontSide(cardAtlas.findRegion(suit+currentRankName));
     }
 
     private void changeSuitIndex(int indexChanger, SortedMap<Integer,String> map){
@@ -94,6 +96,13 @@ public class CardChooserManager {
             currentSuitIndex = map.lastKey();
         }
     }
+
+    public CardActor giveCardActor(){
+        return new CardActor(cardChooser.getDisplayCard().getFrontSide(),
+                new Card(Rank.getRank(currentRankName),Suit.getSuit(currentSuitName)));
+    }
+
+
 
     public void setCurrentRankName(String currentRankName) {
         this.currentRankName = currentRankName;

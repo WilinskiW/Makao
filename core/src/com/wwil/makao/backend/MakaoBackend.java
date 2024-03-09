@@ -47,17 +47,19 @@ public class MakaoBackend {
     //Jedyna publiczna metoda (odbiera informacje, wykonuje działanie i wysyła)
     public RoundReport executeAction(Play humanPlay) {
         roundReport = new RoundReport();
+        //Nie jest położona i gracz nie chce dobrać (Przypadek drag)
         if (!humanPlay.isDropped() && !humanPlay.wantsToDraw()) {
             roundReport.addPlay(new PlayReport(currentPlayer(),
                     null, humanPlay, null, isCorrectCard(humanPlay.getCardPlayed())));
             roundReport.setIncorrect();
             return roundReport;
         }
-
+        //Nie jest położona i jest nieprawidłowa (Przypadek położonej błędnej karty
         if (!humanPlay.wantsToDraw() && !isCorrectCard(humanPlay.getCardPlayed())) {
             roundReport.setIncorrect();
             return roundReport;
         }
+
         playRound(humanPlay);
 
         return roundReport;
@@ -123,23 +125,32 @@ public class MakaoBackend {
 
     private PullDemander useCardAbility(Card card) {
         PullDemander pullDemander = null;
-        switch (card.getRank()) {
-            case TWO:
+        switch (card.getRank().getAbility()) {
+            case CHANGE_SUIT:
+                useChangeSuitAbility();
+                break;
+            case PLUS_2:
                 pullDemander = usePlusAbility(2);
                 break;
-            case THREE:
+            case PLUS_3:
                 pullDemander = usePlusAbility(3);
                 break;
-            case FOUR:
+            case WAIT:
                 useFourAbility();
                 break;
-            case K:
+            case DEMAND:
+                System.out.println("J");
+                break;
+            case KING:
                 pullDemander = useKingAbility(card,pullDemander);
                 break;
         }
         return pullDemander;
     }
 
+    private void useChangeSuitAbility(){
+
+    }
 
     private PullDemander usePlusAbility(int amountOfCards) {
         int lastIndex = players.size() - 1;

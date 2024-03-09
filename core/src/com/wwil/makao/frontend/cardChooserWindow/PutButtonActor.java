@@ -9,15 +9,18 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.wwil.makao.frontend.GUIparams;
+import com.wwil.makao.frontend.GameController;
 
 public class PutButtonActor extends Actor {
-    private final CardChooserManager manager;
+    private final CardChooserGroup cardChooser;
+    private final GameController controller;
     private final CardChooserButtonParams type;
     private final TextureRegion texture;
 
 
-    public PutButtonActor(CardChooserManager manager) {
-        this.manager = manager;
+    public PutButtonActor(CardChooserGroup cardChooser) {
+        this.cardChooser = cardChooser;
+        this.controller = cardChooser.getGameController();
         this.type = CardChooserButtonParams.PUT;
         this.texture = new TextureRegion(new Texture(Gdx.files.internal("buttons/Put.png")));
         setBounds(type.getPosX(), type.getPosY(), type.getWidth(), type.getHeight());
@@ -36,7 +39,7 @@ public class PutButtonActor extends Actor {
     private class PutListener extends ClickListener {
         @Override
         public void clicked(InputEvent event, float x, float y) {
-            System.out.println(type.name()); //todo
+            controller.executeHumanAction(cardChooser.getManager().giveCardActor(),true,true);
             super.clicked(event, x, y);
         }
     }

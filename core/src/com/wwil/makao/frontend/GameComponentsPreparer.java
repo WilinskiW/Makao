@@ -1,11 +1,15 @@
 package com.wwil.makao.frontend;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.wwil.makao.backend.MakaoBackend;
 import com.wwil.makao.backend.Card;
+import com.wwil.makao.backend.Rank;
+import com.wwil.makao.backend.Suit;
 import com.wwil.makao.frontend.cardChooserWindow.ArrowButtonActor;
-import com.wwil.makao.frontend.cardChooserWindow.CardChooserWindow;
+import com.wwil.makao.frontend.cardChooserWindow.CardChooserGroup;
 
+import java.util.Arrays;
 import java.util.List;
 
 //Przygotowanie elementów graficznych ekranu
@@ -28,24 +32,10 @@ public class GameComponentsPreparer {
         prepareStackCardsGroup();
         preparePullButton();
         prepareHandGroups();
-        showCardChooserWindow();
+        createCardChooser();
     }
+
     //todo tylko do testów
-    private void showCardChooserWindow(){
-        CardChooserWindow chooserWindow = new CardChooserWindow(controller);
-        stage.addActor(chooserWindow);
-        chooserWindow.setPosition(GUIparams.CHOOSER_WINDOW_X_POS,GUIparams.CHOOSER_WINDOW_Y_POS);
-
-        for(ArrowButtonActor button : chooserWindow.getArrowButtons()){
-            button.setZIndex(3);
-            stage.addActor(button);
-            button.setRotation(button.getType().getRotation());
-        }
-        stage.addActor(chooserWindow.getDisplayCard());
-        stage.addActor(chooserWindow.getPutButton());
-        chooserWindow.show(true);
-    }
-
     private void prepareStackCardsGroup() {
         controller.addCardActorToStackGroup(createStartingCardActorForStackGroup());
         stage.addActor(controller.getStackCardsGroup());
@@ -75,8 +65,12 @@ public class GameComponentsPreparer {
             handGroups.add(new PlayerHandGroup(backend.getPlayers().get(i)));
         }
         setPlayersCardActorsAlignmentParams();
-        for(PlayerHandGroup handGroup : handGroups){
-            for(Card card : handGroup.getPlayerHand().getCards()){
+        //todo Test:
+        Card card1 = new Card(Rank.AS, Suit.CLUB);
+        Card card2 = new Card(Rank.J, Suit.HEART);
+        handGroups.get(0).getPlayerHand().addCardsToHand(Arrays.asList(card1, card2));
+        for (PlayerHandGroup handGroup : handGroups) {
+            for (Card card : handGroup.getPlayerHand().getCards()) {
                 CardActor cardActor = controller.getCardActorFactory().createCardActor(card);
                 handGroup.addActor(cardActor);
             }
@@ -128,5 +122,12 @@ public class GameComponentsPreparer {
         //West
         controller.getHandGroups().get(3).setPosition(GUIparams.CARD_WIDTH / 5f - 32,
                 GUIparams.HEIGHT / 2f + GUIparams.CARD_HEIGHT / 2f + 25);
+    }
+
+    private void createCardChooser() {
+        CardChooserGroup cardChooser = new CardChooserGroup(controller);
+        stage.addActor(cardChooser);
+        cardChooser.setPosition(0, 0);
+        controller.setCardChooser(cardChooser);
     }
 }

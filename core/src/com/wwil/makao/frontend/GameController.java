@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Timer;
 import com.wwil.makao.backend.*;
 import com.wwil.makao.backend.Card;
+import com.wwil.makao.frontend.cardChooserWindow.CardChooserGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ public class GameController {
     private final CardActorFactory cardActorFactory = new CardActorFactory();
     private final List<PlayerHandGroup> handGroups = new ArrayList<>();
     private final StackCardsGroup stackCardsGroup = new StackCardsGroup(backend.getStack());
+    private CardChooserGroup cardChooser;
     private PullButtonActor pullButtonActor;
     private final DragAndDropManager dragAndDropManager = new DragAndDropManager(this);
     private final Stage stage;
@@ -30,9 +32,10 @@ public class GameController {
         this.stage = gameplayScreen.getStage();
     }
 
-    public void executeHumanAction(CardActor cardPlayed, boolean isDropped) {
+    public void executeHumanAction(CardActor cardPlayed, boolean isDropped, boolean chooserWantCheck) {
         RoundReport report;
         PlayerHandGroup human = handGroups.get(0);
+
 
         if (pullButtonActor.isClick()) {
             report = handlePullButtonAction(isDropped, human);
@@ -51,6 +54,7 @@ public class GameController {
         }
     }
 
+
     private RoundReport handlePullButtonAction(boolean isDropped, PlayerHandGroup human) {
         RoundReport report = backend.executeAction(new Play(null, true, isDropped));
         pullCard(report.getPlayReports().get(0).getDrawn(), human);
@@ -67,7 +71,8 @@ public class GameController {
     }
 
     private RoundReport handleDragAction(CardActor cardPlayed) {
-        RoundReport report = backend.executeAction(new Play(cardPlayed.getCard(), false, false));
+        RoundReport report = backend.executeAction(new Play
+                (cardPlayed.getCard(), false, false));
         changeCardColor(report.getPlayReports().get(0).isCardCorrect(), cardPlayed);
         return report;
     }
@@ -84,10 +89,18 @@ public class GameController {
         RoundReport report = backend.executeAction(new Play(cardPlayed.getCard(), false, true));
         if (report.isCorrect()) {
             putCard(cardPlayed, human);
+            if (isItNeededToShowWindow(cardPlayed.getCard())) {
+                cardChooser.setVisible(true);
+                report.setIncorrect();
+            }
         } else {
             positionCardInGroup(human, cardPlayed);
         }
         return report;
+    }
+
+    private boolean isItNeededToShowWindow(Card card) {
+        return (card.getRank().equals(Rank.J) || card.getRank().equals(Rank.AS)) && !cardChooser.isVisible();
     }
 
 
@@ -193,7 +206,7 @@ public class GameController {
         Gdx.input.setInputProcessor(gameplayScreen.getStage());
     }
 
-    public CardActor peekStackCardActor(){
+    public CardActor peekStackCardActor() {
         return getStackCardsGroup().peekCardActor();
     }
 
@@ -211,6 +224,10 @@ public class GameController {
 
     public void setInputBlockActive(boolean inputBlockActive) {
         this.inputBlockActive = inputBlockActive;
+    }
+
+    public void setCardChooser(CardChooserGroup cardChooser) {
+        this.cardChooser = cardChooser;
     }
 
     public boolean isInputBlockActive() {
@@ -231,6 +248,10 @@ public class GameController {
 
     public DragAndDropManager getDragAndDropManager() {
         return dragAndDropManager;
+    }
+
+    public CardChooserGroup getCardChooser() {
+        return cardChooser;
     }
 
     public GameplayScreen getGameplayScreen() {
