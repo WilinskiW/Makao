@@ -119,8 +119,8 @@ public class MakaoBackend {
             players.get(currentPlayerIndex).addCardToHand(drawn);
             return new PlayReport(currentPlayer(), null, play, drawn, false);
         }
-        PullDemander pullDemander = putCard(play.getCardPlayed());
-        return new PlayReport(currentPlayer(), pullDemander, play, null, true);
+        AbilityReport abilityReport = putCard(play.getCardPlayed());
+        return new PlayReport(currentPlayer(), abilityReport, play, null, true);
     }
 
     private void nextPlayer() {
@@ -130,11 +130,10 @@ public class MakaoBackend {
         }
     }
 
-    private PullDemander putCard(Card cardPlayed) {
-        PullDemander pullDemander = useCardAbility(cardPlayed);
+    private AbilityReport putCard(Card cardPlayed) {
         getStack().addCardToStack(cardPlayed);
         currentPlayer().removeCardFromHand(cardPlayed);
-        return pullDemander;
+        return useCardAbility(cardPlayed);
     }
 
     private Play executeComputerPlay() {
@@ -148,17 +147,17 @@ public class MakaoBackend {
     }
 
 
-    private PullDemander useCardAbility(Card card) {
-        PullDemander pullDemander = null;
+    private AbilityReport useCardAbility(Card card) {
+        AbilityReport abilityReport = null;
         switch (card.getRank().getAbility()) {
             case CHANGE_SUIT:
-                useChangeSuitAbility();
+                abilityReport = useChangeSuitAbility();
                 break;
             case PLUS_2:
-                pullDemander = usePlusAbility(2);
+                abilityReport = usePlusAbility(2);
                 break;
             case PLUS_3:
-                pullDemander = usePlusAbility(3);
+                abilityReport = usePlusAbility(3);
                 break;
             case WAIT:
                 useFourAbility();
@@ -167,25 +166,30 @@ public class MakaoBackend {
                 System.out.println("J");
                 break;
             case KING:
-                pullDemander = useKingAbility(card, pullDemander);
+                abilityReport = useKingAbility(card, abilityReport);
                 break;
         }
-        return pullDemander;
+        return abilityReport;
     }
 
-    private void useChangeSuitAbility() {
-
+    private AbilityReport useChangeSuitAbility() {
+        if(currentPlayerIndex != 0){
+            Card choosenCard = new Card(Rank.AS,currentPlayer().giveMostDominantSuit());
+            stack.addCardToStack(choosenCard);
+            return new AbilityReport(currentPlayerIndex, null, choosenCard);
+        }
+        return new AbilityReport(0,null,stack.peekCard());
     }
 
-    private PullDemander usePlusAbility(int amountOfCards) {
+    private AbilityReport usePlusAbility(int amountOfCards) {
         int lastIndex = players.size() - 1;
         List<Card> pulledCards = giveCards(amountOfCards);
         if (currentPlayerIndex != lastIndex) {
             players.get(currentPlayerIndex + 1).addCardsToHand(pulledCards);
-            return new PullDemander(currentPlayerIndex + 1, pulledCards);
+            return new AbilityReport(currentPlayerIndex + 1, pulledCards, null);
         } else {
             players.get(0).addCardsToHand(pulledCards);
-            return new PullDemander(0, pulledCards);
+            return new AbilityReport(0, pulledCards, null);
         }
     }
 
@@ -198,26 +202,26 @@ public class MakaoBackend {
         }
     }
 
-    private PullDemander useKingAbility(Card card, PullDemander pullDemander) {
+    private AbilityReport useKingAbility(Card card, AbilityReport abilityReport) {
         switch (card.getSuit()) {
             case HEART:
-                pullDemander = usePlusAbility(5);
+                abilityReport = usePlusAbility(5);
                 break;
             case SPADE:
-                pullDemander = usePlusFiveAbilityToPreviousPlayer();
+                abilityReport = usePlusFiveAbilityToPreviousPlayer();
         }
-        return pullDemander;
+        return abilityReport;
     }
 
-    private PullDemander usePlusFiveAbilityToPreviousPlayer() {
+    private AbilityReport usePlusFiveAbilityToPreviousPlayer() {
         int lastIndex = players.size() - 1;
         List<Card> pulledCards = giveCards(5);
         if (currentPlayerIndex != 0) {
             players.get(currentPlayerIndex - 1).addCardsToHand(pulledCards);
-            return new PullDemander(currentPlayerIndex - 1, pulledCards);
+            return new AbilityReport(currentPlayerIndex - 1, pulledCards, null);
         } else {
             players.get(lastIndex).addCardsToHand(pulledCards);
-            return new PullDemander(0, pulledCards);
+            return new AbilityReport(3, pulledCards, null);
         }
     }
 

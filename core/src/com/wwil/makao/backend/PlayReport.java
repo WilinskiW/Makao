@@ -3,14 +3,14 @@ package com.wwil.makao.backend;
 //Raport karty, którą zagrał gracz lub dobrania
 public class PlayReport {
     private final PlayerHand playerHand;
-    private final PullDemander pullDemander;
+    private final AbilityReport abilityReport;
     private final Play play;
     private final Card drawn;
     private final boolean isCardCorrect;
 
-    public PlayReport(PlayerHand playerHand, PullDemander pullDemander, Play play, Card drawn, boolean isCardCorrect) {
+    public PlayReport(PlayerHand playerHand, AbilityReport abilityReport, Play play, Card drawn, boolean isCardCorrect) {
         this.playerHand = playerHand;
-        this.pullDemander = pullDemander;
+        this.abilityReport = abilityReport;
         this.play = play;
         this.drawn = drawn;
         this.isCardCorrect = isCardCorrect;
@@ -20,8 +20,8 @@ public class PlayReport {
         return playerHand;
     }
 
-    public PullDemander getPullRequest() {
-        return pullDemander;
+    public AbilityReport getAbilityReport() {
+        return abilityReport;
     }
 
     public Card getDrawn() {

@@ -24,10 +24,6 @@ public class ArrowButtonActor extends Actor {
         addListener(new ArrowListener());
     }
 
-    public void setTransparency(float transparency){
-        this.setColor(getColor().r,getColor().g,getColor().b,0.75f);
-    }
-
     @Override
     public void draw(Batch batch, float parentAlpha) {
         Color color = getColor();

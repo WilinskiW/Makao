@@ -25,6 +25,22 @@ public class PlayerHand {
     public boolean checkIfPlayerHaveNoCards(){
         return cards.isEmpty();
     }
+    public Suit giveMostDominantSuit() {
+        int[] counts = new int[4]; // Tablica przechowująca liczbę wystąpień dla każdego koloru
+
+        for (Card card : cards) {
+            counts[card.getSuit().ordinal()]++; // Inkrementacja odpowiedniego licznika
+        }
+
+        int maxIndex = 0;
+        for (int i = 1; i < counts.length; i++) {
+            if (counts[i] > counts[maxIndex]) {
+                maxIndex = i;
+            }
+        }
+
+        return Suit.values()[maxIndex]; // Zwracanie koloru z największą liczbą wystąpień
+    }
     public List<Card> getCards() {
         return cards;
     }

@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 //Komunikacja miedzy back endem a front endem
 
-// FIXME: 09.03.2024 Wait dla gracza człowieka. Karta K PIK
+// FIXME: 09.03.2024 Wait dla gracza człowieka.
 public class GameController {
     private final GameplayScreen gameplayScreen;
     private final MakaoBackend backend = new MakaoBackend();
@@ -35,12 +35,7 @@ public class GameController {
     }
 
     //Plan działania:
-    //1. Zrobić tak, aby po położonej karcie był poprawna karta pokazowa (ZROBIONE)
-    //1.1. Gdy J -> Najmniejsza ranga koloru J
-    //1.2. Gdy AS -> Karta AS
-    //2. Nie dostępne strzałki są przeźroczyste (NA PÓŹNIEJ)
-    //3. Gdy zostanie naciśnięte PUT, zostaje położona karta. Bez sprawdzania
-    //4. Sprawdzenię czy karta jest poprawna
+
 
     public void executeHumanAction(CardActor cardPlayed, boolean isDropped, boolean isCardChooserActive) {
         RoundReport report;
@@ -131,7 +126,7 @@ public class GameController {
 
     private void endIfPlayerWon(PlayerHandGroup playerHandGroup) {
         if (playerHandGroup.getPlayerHand().checkIfPlayerHaveNoCards()) {
-            System.out.println("Ktoś wygrał");
+            System.out.println(playerHandGroup + "won");
             Gdx.app.exit();
         }
     }
@@ -152,9 +147,9 @@ public class GameController {
     }
 
     private void pullDemandedCards(PlayReport playReport) {
-        PullDemander pullDemander = playReport.getPullRequest();
-        if (pullDemander != null) {
-            pullCards(pullDemander.getCards(), handGroups.get(pullDemander.getPerformerIndex()));
+        AbilityReport abilityReport = playReport.getAbilityReport();
+        if (abilityReport != null && abilityReport.getToPull() != null) {
+            pullCards(abilityReport.getToPull(), handGroups.get(abilityReport.getPerformerIndex()));
         }
     }
 
@@ -197,6 +192,7 @@ public class GameController {
                         Card cardToPlay = currentPlayReport.getPlay().getCardPlayed();
                         if (cardToPlay != null) {
                             putCard(currentHandGroup.findCardActor(cardToPlay), currentHandGroup, false);
+                            putChosenCardIfNecessary(currentPlayReport.getAbilityReport(),currentHandGroup);
                         } else {
                             CardActor drawnCard = cardActorFactory.createCardActor(currentPlayReport.getDrawn());
                             currentHandGroup.addActor(drawnCard);
@@ -210,6 +206,13 @@ public class GameController {
                     }
                 }
             }, i * delta); // Opóźnienie względem indeksu
+        }
+    }
+
+    private void putChosenCardIfNecessary(AbilityReport abilityReport, PlayerHandGroup currentHandGroup){
+        if(abilityReport != null && abilityReport.getChoosenCard() != null){
+            putCard(cardActorFactory.createCardActor(abilityReport.getChoosenCard()),
+                    currentHandGroup,false);
         }
     }
 
