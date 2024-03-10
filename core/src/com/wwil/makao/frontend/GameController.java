@@ -119,8 +119,8 @@ public class GameController {
 
     private void showCardChooser(CardActor cardPlayed, PlayerHandGroup human, boolean isChooserActive) {
         putCard(cardPlayed, human, isChooserActive);
-        cardChooser.getManager().setAttributesFromStackCard(stackCardsGroup.peekCardActor());
         cardChooser.setVisibility(true);
+        cardChooser.getManager().setAttributesFromStackCard(stackCardsGroup.peekCardActor());
     }
 
     public void addCardActorToStackGroup(CardActor cardActor) {

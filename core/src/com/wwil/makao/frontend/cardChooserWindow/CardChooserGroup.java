@@ -22,10 +22,10 @@ public class CardChooserGroup extends Group {
         this.manager = new CardChooserManager(this);
         //Tworzenie obiektów okna
         this.window = new WindowActor();
-        this.arrowButtons = createArrows();
         this.putButton = new PutButtonActor(this);
         this.displayCard = new CardActor(null);
         assignElementsToGroup();
+        this.arrowButtons = createArrows();
         displayCard.setPosition(GUIparams.CHOOSER_CARD_X_POS, GUIparams.CHOOSER_CARD_Y_POS);
         setBounds(GUIparams.CHOOSER_WINDOW_X_POS, GUIparams.CHOOSER_WINDOW_Y_POS,
                 GUIparams.CHOOSER_WINDOW_WIDTH, GUIparams.CHOOSER_WINDOW_HEIGHT);
