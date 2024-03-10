@@ -12,15 +12,20 @@ import com.wwil.makao.frontend.GUIparams;
 
 public class ArrowButtonActor extends Actor {
     private final CardChooserManager chooserManager;
-    private final CardChooserButtonParams type;
+    private final CardChooserButtonTypes type;
     private final TextureRegion texture;
 
-    public ArrowButtonActor(CardChooserManager chooserManager, CardChooserButtonParams type) {
+    public ArrowButtonActor(CardChooserManager chooserManager, CardChooserButtonTypes type) {
         this.chooserManager = chooserManager;
-        setBounds(type.getPosX(), type.getPosY(), type.getWidth(), type.getHeight());
         this.type = type;
         this.texture = new TextureRegion(new Texture(Gdx.files.internal("buttons/arrow.png")));
+        setBounds(type.getPosX(), type.getPosY(), type.getWidth(), type.getHeight());
+        setRotation(type.getRotation());
         addListener(new ArrowListener());
+    }
+
+    public void setTransparency(float transparency){
+        this.setColor(getColor().r,getColor().g,getColor().b,0.75f);
     }
 
     @Override
@@ -36,16 +41,16 @@ public class ArrowButtonActor extends Actor {
         @Override
         public void clicked(InputEvent event, float x, float y) {
             switch (type){
-                case UP_LEFT:
+                case RANK_LEFT:
                     chooserManager.changeRank(-1);
                     break;
-                case UP_RIGHT:
+                case RANK_RIGHT:
                     chooserManager.changeRank(1);
                     break;
-                case DOWN_LEFT:
+                case SUIT_LEFT:
                     chooserManager.changeSuit(-1);
                     break;
-                case DOWN_RIGHT:
+                case SUIT_RIGHT:
                     chooserManager.changeSuit(1);
                     break;
             }
@@ -53,7 +58,7 @@ public class ArrowButtonActor extends Actor {
         }
     }
 
-    public CardChooserButtonParams getType() {
+    public CardChooserButtonTypes getType() {
         return type;
     }
 }

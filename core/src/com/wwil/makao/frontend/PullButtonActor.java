@@ -11,7 +11,7 @@ public class PullButtonActor extends Actor{
     private final Texture clickTexture;
     private boolean isClick = false;
 
-    public PullButtonActor() {//todo Możliwy refactor do animacji
+    public PullButtonActor() {
         this.unclickTexture = new Texture(Gdx.files.internal("assets/Buttons/PullCardButton_unclick.png"));
         this.clickTexture = new Texture(Gdx.files.internal("assets/Buttons/PullCardButton_click.png"));
         setBounds(0, 0, GUIparams.PULL_BUTTON_WIDTH, GUIparams.PULL_BUTTON_HEIGHT);

@@ -14,14 +14,14 @@ import com.wwil.makao.frontend.GameController;
 public class PutButtonActor extends Actor {
     private final CardChooserGroup cardChooser;
     private final GameController controller;
-    private final CardChooserButtonParams type;
+    private final CardChooserButtonTypes type;
     private final TextureRegion texture;
 
 
     public PutButtonActor(CardChooserGroup cardChooser) {
         this.cardChooser = cardChooser;
         this.controller = cardChooser.getGameController();
-        this.type = CardChooserButtonParams.PUT;
+        this.type = CardChooserButtonTypes.PUT;
         this.texture = new TextureRegion(new Texture(Gdx.files.internal("buttons/Put.png")));
         setBounds(type.getPosX(), type.getPosY(), type.getWidth(), type.getHeight());
         addListener(new PutListener());

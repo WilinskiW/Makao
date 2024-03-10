@@ -13,7 +13,7 @@ import com.wwil.makao.backend.Card;
 
 import java.util.List;
 
-public class CardActor extends Actor { //todo klasa z logiką i grafiką
+public class CardActor extends Actor {
     private Card card;
     private TextureRegion frontSide;
     private TextureRegion backSide;

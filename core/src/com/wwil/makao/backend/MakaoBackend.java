@@ -43,26 +43,43 @@ public class MakaoBackend {
         }
         return cards;
     }
+
     //////////// Logika:
     //Jedyna publiczna metoda (odbiera informacje, wykonuje działanie i wysyła)
     public RoundReport executeAction(Play humanPlay) {
         roundReport = new RoundReport();
         //Nie jest położona i gracz nie chce dobrać (Przypadek drag)
-        if (!humanPlay.isDropped() && !humanPlay.wantsToDraw()) {
-            roundReport.addPlay(new PlayReport(currentPlayer(),
-                    null, humanPlay, null, isCorrectCard(humanPlay.getCardPlayed())));
+        if (isDrag(humanPlay)) {
+            roundReport.addPlay(new PlayReport(currentPlayer(), null, humanPlay, null,
+                    isCorrectCard(humanPlay.getCardPlayed())));
             roundReport.setIncorrect();
             return roundReport;
         }
-        //Nie jest położona i jest nieprawidłowa (Przypadek położonej błędnej karty
-        if (!humanPlay.wantsToDraw() && !isCorrectCard(humanPlay.getCardPlayed())) {
+
+        //Nie chce ciągnąć i jest nieprawidłowa
+        if (isPlayUnfinished(humanPlay)) {
             roundReport.setIncorrect();
+            return roundReport;
+        }
+        //Czy aktywować okno
+        if (!humanPlay.wantsToDraw() && isCardActivateChooser(humanPlay)) {
+            roundReport.addPlay(new PlayReport(currentPlayer(), null, humanPlay, null,
+                    isCorrectCard(humanPlay.getCardPlayed())));
+            executePlay(humanPlay);
+            roundReport.setIncorrect();
+            roundReport.setChooserActivation(true);
             return roundReport;
         }
 
         playRound(humanPlay);
 
         return roundReport;
+    }
+
+    private boolean isCardActivateChooser(Play humanPlay) {
+        return !humanPlay.isChooserActive() &&
+                (humanPlay.getCardPlayed().getRank().equals(Rank.J) ||
+                        humanPlay.getCardPlayed().getRank().equals(Rank.AS));
     }
 
     private boolean isCorrectCard(Card chosenCard) {
@@ -77,6 +94,14 @@ public class MakaoBackend {
 
     private boolean compareCards(Card card1, Card card2) {
         return card1.getSuit() == card2.getSuit() || card1.getRank() == card2.getRank();
+    }
+
+    private boolean isDrag(Play humanPlay) {
+        return !humanPlay.isDropped() && !humanPlay.wantsToDraw();
+    }
+
+    private boolean isPlayUnfinished(Play humanPlay) {
+        return !humanPlay.wantsToDraw() && !isCorrectCard(humanPlay.getCardPlayed());
     }
 
     private void playRound(Play humanPlay) {
@@ -116,10 +141,10 @@ public class MakaoBackend {
         PlayerHand playerHand = currentPlayer();
         for (Card card : playerHand.getCards()) {
             if (isCorrectCard(card)) {
-                return new Play(card, false, true);
+                return new Play(card, false, true, false);
             }
         }
-        return new Play(null, true, false);
+        return new Play(null, true, false, false);
     }
 
 
@@ -142,13 +167,13 @@ public class MakaoBackend {
                 System.out.println("J");
                 break;
             case KING:
-                pullDemander = useKingAbility(card,pullDemander);
+                pullDemander = useKingAbility(card, pullDemander);
                 break;
         }
         return pullDemander;
     }
 
-    private void useChangeSuitAbility(){
+    private void useChangeSuitAbility() {
 
     }
 
@@ -157,7 +182,7 @@ public class MakaoBackend {
         List<Card> pulledCards = giveCards(amountOfCards);
         if (currentPlayerIndex != lastIndex) {
             players.get(currentPlayerIndex + 1).addCardsToHand(pulledCards);
-            return new PullDemander(currentPlayerIndex+1, pulledCards);
+            return new PullDemander(currentPlayerIndex + 1, pulledCards);
         } else {
             players.get(0).addCardsToHand(pulledCards);
             return new PullDemander(0, pulledCards);
@@ -189,10 +214,10 @@ public class MakaoBackend {
         List<Card> pulledCards = giveCards(5);
         if (currentPlayerIndex != 0) {
             players.get(currentPlayerIndex - 1).addCardsToHand(pulledCards);
-            return new PullDemander(currentPlayerIndex - 1,pulledCards);
+            return new PullDemander(currentPlayerIndex - 1, pulledCards);
         } else {
             players.get(lastIndex).addCardsToHand(pulledCards);
-            return new PullDemander(0,pulledCards);
+            return new PullDemander(0, pulledCards);
         }
     }
 

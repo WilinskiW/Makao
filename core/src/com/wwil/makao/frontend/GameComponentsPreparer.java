@@ -35,7 +35,6 @@ public class GameComponentsPreparer {
         createCardChooser();
     }
 
-    //todo tylko do testów
     private void prepareStackCardsGroup() {
         controller.addCardActorToStackGroup(createStartingCardActorForStackGroup());
         stage.addActor(controller.getStackCardsGroup());
@@ -66,9 +65,14 @@ public class GameComponentsPreparer {
         }
         setPlayersCardActorsAlignmentParams();
         //todo Test:
-        Card card1 = new Card(Rank.AS, Suit.CLUB);
-        Card card2 = new Card(Rank.J, Suit.HEART);
-        handGroups.get(0).getPlayerHand().addCardsToHand(Arrays.asList(card1, card2));
+//        handGroups.get(0).getPlayerHand().getCards().clear();
+//        Card card1 = new Card(Rank.AS, Suit.CLUB);
+//        Card card2 = new Card(Rank.J, Suit.HEART);
+//        Card card3 = new Card(Rank.AS, Suit.DIAMOND);
+//        Card card4 = new Card(Rank.J,Suit.SPADE);
+//        Card card5 = new Card(Rank.AS,Suit.SPADE);
+//        handGroups.get(0).getPlayerHand().addCardsToHand(Arrays.asList(card1, card2,card3,card4,card5));
+        //
         for (PlayerHandGroup handGroup : handGroups) {
             for (Card card : handGroup.getPlayerHand().getCards()) {
                 CardActor cardActor = controller.getCardActorFactory().createCardActor(card);

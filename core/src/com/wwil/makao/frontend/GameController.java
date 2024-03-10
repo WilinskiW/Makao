@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 //Komunikacja miedzy back endem a front endem
+
+// FIXME: 09.03.2024 Wait dla gracza człowieka. Karta K PIK
 public class GameController {
     private final GameplayScreen gameplayScreen;
     private final MakaoBackend backend = new MakaoBackend();
@@ -32,7 +34,15 @@ public class GameController {
         this.stage = gameplayScreen.getStage();
     }
 
-    public void executeHumanAction(CardActor cardPlayed, boolean isDropped, boolean chooserWantCheck) {
+    //Plan działania:
+    //1. Zrobić tak, aby po położonej karcie był poprawna karta pokazowa (ZROBIONE)
+    //1.1. Gdy J -> Najmniejsza ranga koloru J
+    //1.2. Gdy AS -> Karta AS
+    //2. Nie dostępne strzałki są przeźroczyste (NA PÓŹNIEJ)
+    //3. Gdy zostanie naciśnięte PUT, zostaje położona karta. Bez sprawdzania
+    //4. Sprawdzenię czy karta jest poprawna
+
+    public void executeHumanAction(CardActor cardPlayed, boolean isDropped, boolean isCardChooserActive) {
         RoundReport report;
         PlayerHandGroup human = handGroups.get(0);
 
@@ -41,22 +51,24 @@ public class GameController {
             report = handlePullButtonAction(isDropped, human);
         } else {
             if (isDropped) {
-                report = handleCardDropAction(cardPlayed, human);
+                report = handleCardDropAction(cardPlayed, human, isCardChooserActive);
             } else {
                 report = handleDragAction(cardPlayed);
             }
         }
 
         if (report.isCorrect()) {
+            cardChooser.setVisibility(false);
             pullDemandedCards(report.getPlayReports().get(0));
             turnOffHumanInput();
             executeComputersTurn(report);
         }
+
     }
 
 
     private RoundReport handlePullButtonAction(boolean isDropped, PlayerHandGroup human) {
-        RoundReport report = backend.executeAction(new Play(null, true, isDropped));
+        RoundReport report = backend.executeAction(new Play(null, true, isDropped, false));
         pullCard(report.getPlayReports().get(0).getDrawn(), human);
         return report;
     }
@@ -72,7 +84,7 @@ public class GameController {
 
     private RoundReport handleDragAction(CardActor cardPlayed) {
         RoundReport report = backend.executeAction(new Play
-                (cardPlayed.getCard(), false, false));
+                (cardPlayed.getCard(), false, false, false));
         changeCardColor(report.getPlayReports().get(0).isCardCorrect(), cardPlayed);
         return report;
     }
@@ -85,29 +97,30 @@ public class GameController {
         }
     }
 
-    private RoundReport handleCardDropAction(CardActor cardPlayed, PlayerHandGroup human) {
-        RoundReport report = backend.executeAction(new Play(cardPlayed.getCard(), false, true));
+    private RoundReport handleCardDropAction(CardActor cardPlayed, PlayerHandGroup human, boolean isCardChooserActive) {
+        RoundReport report = backend.executeAction(new Play(cardPlayed.getCard(), false, true, isCardChooserActive));
         if (report.isCorrect()) {
-            putCard(cardPlayed, human);
-            if (isItNeededToShowWindow(cardPlayed.getCard())) {
-                cardChooser.setVisible(true);
-                report.setIncorrect();
-            }
+            putCard(cardPlayed, human, isCardChooserActive);
+        } else if (report.isChooserActive()) {
+            showCardChooser(cardPlayed, human, isCardChooserActive);
         } else {
             positionCardInGroup(human, cardPlayed);
         }
         return report;
     }
 
-    private boolean isItNeededToShowWindow(Card card) {
-        return (card.getRank().equals(Rank.J) || card.getRank().equals(Rank.AS)) && !cardChooser.isVisible();
-    }
-
-
-    private void putCard(CardActor cardToPlay, PlayerHandGroup player) {
+    private void putCard(CardActor cardToPlay, PlayerHandGroup player, boolean isChooserActive) {
         addCardActorToStackGroup(cardToPlay); //położyć aktora
         endIfPlayerWon(player);
-        player.moveCloserToStartingPosition(); //autowyrównanie
+        if (!isChooserActive) {
+            player.moveCloserToStartingPosition(); //autowyrównanie
+        }
+    }
+
+    private void showCardChooser(CardActor cardPlayed, PlayerHandGroup human, boolean isChooserActive) {
+        putCard(cardPlayed, human, isChooserActive);
+        cardChooser.getManager().setAttributesFromStackCard(stackCardsGroup.peekCardActor());
+        cardChooser.setVisibility(true);
     }
 
     public void addCardActorToStackGroup(CardActor cardActor) {
@@ -183,7 +196,7 @@ public class GameController {
                     if (!currentPlayReport.getPlayerHand().isWaiting()) {
                         Card cardToPlay = currentPlayReport.getPlay().getCardPlayed();
                         if (cardToPlay != null) {
-                            putCard(currentHandGroup.findCardActor(cardToPlay), currentHandGroup);
+                            putCard(currentHandGroup.findCardActor(cardToPlay), currentHandGroup, false);
                         } else {
                             CardActor drawnCard = cardActorFactory.createCardActor(currentPlayReport.getDrawn());
                             currentHandGroup.addActor(drawnCard);
@@ -248,10 +261,6 @@ public class GameController {
 
     public DragAndDropManager getDragAndDropManager() {
         return dragAndDropManager;
-    }
-
-    public CardChooserGroup getCardChooser() {
-        return cardChooser;
     }
 
     public GameplayScreen getGameplayScreen() {

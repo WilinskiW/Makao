@@ -1,6 +1,7 @@
 package com.wwil.makao.frontend.cardChooserWindow;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.wwil.makao.backend.Card;
 import com.wwil.makao.backend.Rank;
 import com.wwil.makao.backend.Suit;
@@ -102,7 +103,28 @@ public class CardChooserManager {
                 new Card(Rank.getRank(currentRankName),Suit.getSuit(currentSuitName)));
     }
 
+    public void setAttributesFromStackCard(CardActor stackCard) {
+        if(stackCard.getCard().getRank().equals(Rank.AS)) {
+            currentRankName = stackCard.getCard().getRank().getName();
+            hideArrows("RANK");
+        }
+        else{
+            currentRankName = "5";
+            hideArrows("SUIT");
+        }
+        currentSuitName = stackCard.getCard().getSuit().getName();
 
+        cardChooser.getDisplayCard().setFrontSide
+                (new TextureRegion(cardAtlas.findRegion(currentSuitName+currentRankName)));
+    }
+
+    private void hideArrows(String typeString){
+        for(ArrowButtonActor arrow : cardChooser.getArrowButtons()){
+            if(arrow.getType().name().contains(typeString)){
+                arrow.setVisible(false);
+            }
+        }
+    }
 
     public void setCurrentRankName(String currentRankName) {
         this.currentRankName = currentRankName;
