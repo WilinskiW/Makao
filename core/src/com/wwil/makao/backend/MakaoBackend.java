@@ -48,10 +48,16 @@ public class MakaoBackend {
     //Jedyna publiczna metoda (odbiera informacje, wykonuje działanie i wysyła)
     public RoundReport executeAction(Play humanPlay) {
         roundReport = new RoundReport();
+
+        if(humanPlay.isSkipTurn()){
+            playRound(humanPlay);
+            return roundReport;
+        }
+
         //Nie jest położona i gracz nie chce dobrać (Przypadek drag)
         if (isDrag(humanPlay)) {
             roundReport.addPlay(new PlayReport(currentPlayer(), null, humanPlay, null,
-                    isCorrectCard(humanPlay.getCardPlayed())));
+                    isCorrectCard(humanPlay.getCardPlayed()), true));
             roundReport.setIncorrect();
             return roundReport;
         }
@@ -64,7 +70,7 @@ public class MakaoBackend {
         //Czy aktywować okno
         if (!humanPlay.wantsToDraw() && isCardActivateChooser(humanPlay)) {
             roundReport.addPlay(new PlayReport(currentPlayer(), null, humanPlay, null,
-                    isCorrectCard(humanPlay.getCardPlayed())));
+                    isCorrectCard(humanPlay.getCardPlayed()), false));
             executePlay(humanPlay);
             roundReport.setIncorrect();
             roundReport.setChooserActivation(true);
@@ -114,15 +120,21 @@ public class MakaoBackend {
     }
 
     private PlayReport executePlay(Play play) {
+        if(play.isSkipTurn()){
+            return new PlayReport(currentPlayer(),null,play,null,false, true);
+        }
+
         if (play.wantsToDraw()) {
             Card drawn = takeCardFromGameDeck();
             players.get(currentPlayerIndex).addCardToHand(drawn);
-            return new PlayReport(currentPlayer(), null, play, drawn, false);
+            return new PlayReport(currentPlayer(), null, play, drawn, false, false);
         }
         AbilityReport abilityReport = putCard(play.getCardPlayed());
-        return new PlayReport(currentPlayer(), abilityReport, play, null, true);
+        return new PlayReport(currentPlayer(), abilityReport, play, null, true, false);
     }
 
+    //PlayReport 1 -> block, performer: 1
+    //Pla
     private void nextPlayer() {
         currentPlayerIndex++;
         if (currentPlayerIndex == AMOUNT_OF_PLAYERS) {
@@ -138,12 +150,18 @@ public class MakaoBackend {
 
     private Play executeComputerPlay() {
         PlayerHand playerHand = currentPlayer();
+        PlayReport lastReport = roundReport.getLastPlay();
+
+        if(lastReport.getAbilityReport() != null && lastReport.getAbilityReport().isBlockNext()){
+            return new Play(null,false,false,false, true);
+        }
+
         for (Card card : playerHand.getCards()) {
             if (isCorrectCard(card)) {
-                return new Play(card, false, true, false);
+                return new Play(card, false, true, false, false);
             }
         }
-        return new Play(null, true, false, false);
+        return new Play(null, true, false, false, false);
     }
 
 
@@ -160,7 +178,7 @@ public class MakaoBackend {
                 abilityReport = usePlusAbility(3);
                 break;
             case WAIT:
-                useFourAbility();
+                abilityReport = useFourAbility();
                 break;
             case DEMAND:
                 System.out.println("J");
@@ -176,9 +194,9 @@ public class MakaoBackend {
         if(currentPlayerIndex != 0){
             Card choosenCard = new Card(Rank.AS,currentPlayer().giveMostDominantSuit());
             stack.addCardToStack(choosenCard);
-            return new AbilityReport(currentPlayerIndex, null, choosenCard);
+            return new AbilityReport(currentPlayerIndex, null, choosenCard, false);
         }
-        return new AbilityReport(0,null,stack.peekCard());
+        return new AbilityReport(0,null,stack.peekCard(), false);
     }
 
     private AbilityReport usePlusAbility(int amountOfCards) {
@@ -186,19 +204,19 @@ public class MakaoBackend {
         List<Card> pulledCards = giveCards(amountOfCards);
         if (currentPlayerIndex != lastIndex) {
             players.get(currentPlayerIndex + 1).addCardsToHand(pulledCards);
-            return new AbilityReport(currentPlayerIndex + 1, pulledCards, null);
+            return new AbilityReport(currentPlayerIndex + 1, pulledCards, null, false);
         } else {
             players.get(0).addCardsToHand(pulledCards);
-            return new AbilityReport(0, pulledCards, null);
+            return new AbilityReport(0, pulledCards, null, false);
         }
     }
 
-    private void useFourAbility() {
+    private AbilityReport useFourAbility() {
         int lastIndex = players.size() - 1;
         if (currentPlayerIndex != lastIndex) {
-            players.get(currentPlayerIndex + 1).setWaiting(true);
+            return new AbilityReport(currentPlayerIndex + 1, null, null, true);
         } else {
-            players.get(0).setWaiting(true);
+            return new AbilityReport(0, null, null, true);
         }
     }
 
@@ -218,10 +236,10 @@ public class MakaoBackend {
         List<Card> pulledCards = giveCards(5);
         if (currentPlayerIndex != 0) {
             players.get(currentPlayerIndex - 1).addCardsToHand(pulledCards);
-            return new AbilityReport(currentPlayerIndex - 1, pulledCards, null);
+            return new AbilityReport(currentPlayerIndex - 1, pulledCards, null, false);
         } else {
             players.get(lastIndex).addCardsToHand(pulledCards);
-            return new AbilityReport(3, pulledCards, null);
+            return new AbilityReport(3, pulledCards, null, false);
         }
     }
 

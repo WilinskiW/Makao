@@ -12,6 +12,10 @@ public class RoundReport {
         playReports.add(playReport);
     }
 
+    public PlayReport getLastPlay(){
+        return playReports.get(getPlayReports().size()-1);
+    }
+
     public List<PlayReport> getPlayReports() {
         return playReports;
     }

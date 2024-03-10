@@ -4,7 +4,6 @@ import java.util.List;
 
 public class PlayerHand {
     private final List<Card> cards;
-    private boolean isWaiting = false;
 
     public PlayerHand(List<Card> cards) {
         this.cards = cards;
@@ -43,13 +42,5 @@ public class PlayerHand {
     }
     public List<Card> getCards() {
         return cards;
-    }
-
-    public boolean isWaiting() {
-        return isWaiting;
-    }
-
-    public void setWaiting(boolean waiting) {
-        isWaiting = waiting;
     }
 }

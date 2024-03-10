@@ -39,7 +39,7 @@ public class PutButtonActor extends Actor {
     private class PutListener extends ClickListener {
         @Override
         public void clicked(InputEvent event, float x, float y) {
-            controller.executeHumanAction(cardChooser.getManager().giveCardActor(),true,true);
+            controller.startTurn(cardChooser.getManager().giveCardActor(),true,true,false);
             super.clicked(event, x, y);
         }
     }

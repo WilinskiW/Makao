@@ -65,7 +65,9 @@ public class GameComponentsPreparer {
         }
         setPlayersCardActorsAlignmentParams();
         //todo Test:
-//        handGroups.get(1).getPlayerHand().getCards().clear();
+//        handGroups.get(3).getPlayerHand().getCards().clear();
+//        handGroups.get(3).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.FOUR,Suit.CLUB),
+//                new Card(Rank.FOUR,Suit.SPADE), new Card(Rank.FOUR,Suit.DIAMOND), new Card(Rank.FOUR,Suit.HEART)));
 //        Card card1 = new Card(Rank.AS, Suit.CLUB);
 //        //Card card2 = new Card(Rank.J, Suit.HEART);
 //        Card card3 = new Card(Rank.AS, Suit.DIAMOND);

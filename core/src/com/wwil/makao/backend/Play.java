@@ -6,12 +6,19 @@ public class Play {
     private final boolean draw;
     private final boolean dropped;
     private final boolean chooserActive;
+    private final boolean skipTurn;
 
-    public Play(Card cardPlayed, boolean draw, boolean dropped, boolean chooserActive) {
+    public Play(Card cardPlayed, boolean draw, boolean dropped, boolean chooserActive, boolean skipTurn) {
         this.cardPlayed = cardPlayed;
         this.draw = draw;
         this.dropped = dropped;
         this.chooserActive = chooserActive;
+
+        this.skipTurn = skipTurn;
+    }
+
+    public boolean isSkipTurn() {
+        return skipTurn;
     }
 
     public boolean isDropped() {
