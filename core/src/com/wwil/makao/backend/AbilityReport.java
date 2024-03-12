@@ -7,12 +7,14 @@ public class AbilityReport {
     private final List<Card> toPull;
     private final Card choosenCard;
     private final boolean blockNext;
+    private final boolean demanded;
 
-    public AbilityReport(int performerIndex, List<Card> toPull, Card choosenCard, boolean blockNext) {
+    public AbilityReport(int performerIndex, List<Card> toPull, Card choosenCard, boolean blockNext, boolean demanded) {
         this.performerIndex = performerIndex;
         this.toPull = toPull;
         this.choosenCard = choosenCard;
         this.blockNext = blockNext;
+        this.demanded = demanded;
     }
 
     public boolean isBlockNext() {

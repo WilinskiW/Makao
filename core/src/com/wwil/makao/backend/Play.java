@@ -1,6 +1,5 @@
 package com.wwil.makao.backend;
 
-//Informacje jakie przekazuje frontend -> backend
 public class Play {
     private final Card cardPlayed;
     private final boolean draw;
@@ -13,11 +12,14 @@ public class Play {
         this.draw = draw;
         this.dropped = dropped;
         this.chooserActive = chooserActive;
-
         this.skipTurn = skipTurn;
     }
 
-    public boolean isSkipTurn() {
+    public boolean isDemanding(){
+        return !dropped && chooserActive;
+    }
+
+    public boolean isBlock() {
         return skipTurn;
     }
 

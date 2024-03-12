@@ -40,8 +40,12 @@ public class GameController {
         RoundReport report;
         PlayerHandGroup human = handGroups.get(0);
 
-        if(humanBlock){
-            report = backend.executeAction(new Play(null,false,false,false,true));
+        //isDemanding
+        if(isCardChooserActive && !isDropped){
+            report = handleDemandAction(cardPlayed);
+        }
+        else if(humanBlock){
+            report = handleWaitAction();
         }
         else if (pullButtonActor.isClick()) {
             report = handlePullButtonAction(isDropped, human);
@@ -55,13 +59,19 @@ public class GameController {
 
         if (report.isCorrect()) {
             cardChooser.setVisibility(false);
-            pullDemandedCards(report.getPlayReports().get(0));
+            pullCards(report.getPlayReports().get(0));
             turnOffHumanInput();
             executeComputersTurn(report);
         }
-
     }
 
+    private RoundReport handleDemandAction(CardActor cardPlayed){
+        return backend.executeAction(new Play(cardPlayed.getCard(),false,false,true,false));
+    }
+
+    private RoundReport handleWaitAction(){
+        return backend.executeAction(new Play(null,false,false,false,true));
+    }
 
     private RoundReport handlePullButtonAction(boolean isDropped, PlayerHandGroup human) {
         RoundReport report = backend.executeAction(new Play(null, true, isDropped, false, false));
@@ -148,7 +158,7 @@ public class GameController {
         card.setZIndex((int) card.getLastPositionBeforeRemove().z);
     }
 
-    private void pullDemandedCards(PlayReport playReport) {
+    private void pullCards(PlayReport playReport) {
         AbilityReport abilityReport = playReport.getAbilityReport();
         if (abilityReport != null && abilityReport.getToPull() != null) {
             pullCards(abilityReport.getToPull(), handGroups.get(abilityReport.getPerformerIndex()));
@@ -188,7 +198,7 @@ public class GameController {
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
-                    if(!currentPlayReport.isBlock()) {
+                    if(!currentPlayReport.isBlocked()) {
                         processNormalComputerTurn(currentPlayReport, currentHandGroup);
                     }
                     // Sprawdź, czy to był ostatni ruch komputera
@@ -206,7 +216,7 @@ public class GameController {
     }
 
     private void processNormalComputerTurn(PlayReport currentPlayReport, PlayerHandGroup currentHandGroup) {
-        pullDemandedCards(currentPlayReport);
+        pullCards(currentPlayReport);
         Card cardToPlay = currentPlayReport.getPlay().getCardPlayed();
         if (cardToPlay != null) {
             putCard(currentHandGroup.findCardActor(cardToPlay), currentHandGroup, false);

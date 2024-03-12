@@ -7,23 +7,23 @@ public class PlayReport {
     private final Play play;
     private final Card drawn;
     private final boolean isCardCorrect;
-    private final boolean block;
+    private final boolean blocked;
 
-    public PlayReport(PlayerHand playerHand, AbilityReport abilityReport, Play play, Card drawn, boolean isCardCorrect, boolean block) {
+    public PlayReport(PlayerHand playerHand, AbilityReport abilityReport, Play play, Card drawn, boolean isCardCorrect, boolean blocked) {
         this.playerHand = playerHand;
         this.abilityReport = abilityReport;
         this.play = play;
         this.drawn = drawn;
         this.isCardCorrect = isCardCorrect;
-        this.block = block;
+        this.blocked = blocked;
     }
 
     public AbilityReport getAbilityReport() {
         return abilityReport;
     }
 
-    public boolean isBlock() {
-        return block;
+    public boolean isBlocked() {
+        return blocked;
     }
 
     public Card getDrawn() {

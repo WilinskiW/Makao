@@ -24,6 +24,15 @@ public class PlayerHand {
     public boolean checkIfPlayerHaveNoCards(){
         return cards.isEmpty();
     }
+
+    public Card findDemandedCard(Card demanded){
+        for(Card card : cards){
+            if(card.getRank() == demanded.getRank()){
+                return card;
+            }
+        }
+        return null;
+    }
     public Suit giveMostDominantSuit() {
         int[] counts = new int[4]; // Tablica przechowująca liczbę wystąpień dla każdego koloru
 

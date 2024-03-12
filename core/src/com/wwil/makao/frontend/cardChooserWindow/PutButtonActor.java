@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.wwil.makao.backend.Rank;
 import com.wwil.makao.frontend.GUIparams;
 import com.wwil.makao.frontend.GameController;
 
@@ -39,7 +40,9 @@ public class PutButtonActor extends Actor {
     private class PutListener extends ClickListener {
         @Override
         public void clicked(InputEvent event, float x, float y) {
-            controller.startTurn(cardChooser.getManager().giveCardActor(),true,true,false);
+            controller.startTurn(cardChooser.getManager().giveCardActor(),
+                    !controller.getStackCardsGroup().peekCardActor().getCard().getRank().equals(Rank.J),
+                    true,false);
             super.clicked(event, x, y);
         }
     }
