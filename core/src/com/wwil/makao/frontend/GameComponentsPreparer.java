@@ -1,12 +1,10 @@
 package com.wwil.makao.frontend;
 
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.wwil.makao.backend.MakaoBackend;
 import com.wwil.makao.backend.Card;
 import com.wwil.makao.backend.Rank;
 import com.wwil.makao.backend.Suit;
-import com.wwil.makao.frontend.cardChooserWindow.ArrowButtonActor;
 import com.wwil.makao.frontend.cardChooserWindow.CardChooserGroup;
 
 import java.util.Arrays;
@@ -66,18 +64,18 @@ public class GameComponentsPreparer {
         setPlayersCardActorsAlignmentParams();
         //todo Test:
         handGroups.get(0).getPlayerHand().getCards().clear();
-//        handGroups.get(3).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.FOUR,Suit.CLUB),
-//                new Card(Rank.FOUR,Suit.SPADE), new Card(Rank.FOUR,Suit.DIAMOND), new Card(Rank.FOUR,Suit.HEART)));
-        Card card1 = new Card(Rank.J, Suit.CLUB);
-        Card card2 = new Card(Rank.J, Suit.HEART);
-        Card card3 = new Card(Rank.J, Suit.DIAMOND);
-        Card card4 = new Card(Rank.J,Suit.SPADE);
-        Card card5 = new Card(Rank.FIVE,Suit.DIAMOND);
-//        handGroups.get(1).getPlayerHand().addCardToHand(card1);
-//        handGroups.get(1).getPlayerHand().addCardToHand(card3);
-        handGroups.get(0).getPlayerHand().addCardsToHand(Arrays.asList(card1 , card2,card3,card4,card5));
-        handGroups.get(0).getPlayerHand().addCardToHand(new Card(Rank.FIVE,Suit.HEART));
-        handGroups.get(0).getPlayerHand().addCardToHand(new Card(Rank.AS,Suit.HEART));
+////        handGroups.get(3).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.FOUR,Suit.CLUB),
+////                new Card(Rank.FOUR,Suit.SPADE), new Card(Rank.FOUR,Suit.DIAMOND), new Card(Rank.FOUR,Suit.HEART)));
+        Card card1 = new Card(Rank.JOKER, Suit.RED);
+        Card card2 = new Card(Rank.JOKER, Suit.BLACK);
+//        Card card3 = new Card(Rank.J, Suit.DIAMOND);
+//        Card card4 = new Card(Rank.J,Suit.SPADE);
+//        Card card5 = new Card(Rank.FIVE,Suit.DIAMOND);
+        handGroups.get(0).getPlayerHand().addCardToHand(card1);
+        handGroups.get(0).getPlayerHand().addCardToHand(card2);
+//        handGroups.get(0).getPlayerHand().addCardsToHand(Arrays.asList(card1 , card2,card3,card4,card5));
+//        handGroups.get(0).getPlayerHand().addCardToHand(new Card(Rank.FIVE,Suit.HEART));
+//        handGroups.get(0).getPlayerHand().addCardToHand(new Card(Rank.AS,Suit.HEART));
         //
         for (PlayerHandGroup handGroup : handGroups) {
             for (Card card : handGroup.getPlayerHand().getCards()) {

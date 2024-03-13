@@ -128,9 +128,10 @@ public class GameController {
     }
 
     private void showCardChooser(CardActor cardPlayed, PlayerHandGroup human, boolean isChooserActive) {
+        CardActor stackCard = stackCardsGroup.peekCardActor();
         putCard(cardPlayed, human, isChooserActive);
         cardChooser.setVisibility(true);
-        cardChooser.getManager().setAttributesFromStackCard(stackCardsGroup.peekCardActor());
+        cardChooser.getManager().setAttributesFromStackCard(stackCard,cardPlayed);
     }
 
     public void addCardActorToStackGroup(CardActor cardActor) {
@@ -245,7 +246,7 @@ public class GameController {
     }
 
     public CardActor peekStackCardActor() {
-        return getStackCardsGroup().peekCardActor();
+        return stackCardsGroup.peekCardActor();
     }
 
     public PlayerHandGroup getHumanHand() {

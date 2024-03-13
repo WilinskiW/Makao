@@ -33,6 +33,9 @@ public class CardChooserManager {
         TreeMap<Integer, String> rankMap = new TreeMap<>();
         int i = 1;
         for (Rank rank : Rank.values()) {
+            if(rank.equals(Rank.JOKER)){
+                continue;
+            }
             rankMap.put(i++, rank.getName());
         }
         return rankMap;
@@ -49,7 +52,7 @@ public class CardChooserManager {
     private TreeMap<Integer, String> createSuitMap() {
         TreeMap<Integer, String> suitMap = new TreeMap<>();
         int i = 1;
-        for (Suit suit : Suit.values()) {
+        for (Suit suit : Suit.getNormalSuits()) {
             suitMap.put(i++, suit.getName());
         }
         return suitMap;
@@ -61,7 +64,7 @@ public class CardChooserManager {
         if(cardChooser.getGameController().peekStackCardActor().getCard().getRank().equals(Rank.J)){
             map = mapForJ;
         }
-        else {
+        else  {
             map = rankMap;
         }
         changeRankIndex(indexChanger,map);
@@ -103,16 +106,21 @@ public class CardChooserManager {
                 new Card(Rank.getRank(currentRankName),Suit.getSuit(currentSuitName)));
     }
 
-    public void setAttributesFromStackCard(CardActor stackCard) {
-        if(stackCard.getCard().getRank().equals(Rank.AS)) {
-            currentRankName = stackCard.getCard().getRank().getName();
+    public void setAttributesFromStackCard(CardActor stackCard, CardActor cardPlayed) {
+        Rank stackRank = cardPlayed.getCard().getRank();
+        currentSuitName = cardPlayed.getCard().getSuit().getName();
+        if(stackRank.equals(Rank.AS)) {
+            currentRankName = stackRank.getName();
             hideArrows("RANK");
         }
-        else{
+        else if(stackRank.equals(Rank.J)){
             currentRankName = "5";
             hideArrows("SUIT");
         }
-        currentSuitName = stackCard.getCard().getSuit().getName();
+        else {
+            currentRankName = "AS";
+            currentSuitName = stackCard.getCard().getSuit().getName();
+        }
 
         cardChooser.getDisplayCard().setFrontSide
                 (new TextureRegion(cardAtlas.findRegion(currentSuitName+currentRankName)));

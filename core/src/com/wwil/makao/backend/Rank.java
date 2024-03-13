@@ -5,8 +5,7 @@ public enum Rank {
     FOUR(Ability.WAIT, "4"), FIVE(Ability.NONE, "5"), SIX(Ability.NONE, "6"),
     SEVEN(Ability.NONE, "7"), EIGHT(Ability.NONE, "8"), NINE(Ability.NONE, "9"),
     TEN(Ability.NONE, "10"), Q(Ability.ON_EVERYTHING, "Q"), J(Ability.DEMAND, "J"),
-    K(Ability.KING, "K");
-    //, JOKER(Ability.WILD_CARD, "JOKER");
+    K(Ability.KING, "K"), JOKER(Ability.WILD_CARD, "JOKER");
     private final Ability ability;
     private final String name;
 

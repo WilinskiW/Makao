@@ -94,7 +94,7 @@ pikK
   orig: 168, 248
   offset: 3, 3
   index: -1
-blackJoker
+blackJOKER
   rotate: true
   xy: 1221, 165
   size: 162, 242
@@ -192,7 +192,7 @@ kierK
   orig: 168, 248
   offset: 3, 3
   index: -1
-redJoker
+redJOKER
   rotate: true
   xy: 733, 493
   size: 162, 242
