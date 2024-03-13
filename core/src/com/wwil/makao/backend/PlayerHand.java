@@ -25,6 +25,15 @@ public class PlayerHand {
         return cards.isEmpty();
     }
 
+    public Card findCardToDemand(){
+        for(Card card : cards){
+            if(card.getRank().getAbility() == Ability.NONE){
+                return card;
+            }
+        }
+        return null;
+    }
+
     public Card findDemandedCard(Card demanded){
         for(Card card : cards){
             if(card.getRank() == demanded.getRank()){

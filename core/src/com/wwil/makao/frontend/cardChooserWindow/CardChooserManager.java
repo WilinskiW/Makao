@@ -118,6 +118,12 @@ public class CardChooserManager {
                 (new TextureRegion(cardAtlas.findRegion(currentSuitName+currentRankName)));
     }
 
+
+    public void resetIndexes(){
+        currentRankIndex = 1;
+        currentSuitIndex = 1;
+    }
+
     private void hideArrows(String typeString){
         for(ArrowButtonActor arrow : cardChooser.getArrowButtons()){
             if(arrow.getType().name().contains(typeString)){

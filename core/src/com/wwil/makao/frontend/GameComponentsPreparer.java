@@ -70,12 +70,14 @@ public class GameComponentsPreparer {
 //                new Card(Rank.FOUR,Suit.SPADE), new Card(Rank.FOUR,Suit.DIAMOND), new Card(Rank.FOUR,Suit.HEART)));
         Card card1 = new Card(Rank.J, Suit.CLUB);
         Card card2 = new Card(Rank.J, Suit.HEART);
-        Card card3 = new Card(Rank.FIVE, Suit.DIAMOND);
+        Card card3 = new Card(Rank.J, Suit.DIAMOND);
         Card card4 = new Card(Rank.J,Suit.SPADE);
-        Card card5 = new Card(Rank.AS,Suit.SPADE);
+        Card card5 = new Card(Rank.FIVE,Suit.DIAMOND);
 //        handGroups.get(1).getPlayerHand().addCardToHand(card1);
 //        handGroups.get(1).getPlayerHand().addCardToHand(card3);
         handGroups.get(0).getPlayerHand().addCardsToHand(Arrays.asList(card1 , card2,card3,card4,card5));
+        handGroups.get(0).getPlayerHand().addCardToHand(new Card(Rank.FIVE,Suit.HEART));
+        handGroups.get(0).getPlayerHand().addCardToHand(new Card(Rank.AS,Suit.HEART));
         //
         for (PlayerHandGroup handGroup : handGroups) {
             for (Card card : handGroup.getPlayerHand().getCards()) {

@@ -17,6 +17,10 @@ public class AbilityReport {
         this.demanded = demanded;
     }
 
+    public boolean isDemanded() {
+        return demanded;
+    }
+
     public boolean isBlockNext() {
         return blockNext;
     }

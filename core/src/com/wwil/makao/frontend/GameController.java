@@ -40,18 +40,17 @@ public class GameController {
         RoundReport report;
         PlayerHandGroup human = handGroups.get(0);
 
-        //isDemanding
-        if(isCardChooserActive && !isDropped){
-            report = handleDemandAction(cardPlayed);
-        }
-        else if(humanBlock){
+        if (humanBlock) {
             report = handleWaitAction();
-        }
-        else if (pullButtonActor.isClick()) {
+        } else if (pullButtonActor.isClick()) {
             report = handlePullButtonAction(isDropped, human);
         } else {
-            if (isDropped) {
-                report = handleCardDropAction(cardPlayed, human, isCardChooserActive);
+            //isDemanding
+            if ((isCardChooserActive || backend.isDemandActive()) && !isDropped) {
+                report = handleDemandAction(cardPlayed);
+            }
+            else if (isDropped) {
+                report = handleCardDropAction(cardPlayed,isCardChooserActive);
             } else {
                 report = handleDragAction(cardPlayed);
             }
@@ -65,12 +64,15 @@ public class GameController {
         }
     }
 
-    private RoundReport handleDemandAction(CardActor cardPlayed){
-        return backend.executeAction(new Play(cardPlayed.getCard(),false,false,true,false));
+    private RoundReport handleDemandAction(CardActor cardPlayed) {
+        RoundReport report;
+        report = backend.executeAction(new Play(cardPlayed.getCard(), false, false, true, false));
+        changeCardColor(report.getPlayReports().get(0).isCardCorrect(), cardPlayed);
+        return report;
     }
 
-    private RoundReport handleWaitAction(){
-        return backend.executeAction(new Play(null,false,false,false,true));
+    private RoundReport handleWaitAction() {
+        return backend.executeAction(new Play(null, false, false, false, true));
     }
 
     private RoundReport handlePullButtonAction(boolean isDropped, PlayerHandGroup human) {
@@ -103,7 +105,8 @@ public class GameController {
         }
     }
 
-    private RoundReport handleCardDropAction(CardActor cardPlayed, PlayerHandGroup human, boolean isCardChooserActive) {
+    private RoundReport handleCardDropAction(CardActor cardPlayed, boolean isCardChooserActive) {
+        PlayerHandGroup human = getHumanHand();
         RoundReport report = backend.executeAction(
                 new Play(cardPlayed.getCard(), false, true, isCardChooserActive, false));
         if (report.isCorrect()) {
@@ -198,15 +201,16 @@ public class GameController {
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
-                    if(!currentPlayReport.isBlocked()) {
+                    if (!currentPlayReport.isBlocked()) {
                         processNormalComputerTurn(currentPlayReport, currentHandGroup);
                     }
                     // Sprawdź, czy to był ostatni ruch komputera
                     if (completedComputers.incrementAndGet() == numberOfComputers) {
-                        if(currentPlayReport.getAbilityReport() != null && currentPlayReport.getAbilityReport().isBlockNext()){
-                            startTurn(null,false,false,true);
-                        }
-                        else {
+                        if (currentPlayReport.getAbilityReport() != null && currentPlayReport.getAbilityReport().isBlockNext()) {
+                            startTurn(null, false, false, true);
+                        } else if (currentPlayReport.getAbilityReport() != null && currentPlayReport.getAbilityReport().isDemanded()) {
+                            startTurn(null, false, false, true);
+                        } else {
                             turnOnHumanInput();
                         }
                     }
@@ -228,7 +232,7 @@ public class GameController {
     }
 
     private void putChosenCardIfNecessary(AbilityReport abilityReport, PlayerHandGroup currentHandGroup) {
-        if (abilityReport != null && abilityReport.getChoosenCard() != null) {
+        if (abilityReport != null && abilityReport.getChoosenCard() != null && !abilityReport.isDemanded()) {
             putCard(cardActorFactory.createCardActor(abilityReport.getChoosenCard()),
                     currentHandGroup, false);
         }

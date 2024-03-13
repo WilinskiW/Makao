@@ -52,6 +52,7 @@ public class CardChooserGroup extends Group {
     public void setVisibility(boolean visible){
         this.setVisible(visible);
         resetArrowsVisibility();
+        manager.resetIndexes();
     }
 
     private void resetArrowsVisibility(){
