@@ -15,7 +15,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 //Komunikacja miedzy back endem a front endem
 
-// FIXME: 09.03.2024 Wait dla gracza człowieka.
+// FIXME: 13.03.2024 Talie się rozjeżdżają
+//todo Zrobić refactor
 public class GameController {
     private final GameplayScreen gameplayScreen;
     private final MakaoBackend backend = new MakaoBackend();
@@ -34,9 +35,8 @@ public class GameController {
         this.stage = gameplayScreen.getStage();
     }
 
-    //Plan działania:
-
-    public void startTurn(CardActor cardPlayed, boolean isDropped, boolean isCardChooserActive, boolean humanBlock) {
+    public void startTurn(CardActor cardPlayed, boolean isDropped,
+                          boolean isCardChooserActive, boolean humanBlock, boolean isDemanding) {
         RoundReport report;
         PlayerHandGroup human = handGroups.get(0);
 
@@ -46,8 +46,8 @@ public class GameController {
             report = handlePullButtonAction(isDropped, human);
         } else {
             //isDemanding
-            if ((isCardChooserActive || backend.isDemandActive()) && !isDropped) {
-                report = handleDemandAction(cardPlayed);
+            if(isDemanding){
+                report = backend.executeAction(new Play(cardPlayed.getCard(),false,false,true,false));
             }
             else if (isDropped) {
                 report = handleCardDropAction(cardPlayed,isCardChooserActive);
@@ -64,10 +64,9 @@ public class GameController {
         }
     }
 
-    private RoundReport handleDemandAction(CardActor cardPlayed) {
+    private RoundReport handleDemandDragAction(CardActor cardPlayed) {
         RoundReport report;
-        report = backend.executeAction(new Play(cardPlayed.getCard(), false, false, true, false));
-        changeCardColor(report.getPlayReports().get(0).isCardCorrect(), cardPlayed);
+        report = backend.executeAction(new Play(cardPlayed.getCard(), false, false, false, false));
         return report;
     }
 
@@ -91,8 +90,14 @@ public class GameController {
     }
 
     private RoundReport handleDragAction(CardActor cardPlayed) {
-        RoundReport report = backend.executeAction(new Play
-                (cardPlayed.getCard(), false, false, false, false));
+        RoundReport report;
+        if (backend.isDemandActive()) {
+            report = handleDemandDragAction(cardPlayed);
+        }
+        else {
+            report = backend.executeAction(new Play
+                    (cardPlayed.getCard(), false, false, false, false));
+        }
         changeCardColor(report.getPlayReports().get(0).isCardCorrect(), cardPlayed);
         return report;
     }
@@ -131,7 +136,7 @@ public class GameController {
         CardActor stackCard = stackCardsGroup.peekCardActor();
         putCard(cardPlayed, human, isChooserActive);
         cardChooser.setVisibility(true);
-        cardChooser.getManager().setAttributesFromStackCard(stackCard,cardPlayed);
+        cardChooser.getManager().setAttributesFromStackCard(stackCard, cardPlayed);
     }
 
     public void addCardActorToStackGroup(CardActor cardActor) {
@@ -208,9 +213,7 @@ public class GameController {
                     // Sprawdź, czy to był ostatni ruch komputera
                     if (completedComputers.incrementAndGet() == numberOfComputers) {
                         if (currentPlayReport.getAbilityReport() != null && currentPlayReport.getAbilityReport().isBlockNext()) {
-                            startTurn(null, false, false, true);
-                        } else if (currentPlayReport.getAbilityReport() != null && currentPlayReport.getAbilityReport().isDemanded()) {
-                            startTurn(null, false, false, true);
+                            startTurn(null, false, false, true,false);
                         } else {
                             turnOnHumanInput();
                         }
@@ -225,15 +228,16 @@ public class GameController {
         Card cardToPlay = currentPlayReport.getPlay().getCardPlayed();
         if (cardToPlay != null) {
             putCard(currentHandGroup.findCardActor(cardToPlay), currentHandGroup, false);
-            putChosenCardIfNecessary(currentPlayReport.getAbilityReport(), currentHandGroup);
+            putChosenCardIfNecessary(currentPlayReport.getAbilityReport(), currentHandGroup, currentPlayReport.getPlay());
         } else {
             CardActor drawnCard = cardActorFactory.createCardActor(currentPlayReport.getDrawn());
             currentHandGroup.addActor(drawnCard);
         }
     }
 
-    private void putChosenCardIfNecessary(AbilityReport abilityReport, PlayerHandGroup currentHandGroup) {
-        if (abilityReport != null && abilityReport.getChoosenCard() != null && !abilityReport.isDemanded()) {
+    private void putChosenCardIfNecessary(AbilityReport abilityReport, PlayerHandGroup currentHandGroup, Play play) {
+        if (abilityReport != null && (abilityReport.getChoosenCard() != null && !abilityReport.isDemanded()
+                || play.getCardPlayed().getRank().equals(Rank.JOKER))) {
             putCard(cardActorFactory.createCardActor(abilityReport.getChoosenCard()),
                     currentHandGroup, false);
         }

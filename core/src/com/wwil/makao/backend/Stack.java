@@ -9,6 +9,9 @@ public class Stack {
     public void addCardToStack(Card card){
         cards.add(card);
     }
+    public boolean isJackOnTop(){
+        return peekCard().getRank().equals(Rank.J);
+    }
 
     public Card peekCard(){
         return cards.get(getCards().size()-1);

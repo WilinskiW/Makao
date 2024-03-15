@@ -1,5 +1,9 @@
 package com.wwil.makao.backend;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public enum Rank {
     AS(Ability.CHANGE_SUIT, "AS"), TWO(Ability.PLUS_2, "2"), THREE(Ability.PLUS_3, "3"),
     FOUR(Ability.WAIT, "4"), FIVE(Ability.NONE, "5"), SIX(Ability.NONE, "6"),
@@ -14,6 +18,18 @@ public enum Rank {
         this.name = name;
     }
 
+    public static Rank getRandomWithAbility() {
+        List<Rank> ranksForJoker = new ArrayList<>();
+        for (Rank rank : Rank.values()) {
+            if (!rank.ability.equals(Ability.NONE) && !rank.ability.equals(Ability.WILD_CARD)) {
+                ranksForJoker.add(rank);
+            }
+        }
+        Random random = new Random();
+        int randomIndex = random.nextInt(ranksForJoker.size());
+        return ranksForJoker.get(randomIndex);
+    }
+
     public static Rank getRank(String nameOfRank){
         for(Rank rank : values()){
             if(rank.name.equals(nameOfRank)){
@@ -21,6 +37,10 @@ public enum Rank {
             }
         }
         return null;
+    }
+
+    public boolean isRankActivateChooser(){
+        return this.equals(J) || this.equals(AS) || this.equals(JOKER);
     }
 
     public Ability getAbility() {

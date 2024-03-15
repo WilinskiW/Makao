@@ -1,5 +1,6 @@
 package com.wwil.makao.backend;
 
+import java.util.Collections;
 import java.util.List;
 
 public class PlayerHand {
@@ -21,32 +22,45 @@ public class PlayerHand {
         cards.remove(card);
     }
 
-    public boolean checkIfPlayerHaveNoCards(){
+    public boolean checkIfPlayerHaveNoCards() {
         return cards.isEmpty();
     }
 
-    public Card findCardToDemand(){
-        for(Card card : cards){
-            if(card.getRank().getAbility() == Ability.NONE){
+    public Card findCardToDemand() {
+        List<Card> playerCards = cards;
+        Collections.shuffle(playerCards);
+        for (Card card : playerCards) {
+            if (card.getRank().getAbility() == Ability.NONE) {
                 return card;
             }
         }
         return null;
     }
 
-    public Card findDemandedCard(Card demanded){
-        for(Card card : cards){
-            if(card.getRank() == demanded.getRank()){
+    public Card findDemandedCard(Card demanded, boolean lookingForJack) {
+        List<Card> playerCards = cards;
+        Collections.shuffle(playerCards);
+        Card cardToPlay = null;
+        for (Card card : playerCards) {
+            if (lookingForJack && card.getRank().equals(Rank.J)) {
                 return card;
             }
+
+            if (card.getRank() == demanded.getRank()) {
+                cardToPlay = card;
+            }
         }
-        return null;
+        return cardToPlay;
     }
+
     public Suit giveMostDominantSuit() {
         int[] counts = new int[4]; // Tablica przechowująca liczbę wystąpień dla każdego koloru
 
         for (Card card : cards) {
-            counts[card.getSuit().ordinal()]++; // Inkrementacja odpowiedniego licznika
+            Suit cardSuit = card.getSuit();
+            if (cardSuit != Suit.BLACK && cardSuit != Suit.RED) { // Pomijanie BLACK i RED
+                counts[cardSuit.ordinal()]++; // Inkrementacja odpowiedniego licznika
+            }
         }
 
         int maxIndex = 0;
@@ -58,6 +72,7 @@ public class PlayerHand {
 
         return Suit.values()[maxIndex]; // Zwracanie koloru z największą liczbą wystąpień
     }
+
     public List<Card> getCards() {
         return cards;
     }

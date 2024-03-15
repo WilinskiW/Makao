@@ -16,7 +16,7 @@ public class Play {
     }
 
     public boolean isDemanding(){
-        return !dropped && chooserActive;
+        return isChooserActive() && !isDropped();
     }
 
     public boolean isBlock() {
