@@ -40,7 +40,6 @@ public class PutButtonActor extends Actor {
     private class PutListener extends ClickListener {
         @Override
         public void clicked(InputEvent event, float x, float y) {
-            //boolean isCardActive = !controller.peekStackCardActor().getCard().getRank().equals(Rank.JOKER);
             if (controller.peekStackCardActor().getCard().getRank().equals(Rank.J)) {
                 controller.startTurn(cardChooser.getManager().giveCardActor(),
                         false, true, false, true);

@@ -34,13 +34,9 @@ public class GameComponentsPreparer {
     }
 
     private void prepareStackCardsGroup() {
-        controller.addCardActorToStackGroup(createStartingCardActorForStackGroup());
+        controller.addCardActorToStackGroup(cardActorFactory.createCardActor(backend.getStack().peekCard()));
         stage.addActor(controller.getStackCardsGroup());
         controller.getStackCardsGroup().setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
-    }
-
-    private CardActor createStartingCardActorForStackGroup() {
-        return cardActorFactory.createCardActor(backend.getStack().peekCard());
     }
 
     private void preparePullButton() {
@@ -63,11 +59,11 @@ public class GameComponentsPreparer {
         }
         setPlayersCardActorsAlignmentParams();
         //todo Test:
-        handGroups.get(3).getPlayerHand().getCards().clear();
-        handGroups.get(3).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.J,Suit.CLUB),
-                new Card(Rank.J,Suit.SPADE), new Card(Rank.J,Suit.DIAMOND), new Card(Rank.J,Suit.HEART)));
-        handGroups.get(3).getPlayerHand().addCardToHand(new Card(Rank.FIVE,Suit.DIAMOND));
-        handGroups.get(0).getPlayerHand().addCardToHand(new Card(Rank.J,Suit.DIAMOND));
+//        handGroups.get(3).getPlayerHand().getCards().clear();
+//        handGroups.get(3).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.J,Suit.CLUB),
+//                new Card(Rank.J,Suit.SPADE), new Card(Rank.J,Suit.DIAMOND), new Card(Rank.J,Suit.HEART)));
+//        handGroups.get(3).getPlayerHand().addCardToHand(new Card(Rank.FIVE,Suit.DIAMOND));
+//        handGroups.get(0).getPlayerHand().addCardToHand(new Card(Rank.J,Suit.DIAMOND));
 //        Card card1 = new Card(Rank.JOKER, Suit.RED);
 //        Card card2 = new Card(Rank.JOKER, Suit.BLACK);
 //        Card card3 = new Card(Rank.FIVE, Suit.HEART);
@@ -120,7 +116,6 @@ public class GameComponentsPreparer {
     }
 
     private void setPositionOfHandGroups() {
-        // TODO: 05.02.2024 Poprawić ustawianie grupy
         //South
         controller.getHandGroups().get(0).setPosition
                 (GUIparams.WIDTH / 2f,

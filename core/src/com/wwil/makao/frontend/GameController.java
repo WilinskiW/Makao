@@ -15,7 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 //Komunikacja miedzy back endem a front endem
 
-// FIXME: 13.03.2024 Talie się rozjeżdżają
 //todo Zrobić refactor
 public class GameController {
     private final GameplayScreen gameplayScreen;
@@ -41,18 +40,16 @@ public class GameController {
         PlayerHandGroup human = handGroups.get(0);
 
         if (humanBlock) {
-            report = handleWaitAction();
+            report = createWaitReport();
         } else if (pullButtonActor.isClick()) {
-            report = handlePullButtonAction(isDropped, human);
+            report = createPullReport(isDropped, human);
         } else {
-            //isDemanding
-            if(isDemanding){
-                report = backend.executeAction(new Play(cardPlayed.getCard(),false,false,true,false));
-            }
-            else if (isDropped) {
-                report = handleCardDropAction(cardPlayed,isCardChooserActive);
+            if (isDemanding) {
+                report = createDemandReport(cardPlayed);
+            } else if (isDropped) {
+                report = createDropReport(cardPlayed, isCardChooserActive);
             } else {
-                report = handleDragAction(cardPlayed);
+                report = createDragReport(cardPlayed);
             }
         }
 
@@ -64,18 +61,14 @@ public class GameController {
         }
     }
 
-    private RoundReport handleDemandDragAction(CardActor cardPlayed) {
-        RoundReport report;
-        report = backend.executeAction(new Play(cardPlayed.getCard(), false, false, false, false));
-        return report;
+    private RoundReport createWaitReport() {
+        return backend.executeAction
+                (new Play(null, false, false, false, true));
     }
 
-    private RoundReport handleWaitAction() {
-        return backend.executeAction(new Play(null, false, false, false, true));
-    }
-
-    private RoundReport handlePullButtonAction(boolean isDropped, PlayerHandGroup human) {
-        RoundReport report = backend.executeAction(new Play(null, true, isDropped, false, false));
+    private RoundReport createPullReport(boolean isDropped, PlayerHandGroup human) {
+        RoundReport report = backend.executeAction
+                (new Play(null, true, isDropped, false, false));
         pullCard(report.getPlayReports().get(0).getDrawn(), human);
         return report;
     }
@@ -89,15 +82,14 @@ public class GameController {
         player.addActor(drawnCard);
     }
 
-    private RoundReport handleDragAction(CardActor cardPlayed) {
-        RoundReport report;
-        if (backend.isDemandActive()) {
-            report = handleDemandDragAction(cardPlayed);
-        }
-        else {
-            report = backend.executeAction(new Play
-                    (cardPlayed.getCard(), false, false, false, false));
-        }
+    private RoundReport createDemandReport(CardActor cardPlayed) {
+        return backend.executeAction
+                (new Play(cardPlayed.getCard(), false, false, true, false));
+    }
+
+    private RoundReport createDragReport(CardActor cardPlayed) {
+        RoundReport report = backend.executeAction
+                (new Play(cardPlayed.getCard(), false, false, false, false));
         changeCardColor(report.getPlayReports().get(0).isCardCorrect(), cardPlayed);
         return report;
     }
@@ -110,16 +102,16 @@ public class GameController {
         }
     }
 
-    private RoundReport handleCardDropAction(CardActor cardPlayed, boolean isCardChooserActive) {
-        PlayerHandGroup human = getHumanHand();
-        RoundReport report = backend.executeAction(
-                new Play(cardPlayed.getCard(), false, true, isCardChooserActive, false));
+    private RoundReport createDropReport(CardActor cardPlayed, boolean isCardChooserActive) {
+        RoundReport report = backend.executeAction
+                (new Play(cardPlayed.getCard(), false, true, isCardChooserActive, false));
+
         if (report.isCorrect()) {
-            putCard(cardPlayed, human, isCardChooserActive);
+            putCard(cardPlayed, getHumanHand(), isCardChooserActive);
         } else if (report.isChooserActive()) {
-            showCardChooser(cardPlayed, human, isCardChooserActive);
+            showCardChooser(cardPlayed, getHumanHand(), isCardChooserActive);
         } else {
-            positionCardInGroup(human, cardPlayed);
+            positionCardInGroup(getHumanHand(), cardPlayed);
         }
         return report;
     }
@@ -146,8 +138,9 @@ public class GameController {
     }
 
     private void endIfPlayerWon(PlayerHandGroup playerHandGroup) {
+        //Do czasu wprowadzenia menu
         if (playerHandGroup.getPlayerHand().checkIfPlayerHaveNoCards()) {
-            System.out.println(playerHandGroup + "won");
+            System.out.println(playerHandGroup + " won");
             Gdx.app.exit();
         }
     }
@@ -213,7 +206,7 @@ public class GameController {
                     // Sprawdź, czy to był ostatni ruch komputera
                     if (completedComputers.incrementAndGet() == numberOfComputers) {
                         if (currentPlayReport.getAbilityReport() != null && currentPlayReport.getAbilityReport().isBlockNext()) {
-                            startTurn(null, false, false, true,false);
+                            startTurn(null, false, false, true, false);
                         } else {
                             turnOnHumanInput();
                         }
@@ -236,8 +229,9 @@ public class GameController {
     }
 
     private void putChosenCardIfNecessary(AbilityReport abilityReport, PlayerHandGroup currentHandGroup, Play play) {
-        if (abilityReport != null && (abilityReport.getChoosenCard() != null && !abilityReport.isDemanded()
-                || play.getCardPlayed().getRank().equals(Rank.JOKER))) {
+        if (abilityReport != null &&
+                (abilityReport.getChoosenCard() != null && !abilityReport.isDemanded()
+                        || play.getCardPlayed().getRank().equals(Rank.JOKER))) {
             putCard(cardActorFactory.createCardActor(abilityReport.getChoosenCard()),
                     currentHandGroup, false);
         }

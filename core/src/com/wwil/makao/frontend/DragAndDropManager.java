@@ -14,11 +14,10 @@ public class DragAndDropManager {
         this.target = prepareTarget(gameController.getStackCardsGroup());
     }
 
-    private DragAndDrop.Target prepareTarget(final StackCardsGroup stackCardsGroup) { // stack - target
-    //Target
+    private DragAndDrop.Target prepareTarget(final StackCardsGroup stackCardsGroup) {
     return new DragAndDrop.Target(stackCardsGroup) {
         @Override
-        public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) { // SOURCE - CARD
+        public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
             CardActor chosenCardActor = (CardActor) source.getActor();
             gameController.startTurn(chosenCardActor, false,false,false,false);
             return true;

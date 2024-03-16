@@ -16,15 +16,15 @@ public class Play {
     }
 
     public boolean isDemanding(){
-        return isChooserActive() && !isDropped();
+        return isChooserActive() && isNotDropped();
     }
 
     public boolean isBlock() {
         return skipTurn;
     }
 
-    public boolean isDropped() {
-        return dropped;
+    public boolean isNotDropped() {
+        return !dropped;
     }
 
     public Card getCardPlayed() {

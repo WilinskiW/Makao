@@ -37,12 +37,12 @@ public class PlayerHand {
         return null;
     }
 
-    public Card findDemandedCard(Card demanded, boolean lookingForJack) {
+    public Card findDemandedCard(Card demanded, boolean lookForJ) {
         List<Card> playerCards = cards;
         Collections.shuffle(playerCards);
         Card cardToPlay = null;
         for (Card card : playerCards) {
-            if (lookingForJack && card.getRank().equals(Rank.J)) {
+            if (lookForJ && card.getRank().equals(Rank.J)) {
                 return card;
             }
 

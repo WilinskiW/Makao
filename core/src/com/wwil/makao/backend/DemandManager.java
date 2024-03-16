@@ -2,11 +2,6 @@ package com.wwil.makao.backend;
 
 public class DemandManager {
     private final int performerIndex;
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
     private boolean active;
     private final Card demandedCard;
 
@@ -28,12 +23,7 @@ public class DemandManager {
         return active;
     }
 
-    @Override //todo Test
-    public String toString() {
-        return "DemandManager{" +
-                "performerIndex=" + performerIndex +
-                ", active=" + active +
-                ", demandedCard=" + demandedCard +
-                '}';
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
