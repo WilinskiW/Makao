@@ -15,7 +15,6 @@ public class CardChooserGroup extends Group {
     private final CardActor displayCard;
     private final List<ArrowButtonActor> arrowButtons;
     private final PutButtonActor putButton;
-    private boolean visible = false;
 
     public CardChooserGroup(GameController gameController) {
         this.gameController = gameController;
@@ -29,6 +28,7 @@ public class CardChooserGroup extends Group {
         displayCard.setPosition(GUIparams.CHOOSER_CARD_X_POS, GUIparams.CHOOSER_CARD_Y_POS);
         setBounds(GUIparams.CHOOSER_WINDOW_X_POS, GUIparams.CHOOSER_WINDOW_Y_POS,
                 GUIparams.CHOOSER_WINDOW_WIDTH, GUIparams.CHOOSER_WINDOW_HEIGHT);
+        this.setVisible(false);
     }
 
     private List<ArrowButtonActor> createArrows() {
@@ -43,20 +43,20 @@ public class CardChooserGroup extends Group {
         return buttons;
     }
 
-    private void assignElementsToGroup(){
+    private void assignElementsToGroup() {
         addActor(window);
         addActor(putButton);
         addActor(displayCard);
     }
 
-    public void setVisibility(boolean visible){
+    public void setVisibility(boolean visible) {
         this.setVisible(visible);
         resetArrowsVisibility();
         manager.resetIndexes();
     }
 
-    private void resetArrowsVisibility(){
-        for(ArrowButtonActor arrow : getArrowButtons()){
+    private void resetArrowsVisibility() {
+        for (ArrowButtonActor arrow : getArrowButtons()) {
             arrow.setVisible(true);
         }
     }
@@ -71,16 +71,6 @@ public class CardChooserGroup extends Group {
 
     public CardChooserManager getManager() {
         return manager;
-    }
-
-    @Override
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
-    @Override
-    public boolean isVisible() {
-        return visible;
     }
 
     public List<ArrowButtonActor> getArrowButtons() {

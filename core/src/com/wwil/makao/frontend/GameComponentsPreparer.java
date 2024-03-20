@@ -26,7 +26,7 @@ public class GameComponentsPreparer {
         this.stage = stage;
     }
 
-    public void prepare() {
+    public void execute() {
         prepareStackCardsGroup();
         preparePullButton();
         prepareHandGroups();
@@ -58,8 +58,9 @@ public class GameComponentsPreparer {
             handGroups.add(new PlayerHandGroup(backend.getPlayers().get(i)));
         }
         setPlayersCardActorsAlignmentParams();
-        //todo Test:
-        test(3);
+
+        //todo metoda testowa:
+        //test(3);
 
         for (PlayerHandGroup handGroup : handGroups) {
             for (Card card : handGroup.getPlayerHand().getCards()) {
@@ -69,19 +70,19 @@ public class GameComponentsPreparer {
         }
     }
 
-    private void test(int subject) {
-        handGroups.get(subject).getPlayerHand().getCards().clear();
-        handGroups.get(subject).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.J, Suit.CLUB),
-                new Card(Rank.J, Suit.SPADE), new Card(Rank.J, Suit.DIAMOND), new Card(Rank.J, Suit.HEART)));
-        Card jokerRed = new Card(Rank.JOKER, Suit.RED);
-        Card jokerBlack = new Card(Rank.JOKER, Suit.BLACK);
-        Card card3 = new Card(Rank.AS, Suit.SPADE);
-        Card card4 = new Card(Rank.FIVE, Suit.HEART);
-        handGroups.get(subject).getPlayerHand().addCardToHand(jokerRed);
-        handGroups.get(0).getPlayerHand().addCardToHand(jokerBlack);
-        //handGroups.get(subject).getPlayerHand().addCardToHand(card3);
-        handGroups.get(subject).getPlayerHand().addCardToHand(card4);
-    }
+//    private void test(int subject) {
+//        handGroups.get(subject).getPlayerHand().getCards().clear();
+//        handGroups.get(subject).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.J, Suit.CLUB),
+//                new Card(Rank.J, Suit.SPADE), new Card(Rank.J, Suit.DIAMOND), new Card(Rank.J, Suit.HEART)));
+//        Card jokerRed = new Card(Rank.JOKER, Suit.RED);
+//        Card jokerBlack = new Card(Rank.JOKER, Suit.BLACK);
+//        Card card3 = new Card(Rank.AS, Suit.SPADE);
+//        Card card4 = new Card(Rank.FIVE, Suit.HEART);
+//        handGroups.get(subject).getPlayerHand().addCardToHand(jokerRed);
+//        handGroups.get(0).getPlayerHand().addCardToHand(jokerBlack);
+//        //handGroups.get(subject).getPlayerHand().addCardToHand(card3);
+//        handGroups.get(subject).getPlayerHand().addCardToHand(card4);
+//    }
 
 
     private void setPlayersCardActorsAlignmentParams() {
@@ -93,8 +94,7 @@ public class GameComponentsPreparer {
 
 
     private void adjustHumanCards() {
-        PlayerHandGroup group = controller.getHumanHand();
-        for (CardActor card : group.getCardActors()) {
+        for (CardActor card : controller.getHumanHand().getCardActors()) {
             card.setUpSideDown(false);
             controller.getDragAndDropManager().prepareDragAndDrop(card);
         }

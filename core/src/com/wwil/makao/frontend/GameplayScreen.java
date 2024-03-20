@@ -19,8 +19,8 @@ public class GameplayScreen implements Screen {
         this.makao = makao;
         setGraphicComponents();
         GameController controller = new GameController(this);
-        GameComponentsPreparer gameComponentsPreparer = new GameComponentsPreparer(controller, stage);
-        gameComponentsPreparer.prepare();
+        GameComponentsPreparer preparer = new GameComponentsPreparer(controller, stage);
+        preparer.execute();
     }
 
     private void setGraphicComponents() {

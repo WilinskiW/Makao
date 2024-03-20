@@ -59,7 +59,6 @@ public class CardChooserManager {
     }
 
     public void changeRank(int indexChanger) {
-        //Dla J
         SortedMap<Integer,String> map;
         if(cardChooser.getGameController().peekStackCardActor().getCard().getRank().equals(Rank.J)){
             map = mapForJ;
@@ -84,7 +83,6 @@ public class CardChooserManager {
     }
 
     public void changeSuit(int indexChanger) {
-        //Dla AS
         changeSuitIndex(indexChanger,suitMap);
         String suit = suitMap.get(currentSuitIndex);
         setCurrentSuitName(suit);

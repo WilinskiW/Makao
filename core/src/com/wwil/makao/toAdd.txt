@@ -1,5 +1,4 @@
 Animacje rzucania kart przez boty
-Aktywacja specjalnych zdolności kart ~ Specjalne zdolności
 Rzucanie kilku kart na raz
 Obrona
 Komunikaty akcji graczy

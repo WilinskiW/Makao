@@ -25,5 +25,4 @@ public class WindowActor extends Actor {
         batch.draw(windowTexture, getX(), getY());
         batch.setColor(Color.WHITE);
     }
-
 }

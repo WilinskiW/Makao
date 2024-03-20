@@ -68,7 +68,7 @@ public class PlayerHandGroup extends Group {
         return playerHand;
     }
 
-    public CardActor findCardActor(Card card) {
+    public CardActor getCardActor(Card card) {
         for (CardActor cardActor : getCardActors()) {
             if (cardActor.getCard().equals(card)) {
                 return cardActor;

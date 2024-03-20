@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 //Komunikacja miedzy back endem a front endem
 
-//todo Zrobić refactor
 public class GameController {
     private final GameplayScreen gameplayScreen;
     private final MakaoBackend backend = new MakaoBackend();
@@ -33,8 +32,6 @@ public class GameController {
         this.stage = gameplayScreen.getStage();
     }
 
-    //fixme pojawiły się więcej jokerów na planszy
-    
     public void startTurn(CardActor cardPlayed, boolean isDropped, boolean humanBlock, boolean isDemanding) {
         RoundReport report;
         PlayerHandGroup human = handGroups.get(0);
@@ -55,7 +52,7 @@ public class GameController {
 
         if (report.isCorrect()) {
             cardChooser.setVisibility(false);
-            pullCards(report.getPlayReports().get(0));
+            pullCard(report.getPlayReports().get(0));
             turnOffHumanInput();
             executeComputersTurn(report);
         }
@@ -160,16 +157,12 @@ public class GameController {
         card.setZIndex((int) card.getLastPositionBeforeRemove().z);
     }
 
-    private void pullCards(PlayReport playReport) {
+    private void pullCard(PlayReport playReport) {
         AbilityReport abilityReport = playReport.getAbilityReport();
         if (abilityReport != null && abilityReport.getToPull() != null) {
-            pullCards(abilityReport.getToPull(), handGroups.get(abilityReport.getPerformerIndex()));
-        }
-    }
-
-    private void pullCards(List<Card> cards, PlayerHandGroup player) {
-        for (Card card : cards) {
-            pullCard(card, player);
+            for (Card card : abilityReport.getToPull()) {
+                pullCard(card, handGroups.get(abilityReport.getPerformerIndex()));
+            }
         }
     }
 
@@ -200,7 +193,7 @@ public class GameController {
                 @Override
                 public void run() {
                     if (!currentPlayReport.isBlocked()) {
-                        processNormalComputerTurn(currentPlayReport, currentHandGroup);
+                        processComputerTurn(currentPlayReport, currentHandGroup);
                     }
                     // Sprawdź, czy to był ostatni ruch komputera
                     if (completedComputers.incrementAndGet() == numberOfComputers) {
@@ -215,11 +208,11 @@ public class GameController {
         }
     }
 
-    private void processNormalComputerTurn(PlayReport currentPlayReport, PlayerHandGroup currentHandGroup) {
-        pullCards(currentPlayReport);
+    private void processComputerTurn(PlayReport currentPlayReport, PlayerHandGroup currentHandGroup) {
+        pullCard(currentPlayReport);
         Card cardToPlay = currentPlayReport.getPlay().getCardPlayed();
         if (cardToPlay != null) {
-            putCard(currentHandGroup.findCardActor(cardToPlay), currentHandGroup, false);
+            putCard(currentHandGroup.getCardActor(cardToPlay), currentHandGroup, false);
             putChosenCardIfNecessary(currentPlayReport.getAbilityReport(), currentHandGroup, currentPlayReport.getPlay());
         } else {
             CardActor drawnCard = cardActorFactory.createCardActor(currentPlayReport.getDrawn());
@@ -228,11 +221,9 @@ public class GameController {
     }
 
     private void putChosenCardIfNecessary(AbilityReport abilityReport, PlayerHandGroup currentHandGroup, Play play) {
-        if (abilityReport != null &&
-                (abilityReport.getChoosenCard() != null && !abilityReport.isDemanded()
-                        || play.getCardPlayed().getRank().equals(Rank.JOKER))) {
-            putCard(cardActorFactory.createCardActor(abilityReport.getChoosenCard()),
-                    currentHandGroup, false);
+        if (abilityReport != null && (abilityReport.getChoosenCard() != null && !abilityReport.isDemanded()
+                || play.getCardPlayed().getRank().equals(Rank.JOKER))) {
+            putCard(cardActorFactory.createCardActor(abilityReport.getChoosenCard()), currentHandGroup, false);
         }
     }
 
