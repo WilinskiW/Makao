@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Timer;
 import com.wwil.makao.backend.*;
-import com.wwil.makao.backend.Card;
 import com.wwil.makao.frontend.cardChooserWindow.CardChooserGroup;
 
 import java.util.ArrayList;
@@ -34,8 +33,9 @@ public class GameController {
         this.stage = gameplayScreen.getStage();
     }
 
-    public void startTurn(CardActor cardPlayed, boolean isDropped,
-                          boolean isCardChooserActive, boolean humanBlock, boolean isDemanding) {
+    //fixme pojawiły się więcej jokerów na planszy
+    
+    public void startTurn(CardActor cardPlayed, boolean isDropped, boolean humanBlock, boolean isDemanding) {
         RoundReport report;
         PlayerHandGroup human = handGroups.get(0);
 
@@ -47,7 +47,7 @@ public class GameController {
             if (isDemanding) {
                 report = createDemandReport(cardPlayed);
             } else if (isDropped) {
-                report = createDropReport(cardPlayed, isCardChooserActive);
+                report = createDropReport(cardPlayed, cardChooser.isVisible());
             } else {
                 report = createDragReport(cardPlayed);
             }
@@ -109,8 +109,8 @@ public class GameController {
         if (report.isCorrect()) {
             putCard(cardPlayed, getHumanHand(), isCardChooserActive);
         } else if (report.isChooserActive()) {
-            showCardChooser(cardPlayed, getHumanHand(), isCardChooserActive);
-        } else {
+            showCardChooser(cardPlayed, isCardChooserActive);
+        } else if(!isCardChooserActive){
             positionCardInGroup(getHumanHand(), cardPlayed);
         }
         return report;
@@ -124,11 +124,11 @@ public class GameController {
         }
     }
 
-    private void showCardChooser(CardActor cardPlayed, PlayerHandGroup human, boolean isChooserActive) {
+    private void showCardChooser(CardActor cardPlayed, boolean isChooserActive) {
         CardActor stackCard = stackCardsGroup.peekCardActor();
-        putCard(cardPlayed, human, isChooserActive);
+        putCard(cardPlayed, getHumanHand(), isChooserActive);
         cardChooser.setVisibility(true);
-        cardChooser.getManager().setAttributesFromStackCard(stackCard, cardPlayed);
+        cardChooser.getManager().setDisplayCard(stackCard, cardPlayed);
     }
 
     public void addCardActorToStackGroup(CardActor cardActor) {
@@ -174,11 +174,10 @@ public class GameController {
     }
 
     public void executeDragStop(CardActor card) {
-        PlayerHandGroup humanGroup = handGroups.get(0);
-        if (!humanGroup.getChildren().isEmpty()) {
+        if (!getHumanHand().getChildren().isEmpty()) {
             card.beLastInGroup();
         } else {
-            moveCardBackToHumanGroup(humanGroup, card);
+            moveCardBackToHumanGroup(getHumanHand(), card);
         }
     }
 
@@ -206,7 +205,7 @@ public class GameController {
                     // Sprawdź, czy to był ostatni ruch komputera
                     if (completedComputers.incrementAndGet() == numberOfComputers) {
                         if (currentPlayReport.getAbilityReport() != null && currentPlayReport.getAbilityReport().isBlockNext()) {
-                            startTurn(null, false, false, true, false);
+                            startTurn(null, false, true, false);
                         } else {
                             turnOnHumanInput();
                         }

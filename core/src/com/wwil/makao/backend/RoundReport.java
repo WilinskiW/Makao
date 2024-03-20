@@ -6,7 +6,7 @@ import java.util.List;
 public class RoundReport {
     private boolean correct = true;
     private final List<PlayReport> playReports = new ArrayList<>();
-    private boolean chooserActive = false;
+    private boolean shouldActiveChooser = false;
 
     public void addPlay(PlayReport playReport) {
         playReports.add(playReport);
@@ -21,7 +21,7 @@ public class RoundReport {
     }
 
     public boolean isChooserActive() {
-        return chooserActive;
+        return shouldActiveChooser;
     }
 
     public void setIncorrect() {
@@ -29,7 +29,7 @@ public class RoundReport {
     }
 
     public void setChooserActivation(boolean active) {
-        this.chooserActive = active;
+        this.shouldActiveChooser = active;
     }
 
     public boolean isCorrect() {

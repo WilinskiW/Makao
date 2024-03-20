@@ -21,7 +21,9 @@ public enum Rank {
     public static Rank getRandomWithAbility() {
         List<Rank> ranksForJoker = new ArrayList<>();
         for (Rank rank : Rank.values()) {
-            if (!rank.ability.equals(Ability.NONE) && !rank.ability.equals(Ability.WILD_CARD)) {
+            if (!rank.ability.equals(Ability.NONE) &&
+                    !rank.ability.equals(Ability.WILD_CARD) &&
+                    !rank.ability.equals(Ability.ON_EVERYTHING)) {
                 ranksForJoker.add(rank);
             }
         }
@@ -30,16 +32,16 @@ public enum Rank {
         return ranksForJoker.get(randomIndex);
     }
 
-    public static Rank getRank(String nameOfRank){
-        for(Rank rank : values()){
-            if(rank.name.equals(nameOfRank)){
+    public static Rank getRank(String nameOfRank) {
+        for (Rank rank : values()) {
+            if (rank.name.equals(nameOfRank)) {
                 return rank;
             }
         }
         return null;
     }
 
-    public boolean isRankActivateChooser(){
+    public boolean isRankActivateChooser() {
         return this.equals(J) || this.equals(AS) || this.equals(JOKER);
     }
 

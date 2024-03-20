@@ -58,13 +58,13 @@ public class MakaoBackend {
     //Jedyna publiczna metoda (odbiera informacje, wykonuje działanie i wysyła)
     public RoundReport executeAction(Play humanPlay) {
         roundReport = new RoundReport();
-        if (isDragging(humanPlay)) {
-            return createDragReport(humanPlay);
-        }
-
         if (humanPlay.isBlock()) {
             playRound(humanPlay);
             return roundReport;
+        }
+
+        if (isDragging(humanPlay)) {
+            return createDragReport(humanPlay);
         }
 
         if (humanPlay.isDemanding()) {
@@ -78,6 +78,7 @@ public class MakaoBackend {
             return roundReport;
         }
 
+        //Zmienić warunek
         if (shouldActiveChooser(humanPlay)) {
             return createActivateChooserReport(humanPlay);
         }
@@ -98,7 +99,7 @@ public class MakaoBackend {
     private RoundReport createDragReport(Play humanPlay) {
         boolean isCorrectCard;
         if (demand.isActive()) {
-            isCorrectCard = isCorrectCardForDemand(humanPlay.getCardPlayed());
+            isCorrectCard = isCorrectCardForDemand(humanPlay);
         } else {
             isCorrectCard = isCorrectCard(humanPlay.getCardPlayed());
         }
@@ -110,21 +111,24 @@ public class MakaoBackend {
 
     private boolean isCardIncorrect(Play humanPlay) {
         if (demand.isActive()) {
-            return !humanPlay.wantsToDraw() && !isCorrectCardForDemand(humanPlay.getCardPlayed());
+            return !humanPlay.wantsToDraw() && !isCorrectCardForDemand(humanPlay);
         }
         return !humanPlay.wantsToDraw() && !isCorrectCard(humanPlay.getCardPlayed());
     }
 
-    private boolean isCorrectCardForDemand(Card chosenCard) {
+    private boolean isCorrectCardForDemand(Play humanPlay) {
+        Card chosenCard = humanPlay.getCardPlayed();
         return chosenCard.getRank() == demand.getCard().getRank() ||
                 chosenCard.getRank().equals(Rank.JOKER) ||
-                (chosenCard.getRank().equals(Rank.J) && stack.isJackOnTop());
+                (chosenCard.getRank().equals(Rank.J) && stack.isJackOnTop()) ||
+                humanPlay.isChooserActive() && stack.isJackBeforeJoker() && chosenCard.getRank().equals(Rank.J);
     }
 
     private boolean shouldActiveChooser(Play humanPlay) {
-        return !humanPlay.wantsToDraw()
-                && humanPlay.getCardPlayed().getRank().isRankActivateChooser()
-                && !humanPlay.isChooserActive();
+        return ((!humanPlay.wantsToDraw()
+                && humanPlay.getCardPlayed().getRank().isRankActivateChooser())
+                && !humanPlay.isChooserActive())
+                || stack.peekCard().getRank().equals(Rank.JOKER);
     }
 
     private RoundReport createActivateChooserReport(Play humanPlay) {
@@ -147,7 +151,6 @@ public class MakaoBackend {
         return stackCard.getSuit() == chosenCard.getSuit() || stackCard.getRank() == chosenCard.getRank();
     }
 
-    //Tutaj nic do zmiany
     private void playRound(Play humanPlay) {
         roundReport.addPlay(executePlay(humanPlay));
         nextPlayer();

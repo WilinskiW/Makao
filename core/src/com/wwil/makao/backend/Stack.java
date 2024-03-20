@@ -13,6 +13,9 @@ public class Stack {
         return peekCard().getRank().equals(Rank.J);
     }
 
+    public boolean isJackBeforeJoker(){
+        return peekCard().getRank().equals(Rank.JOKER) && getCards().get(getCards().size()-2).getRank().equals(Rank.J);
+    }
     public Card peekCard(){
         return cards.get(getCards().size()-1);
     }

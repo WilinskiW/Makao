@@ -42,10 +42,11 @@ public class PutButtonActor extends Actor {
         public void clicked(InputEvent event, float x, float y) {
             if (controller.peekStackCardActor().getCard().getRank().equals(Rank.J)) {
                 controller.startTurn(cardChooser.getManager().giveCardActor(),
-                        false, true, false, true);
-            } else {
+                        false, false, true);
+            }
+            else {
                 controller.startTurn(cardChooser.getManager().giveCardActor(),
-                        true, true, false, false);
+                        true, false, false);
             }
             super.clicked(event, x, y);
         }

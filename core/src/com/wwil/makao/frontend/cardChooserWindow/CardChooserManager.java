@@ -106,16 +106,20 @@ public class CardChooserManager {
                 new Card(Rank.getRank(currentRankName),Suit.getSuit(currentSuitName)));
     }
 
-    public void setAttributesFromStackCard(CardActor stackCard, CardActor cardPlayed) {
-        Rank stackRank = cardPlayed.getCard().getRank();
+    public void setDisplayCard(CardActor stackCard, CardActor cardPlayed) {
+        Rank cardPlayedRank = cardPlayed.getCard().getRank();
         currentSuitName = cardPlayed.getCard().getSuit().getName();
-        if(stackRank.equals(Rank.AS)) {
-            currentRankName = stackRank.getName();
+        if(cardPlayedRank.equals(Rank.AS)) {
+            currentRankName = cardPlayedRank.getName();
             hideArrows("RANK");
         }
-        else if(stackRank.equals(Rank.J)){
+        else if(cardPlayedRank.equals(Rank.J)){
             currentRankName = "5";
             hideArrows("SUIT");
+        }
+        else if(stackCard.getCard().getRank().equals(Rank.JOKER)){
+            currentRankName = cardPlayed.getCard().getRank().getName();
+            currentSuitName = cardPlayed.getCard().getSuit().getName();
         }
         else {
             currentRankName = "AS";

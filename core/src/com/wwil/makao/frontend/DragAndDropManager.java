@@ -19,7 +19,7 @@ public class DragAndDropManager {
         @Override
         public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
             CardActor chosenCardActor = (CardActor) source.getActor();
-            gameController.startTurn(chosenCardActor, false,false,false,false);
+            gameController.startTurn(chosenCardActor,false,false,false);
             return true;
         }
 
@@ -32,7 +32,7 @@ public class DragAndDropManager {
         @Override
         public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
             CardActor chosenCardActor = (CardActor) source.getActor();
-            gameController.startTurn(chosenCardActor, true, false,false,false);
+            gameController.startTurn(chosenCardActor, true,false,false);
         }
     };
 }

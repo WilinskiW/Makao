@@ -23,7 +23,7 @@ public class PullButtonManager extends ClickListener {
 
     private void performPullButtonClick() {
         pullButtonActor.setClick(true);
-        controller.startTurn(null,false,false,false,false);
+        controller.startTurn(null,false,false,false);
         performButtonAnimation();
     }
 
