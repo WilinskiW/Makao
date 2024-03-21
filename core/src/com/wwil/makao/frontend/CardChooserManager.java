@@ -1,11 +1,13 @@
-package com.wwil.makao.frontend.cardChooserWindow;
+package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.wwil.makao.backend.Card;
 import com.wwil.makao.backend.Rank;
 import com.wwil.makao.backend.Suit;
-import com.wwil.makao.frontend.CardActor;
+import com.wwil.makao.frontend.entities.CardActor;
+import com.wwil.makao.frontend.entities.cardChooser.ArrowButtonActor;
+import com.wwil.makao.frontend.entities.groups.CardChooserGroup;
 
 import java.util.SortedMap;
 import java.util.TreeMap;

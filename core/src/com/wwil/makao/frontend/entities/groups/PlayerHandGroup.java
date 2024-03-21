@@ -1,9 +1,12 @@
-package com.wwil.makao.frontend;
+package com.wwil.makao.frontend.entities.groups;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.wwil.makao.backend.PlayerHand;
 import com.wwil.makao.backend.Card;
+import com.wwil.makao.frontend.CardsAlignmentParams;
+import com.wwil.makao.frontend.GUIparams;
+import com.wwil.makao.frontend.entities.CardActor;
 
 import java.util.ArrayList;
 import java.util.List;

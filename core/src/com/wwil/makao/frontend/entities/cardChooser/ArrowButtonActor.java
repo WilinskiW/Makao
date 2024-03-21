@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend.cardChooserWindow;
+package com.wwil.makao.frontend.entities.cardChooser;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.wwil.makao.frontend.CardChooserManager;
 import com.wwil.makao.frontend.GUIparams;
 
 public class ArrowButtonActor extends Actor {

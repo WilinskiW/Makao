@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
+import com.wwil.makao.frontend.entities.CardActor;
+import com.wwil.makao.frontend.entities.groups.StackCardsGroup;
 
 public class DragAndDropManager {
     private final GameController gameController;
@@ -19,7 +21,9 @@ public class DragAndDropManager {
         @Override
         public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
             CardActor chosenCardActor = (CardActor) source.getActor();
-            gameController.startTurn(chosenCardActor,false,false,false);
+            if(target != null) {
+                gameController.executeTurn(chosenCardActor, false, false, false, false);
+            }
             return true;
         }
 
@@ -32,7 +36,7 @@ public class DragAndDropManager {
         @Override
         public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
             CardActor chosenCardActor = (CardActor) source.getActor();
-            gameController.startTurn(chosenCardActor, true,false,false);
+            gameController.executeTurn(chosenCardActor, true,false,false,false);
         }
     };
 }

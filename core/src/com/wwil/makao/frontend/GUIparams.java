@@ -5,8 +5,8 @@ public class GUIparams {
    public static int HEIGHT = 768;
    public static final int CARD_WIDTH = 168;
    public static final int CARD_HEIGHT = 248;
-   public static final int PULL_BUTTON_WIDTH = 128;
-   public static final int PULL_BUTTON_HEIGHT = 64;
+   public static final int GAME_BUTTON_WIDTH = 128;
+   public static final int GAME_BUTTON_HEIGHT = 64;
    public static final float CHOOSER_WINDOW_X_POS = WIDTH / 2f-50;
    public static final float CHOOSER_WINDOW_Y_POS = HEIGHT / 2f;
    public static final float CHOOSER_WINDOW_WIDTH = 300;

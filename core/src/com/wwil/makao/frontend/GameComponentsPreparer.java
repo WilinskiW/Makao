@@ -3,11 +3,13 @@ package com.wwil.makao.frontend;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.wwil.makao.backend.MakaoBackend;
 import com.wwil.makao.backend.Card;
-import com.wwil.makao.backend.Rank;
-import com.wwil.makao.backend.Suit;
-import com.wwil.makao.frontend.cardChooserWindow.CardChooserGroup;
+import com.wwil.makao.frontend.entities.gameButtons.EndTurnButton;
+import com.wwil.makao.frontend.entities.gameButtons.GameButton;
+import com.wwil.makao.frontend.entities.groups.CardChooserGroup;
+import com.wwil.makao.frontend.entities.CardActor;
+import com.wwil.makao.frontend.entities.groups.PlayerHandGroup;
+import com.wwil.makao.frontend.entities.gameButtons.PullButton;
 
-import java.util.Arrays;
 import java.util.List;
 
 //Przygotowanie elementów graficznych ekranu
@@ -29,6 +31,7 @@ public class GameComponentsPreparer {
     public void execute() {
         prepareStackCardsGroup();
         preparePullButton();
+        prepareEndTurnButton();
         prepareHandGroups();
         createCardChooser();
     }
@@ -40,11 +43,17 @@ public class GameComponentsPreparer {
     }
 
     private void preparePullButton() {
-        PullButtonActor pullButton = new PullButtonActor();
-        pullButton.addListener(new PullButtonManager(pullButton, controller));
+        GameButton pullButton = new PullButton(controller);
         stage.addActor(pullButton);
         pullButton.setPosition(GUIparams.WIDTH / 2f - 300, GUIparams.HEIGHT / 2f - 100);
-        controller.setPullButtonActor(pullButton);
+        controller.setPullButton(pullButton);
+    }
+
+    private void prepareEndTurnButton() {
+        GameButton endTurnButton = new EndTurnButton(controller);
+        stage.addActor(endTurnButton);
+        endTurnButton.setPosition(GUIparams.WIDTH / 2f - 300, GUIparams.HEIGHT / 2f - 25);
+        controller.setEndTurnButton(endTurnButton);
     }
 
     private void prepareHandGroups() {

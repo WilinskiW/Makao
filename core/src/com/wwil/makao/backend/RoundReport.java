@@ -7,6 +7,7 @@ public class RoundReport {
     private boolean correct = true;
     private final List<PlayReport> playReports = new ArrayList<>();
     private boolean shouldActiveChooser = false;
+    private boolean blockPullButton = false;
 
     public void addPlay(PlayReport playReport) {
         playReports.add(playReport);
@@ -28,9 +29,18 @@ public class RoundReport {
         correct = false;
     }
 
+    public void setBlockPullButton(boolean blockPullButton) {
+        this.blockPullButton = blockPullButton;
+    }
+
+    public boolean isBlockPullButton() {
+        return blockPullButton;
+    }
+
     public void setChooserActivation(boolean active) {
         this.shouldActiveChooser = active;
     }
+
 
     public boolean isCorrect() {
         return correct;

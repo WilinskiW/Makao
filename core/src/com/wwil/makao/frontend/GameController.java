@@ -6,9 +6,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Timer;
 import com.wwil.makao.backend.*;
-import com.wwil.makao.frontend.cardChooserWindow.CardChooserGroup;
+import com.wwil.makao.frontend.entities.gameButtons.GameButton;
+import com.wwil.makao.frontend.entities.groups.CardChooserGroup;
+import com.wwil.makao.frontend.entities.CardActor;
+import com.wwil.makao.frontend.entities.groups.PlayerHandGroup;
+import com.wwil.makao.frontend.entities.groups.StackCardsGroup;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,7 +26,8 @@ public class GameController {
     private final List<PlayerHandGroup> handGroups = new ArrayList<>();
     private final StackCardsGroup stackCardsGroup = new StackCardsGroup(backend.getStack());
     private CardChooserGroup cardChooser;
-    private PullButtonActor pullButtonActor;
+    private GameButton pullButton;
+    private GameButton endTurnButton;
     private final DragAndDropManager dragAndDropManager = new DragAndDropManager(this);
     private final Stage stage;
     private boolean inputBlockActive = false;
@@ -32,13 +38,32 @@ public class GameController {
         this.stage = gameplayScreen.getStage();
     }
 
-    public void startTurn(CardActor cardPlayed, boolean isDropped, boolean humanBlock, boolean isDemanding) {
+    //Jak działał report?
+    //1. Gracz wybierał akcje (drag, put, pull).
+    //2. Akcja ta była wysyła do backendu
+    //3. Backend tworzył Play Report'y gracza i komputerów
+    //4. Wszystko to było pakowane do RoundReporta
+    //5. Frontend wszystko wyświetla.
+
+    //Jak ma teraz działać?
+    //1. Gracz kładzie tyle kart ile może -> wymagane ich sprawdzania przez backend
+    //2. Gdy chce pociągnąć wtedy tura jest automatycznie kończona.
+    //3. Gdy naciśnie przycisk End turn to wtedy są tworzone playa dla komputerów
+
+    //Plan działania:
+    //DLA GRACZA:
+    //1. Zrobić tak, żeby gracz mógł położyć więcej niż jedną kartę (ZROBIONE)
+    //2. Gdy gracz dobiera kartę to wtedy automatycznie jest kończona tura. (ZROBIONE)
+    //3. Gdy gracz położy kartę to wtedy nie może dobrać karty (ZROBIONE)
+    //5. Gracz jedynie może położyć karty tej samej rangi
+
+    public void executeTurn(CardActor cardPlayed, boolean isDropped, boolean humanBlock, boolean isDemanding, boolean wantToEnd) {
         RoundReport report;
         PlayerHandGroup human = handGroups.get(0);
 
         if (humanBlock) {
             report = createWaitReport();
-        } else if (pullButtonActor.isClick()) {
+        } else if (pullButton.isClick()) {
             report = createPullReport(isDropped, human);
         } else {
             if (isDemanding) {
@@ -50,234 +75,247 @@ public class GameController {
             }
         }
 
-        if (report.isCorrect()) {
+        if(report.isBlockPullButton()){
+            pullButton.setActive(false);
+        }
+
+        if (endTurnButton.isClick() || wantToEnd) {
             cardChooser.setVisibility(false);
             pullCard(report.getPlayReports().get(0));
             turnOffHumanInput();
             executeComputersTurn(report);
         }
     }
-
-    private RoundReport createWaitReport() {
-        return backend.executeAction
-                (new Play(null, false, false, false, true));
-    }
-
-    private RoundReport createPullReport(boolean isDropped, PlayerHandGroup human) {
-        RoundReport report = backend.executeAction
-                (new Play(null, true, isDropped, false, false));
-        pullCard(report.getPlayReports().get(0).getDrawn(), human);
-        return report;
-    }
-
-    private void pullCard(Card card, PlayerHandGroup player) {
-        CardActor drawnCard = cardActorFactory.createCardActor(card);
-        if (player == getHumanHand()) {
-            drawnCard.setUpSideDown(false);
-            dragAndDropManager.prepareDragAndDrop(drawnCard);
+        private RoundReport createWaitReport () {
+            return backend.executeAction
+                    (new HumanPlay(null, false, false, false, true, false));
         }
-        player.addActor(drawnCard);
-    }
 
-    private RoundReport createDemandReport(CardActor cardPlayed) {
-        return backend.executeAction
-                (new Play(cardPlayed.getCard(), false, false, true, false));
-    }
-
-    private RoundReport createDragReport(CardActor cardPlayed) {
-        RoundReport report = backend.executeAction
-                (new Play(cardPlayed.getCard(), false, false, false, false));
-        changeCardColor(report.getPlayReports().get(0).isCardCorrect(), cardPlayed);
-        return report;
-    }
-
-    public void changeCardColor(boolean isCardCorrect, CardActor chosenCardActor) {
-        if (isCardCorrect) {
-            chosenCardActor.setColor(Color.LIME);
-        } else {
-            chosenCardActor.setColor(Color.SCARLET);
+        private RoundReport createPullReport ( boolean isDropped, PlayerHandGroup human){
+            RoundReport report = backend.executeAction
+                    (new HumanPlay(null, true, isDropped, false, false, false));
+            pullCard(report.getPlayReports().get(0).getDrawn(), human);
+            return report;
         }
-    }
 
-    private RoundReport createDropReport(CardActor cardPlayed, boolean isCardChooserActive) {
-        RoundReport report = backend.executeAction
-                (new Play(cardPlayed.getCard(), false, true, isCardChooserActive, false));
-
-        if (report.isCorrect()) {
-            putCard(cardPlayed, getHumanHand(), isCardChooserActive);
-        } else if (report.isChooserActive()) {
-            showCardChooser(cardPlayed, isCardChooserActive);
-        } else if(!isCardChooserActive){
-            positionCardInGroup(getHumanHand(), cardPlayed);
+        private void pullCard (Card card, PlayerHandGroup player){
+            CardActor drawnCard = cardActorFactory.createCardActor(card);
+            if (player == getHumanHand()) {
+                drawnCard.setUpSideDown(false);
+                dragAndDropManager.prepareDragAndDrop(drawnCard);
+            }
+            player.addActor(drawnCard);
         }
-        return report;
-    }
 
-    private void putCard(CardActor cardToPlay, PlayerHandGroup player, boolean isChooserActive) {
-        addCardActorToStackGroup(cardToPlay); //położyć aktora
-        endIfPlayerWon(player);
-        if (!isChooserActive) {
-            player.moveCloserToStartingPosition(); //autowyrównanie
+        private RoundReport createDemandReport (CardActor cardPlayed){
+            return backend.executeAction
+                    (new HumanPlay(Arrays.asList(cardPlayed.getCard()), false, false,
+                            true, false, true));
         }
-    }
 
-    private void showCardChooser(CardActor cardPlayed, boolean isChooserActive) {
-        CardActor stackCard = stackCardsGroup.peekCardActor();
-        putCard(cardPlayed, getHumanHand(), isChooserActive);
-        cardChooser.setVisibility(true);
-        cardChooser.getManager().setDisplayCard(stackCard, cardPlayed);
-    }
-
-    public void addCardActorToStackGroup(CardActor cardActor) {
-        stage.addActor(cardActor);
-        cardActor.setUpSideDown(false);
-        stackCardsGroup.addActor(cardActor);
-    }
-
-    private void endIfPlayerWon(PlayerHandGroup playerHandGroup) {
-        //Do czasu wprowadzenia menu
-        if (playerHandGroup.getPlayerHand().checkIfPlayerHaveNoCards()) {
-            System.out.println(playerHandGroup + " won");
-            Gdx.app.exit();
+        private RoundReport createDragReport (CardActor cardPlayed){
+            RoundReport report = backend.executeAction
+                    (new HumanPlay(Arrays.asList(cardPlayed.getCard()), false, false,
+                            false, false, false));
+            changeCardColor(report.getPlayReports().get(0).isCardCorrect(), cardPlayed);
+            return report;
         }
-    }
 
-    private void positionCardInGroup(PlayerHandGroup human, CardActor chosenCard) {
-        if (!human.getChildren().isEmpty()) {
-            chosenCard.beLastInGroup();
-        } else {
-            moveCardBackToHumanGroup(human, chosenCard);
-        }
-    }
-
-    private void moveCardBackToHumanGroup(PlayerHandGroup humanGroup, CardActor card) {
-        humanGroup.addActor(card);
-        card.setX(card.getLastPositionBeforeRemove().x);
-        card.setY(card.getLastPositionBeforeRemove().y);
-        card.setZIndex((int) card.getLastPositionBeforeRemove().z);
-    }
-
-    private void pullCard(PlayReport playReport) {
-        AbilityReport abilityReport = playReport.getAbilityReport();
-        if (abilityReport != null && abilityReport.getToPull() != null) {
-            for (Card card : abilityReport.getToPull()) {
-                pullCard(card, handGroups.get(abilityReport.getPerformerIndex()));
+        public void changeCardColor ( boolean isCardCorrect, CardActor chosenCardActor){
+            if (isCardCorrect) {
+                chosenCardActor.setColor(Color.LIME);
+            } else {
+                chosenCardActor.setColor(Color.SCARLET);
             }
         }
-    }
 
-    public void executeDragStop(CardActor card) {
-        if (!getHumanHand().getChildren().isEmpty()) {
-            card.beLastInGroup();
-        } else {
-            moveCardBackToHumanGroup(getHumanHand(), card);
+        private RoundReport createDropReport (CardActor cardPlayed,boolean isCardChooserActive){
+            RoundReport report = backend.executeAction
+                    (new HumanPlay(Arrays.asList(cardPlayed.getCard()), false, true,
+                            isCardChooserActive, false, false));
+            if (report.isCorrect() && report.getPlayReports().get(0).isCardCorrect()) {
+                putCard(cardPlayed, getHumanHand(), isCardChooserActive);
+            } else if(!isCardChooserActive){
+                positionCardInGroup(getHumanHand(), cardPlayed);
+            }
+
+            if (report.isChooserActive()) {
+                showCardChooser(cardPlayed, isCardChooserActive);
+            }
+
+            return report;
         }
-    }
 
-    public void turnOffHumanInput() {
-        pullButtonActor.changeTransparency(0.5f);
-        Gdx.input.setInputProcessor(null);
-        setInputBlockActive(true);
-    }
+        private void putCard (CardActor cardToPlay, PlayerHandGroup player,boolean isChooserActive){
+            addCardActorToStackGroup(cardToPlay);
+            endIfPlayerWon(player);
+            player.moveCloserToStartingPosition();
+        }
 
-    private void executeComputersTurn(final RoundReport roundReport) {
-        float delta = 1.5f;
-        final int numberOfComputers = handGroups.size() - 1;
-        final AtomicInteger completedComputers = new AtomicInteger(0);
+        private void showCardChooser (CardActor cardPlayed,boolean isChooserActive){
+            CardActor stackCard = stackCardsGroup.peekCardActor();
+            putCard(cardPlayed, getHumanHand(), isChooserActive);
+            cardChooser.setVisibility(true);
+            cardChooser.getManager().setDisplayCard(stackCard, cardPlayed);
+        }
 
-        for (int i = 1; i < handGroups.size(); i++) {
-            final PlayerHandGroup currentHandGroup = handGroups.get(i);
-            final PlayReport currentPlayReport = roundReport.getPlayReports().get(i);
+        public void addCardActorToStackGroup (CardActor cardActor){
+            stage.addActor(cardActor);
+            cardActor.setUpSideDown(false);
+            stackCardsGroup.addActor(cardActor);
+        }
 
-            Timer.schedule(new Timer.Task() {
-                @Override
-                public void run() {
-                    if (!currentPlayReport.isBlocked()) {
-                        processComputerTurn(currentPlayReport, currentHandGroup);
-                    }
-                    // Sprawdź, czy to był ostatni ruch komputera
-                    if (completedComputers.incrementAndGet() == numberOfComputers) {
-                        if (currentPlayReport.getAbilityReport() != null && currentPlayReport.getAbilityReport().isBlockNext()) {
-                            startTurn(null, false, true, false);
-                        } else {
-                            turnOnHumanInput();
+        private void endIfPlayerWon (PlayerHandGroup playerHandGroup){
+            //Do czasu wprowadzenia menu
+            if (playerHandGroup.getPlayerHand().checkIfPlayerHaveNoCards()) {
+                System.out.println(playerHandGroup + " won");
+                Gdx.app.exit();
+            }
+        }
+
+        private void positionCardInGroup (PlayerHandGroup human, CardActor chosenCard){
+            if (!human.getChildren().isEmpty()) {
+                chosenCard.beLastInGroup();
+            } else {
+                moveCardBackToHumanGroup(human, chosenCard);
+            }
+        }
+
+        private void moveCardBackToHumanGroup (PlayerHandGroup humanGroup, CardActor card){
+            humanGroup.addActor(card);
+            card.setX(card.getLastPositionBeforeRemove().x);
+            card.setY(card.getLastPositionBeforeRemove().y);
+            card.setZIndex((int) card.getLastPositionBeforeRemove().z);
+        }
+
+        private void pullCard (PlayReport playReport){
+            AbilityReport abilityReport = playReport.getAbilityReport();
+            if (abilityReport != null && abilityReport.getToPull() != null) {
+                for (Card card : abilityReport.getToPull()) {
+                    pullCard(card, handGroups.get(abilityReport.getPerformerIndex()));
+                }
+            }
+        }
+
+        public void executeDragStop (CardActor card){
+            if (!getHumanHand().getChildren().isEmpty()) {
+                card.beLastInGroup();
+            } else {
+                moveCardBackToHumanGroup(getHumanHand(), card);
+            }
+        }
+
+        public void turnOffHumanInput () {
+            pullButton.setActive(false);
+            endTurnButton.setActive(false);
+            Gdx.input.setInputProcessor(null);
+            setInputBlockActive(true);
+        }
+
+        private void executeComputersTurn ( final RoundReport roundReport){
+            float delta = 1.5f;
+            final int numberOfComputers = handGroups.size() - 1;
+            final AtomicInteger completedComputers = new AtomicInteger(0);
+
+            for (int i = 1; i < handGroups.size(); i++) {
+                final PlayerHandGroup currentHandGroup = handGroups.get(i);
+                final PlayReport currentPlayReport = roundReport.getPlayReports().get(i);
+
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        if (!currentPlayReport.isBlocked()) {
+                            processComputerTurn(currentPlayReport, currentHandGroup);
+                        }
+                        // Sprawdź, czy to był ostatni ruch komputera
+                        if (completedComputers.incrementAndGet() == numberOfComputers) {
+                            if (currentPlayReport.getAbilityReport() != null && currentPlayReport.getAbilityReport().isBlockNext()) {
+                                executeTurn(null, false, true, false, true);
+                            } else {
+                                turnOnHumanInput();
+                            }
                         }
                     }
-                }
-            }, i * delta); // Opóźnienie względem indeksu
+                }, i * delta); // Opóźnienie względem indeksu
+            }
+        }
+
+        private void processComputerTurn (PlayReport currentPlayReport, PlayerHandGroup currentHandGroup){
+            pullCard(currentPlayReport);
+            List<Card> cardsToPlay = currentPlayReport.getPlay().getCardsPlayed();
+            if (cardsToPlay != null) {
+                putCard(currentHandGroup.getCardActor(cardsToPlay.get(0)), currentHandGroup, false);
+                putChosenCardIfNecessary(currentPlayReport.getAbilityReport(), currentHandGroup, currentPlayReport.getPlay());
+            } else {
+                CardActor drawnCard = cardActorFactory.createCardActor(currentPlayReport.getDrawn());
+                currentHandGroup.addActor(drawnCard);
+            }
+        }
+
+        private void putChosenCardIfNecessary (AbilityReport abilityReport, PlayerHandGroup currentHandGroup, Play play)
+        {
+            if (abilityReport != null && (abilityReport.getChoosenCard() != null && !abilityReport.isDemanded()
+                    || play.getCardPlayed().getRank().equals(Rank.JOKER))) {
+                putCard(cardActorFactory.createCardActor(abilityReport.getChoosenCard()), currentHandGroup, false);
+            }
+        }
+
+        private void turnOnHumanInput () {
+            setInputBlockActive(false);
+            pullButton.setActive(true);
+            endTurnButton.setActive(true);
+            Gdx.input.setInputProcessor(gameplayScreen.getStage());
+        }
+
+        public CardActor peekStackCardActor () {
+            return stackCardsGroup.peekCardActor();
+        }
+
+        public PlayerHandGroup getHumanHand () {
+            return handGroups.get(0);
+        }
+
+        public StackCardsGroup getStackCardsGroup () {
+            return stackCardsGroup;
+        }
+
+        public void setPullButton (GameButton pullButton){
+            this.pullButton = pullButton;
+        }
+
+        public void setEndTurnButton (GameButton endTurnButton){
+            this.endTurnButton = endTurnButton;
+        }
+
+        public void setInputBlockActive ( boolean inputBlockActive){
+            this.inputBlockActive = inputBlockActive;
+        }
+
+        public void setCardChooser (CardChooserGroup cardChooser){
+            this.cardChooser = cardChooser;
+        }
+
+        public boolean isInputBlockActive () {
+            return inputBlockActive;
+        }
+
+        public CardActorFactory getCardActorFactory () {
+            return cardActorFactory;
+        }
+
+        public List<PlayerHandGroup> getHandGroups () {
+            return handGroups;
+        }
+
+        public MakaoBackend getBackend () {
+            return backend;
+        }
+
+        public DragAndDropManager getDragAndDropManager () {
+            return dragAndDropManager;
+        }
+
+        public GameplayScreen getGameplayScreen () {
+            return gameplayScreen;
         }
     }
-
-    private void processComputerTurn(PlayReport currentPlayReport, PlayerHandGroup currentHandGroup) {
-        pullCard(currentPlayReport);
-        Card cardToPlay = currentPlayReport.getPlay().getCardPlayed();
-        if (cardToPlay != null) {
-            putCard(currentHandGroup.getCardActor(cardToPlay), currentHandGroup, false);
-            putChosenCardIfNecessary(currentPlayReport.getAbilityReport(), currentHandGroup, currentPlayReport.getPlay());
-        } else {
-            CardActor drawnCard = cardActorFactory.createCardActor(currentPlayReport.getDrawn());
-            currentHandGroup.addActor(drawnCard);
-        }
-    }
-
-    private void putChosenCardIfNecessary(AbilityReport abilityReport, PlayerHandGroup currentHandGroup, Play play) {
-        if (abilityReport != null && (abilityReport.getChoosenCard() != null && !abilityReport.isDemanded()
-                || play.getCardPlayed().getRank().equals(Rank.JOKER))) {
-            putCard(cardActorFactory.createCardActor(abilityReport.getChoosenCard()), currentHandGroup, false);
-        }
-    }
-
-    private void turnOnHumanInput() {
-        setInputBlockActive(false);
-        pullButtonActor.changeTransparency(1);
-        Gdx.input.setInputProcessor(gameplayScreen.getStage());
-    }
-
-    public CardActor peekStackCardActor() {
-        return stackCardsGroup.peekCardActor();
-    }
-
-    public PlayerHandGroup getHumanHand() {
-        return handGroups.get(0);
-    }
-
-    public StackCardsGroup getStackCardsGroup() {
-        return stackCardsGroup;
-    }
-
-    public void setPullButtonActor(PullButtonActor pullButtonActor) {
-        this.pullButtonActor = pullButtonActor;
-    }
-
-    public void setInputBlockActive(boolean inputBlockActive) {
-        this.inputBlockActive = inputBlockActive;
-    }
-
-    public void setCardChooser(CardChooserGroup cardChooser) {
-        this.cardChooser = cardChooser;
-    }
-
-    public boolean isInputBlockActive() {
-        return inputBlockActive;
-    }
-
-    public CardActorFactory getCardActorFactory() {
-        return cardActorFactory;
-    }
-
-    public List<PlayerHandGroup> getHandGroups() {
-        return handGroups;
-    }
-
-    public MakaoBackend getBackend() {
-        return backend;
-    }
-
-    public DragAndDropManager getDragAndDropManager() {
-        return dragAndDropManager;
-    }
-
-    public GameplayScreen getGameplayScreen() {
-        return gameplayScreen;
-    }
-}

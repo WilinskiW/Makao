@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend.cardChooserWindow;
+package com.wwil.makao.frontend.entities.cardChooser;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.wwil.makao.backend.Rank;
 import com.wwil.makao.frontend.GUIparams;
 import com.wwil.makao.frontend.GameController;
+import com.wwil.makao.frontend.entities.groups.CardChooserGroup;
 
 public class PutButtonActor extends Actor {
     private final CardChooserGroup cardChooser;
@@ -41,12 +42,12 @@ public class PutButtonActor extends Actor {
         @Override
         public void clicked(InputEvent event, float x, float y) {
             if (controller.peekStackCardActor().getCard().getRank().equals(Rank.J)) {
-                controller.startTurn(cardChooser.getManager().giveCardActor(),
-                        false, false, true);
+                controller.executeTurn(cardChooser.getManager().giveCardActor(),
+                        false, false, true,false);
             }
             else {
-                controller.startTurn(cardChooser.getManager().giveCardActor(),
-                        true, false, false);
+                controller.executeTurn(cardChooser.getManager().giveCardActor(),
+                        true, false, false,false);
             }
             super.clicked(event, x, y);
         }

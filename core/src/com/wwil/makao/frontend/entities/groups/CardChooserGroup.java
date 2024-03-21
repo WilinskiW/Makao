@@ -1,9 +1,11 @@
-package com.wwil.makao.frontend.cardChooserWindow;
+package com.wwil.makao.frontend.entities.groups;
 
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.wwil.makao.frontend.CardActor;
+import com.wwil.makao.frontend.CardChooserManager;
+import com.wwil.makao.frontend.entities.CardActor;
 import com.wwil.makao.frontend.GUIparams;
 import com.wwil.makao.frontend.GameController;
+import com.wwil.makao.frontend.entities.cardChooser.*;
 
 import java.util.ArrayList;
 import java.util.List;
