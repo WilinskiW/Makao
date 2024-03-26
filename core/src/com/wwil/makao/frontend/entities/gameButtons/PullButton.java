@@ -14,6 +14,6 @@ public class PullButton extends GameButton {
 
     @Override
     public void sendInput() {
-        controller.executeTurn(null,false,false,false,true);
+        controller.executeTurn(null,false,false,false);
     }
 }

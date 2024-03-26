@@ -5,7 +5,7 @@ import com.wwil.makao.frontend.CardChooserManager;
 import com.wwil.makao.frontend.entities.CardActor;
 import com.wwil.makao.frontend.GUIparams;
 import com.wwil.makao.frontend.GameController;
-import com.wwil.makao.frontend.entities.cardChooser.*;
+import com.wwil.makao.frontend.entities.cardChooserElements.*;
 
 import java.util.ArrayList;
 import java.util.List;

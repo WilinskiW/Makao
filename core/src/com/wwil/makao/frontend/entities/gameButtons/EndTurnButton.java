@@ -10,10 +10,11 @@ public class EndTurnButton extends GameButton {
         super(controller, new Texture(Gdx.files.internal("buttons/EndTurnButton_unclick.png")),
                 new Texture(Gdx.files.internal("buttons/EndTurnButton_click.png")));
         this.controller = controller;
+        setActive(false);
     }
 
     @Override
     public void sendInput() {
-        controller.executeTurn(null,false,true,false,false);
+        controller.executeTurn(null,false,false,false);
     }
 }

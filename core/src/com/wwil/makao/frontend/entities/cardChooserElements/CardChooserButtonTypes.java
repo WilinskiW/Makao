@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend.entities.cardChooser;
+package com.wwil.makao.frontend.entities.cardChooserElements;
 
 import com.wwil.makao.frontend.GUIparams;
 

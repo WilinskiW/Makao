@@ -3,6 +3,8 @@ package com.wwil.makao.frontend;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.wwil.makao.backend.MakaoBackend;
 import com.wwil.makao.backend.Card;
+import com.wwil.makao.backend.Rank;
+import com.wwil.makao.backend.Suit;
 import com.wwil.makao.frontend.entities.gameButtons.EndTurnButton;
 import com.wwil.makao.frontend.entities.gameButtons.GameButton;
 import com.wwil.makao.frontend.entities.groups.CardChooserGroup;
@@ -10,6 +12,7 @@ import com.wwil.makao.frontend.entities.CardActor;
 import com.wwil.makao.frontend.entities.groups.PlayerHandGroup;
 import com.wwil.makao.frontend.entities.gameButtons.PullButton;
 
+import java.util.Arrays;
 import java.util.List;
 
 //Przygotowanie elementów graficznych ekranu
@@ -69,7 +72,7 @@ public class GameComponentsPreparer {
         setPlayersCardActorsAlignmentParams();
 
         //todo metoda testowa:
-        //test(3);
+        test(0);
 
         for (PlayerHandGroup handGroup : handGroups) {
             for (Card card : handGroup.getPlayerHand().getCards()) {
@@ -79,10 +82,10 @@ public class GameComponentsPreparer {
         }
     }
 
-//    private void test(int subject) {
-//        handGroups.get(subject).getPlayerHand().getCards().clear();
-//        handGroups.get(subject).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.J, Suit.CLUB),
-//                new Card(Rank.J, Suit.SPADE), new Card(Rank.J, Suit.DIAMOND), new Card(Rank.J, Suit.HEART)));
+    private void test(int subject) {
+        handGroups.get(subject).getPlayerHand().getCards().clear();
+        handGroups.get(subject).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.J, Suit.CLUB),
+                new Card(Rank.J, Suit.SPADE), new Card(Rank.J, Suit.DIAMOND), new Card(Rank.J, Suit.HEART)));
 //        Card jokerRed = new Card(Rank.JOKER, Suit.RED);
 //        Card jokerBlack = new Card(Rank.JOKER, Suit.BLACK);
 //        Card card3 = new Card(Rank.AS, Suit.SPADE);
@@ -91,7 +94,7 @@ public class GameComponentsPreparer {
 //        handGroups.get(0).getPlayerHand().addCardToHand(jokerBlack);
 //        //handGroups.get(subject).getPlayerHand().addCardToHand(card3);
 //        handGroups.get(subject).getPlayerHand().addCardToHand(card4);
-//    }
+    }
 
 
     private void setPlayersCardActorsAlignmentParams() {

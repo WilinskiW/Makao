@@ -6,7 +6,7 @@ import com.wwil.makao.backend.Card;
 import com.wwil.makao.backend.Rank;
 import com.wwil.makao.backend.Suit;
 import com.wwil.makao.frontend.entities.CardActor;
-import com.wwil.makao.frontend.entities.cardChooser.ArrowButtonActor;
+import com.wwil.makao.frontend.entities.cardChooserElements.ArrowButtonActor;
 import com.wwil.makao.frontend.entities.groups.CardChooserGroup;
 
 import java.util.SortedMap;

@@ -14,7 +14,7 @@ public class MakaoBackend {
     private int currentPlayerIndex = 0;
     private RoundReport roundReport;
     private DemandManager demand = new DemandManager(0, false, null);
-    private List<Card> humanPlayedCards = new ArrayList<>();
+    private final List<Card> humanPlayedCards = new ArrayList<>();
 
     public MakaoBackend() {
         createCardsToGameDeck();
@@ -66,16 +66,29 @@ public class MakaoBackend {
             playRound(humanPlay);
             return roundReport;
         }
+
+        //3. Czy gracz żąda? TAK -> Zakończ turę gracza
+        if (humanPlay.isDemanding()) {
+            demand = new DemandManager(0, true, humanPlay.getCardPlayed());
+        }
+
+        if (humanPlay.wantToEndTurn()) {
+            if (demand.isActive()) {
+                playRound(new HumanPlay(humanPlayedCards, false, false, false, false,
+                        true, true));
+            } else {
+                playRound(new HumanPlay(humanPlayedCards, false, true, false, false,
+                        false, true));
+            }
+            humanPlayedCards.clear();
+            return roundReport;
+        }
+
         //2. Czy gracz ciągnie (metoda sprawdzania kart). TAK -> Zakończ turę gracza
         if (isDragging(humanPlay)) {
             return createDragReport(humanPlay);
         }
-        //3. Czy gracz żąda? TAK -> Zakończ turę gracza
-        if (humanPlay.isDemanding()) {
-            demand = new DemandManager(0, true, humanPlay.getCardPlayed());
-            playRound(humanPlay);
-            return roundReport;
-        }
+
         //4. Czy karta jest nieprawidłowa? TAK -> Zwróć report incorrect
         if (isCardIncorrect(humanPlay)) {
             roundReport.setIncorrect();
@@ -85,15 +98,20 @@ public class MakaoBackend {
         if (shouldActiveChooser(humanPlay)) {
             return createActivateChooserReport(humanPlay);
         }
-        //6. Czy gracz jest osobą żądającą obecnego demand? TAK -> Wyłącz demand i kontynuuj.
-        if (demand.getPerformerIndex() == 0 && demand.isActive()) {
-            demand.setActive(false);
-        }
 
-        if(humanPlay.wantToEndTurn() || humanPlay.wantsToDraw()){
+        if (humanPlay.wantToEndTurn() || humanPlay.wantsToDraw()) {
+            if (humanPlayedCards.size() >= 2) {
+                playRound(new HumanPlay(humanPlayedCards, false, true, false, false, false, true));
+                return roundReport;
+            }
+            //6. Czy gracz jest osobą żądającą obecnego demand? TAK -> Wyłącz demand i kontynuuj.
+            if (demand.getPerformerIndex() == 0 && demand.isActive()) {
+                demand.setActive(false);
+            }
             playRound(humanPlay);
             return roundReport;
         }
+
         roundReport.addPlay(executePlay(humanPlay));
         return roundReport;
     }
@@ -124,10 +142,13 @@ public class MakaoBackend {
 
     private boolean isCorrectCardForDemand(HumanPlay humanPlay) {
         Card chosenCard = humanPlay.getCardPlayed();
-        return chosenCard.getRank() == demand.getCard().getRank() ||
-                chosenCard.getRank().equals(Rank.JOKER) ||
-                (chosenCard.getRank().equals(Rank.J) && stack.isJackOnTop()) ||
-                humanPlay.isChooserActive() && stack.isJackBeforeJoker() && chosenCard.getRank().equals(Rank.J);
+        if (humanPlayedCards.size() == 1) {
+            return chosenCard.getRank() == demand.getCard().getRank() ||
+                    chosenCard.getRank().equals(Rank.JOKER) ||
+                    (chosenCard.getRank().equals(Rank.J) && stack.isJackOnTop()) ||
+                    humanPlay.isChooserActive() && stack.isJackBeforeJoker() && chosenCard.getRank().equals(Rank.J);
+        }
+        return chosenCard.getRank() == humanPlay.getCardsPlayed().get(0).getRank();
     }
 
     private boolean shouldActiveChooser(HumanPlay humanPlay) {
@@ -148,7 +169,9 @@ public class MakaoBackend {
 
     private boolean isCorrectCard(Card chosenCard) {
         Card stackCard = stack.peekCard();
-        if (stackCard.getRank().equals(Rank.Q)
+        if (!humanPlayedCards.isEmpty()) {
+            return chosenCard.getRank() == humanPlayedCards.get(0).getRank();
+        } else if (stackCard.getRank().equals(Rank.Q)
                 || chosenCard.getRank().equals(Rank.Q)
                 || chosenCard.getRank().equals(Rank.JOKER)
                 || stackCard.getRank().equals(Rank.JOKER)) {
@@ -159,7 +182,6 @@ public class MakaoBackend {
 
     private void playRound(HumanPlay humanPlay) {
         roundReport.addPlay(executePlay(humanPlay));
-        humanPlayedCards = null;
         nextPlayer();
         for (int i = 1; i < players.size(); i++) {
             roundReport.addPlay(executePlay(executeComputerPlay()));
@@ -211,7 +233,9 @@ public class MakaoBackend {
     private AbilityReport putCard(Card cardPlayed) {
         getStack().addCardToStack(cardPlayed);
         currentPlayer().removeCardFromHand(cardPlayed);
-        humanPlayedCards.add(cardPlayed);
+        if (currentPlayerIndex == 0) {
+            humanPlayedCards.add(cardPlayed);
+        }
         return useCardAbility(cardPlayed, null);
     }
 
@@ -233,13 +257,13 @@ public class MakaoBackend {
         }
         //Czy poprzedni zablokował obecnego?
         if (lastReport.getAbilityReport() != null && lastReport.getAbilityReport().isBlockNext()) {
-            return new ComputerPlay(null, false, false, true,false);
+            return new ComputerPlay(null, false, false, true, false);
         }
         //Znajdź poprawną kartę i ją zapisz
         //todo komputer w trakcie swojej tury może położyć parę pasujących kart
         for (Card card : playerHand.getCards()) {
             if (isCorrectCard(card)) {
-                return new ComputerPlay(Arrays.asList(card), true, false, false,false);
+                return new ComputerPlay(Arrays.asList(card), false, true, false, false);
             }
         }
         //Przypadek dobrania
@@ -256,13 +280,13 @@ public class MakaoBackend {
         }
         //todo komputer w trakcie żądania może położyć parę pasujących kart
         if (card != null) {
-            return new ComputerPlay(Arrays.asList(card), true, false, false,false);
+            return new ComputerPlay(Arrays.asList(card), true, false, false, false);
         }
         return getPullCardPlay();
     }
 
     private Play getPullCardPlay() {
-        return new ComputerPlay(null, true, false, false,false);
+        return new ComputerPlay(null, true, false, false, false);
     }
 
     private AbilityReport useCardAbility(Card card, AbilityReport wildCardReport) {
