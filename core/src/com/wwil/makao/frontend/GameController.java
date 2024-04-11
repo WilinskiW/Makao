@@ -340,3 +340,35 @@ public class GameController {
         return gameplayScreen;
     }
 }
+/*
+* todo To zrobić:
+*  Bez podświetlania (na razie)
+* Obiekt Play:
+* Okno może się uruchamiać ale może nie przepuścić
+* Obiekt Play:
+
+* zagranie próba
+* zagranie normalne
+* zagranie normalne + wybór
+* dobram karte (nie pozwoli Ci jeśli już zagrałeś) (Pierwsza karta ratuje)
+* kończę turę -> zapytanie na backendzie
+*
+*
+*  zagralem karte (próba lub prawdziwe zagranie)
+*    -> wybór
+*  kończe turę
+*  dobieram karte
+*
+* zadam figur (jopek)
+* zmiana koloru (as)
+* przeciwnik dobiera x (2,3, krol pik/kier)
+* przeciwnik czeka x tur (4)
+* jocker ( zmienia sie w dowolna wybrana karte)
+*
+* //Abstrakcyjna klasa Event
+* //event dobierania -> aktywny, jakie karty
+* //event czekania
+* //event żądania -> aktywny, jaka karta (ranga)
+*
+*
+* */

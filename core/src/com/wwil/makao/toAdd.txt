@@ -1,7 +1,9 @@
-Animacje rzucania kart przez boty
 Rzucanie kilku kart na raz
 Obrona
 Komunikaty akcji graczy
+Pierwsza karta ratuje
+
+Animacje rzucania kart przez boty
 Główne menu
 Dźwięk i muzyka
 Możliwość zmiany skinów do kart
