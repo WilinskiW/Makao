@@ -13,7 +13,6 @@ import com.wwil.makao.frontend.entities.groups.PlayerHandGroup;
 import com.wwil.makao.frontend.entities.groups.StackCardsGroup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -153,7 +152,7 @@ public class GameController {
         RoundReport report = backend.executeAction
                 (new HumanPlay(Collections.singletonList(cardPlayed.getCard()), false, true,
                         isCardChooserActive, false, false, false));
-        if (report.isCorrect() && report.getPlayReports().get(0).isCardCorrect()) {
+        if (report.isAttemptCorrect() && report.getPlayReports().get(0).isCardCorrect()) {
             putCard(cardPlayed, getHumanHand(),true);
             endTurnButton.setActive(true);
             cardChooser.setVisibility(false);
@@ -345,12 +344,10 @@ public class GameController {
 *  Bez podświetlania (na razie)
 * Obiekt Play:
 * Okno może się uruchamiać ale może nie przepuścić
-* Obiekt Play:
-
 * zagranie próba
 * zagranie normalne
 * zagranie normalne + wybór
-* dobram karte (nie pozwoli Ci jeśli już zagrałeś) (Pierwsza karta ratuje)
+* dobranie karty (nie pozwoli Ci jeśli już zagrałeś) (Pierwsza karta ratuje)
 * kończę turę -> zapytanie na backendzie
 *
 *

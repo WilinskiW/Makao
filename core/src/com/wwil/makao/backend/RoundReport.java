@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 //Zebranie wszystkich ruchów graczy w jeden obiekt
 public class RoundReport {
-    private boolean correct = true;
+    private boolean attemptCorrect = true;
     private final List<PlayReport> playReports = new ArrayList<>();
     private boolean shouldActiveChooser = false;
     private boolean blockPullButton = false;
@@ -26,7 +26,7 @@ public class RoundReport {
     }
 
     public void setIncorrect() {
-        correct = false;
+        attemptCorrect = false;
     }
 
     public void setBlockPullButton(boolean blockPullButton) {
@@ -42,7 +42,7 @@ public class RoundReport {
     }
 
 
-    public boolean isCorrect() {
-        return correct;
+    public boolean isAttemptCorrect() {
+        return attemptCorrect;
     }
 }
