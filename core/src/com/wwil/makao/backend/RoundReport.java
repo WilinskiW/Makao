@@ -6,11 +6,14 @@ import java.util.List;
 public class RoundReport {
     private boolean attemptCorrect = true;
     private final List<PlayReport> playReports = new ArrayList<>();
-    private boolean shouldActiveChooser = false;
     private boolean blockPullButton = false;
 
     public void addPlay(PlayReport playReport) {
         playReports.add(playReport);
+    }
+
+    public PlayReport getHumanReport(){
+        return playReports.get(0);
     }
 
     public PlayReport getLastPlay(){
@@ -21,10 +24,6 @@ public class RoundReport {
         return playReports;
     }
 
-    public boolean isChooserActive() {
-        return shouldActiveChooser;
-    }
-
     public void setIncorrect() {
         attemptCorrect = false;
     }
@@ -33,14 +32,9 @@ public class RoundReport {
         this.blockPullButton = blockPullButton;
     }
 
-    public boolean isBlockPullButton() {
+    public boolean isPullButtonBlock() {
         return blockPullButton;
     }
-
-    public void setChooserActivation(boolean active) {
-        this.shouldActiveChooser = active;
-    }
-
 
     public boolean isAttemptCorrect() {
         return attemptCorrect;

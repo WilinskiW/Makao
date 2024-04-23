@@ -2,6 +2,8 @@ package com.wwil.makao.frontend.entities.gameButtons;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.wwil.makao.backend.Action;
+import com.wwil.makao.backend.Play;
 import com.wwil.makao.frontend.GameController;
 
 public class EndTurnButton extends GameButton {
@@ -15,6 +17,8 @@ public class EndTurnButton extends GameButton {
 
     @Override
     public void sendInput() {
-        controller.executeTurn(null,false,false,false);
+        controller.executeAction(
+                new Play()
+                        .setAction(Action.END));
     }
 }

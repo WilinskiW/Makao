@@ -4,8 +4,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
+import com.wwil.makao.backend.Action;
+import com.wwil.makao.backend.Play;
 import com.wwil.makao.frontend.entities.CardActor;
 import com.wwil.makao.frontend.entities.groups.StackCardsGroup;
+
+import java.util.Collections;
 
 public class DragAndDropManager {
     private final GameController gameController;
@@ -21,8 +25,13 @@ public class DragAndDropManager {
         @Override
         public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
             CardActor chosenCardActor = (CardActor) source.getActor();
+            gameController.setChosenCardActor(chosenCardActor);
             if(target != null) {
-                gameController.executeTurn(chosenCardActor, false, false, false);
+                gameController.executeAction(
+                        new Play()
+                                .setCardsPlayed(Collections.singletonList(chosenCardActor.getCard()))
+                                .setAction(Action.TRY)
+                );
             }
             return true;
         }
@@ -36,7 +45,11 @@ public class DragAndDropManager {
         @Override
         public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
             CardActor chosenCardActor = (CardActor) source.getActor();
-            gameController.executeTurn(chosenCardActor, true,false,false);
+            gameController.executePut(
+                    new Play()
+                            .setCardsPlayed(Collections.singletonList(chosenCardActor.getCard()))
+                            .setAction(Action.PUT),chosenCardActor
+            );
         }
     };
 }

@@ -58,114 +58,126 @@ public class MakaoBackend {
 
     //////////// Logika:
     //Jedyna publiczna metoda (odbiera informacje, wykonuje działanie i wysyła)
-    public RoundReport executeAction(HumanPlay humanPlay) {
+    public RoundReport executeAction(Play play) {
         roundReport = new RoundReport();
-        //Zapytania od frontendu:
-        //1. Czy gracz jest zablokowany? TAK -> Zakończ turę gracza
-        if (humanPlay.isBlock()) {
-            playRound(humanPlay);
-            return roundReport;
+//
+////        if(humanPlay.isDragging()){
+////            return roundReport;
+////        }
+//
+//        //Zapytania od frontendu:
+//        //1. Czy gracz jest zablokowany? TAK -> Zakończ turę gracza
+////        if (humanPlay.isBlock()) {
+////            playRound(humanPlay);
+////            return roundReport;
+////        }
+//
+//        //3. Czy gracz żąda? TAK -> Zakończ turę gracza
+//        if (humanPlay.isDemanding()) {
+//            demand = new DemandManager(0, true, humanPlay.getCardPlayed());
+//        }
+//
+//        if (humanPlay.wantToEndTurn()) {
+//            if (demand.isActive()) {
+//                playRound(humanPlay);
+//            } else {
+//                playRound(humanPlay);
+//            }
+//            humanPlayedCards.clear();
+//            return roundReport;
+//        }
+//
+//
+//        //4. Czy karta jest nieprawidłowa? TAK -> Zwróć report incorrect
+//        if (isCardIncorrect(humanPlay)) {
+//            roundReport.setIncorrect();
+//            return roundReport;
+//        }
+//        //5. Czy karta aktywuje chooser? TAK -> Aktywuj chooser i zwróć report incorrect
+////        if (shouldActiveChooser(play)) {
+////            return createActivateChooserReport(play);
+////        }
+//
+//        if (humanPlay.wantToEndTurn() || humanPlay.wantsToDraw()) {
+//            if (humanPlayedCards.size() >= 2) {
+//                playRound(humanPlay);
+//                return roundReport;
+//            }
+//            //6. Czy gracz jest osobą żądającą obecnego demand? TAK -> Wyłącz demand i kontynuuj.
+//            if (demand.getPerformerIndex() == 0 && demand.isActive()) {
+//                demand.setActive(false);
+//            }
+//            playRound(humanPlay);
+//            return roundReport;
+//        }
+//
+//        roundReport.addPlay(executePlay(humanPlay));
+
+//        if (play.isDragging()) {
+//            return createDragReport(play);
+//        }
+        if (play.isDropped() && isCardCorrect(play)) {
+            putCard(play.getCardPlayed());
+            roundReport.addPlay(
+                    new PlayReport(play)
+                            .setCardCorrect(true)
+            );
+        } else if (play.wantToEndTurn()) {
+            playRound(play);
         }
 
-        //3. Czy gracz żąda? TAK -> Zakończ turę gracza
-        if (humanPlay.isDemanding()) {
-            demand = new DemandManager(0, true, humanPlay.getCardPlayed());
-        }
-
-        if (humanPlay.wantToEndTurn()) {
-            if (demand.isActive()) {
-                playRound(new HumanPlay(humanPlayedCards, false, false, false, false,
-                        true, true));
-            } else {
-                playRound(new HumanPlay(humanPlayedCards, false, true, false, false,
-                        false, true));
-            }
-            humanPlayedCards.clear();
-            return roundReport;
-        }
-
-        //2. Czy gracz ciągnie (metoda sprawdzania kart). TAK -> Zakończ turę gracza
-        if (isDragging(humanPlay)) {
-            return createDragReport(humanPlay);
-        }
-
-        //4. Czy karta jest nieprawidłowa? TAK -> Zwróć report incorrect
-        if (isCardIncorrect(humanPlay)) {
-            roundReport.setIncorrect();
-            return roundReport;
-        }
-        //5. Czy karta aktywuje chooser? TAK -> Aktywuj chooser i zwróć report incorrect
-        if (shouldActiveChooser(humanPlay)) {
-            return createActivateChooserReport(humanPlay);
-        }
-
-        if (humanPlay.wantToEndTurn() || humanPlay.wantsToDraw()) {
-            if (humanPlayedCards.size() >= 2) {
-                playRound(new HumanPlay(humanPlayedCards, false, true, false, false, false, true));
-                return roundReport;
-            }
-            //6. Czy gracz jest osobą żądającą obecnego demand? TAK -> Wyłącz demand i kontynuuj.
-            if (demand.getPerformerIndex() == 0 && demand.isActive()) {
-                demand.setActive(false);
-            }
-            playRound(humanPlay);
-            return roundReport;
-        }
-
-        roundReport.addPlay(executePlay(humanPlay));
         return roundReport;
     }
 
-    private boolean isDragging(HumanPlay humanPlay) {
-        return humanPlay.isNotDropped() && !humanPlay.wantsToDraw() && !humanPlay.isChooserActive();
+    private RoundReport createDragReport(Play play) {
+        roundReport.addPlay(
+                new PlayReport(play)
+                .setCardCorrect(true)
+        );
+        return roundReport;
     }
 
-    private RoundReport createDragReport(HumanPlay humanPlay) {
-        boolean isCorrectCard;
+    private boolean isCardCorrect(Play humanPlay) {
         if (demand.isActive()) {
-            isCorrectCard = isCorrectCardForDemand(humanPlay);
+            return isCorrectCardForDemand(humanPlay);
         } else {
-            isCorrectCard = isCorrectCard(humanPlay.getCardPlayed());
+            return isCorrectCard(humanPlay.getCardPlayed());
         }
-        roundReport.setIncorrect();
-        roundReport.addPlay(new PlayReport(currentPlayer(), null, humanPlay, null,
-                isCorrectCard, false));
-        return roundReport;
     }
 
-    private boolean isCardIncorrect(HumanPlay humanPlay) {
-        if (demand.isActive()) {
-            return !humanPlay.wantsToDraw() && !isCorrectCardForDemand(humanPlay);
-        }
-        return !humanPlay.wantsToDraw() && !isCorrectCard(humanPlay.getCardPlayed());
-    }
+//    private boolean isCardIncorrect(Play humanPlay) {
+//        if (demand.isActive()) {
+//            return !humanPlay.wantsToDraw() && !isCorrectCardForDemand(humanPlay);
+//        }
+//        return !humanPlay.wantsToDraw() && !isCorrectCard(humanPlay.getCardPlayed());
+//    }
 
-    private boolean isCorrectCardForDemand(HumanPlay humanPlay) {
+    private boolean isCorrectCardForDemand(Play humanPlay) {
         Card chosenCard = humanPlay.getCardPlayed();
         if (humanPlayedCards.size() == 1) {
             return chosenCard.getRank() == demand.getCard().getRank() ||
                     chosenCard.getRank().equals(Rank.JOKER) ||
                     (chosenCard.getRank().equals(Rank.J) && stack.isJackOnTop()) ||
-                    humanPlay.isChooserActive() && stack.isJackBeforeJoker() && chosenCard.getRank().equals(Rank.J);
+                    stack.isJackBeforeJoker() && chosenCard.getRank().equals(Rank.J);
         }
         return chosenCard.getRank() == humanPlay.getCardsPlayed().get(0).getRank();
     }
 
-    private boolean shouldActiveChooser(HumanPlay humanPlay) {
-        return ((!humanPlay.wantsToDraw()
-                && humanPlay.getCardPlayed().getRank().isRankActivateChooser())
-                && !humanPlay.isChooserActive())
-                || stack.peekCard().getRank().equals(Rank.JOKER);
-    }
+//    private boolean shouldActiveChooser(HumanPlay humanPlay) {
+//        return ((!humanPlay.wantsToDraw()
+//                && humanPlay.getCardPlayed().getRank().isRankActivateChooser())
+//                && !humanPlay
+//                || stack.peekCard().getRank().equals(Rank.JOKER);
+//    }
 
-    private RoundReport createActivateChooserReport(HumanPlay humanPlay) {
-        roundReport.addPlay(new PlayReport(currentPlayer(), null, humanPlay, null,
-                isCorrectCard(humanPlay.getCardPlayed()), false));
-        executePlay(humanPlay);
-        roundReport.setIncorrect();
-        roundReport.setChooserActivation(true);
-        return roundReport;
-    }
+//    private RoundReport createActivateChooserReport(Play humanPlay) {
+//        roundReport.addPlay(new PlayReport(currentPlayer(), null, humanPlay, null,
+//                isCorrectCard(humanPlay.getCardPlayed()), false));
+//        executePlay(humanPlay);
+//        roundReport.setIncorrect();
+//        //roundReport.setChooserActivation(true);
+//        return roundReport;
+//    }
 
     private boolean isCorrectCard(Card chosenCard) {
         Card stackCard = stack.peekCard();
@@ -180,7 +192,7 @@ public class MakaoBackend {
         return stackCard.getSuit() == chosenCard.getSuit() || stackCard.getRank() == chosenCard.getRank();
     }
 
-    private void playRound(HumanPlay humanPlay) {
+    private void playRound(Play humanPlay) {
         roundReport.addPlay(executePlay(humanPlay));
         nextPlayer();
         for (int i = 1; i < players.size(); i++) {
@@ -190,13 +202,17 @@ public class MakaoBackend {
     }
 
     private PlayReport executePlay(Play play) {
+        if (play.endTurn()) {
+            return new PlayReport(play).setCardCorrect(true);
+        }
+
         //Skip turn
         if (play.isBlock()) {
-            return new PlayReport(currentPlayer(), null, play, null, false, true);
+            return new PlayReport(play).setBlocked(true);
         }
 
         if (play.isDemanding()) {
-            return new PlayReport(currentPlayer(), null, play, null, true, false);
+            return new PlayReport(play).setCardCorrect(true);
         }
 
         //Is demanded
@@ -205,7 +221,7 @@ public class MakaoBackend {
                 return drawCard(play);
             }
             putCard(play.getCardPlayed());
-            return new PlayReport(currentPlayer(), null, play, null, true, false);
+            return new PlayReport(play).setCardCorrect(true);
         }
 
         //Dobierz kartę
@@ -213,21 +229,18 @@ public class MakaoBackend {
             return drawCard(play);
         }
 
-        //Skip turn
-        if (play.isBlock()) {
-            return new PlayReport(currentPlayer(), null, play, null, false, true);
-        }
-
         //Połóż kartę
         AbilityReport abilityReport = putCard(play.getCardPlayed());
         roundReport.setBlockPullButton(true);
-        return new PlayReport(currentPlayer(), abilityReport, play, null, true, false);
+        return new PlayReport(play)
+                .setAbilityReport(abilityReport)
+                .setCardCorrect(true);
     }
 
     private PlayReport drawCard(Play play) {
         Card drawn = takeCardFromGameDeck();
         players.get(currentPlayerIndex).addCardToHand(drawn);
-        return new PlayReport(currentPlayer(), null, play, drawn, false, false);
+        return new PlayReport(play).setDrawn(drawn);
     }
 
     private AbilityReport putCard(Card cardPlayed) {
@@ -257,13 +270,14 @@ public class MakaoBackend {
         }
         //Czy poprzedni zablokował obecnego?
         if (lastReport.getAbilityReport() != null && lastReport.getAbilityReport().isBlockNext()) {
-            return new ComputerPlay(null, false, false, true, false);
+            return new Play().setBlocked(true);
         }
         //Znajdź poprawną kartę i ją zapisz
         //todo komputer w trakcie swojej tury może położyć parę pasujących kart
         for (Card card : playerHand.getCards()) {
             if (isCorrectCard(card)) {
-                return new ComputerPlay(Arrays.asList(card), false, true, false, false);
+                return new Play()
+                        .setCardsPlayed(Collections.singletonList(card));
             }
         }
         //Przypadek dobrania
@@ -280,13 +294,13 @@ public class MakaoBackend {
         }
         //todo komputer w trakcie żądania może położyć parę pasujących kart
         if (card != null) {
-            return new ComputerPlay(Arrays.asList(card), true, false, false, false);
+            //return new Play(Arrays.asList(card), true, false, false, false);
         }
         return getPullCardPlay();
     }
 
     private Play getPullCardPlay() {
-        return new ComputerPlay(null, true, false, false, false);
+        return new Play().setAction(Action.PULL);
     }
 
     private AbilityReport useCardAbility(Card card, AbilityReport wildCardReport) {

@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.wwil.makao.backend.Action;
+import com.wwil.makao.backend.Play;
 import com.wwil.makao.backend.Rank;
 import com.wwil.makao.frontend.GUIparams;
 import com.wwil.makao.frontend.GameController;
@@ -42,12 +44,21 @@ public class PutButtonActor extends Actor {
         @Override
         public void clicked(InputEvent event, float x, float y) {
             if (controller.peekStackCardActor().getCard().getRank().equals(Rank.J)) {
-                controller.executeTurn(cardChooser.getManager().giveCardActor(),
-                        false, false, true);
+                controller.executePut(
+                        new Play()
+                                .setCardFromChooser(cardChooser.getManager().giveCardActor().getCard())
+                                .setDemanding(true)
+                                .setAction(Action.PUT)
+                                .setCardFromChooser(cardChooser.getDisplayCard().getCard()),cardChooser.getDisplayCard()
+                );
             }
             else {
-                controller.executeTurn(cardChooser.getManager().giveCardActor(),
-                        true, false, false);
+                controller.executePut(
+                        new Play()
+                                .setCardFromChooser(cardChooser.getManager().giveCardActor().getCard())
+                                .setAction(Action.PUT)
+                                .setCardFromChooser(cardChooser.getDisplayCard().getCard()),cardChooser.getDisplayCard()
+                );
             }
             super.clicked(event, x, y);
         }

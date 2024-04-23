@@ -2,19 +2,21 @@ package com.wwil.makao.backend;
 
 import java.util.List;
 
-public abstract class Play {
-    private final List<Card> cardsPlayed;
-    private final boolean draw;
-    private final boolean dropped;
-    private final boolean blocked;
-    private final boolean demanding;
+public class Play {
+    private List<Card> cardsPlayed;
+    private Action action;
+    private boolean blocked;
+    private boolean demanding;
+    private Card cardFromChooser;
 
-    public Play(List<Card> cardsPlayed, boolean draw, boolean dropped, boolean blocked, boolean demanding) {
+    public Play(List<Card> cardsPlayed, boolean blocked, boolean demanding, Card cardFromChooser) {
         this.cardsPlayed = cardsPlayed;
-        this.draw = draw;
-        this.dropped = dropped;
         this.blocked = blocked;
         this.demanding = demanding;
+        this.cardFromChooser = cardFromChooser;
+    }
+
+    public Play() {
     }
 
     public boolean isDemanding() {
@@ -25,22 +27,64 @@ public abstract class Play {
         return blocked;
     }
 
-    public boolean isNotDropped() {
-        return !dropped;
-    }
-
     public List<Card> getCardsPlayed() {
         return cardsPlayed;
     }
 
-    public Card getCardPlayed(){
-        if(cardsPlayed.get(0) != null){
+    public Card getCardPlayed() {
+        if (cardsPlayed.get(0) != null) {
             return cardsPlayed.get(0);
         }
         return null;
     }
 
+    public Action getAction() {
+        return action;
+    }
+
+    public boolean isDropped() {
+        return action == Action.PUT;
+    }
+
+    public boolean endTurn(){
+        return wantsToDraw() || wantToEndTurn();
+    }
+
     public boolean wantsToDraw() {
-        return draw;
+        return action == Action.PULL;
+    }
+
+    public boolean wantToEndTurn() {
+        return action == Action.END;
+    }
+
+    public boolean isDragging() {
+        return action == Action.TRY;
+    }
+
+    public Play setAction(Action action) {
+        this.action = action;
+        return this;
+    }
+
+    public Play setCardsPlayed(List<Card> cardsPlayed) {
+        this.cardsPlayed = cardsPlayed;
+        return this;
+    }
+
+    public Play setBlocked(boolean blocked) {
+        this.blocked = blocked;
+        return this;
+    }
+
+    public Play setDemanding(boolean demanding) {
+        this.demanding = demanding;
+        return this;
+    }
+
+
+    public Play setCardFromChooser(Card cardFromChooser) {
+        this.cardFromChooser = cardFromChooser;
+        return this;
     }
 }
