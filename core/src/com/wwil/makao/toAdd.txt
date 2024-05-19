@@ -1,4 +1,3 @@
-Rzucanie kilku kart na raz
 Obrona
 Komunikaty akcji graczy
 Pierwsza karta ratuje

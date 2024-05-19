@@ -2,6 +2,7 @@ package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.wwil.makao.backend.Action;
@@ -60,6 +61,19 @@ public class DragAndDropManager {
         DragAndDrop.Source dropSource = prepareSource(card);
         dragAndDrop.addSource(dropSource);
         dragAndDrop.addTarget(target);
+    }
+
+    public void focusOneCard(final CardActor card){
+        for (Actor actor :  gameController.getHumanHand().getCardActors()) {
+            actor.clearListeners();
+        }
+        prepareDragAndDrop(card);
+    }
+
+    public void startListening(){
+        for (CardActor cardActor :  gameController.getHumanHand().getCardActors()) {
+            prepareDragAndDrop(cardActor);
+        }
     }
 
     private DragAndDrop.Source prepareSource(final CardActor card) {

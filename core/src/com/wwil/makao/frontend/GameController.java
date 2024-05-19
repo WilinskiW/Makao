@@ -48,7 +48,7 @@ public class GameController {
         choosenCardActor = cardActor;
         executeAction(play);
     }
-
+//todo: Pierwsza karta ratuje - po dobraniu można położyć jedynie wyciągniątą karte
     public void executeAction(Play play) {
         if (play.getAction() == Action.DRAG) {
             return;
@@ -110,6 +110,7 @@ public class GameController {
 
     private void endTurn(RoundReport report) {
         cardChooser.setVisibility(false);
+        dragAndDropManager.startListening();
         pullCards(report.getPlayReports().get(0));
         turnOffHumanInput();
         executeComputersTurn(report);
@@ -119,7 +120,7 @@ public class GameController {
         CardActor drawnCard = cardActorFactory.createCardActor(card);
         if (player == getHumanHand()) {
             drawnCard.setUpSideDown(false);
-            dragAndDropManager.prepareDragAndDrop(drawnCard);
+            dragAndDropManager.focusOneCard(drawnCard);
             pullButton.setActive(false);
             endTurnButton.setActive(true);
         }
@@ -201,7 +202,6 @@ public class GameController {
         Gdx.input.setInputProcessor(null);
         setInputBlockActive(true);
     }
-
     ///////////////////////
 //     Komputer
 //////////////////////

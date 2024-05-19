@@ -41,9 +41,7 @@ public class GameComponentsPreparer {
     }
 
     private void prepareStackCardsGroup() {
-        //todo poprawic po testach
-        //controller.addCardActorToStackGroup(cardActorFactory.createCardActor(backend.getStack().peekCard()));
-        controller.getStackCardsGroup().getStack().addCardToStack(new Card(Rank.EIGHT, Suit.HEART));
+        controller.addCardActorToStackGroup(cardActorFactory.createCardActor(backend.getStack().peekCard()));
         controller.addCardActorToStackGroup(cardActorFactory.createCardActor(backend.getStack().peekCard()));
 
         stage.addActor(controller.getStackCardsGroup());
