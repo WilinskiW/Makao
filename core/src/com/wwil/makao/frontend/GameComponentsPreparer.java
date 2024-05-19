@@ -75,7 +75,7 @@ public class GameComponentsPreparer {
         setPlayersCardActorsAlignmentParams();
 
         //todo metoda testowa:
-        //test(0);
+        test(0);
 
         for (PlayerHandGroup handGroup : handGroups) {
             for (Card card : handGroup.getPlayerHand().getCards()) {
@@ -86,11 +86,15 @@ public class GameComponentsPreparer {
     }
 
     private void test(int subject) {
-        handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.EIGHT,Suit.CLUB)));
-        handGroups.get(subject+1).getPlayerHand().getCards().clear();
-        handGroups.get(subject+1).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.EIGHT, Suit.HEART), new Card(Rank.EIGHT,Suit.SPADE)));
-        handGroups.get(subject+1).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.NINE, Suit.HEART), new Card(Rank.NINE,Suit.SPADE)));
-        handGroups.get(subject+1).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.AS, Suit.SPADE)));
+        handGroups.get(subject).getPlayerHand().getCards().clear();
+        handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.TWO,Suit.CLUB)));
+        handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.TWO,Suit.DIAMOND)));
+        handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE,Suit.HEART)));
+        handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE,Suit.SPADE)));
+//        handGroups.get(subject+1).getPlayerHand().getCards().clear();
+//        handGroups.get(subject+1).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.EIGHT, Suit.HEART), new Card(Rank.EIGHT,Suit.SPADE)));
+//        handGroups.get(subject+1).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.NINE, Suit.HEART), new Card(Rank.NINE,Suit.SPADE)));
+//        handGroups.get(subject+1).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.AS, Suit.SPADE)));
 //        handGroups.get(subject).getPlayerHand().getCards().clear();
 //        handGroups.get(subject).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.J, Suit.CLUB),
 //                new Card(Rank.J, Suit.SPADE), new Card(Rank.J, Suit.DIAMOND), new Card(Rank.J, Suit.HEART)));

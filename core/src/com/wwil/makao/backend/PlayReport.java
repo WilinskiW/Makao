@@ -3,15 +3,13 @@ package com.wwil.makao.backend;
 //Raport karty, którą zagrał gracz lub dobrania
 public class PlayReport {
     private PlayerHand player;
-    private AbilityReport abilityReport;
     private final Play play;
     private Card drawn;
     private boolean isCardCorrect;
     private boolean blocked;
 
-    public PlayReport(PlayerHand player,AbilityReport abilityReport, Play play, Card drawn, boolean isCardCorrect, boolean blocked) {
+    public PlayReport(PlayerHand player, Play play, Card drawn, boolean isCardCorrect, boolean blocked) {
         this.player = player;
-        this.abilityReport = abilityReport;
         this.play = play;
         this.drawn = drawn;
         this.isCardCorrect = isCardCorrect;
@@ -31,16 +29,6 @@ public class PlayReport {
         this.player = player;
         return this;
     }
-
-    public AbilityReport getAbilityReport() {
-        return abilityReport;
-    }
-
-    public PlayReport setAbilityReport(AbilityReport abilityReport) {
-        this.abilityReport = abilityReport;
-        return this;
-    }
-
     public Play getPlay() {
         return play;
     }
