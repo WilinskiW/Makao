@@ -48,7 +48,7 @@ public class GameController {
         choosenCardActor = cardActor;
         executeAction(play);
     }
-//todo: Pierwsza karta ratuje - po dobraniu można położyć jedynie wyciągniątą karte
+
     public void executeAction(Play play) {
         if (play.getAction() == Action.DRAG) {
             return;
@@ -70,7 +70,6 @@ public class GameController {
                 break;
             case PULL:
                 pullCard(report.getLastPlay().getDrawn(), getHumanHand());
-                //PULL na szaro - tylko END button do wcisniecia
                 break;
             case END:
                 endTurn(report);
@@ -202,6 +201,7 @@ public class GameController {
         Gdx.input.setInputProcessor(null);
         setInputBlockActive(true);
     }
+
     ///////////////////////
 //     Komputer
 //////////////////////
@@ -238,15 +238,16 @@ public class GameController {
     private void processComputerTurn(PlayReport currentPlayReport, PlayerHandGroup currentHandGroup) {
         pullCards(currentPlayReport);
         List<Card> cardsToPlay = currentPlayReport.getPlay().getCardsPlayed();
+        if(currentPlayReport.getPlay().getAction() == Action.PULL){
+            pullCard(currentPlayReport.getDrawn(),currentHandGroup);
+        }
         if (cardsToPlay != null) {
             List<CardActor> cardActorsToPlay = currentHandGroup.getCardActors(currentPlayReport.getPlay().getCardsPlayed());
             putCards(currentHandGroup, cardActorsToPlay, true);
             putChosenCardIfNecessary(currentPlayReport.getAbilityReport(), currentHandGroup, currentPlayReport.getPlay());
-        } else {
-            CardActor drawnCard = cardActorFactory.createCardActor(currentPlayReport.getDrawn());
-            currentHandGroup.addActor(drawnCard);
         }
     }
+
 
     private void putCards(PlayerHandGroup player, List<CardActor> cardsToPlay, boolean alignCards) {
         for (CardActor cardActor : cardsToPlay) {

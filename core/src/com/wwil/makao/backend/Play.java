@@ -32,7 +32,7 @@ public class Play {
     }
 
     public Card getCardPlayed() {
-        if (cardsPlayed.get(0) != null) {
+        if (cardsPlayed != null) {
             return cardsPlayed.get(0);
         }
         return null;

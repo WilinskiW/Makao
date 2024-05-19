@@ -61,10 +61,6 @@ public class MakaoBackend {
     }
 
     public RoundReport executeAction(Play play) {
-
-        //PUT + PULL(Pierwsza karta ratuje)
-        //PUT - nie można kłaść tych samych kart
-
         if (play.getAction() == Action.PULL) {
             roundReport.addPlayRaport(executePlay(play));
             return roundReport;
@@ -75,10 +71,6 @@ public class MakaoBackend {
             RoundReport report = roundReport;
             startRound();
             return report;
-        }
-
-        if (play.getAction() != Action.PUT) {
-            throw new UnsupportedOperationException("Not yet implemented");
         }
 
         //scenario for put:
@@ -94,9 +86,6 @@ public class MakaoBackend {
     }
 
     private PlayReport drawCard(Play play) {
-        if (play.getAction() != Action.PULL) {
-            throw new IllegalStateException("whe we are here?");
-        }
         Card drawn = takeCardFromGameDeck();
         players.get(currentPlayerIndex).addCardToHand(drawn);
         return new PlayReport(currentPlayer(), play).setDrawn(drawn);
@@ -155,7 +144,7 @@ public class MakaoBackend {
         humanPlayedCards.clear();
         nextPlayer();
         for (int i = 1; i < players.size(); i++) {
-            roundReport.addPlayRaport(executePlay(executeComputerPlay()));
+            roundReport.addPlayRaport(executePlay(createComputerPlay()));
             nextPlayer();
         }
     }
@@ -181,13 +170,22 @@ public class MakaoBackend {
         }
 
         //Dobierz kartę
+        PlayReport putPullReport = new PlayReport(currentPlayer(), play);
         if (play.getAction() == Action.PULL) {
-            return drawCard(play);
+            Card drawn = takeCardFromGameDeck();
+            players.get(currentPlayerIndex).addCardToHand(drawn);
+            if (!isCorrectCard(drawn) || currentPlayer() == humanPlayer()) {
+                return new PlayReport(currentPlayer(), play).setDrawn(drawn);
+            }
+            putPullReport.setDrawn(drawn);
+            play.setCardsPlayed(Collections.singletonList(drawn));
+            System.out.println("Pierwsza karta ratuje!!!");
+
         }
 
         //Połóż kartę/karty
         AbilityReport abilityReport = null;
-        if (play.getCardsPlayed().size() > 1) {
+        if (play.getCardsPlayed() != null && play.getCardsPlayed().size() > 1) {
             for (Card card : play.getCardsPlayed()) {
                 abilityReport = putCard(card);
             }
@@ -195,7 +193,7 @@ public class MakaoBackend {
             abilityReport = putCard(play.getCardPlayed());
         }
         roundReport.setBlockPullButton(true);
-        return new PlayReport(currentPlayer(), play)
+        return putPullReport
                 .setAbilityReport(abilityReport)
                 .setCardCorrect(true);
     }
@@ -219,7 +217,7 @@ public class MakaoBackend {
     }
 
     //Generator playa dla komputerów
-    private Play executeComputerPlay() {
+    private Play createComputerPlay() {
         PlayReport lastReport = roundReport.getLastPlay();
         //Czy poprzedni żąda czegoś?
         if (demand.isActive()) {
@@ -301,7 +299,6 @@ public class MakaoBackend {
                 }
             }
         }
-        System.out.println(playableCards);
         return playableCards;
     }
 
