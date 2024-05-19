@@ -275,7 +275,7 @@ public class MakaoBackend {
 
         //Jeśli nie ma kart o tej samej randze, zwracamy listę kart możliwych do zagrania
         if (cardsWithSameRank.isEmpty()) {
-            return playableCards;
+            return Collections.singletonList(playableCards.get(new Random().nextInt(playableCards.size())));
         }
 
         //Sprawdzamy, czy są karty o tej samej randze wśród kart możliwych do zagrania
@@ -301,7 +301,7 @@ public class MakaoBackend {
                 }
             }
         }
-
+        System.out.println(playableCards);
         return playableCards;
     }
 

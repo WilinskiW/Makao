@@ -71,12 +71,6 @@ public class PlayerHand {
         return (checkList.length-trueValueCounter) <= 1;
     }
 
-    //Zaczynamy od 0
-    //0. AS -> Para 1 (Stawiamy flage)
-    //1. J
-    //2. AS -> Para 1 (Stawiamy flage, więc nie sprawdzamy)
-    //3. J
-    //4. THREE
 
     public Card findCardToDemand() {
         List<Card> playerCards = cards;
