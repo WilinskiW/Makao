@@ -1,7 +1,6 @@
 package com.wwil.makao.backend;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,6 +19,7 @@ public class MakaoBackend {
         createCardsToGameDeck();
         stack.addCardToStack(getStartStackCard());
         createPlayers();
+        startRound();
     }
 
     private void createCardsToGameDeck() {
@@ -58,79 +58,52 @@ public class MakaoBackend {
 
     //////////// Logika:
     //Jedyna publiczna metoda (odbiera informacje, wykonuje działanie i wysyła)
-    public RoundReport executeAction(Play play) {
+    private void startRound(){
         roundReport = new RoundReport();
-//
-////        if(humanPlay.isDragging()){
-////            return roundReport;
-////        }
-//
-//        //Zapytania od frontendu:
-//        //1. Czy gracz jest zablokowany? TAK -> Zakończ turę gracza
-////        if (humanPlay.isBlock()) {
-////            playRound(humanPlay);
-////            return roundReport;
-////        }
-//
-//        //3. Czy gracz żąda? TAK -> Zakończ turę gracza
-//        if (humanPlay.isDemanding()) {
-//            demand = new DemandManager(0, true, humanPlay.getCardPlayed());
-//        }
-//
-//        if (humanPlay.wantToEndTurn()) {
-//            if (demand.isActive()) {
-//                playRound(humanPlay);
-//            } else {
-//                playRound(humanPlay);
-//            }
-//            humanPlayedCards.clear();
-//            return roundReport;
-//        }
-//
-//
-//        //4. Czy karta jest nieprawidłowa? TAK -> Zwróć report incorrect
-//        if (isCardIncorrect(humanPlay)) {
-//            roundReport.setIncorrect();
-//            return roundReport;
-//        }
-//        //5. Czy karta aktywuje chooser? TAK -> Aktywuj chooser i zwróć report incorrect
-////        if (shouldActiveChooser(play)) {
-////            return createActivateChooserReport(play);
-////        }
-//
-//        if (humanPlay.wantToEndTurn() || humanPlay.wantsToDraw()) {
-//            if (humanPlayedCards.size() >= 2) {
-//                playRound(humanPlay);
-//                return roundReport;
-//            }
-//            //6. Czy gracz jest osobą żądającą obecnego demand? TAK -> Wyłącz demand i kontynuuj.
-//            if (demand.getPerformerIndex() == 0 && demand.isActive()) {
-//                demand.setActive(false);
-//            }
-//            playRound(humanPlay);
-//            return roundReport;
-//        }
-//
-//        roundReport.addPlay(executePlay(humanPlay));
+    }
+    public RoundReport executeAction(Play play) {
 
-//        if (play.isDragging()) {
-//            return createDragReport(play);
-//        }
-        if (play.isDropped() && isCardCorrect(play)) {
-            putCard(play.getCardPlayed());
-            roundReport.addPlay(
-                    new PlayReport(play)
-                            .setCardCorrect(true)
-            );
-        } else if (play.wantToEndTurn()) {
+        //PUT + PULL(Pierwsza karta ratuje)
+        //PUT - nie można kłaść tych samych kart
+
+        if (play.getAction() == Action.PULL) {
+           roundReport.addPlayRaport(drawCard(play));
+            return roundReport;
+        }
+
+        if (play.getAction() == Action.END) {
             playRound(play);
+            return roundReport;
+        }
+
+        if (play.getAction() != Action.PUT) {
+            throw new UnsupportedOperationException("Not yet implemented");
+        }
+
+        //scenario for put:
+        roundReport.addPlayRaport(
+                new PlayReport(play)
+                        .setCardCorrect(isCardCorrect(play)));
+
+
+        if (isCardCorrect(play)) {
+            putCard(play.getCardPlayed());
         }
 
         return roundReport;
     }
 
+    private PlayReport drawCard(Play play) {
+        if (play.getAction() != Action.PULL) {
+            throw new IllegalStateException("whe we are here?");
+        }
+        Card drawn = takeCardFromGameDeck();
+        players.get(currentPlayerIndex).addCardToHand(drawn);
+        return new PlayReport(play).setDrawn(drawn);
+    }
+
     private RoundReport createDragReport(Play play) {
-        roundReport.addPlay(
+        roundReport.addPlayRaport(
                 new PlayReport(play)
                 .setCardCorrect(true)
         );
@@ -144,59 +117,45 @@ public class MakaoBackend {
             return isCorrectCard(humanPlay.getCardPlayed());
         }
     }
-
 //    private boolean isCardIncorrect(Play humanPlay) {
 //        if (demand.isActive()) {
 //            return !humanPlay.wantsToDraw() && !isCorrectCardForDemand(humanPlay);
 //        }
 //        return !humanPlay.wantsToDraw() && !isCorrectCard(humanPlay.getCardPlayed());
+
 //    }
 
     private boolean isCorrectCardForDemand(Play humanPlay) {
-        Card chosenCard = humanPlay.getCardPlayed();
+        Rank chosenCardRank = humanPlay.getCardPlayed().getRank();
         if (humanPlayedCards.size() == 1) {
-            return chosenCard.getRank() == demand.getCard().getRank() ||
-                    chosenCard.getRank().equals(Rank.JOKER) ||
-                    (chosenCard.getRank().equals(Rank.J) && stack.isJackOnTop()) ||
-                    stack.isJackBeforeJoker() && chosenCard.getRank().equals(Rank.J);
+            return chosenCardRank == demand.getCard().getRank() ||
+                    chosenCardRank.equals(Rank.JOKER) ||
+                    (chosenCardRank.equals(Rank.J) && stack.isJackOnTop()) ||
+                    stack.isJackBeforeJoker() && chosenCardRank.equals(Rank.J);
         }
-        return chosenCard.getRank() == humanPlay.getCardsPlayed().get(0).getRank();
+        return chosenCardRank == humanPlay.getCardsPlayed().get(0).getRank();
     }
 
-//    private boolean shouldActiveChooser(HumanPlay humanPlay) {
-//        return ((!humanPlay.wantsToDraw()
-//                && humanPlay.getCardPlayed().getRank().isRankActivateChooser())
-//                && !humanPlay
-//                || stack.peekCard().getRank().equals(Rank.JOKER);
-//    }
-
-//    private RoundReport createActivateChooserReport(Play humanPlay) {
-//        roundReport.addPlay(new PlayReport(currentPlayer(), null, humanPlay, null,
-//                isCorrectCard(humanPlay.getCardPlayed()), false));
-//        executePlay(humanPlay);
-//        roundReport.setIncorrect();
-//        //roundReport.setChooserActivation(true);
-//        return roundReport;
-//    }
 
     private boolean isCorrectCard(Card chosenCard) {
         Card stackCard = stack.peekCard();
         if (!humanPlayedCards.isEmpty()) {
             return chosenCard.getRank() == humanPlayedCards.get(0).getRank();
-        } else if (stackCard.getRank().equals(Rank.Q)
-                || chosenCard.getRank().equals(Rank.Q)
-                || chosenCard.getRank().equals(Rank.JOKER)
-                || stackCard.getRank().equals(Rank.JOKER)) {
+        }
+
+        if (stackCard.getRank().equals(Rank.Q) || chosenCard.getRank().equals(Rank.Q)
+                || chosenCard.getRank().equals(Rank.JOKER) || stackCard.getRank().equals(Rank.JOKER)) {
             return true;
         }
+
         return stackCard.getSuit() == chosenCard.getSuit() || stackCard.getRank() == chosenCard.getRank();
     }
 
     private void playRound(Play humanPlay) {
-        roundReport.addPlay(executePlay(humanPlay));
+        roundReport.addPlayRaport(executePlay(humanPlay));
         nextPlayer();
         for (int i = 1; i < players.size(); i++) {
-            roundReport.addPlay(executePlay(executeComputerPlay()));
+            roundReport.addPlayRaport(executePlay(executeComputerPlay()));
             nextPlayer();
         }
     }
@@ -217,7 +176,7 @@ public class MakaoBackend {
 
         //Is demanded
         if (demand.isActive()) {
-            if (play.wantsToDraw()) {
+            if (play.getAction() == Action.PULL) {
                 return drawCard(play);
             }
             putCard(play.getCardPlayed());
@@ -225,7 +184,7 @@ public class MakaoBackend {
         }
 
         //Dobierz kartę
-        if (play.wantsToDraw()) {
+        if (play.getAction() == Action.PULL) {
             return drawCard(play);
         }
 
@@ -237,11 +196,7 @@ public class MakaoBackend {
                 .setCardCorrect(true);
     }
 
-    private PlayReport drawCard(Play play) {
-        Card drawn = takeCardFromGameDeck();
-        players.get(currentPlayerIndex).addCardToHand(drawn);
-        return new PlayReport(play).setDrawn(drawn);
-    }
+
 
     private AbilityReport putCard(Card cardPlayed) {
         getStack().addCardToStack(cardPlayed);
@@ -338,9 +293,9 @@ public class MakaoBackend {
         if (currentPlayerIndex != 0) {
             Card choosenCard = new Card(Rank.AS, currentPlayer().giveMostDominantSuit());
             stack.addCardToStack(choosenCard);
-            return new AbilityReport(currentPlayerIndex, null, choosenCard, false, false);
+            return new AbilityReport(currentPlayer(), null, choosenCard, false, false);
         }
-        return new AbilityReport(0, null, stack.peekCard(), false, false);
+        return new AbilityReport(humanPlayer(), null, stack.peekCard(), false, false);
     }
 
     private AbilityReport usePlusAbility(int amountOfCards, Card wildCard) {
@@ -348,24 +303,24 @@ public class MakaoBackend {
         List<Card> pulledCards = giveCards(amountOfCards);
         if (currentPlayerIndex != lastIndex) {
             players.get(currentPlayerIndex + 1).addCardsToHand(pulledCards);
-            return new AbilityReport(currentPlayerIndex + 1, pulledCards, wildCard, false, false);
+            return new AbilityReport(getNextPlayer(), pulledCards, wildCard, false, false);
         } else {
             players.get(0).addCardsToHand(pulledCards);
-            return new AbilityReport(0, pulledCards, wildCard, false, false);
+            return new AbilityReport(humanPlayer(), pulledCards, wildCard, false, false);
         }
     }
 
     private AbilityReport useWaitAbility(Card wildCard) {
         int lastIndex = players.size() - 1;
         if (currentPlayerIndex != lastIndex) {
-            return new AbilityReport(currentPlayerIndex + 1, null, wildCard, true, false);
+            return new AbilityReport(getNextPlayer(), null, wildCard, true, false);
         } else {
-            return new AbilityReport(0, null, wildCard, true, false);
+            return new AbilityReport(humanPlayer(), null, wildCard, true, false);
         }
     }
 
     private AbilityReport useDemandAbility(Card wildCard) {
-        if (currentPlayerIndex != 0) {
+        if (notHumanPlaying()) {
             demand = new DemandManager(currentPlayerIndex, true, currentPlayer().findCardToDemand());
             if (demand.getCard() == null) {
                 demand.setActive(false);
@@ -374,11 +329,11 @@ public class MakaoBackend {
                 System.out.println("Gracz " + (currentPlayerIndex + 1) + " zada " + demand.getCard().getRank());
             }
             if (wildCard != null) {
-                return new AbilityReport(currentPlayerIndex, null, wildCard, false, demand.isActive());
+                return new AbilityReport(currentPlayer(), null, wildCard, false, demand.isActive());
             }
-            return new AbilityReport(currentPlayerIndex, null, demand.getCard(), false, demand.isActive());
+            return new AbilityReport(currentPlayer(), null, demand.getCard(), false, demand.isActive());
         }
-        return new AbilityReport(0, null, demand.getCard(), false, true);
+        return new AbilityReport(humanPlayer(), null, demand.getCard(), false, true);
     }
 
     private AbilityReport chooseAbilityForKing(Card card, AbilityReport abilityReport, Card wildCard) {
@@ -393,28 +348,51 @@ public class MakaoBackend {
     }
 
     private AbilityReport usePlusFiveAbilityToPreviousPlayer(Card wilCard) {
-        int lastIndex = players.size() - 1;
-        List<Card> pulledCards = giveCards(5);
+       /* List<Card> pulledCards = giveCards(5);
         if (currentPlayerIndex != 0) {
             players.get(currentPlayerIndex - 1).addCardsToHand(pulledCards);
             return new AbilityReport(currentPlayerIndex - 1, pulledCards, wilCard, false, false);
         } else {
-            players.get(lastIndex).addCardsToHand(pulledCards);
+            playerBefore().addCardsToHand(pulledCards);
             return new AbilityReport(3, pulledCards, null, false, false);
-        }
+        }*/
+        throw new IllegalStateException("Special events not supported in new version");
     }
 
     private AbilityReport useWildCard() {
-        if (currentPlayerIndex != 0) {
+        if (notHumanPlaying()) {
             Card choosenCard = new Card(Rank.getRandomWithAbility(), currentPlayer().giveMostDominantSuit());
             stack.addCardToStack(choosenCard);
-            return useCardAbility(choosenCard, new AbilityReport(currentPlayerIndex, null, choosenCard, false, false));
+            return useCardAbility(choosenCard, new AbilityReport(currentPlayer(), null, choosenCard, false, false));
         }
-        return new AbilityReport(0, null, stack.peekCard(), false, false);
+        return new AbilityReport(humanPlayer(), null, stack.peekCard(), false, false);
     }
 
+    private boolean notHumanPlaying() {
+        return currentPlayer() != humanPlayer();
+    }
     private PlayerHand currentPlayer() {
         return players.get(currentPlayerIndex);
+    }
+
+    private PlayerHand playerBefore() {
+        int playerBeforeIndex = currentPlayerIndex - 1;
+        if (playerBeforeIndex < 0) {
+            playerBeforeIndex = players.size() - 1;
+        }
+        return players.get(playerBeforeIndex);
+    }
+
+    private PlayerHand getNextPlayer() {
+        int playerBeforeIndex = currentPlayerIndex + 1;
+        if (playerBeforeIndex >= players.size()) {
+            playerBeforeIndex = 0;
+        }
+        return players.get(playerBeforeIndex);
+    }
+
+    private PlayerHand humanPlayer() {
+        return players.get(0);
     }
 
     public Stack getStack() {
@@ -424,4 +402,6 @@ public class MakaoBackend {
     public List<PlayerHand> getPlayers() {
         return players;
     }
+
+
 }

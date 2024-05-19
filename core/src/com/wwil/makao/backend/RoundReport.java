@@ -8,7 +8,7 @@ public class RoundReport {
     private final List<PlayReport> playReports = new ArrayList<>();
     private boolean blockPullButton = false;
 
-    public void addPlay(PlayReport playReport) {
+    public void addPlayRaport(PlayReport playReport) {
         playReports.add(playReport);
     }
 

@@ -30,7 +30,7 @@ public class DragAndDropManager {
                 gameController.executeAction(
                         new Play()
                                 .setCardsPlayed(Collections.singletonList(chosenCardActor.getCard()))
-                                .setAction(Action.TRY)
+                                .setAction(Action.DRAG)
                 );
             }
             return true;

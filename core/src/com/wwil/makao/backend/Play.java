@@ -42,25 +42,11 @@ public class Play {
         return action;
     }
 
-    public boolean isDropped() {
-        return action == Action.PUT;
-    }
 
     public boolean endTurn(){
-        return wantsToDraw() || wantToEndTurn();
+        return action == Action.PULL || action == Action.END;
     }
 
-    public boolean wantsToDraw() {
-        return action == Action.PULL;
-    }
-
-    public boolean wantToEndTurn() {
-        return action == Action.END;
-    }
-
-    public boolean isDragging() {
-        return action == Action.TRY;
-    }
 
     public Play setAction(Action action) {
         this.action = action;

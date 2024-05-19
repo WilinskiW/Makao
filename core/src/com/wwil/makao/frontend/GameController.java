@@ -38,41 +38,10 @@ public class GameController {
         this.stage = gameplayScreen.getStage();
     }
 
-    //Jak działał report?
-    //1. Gracz wybierał akcje (drag, put, pull).
-    //2. Akcja ta była wysyła do backendu
-    //3. Backend tworzył Play Report'y gracza i komputerów
-    //4. Wszystko to było pakowane do RoundReporta
-    //5. Frontend wszystko wyświetla.
-
-    //Jak ma teraz działać?
-    //1. Gracz kładzie tyle kart ile może -> wymagane ich sprawdzania przez backend
-    //2. Gdy chce pociągnąć wtedy tura jest automatycznie kończona.
-    //3. Gdy naciśnie przycisk End turn to wtedy są tworzone playa dla komputerów
-
-    //Plan działania:
-    //DLA GRACZA:
-    //1. Zrobić tak, żeby gracz mógł położyć więcej niż jedną kartę (ZROBIONE)
-    //2. Gdy gracz dobiera kartę to wtedy automatycznie jest kończona tura. (ZROBIONE)
-    //3. Gdy gracz położy kartę to wtedy nie może dobrać karty (ZROBIONE)
-    //4. Gdy gracz nie położył żadnej karty to przycisk końca tury jest nieaktywny. (ZROBIONE)
-    //5. Gracz jedynie może położyć karty tej samej rangi (ZROBIONE)
-    //6. Położone karty używają swoich umiejętności:
-        //- Dla jednej karty. (ZROBIONE)
-        //- Dla więcej niż jedna. [NA RAZIE BEZ STACKOWANIA]
-    //7. Każda karta, która aktywuje okno wyboru działa:
-        //- Dla jednej karty:
-            //-AS (ZROBIONE)
-            //-J
-            //-JOKER
-        //- Dla więcej niż jedna.
-
-
-
 
 //CardActor cardPlayed, boolean isDropped, boolean humanBlock, boolean isDemanding
     public void executePut(Play play, CardActor cardActor){
-        if(play.isDropped() && play.getCardPlayed().getRank().isRankActivateChooser()){
+        if(play.getAction() == Action.PUT && play.getCardPlayed().getRank().isRankActivateChooser()){
             showCardChooser(cardActor);
             return;
         }
@@ -81,35 +50,20 @@ public class GameController {
     }
 
     public void executeAction(Play play) {
-
+        if (play.getAction() == Action.DRAG) {
+            return;
+        }
         //jeśli isDropped = false -> jest to próba
 
         //jeśli jest to karta wymagająca choosera to pokaż chooser i zatrzymaj grę
 
         RoundReport report;
-        //todo Wywalić if-y, połatać błędy
-//        if (play.isBlock()) {
-//            report = createWaitReport();
-//        } else if (pullButton.isClick()) {
-//            report = backend.executeAction(play);
-//            pullCard(report.getPlayReports().get(0).getDrawn(), getHumanHand());
-//        }
-//        else if(endTurnButton.isClick()){
-//            report = backend.executeAction(play);
-//        } else {
-//            if (play.isDemanding()) {
-//                report = createDemandReport(play);
-//            } else if (play.isDropped()) {
-//                report = executePut(play);
-//            } else {
-//                report = createDragReport(play);
-//            }
-//        }
-
-
         report = backend.executeAction(play);
+
+        //todo: Dobieranie i zagrywania też wielu kart (PUT, PULL i END) bez umiejętności i TRY
+
         switch (play.getAction()){
-            case TRY:
+            case DRAG:
                 //changeCardColor(report.getLastPlay().isCardCorrect(), choosenCardActor);
                 break;
             case PUT:
@@ -117,6 +71,7 @@ public class GameController {
                 break;
             case PULL:
                 pullCard(report.getLastPlay().getDrawn(),getHumanHand());
+                //PULL na szaro - tylko END button do wcisniecia
                 break;
             case END:
                 endTurn(report);
@@ -155,7 +110,7 @@ public class GameController {
 
     private void endTurn(RoundReport report){
         cardChooser.setVisibility(false);
-        pullCard(report.getPlayReports().get(0));
+        pullCards(report.getPlayReports().get(0));
         turnOffHumanInput();
         executeComputersTurn(report);
     }
@@ -165,6 +120,8 @@ public class GameController {
         if (player == getHumanHand()) {
             drawnCard.setUpSideDown(false);
             dragAndDropManager.prepareDragAndDrop(drawnCard);
+            pullButton.setActive(false);
+            endTurnButton.setActive(true);
         }
         player.addActor(drawnCard);
     }
@@ -184,20 +141,6 @@ public class GameController {
             chosenCardActor.setColor(Color.SCARLET);
         }
     }
-//    private RoundReport executePut(Play humanPlay) {
-//        if (report.isAttemptCorrect() && report.getPlayReports().get(0).isCardCorrect()) {
-//            //putCard(choosenCardActor, getHumanHand(),true);
-//            endTurnButton.setActive(true);
-//            cardChooser.setVisibility(false);
-//        }
-//        else {
-//            positionCardInGroup(getHumanHand(), choosenCardActor);
-//        }
-//
-//        return report;
-
-//    }
-
     private void showCardChooser(CardActor cardPlayed) {
         CardActor stackCard = stackCardsGroup.peekCardActor();
         putCard(cardPlayed, getHumanHand(),false);
@@ -234,11 +177,11 @@ public class GameController {
         card.setZIndex((int) card.getLastPositionBeforeRemove().z);
     }
 
-    private void pullCard(PlayReport playReport) {
+    private void pullCards(PlayReport playReport) {
         AbilityReport abilityReport = playReport.getAbilityReport();
         if (abilityReport != null && abilityReport.getToPull() != null) {
             for (Card card : abilityReport.getToPull()) {
-                pullCard(card, handGroups.get(abilityReport.getPerformerIndex()));
+                pullCard(card, handGroups.get(0));
             }
         }
     }
@@ -257,7 +200,9 @@ public class GameController {
         Gdx.input.setInputProcessor(null);
         setInputBlockActive(true);
     }
-
+///////////////////////
+//     Komputer
+//////////////////////
     private void executeComputersTurn(final RoundReport roundReport) {
         float delta = 1.5f;
         final int numberOfComputers = handGroups.size() - 1;
@@ -288,7 +233,7 @@ public class GameController {
     }
 
     private void processComputerTurn(PlayReport currentPlayReport, PlayerHandGroup currentHandGroup) {
-        pullCard(currentPlayReport);
+        pullCards(currentPlayReport);
         List<Card> cardsToPlay = currentPlayReport.getPlay().getCardsPlayed();
         if (cardsToPlay != null) {
             putCard(currentHandGroup.getCardActor(cardsToPlay.get(0)), currentHandGroup,false);
