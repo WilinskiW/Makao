@@ -13,6 +13,7 @@ import com.wwil.makao.frontend.entities.groups.PlayerHandGroup;
 import com.wwil.makao.frontend.entities.gameButtons.PullButton;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 //Przygotowanie elementów graficznych ekranu
@@ -40,7 +41,11 @@ public class GameComponentsPreparer {
     }
 
     private void prepareStackCardsGroup() {
+        //todo poprawic po testach
+        //controller.addCardActorToStackGroup(cardActorFactory.createCardActor(backend.getStack().peekCard()));
+        controller.getStackCardsGroup().getStack().addCardToStack(new Card(Rank.EIGHT, Suit.HEART));
         controller.addCardActorToStackGroup(cardActorFactory.createCardActor(backend.getStack().peekCard()));
+
         stage.addActor(controller.getStackCardsGroup());
         controller.getStackCardsGroup().setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
     }
@@ -72,7 +77,7 @@ public class GameComponentsPreparer {
         setPlayersCardActorsAlignmentParams();
 
         //todo metoda testowa:
-        //test(0);
+        test(0);
 
         for (PlayerHandGroup handGroup : handGroups) {
             for (Card card : handGroup.getPlayerHand().getCards()) {
@@ -83,9 +88,14 @@ public class GameComponentsPreparer {
     }
 
     private void test(int subject) {
-        handGroups.get(subject).getPlayerHand().getCards().clear();
-        handGroups.get(subject).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.J, Suit.CLUB),
-                new Card(Rank.J, Suit.SPADE), new Card(Rank.J, Suit.DIAMOND), new Card(Rank.J, Suit.HEART)));
+        handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.EIGHT,Suit.CLUB)));
+        handGroups.get(subject+1).getPlayerHand().getCards().clear();
+        handGroups.get(subject+1).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.EIGHT, Suit.HEART), new Card(Rank.EIGHT,Suit.SPADE)));
+        handGroups.get(subject+1).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.NINE, Suit.HEART), new Card(Rank.NINE,Suit.SPADE)));
+        handGroups.get(subject+1).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.AS, Suit.SPADE)));
+//        handGroups.get(subject).getPlayerHand().getCards().clear();
+//        handGroups.get(subject).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.J, Suit.CLUB),
+//                new Card(Rank.J, Suit.SPADE), new Card(Rank.J, Suit.DIAMOND), new Card(Rank.J, Suit.HEART)));
 //        Card jokerRed = new Card(Rank.JOKER, Suit.RED);
 //        Card jokerBlack = new Card(Rank.JOKER, Suit.BLACK);
 //        Card card3 = new Card(Rank.AS, Suit.SPADE);

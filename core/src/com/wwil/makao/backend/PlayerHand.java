@@ -1,7 +1,6 @@
 package com.wwil.makao.backend;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class PlayerHand {
     private final List<Card> cards;
@@ -25,6 +24,59 @@ public class PlayerHand {
     public boolean checkIfPlayerHaveNoCards() {
         return cards.isEmpty();
     }
+
+    public List<Card> findCardsWithSameRank() {
+        List<Card> sameCards = new ArrayList<>();
+        boolean isCurrentHasMultiple = false;
+        boolean[] checkList = new boolean[cards.size()];
+        for (int i = 0; i < cards.size(); i++) {
+            for (int j = 0; j < cards.size(); j++) {
+                if(checkList[i]){
+                    break;
+                }
+
+                if (checkList[j]) {
+                    continue;
+                }
+
+                if (cards.get(i).getRank() == cards.get(j).getRank() && i != j) {
+                    sameCards.add(cards.get(j));
+                    checkList[j] = true;
+                    isCurrentHasMultiple = true;
+                }
+            }
+
+            if(isCurrentHasMultiple){
+                sameCards.add(cards.get(i));
+            }
+
+            checkList[i] = true;
+            isCurrentHasMultiple = false;
+
+            if(endSearching(checkList)){
+                break;
+            }
+        }
+
+        return sameCards;
+    }
+
+    private boolean endSearching(boolean[]checkList){
+        int trueValueCounter = 0;
+        for (boolean checked : checkList) {
+            if (checked) {
+                trueValueCounter++;
+            }
+        }
+        return (checkList.length-trueValueCounter) <= 1;
+    }
+
+    //Zaczynamy od 0
+    //0. AS -> Para 1 (Stawiamy flage)
+    //1. J
+    //2. AS -> Para 1 (Stawiamy flage, więc nie sprawdzamy)
+    //3. J
+    //4. THREE
 
     public Card findCardToDemand() {
         List<Card> playerCards = cards;

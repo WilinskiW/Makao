@@ -39,9 +39,9 @@ public class GameController {
     }
 
 
-//CardActor cardPlayed, boolean isDropped, boolean humanBlock, boolean isDemanding
-    public void executePut(Play play, CardActor cardActor){
-        if(play.getAction() == Action.PUT && play.getCardPlayed().getRank().isRankActivateChooser()){
+    //CardActor cardPlayed, boolean isDropped, boolean humanBlock, boolean isDemanding
+    public void executePut(Play play, CardActor cardActor) {
+        if (play.getAction() == Action.PUT && play.getCardPlayed().getRank().isRankActivateChooser()) {
             showCardChooser(cardActor);
             return;
         }
@@ -60,17 +60,16 @@ public class GameController {
         RoundReport report;
         report = backend.executeAction(play);
 
-        //todo: Dobieranie i zagrywania też wielu kart (PUT, PULL i END) bez umiejętności i TRY
 
-        switch (play.getAction()){
+        switch (play.getAction()) {
             case DRAG:
                 //changeCardColor(report.getLastPlay().isCardCorrect(), choosenCardActor);
                 break;
             case PUT:
-                useCard(report.getHumanReport());
+                useCard(report.getLastPlay());
                 break;
             case PULL:
-                pullCard(report.getLastPlay().getDrawn(),getHumanHand());
+                pullCard(report.getLastPlay().getDrawn(), getHumanHand());
                 //PULL na szaro - tylko END button do wcisniecia
                 break;
             case END:
@@ -79,23 +78,24 @@ public class GameController {
         }
     }
 
-    private void useCard(PlayReport playReport){
-        if(playReport.isCardCorrect()) {
+    private void useCard(PlayReport playReport) {
+        if (playReport.isCardCorrect()) {
             putCard(choosenCardActor, getHumanHand(), true);
             pullButton.setActive(false);
-        }
-        else{
-            positionCardInGroup(getHumanHand(),choosenCardActor);
+        } else {
+            positionCardInGroup(getHumanHand(), choosenCardActor);
         }
     }
 
     private void putCard(CardActor playedCard, PlayerHandGroup player, boolean alignCards) {
+        if (player == getHumanHand()) {
+            playedCard.clearListeners();
+            endTurnButton.setActive(true);
+            pullButton.setActive(false);
+        }
         addCardActorToStackGroup(playedCard);
-        playedCard.clearListeners();
-        endTurnButton.setActive(true);
-        pullButton.setActive(false);
         endIfPlayerWon(player);
-        if(alignCards) {
+        if (alignCards) {
             player.moveCloserToStartingPosition();
         }
     }
@@ -103,12 +103,12 @@ public class GameController {
     private RoundReport createWaitReport() {
         return backend.executeAction(
                 new Play()
-                .setBlocked(true)
-                .setAction(Action.END)
+                        .setBlocked(true)
+                        .setAction(Action.END)
         );
     }
 
-    private void endTurn(RoundReport report){
+    private void endTurn(RoundReport report) {
         cardChooser.setVisibility(false);
         pullCards(report.getPlayReports().get(0));
         turnOffHumanInput();
@@ -141,9 +141,10 @@ public class GameController {
             chosenCardActor.setColor(Color.SCARLET);
         }
     }
+
     private void showCardChooser(CardActor cardPlayed) {
         CardActor stackCard = stackCardsGroup.peekCardActor();
-        putCard(cardPlayed, getHumanHand(),false);
+        putCard(cardPlayed, getHumanHand(), false);
         cardChooser.setVisibility(true);
         cardChooser.getManager().setDisplayCard(stackCard, cardPlayed);
     }
@@ -200,17 +201,19 @@ public class GameController {
         Gdx.input.setInputProcessor(null);
         setInputBlockActive(true);
     }
-///////////////////////
+
+    ///////////////////////
 //     Komputer
 //////////////////////
     private void executeComputersTurn(final RoundReport roundReport) {
         float delta = 1.5f;
         final int numberOfComputers = handGroups.size() - 1;
         final AtomicInteger completedComputers = new AtomicInteger(0);
+        final List<PlayReport> computerPlayReports = roundReport.getComputerPlayReport();
 
         for (int i = 1; i < handGroups.size(); i++) {
             final PlayerHandGroup currentHandGroup = handGroups.get(i);
-            final PlayReport currentPlayReport = roundReport.getPlayReports().get(i);
+            final PlayReport currentPlayReport = computerPlayReports.get(i - 1);
 
             Timer.schedule(new Timer.Task() {
                 @Override
@@ -236,7 +239,8 @@ public class GameController {
         pullCards(currentPlayReport);
         List<Card> cardsToPlay = currentPlayReport.getPlay().getCardsPlayed();
         if (cardsToPlay != null) {
-            putCard(currentHandGroup.getCardActor(cardsToPlay.get(0)), currentHandGroup,false);
+            List<CardActor> cardActorsToPlay = currentHandGroup.getCardActors(currentPlayReport.getPlay().getCardsPlayed());
+            putCards(currentHandGroup, cardActorsToPlay, true);
             putChosenCardIfNecessary(currentPlayReport.getAbilityReport(), currentHandGroup, currentPlayReport.getPlay());
         } else {
             CardActor drawnCard = cardActorFactory.createCardActor(currentPlayReport.getDrawn());
@@ -244,15 +248,26 @@ public class GameController {
         }
     }
 
+    private void putCards(PlayerHandGroup player, List<CardActor> cardsToPlay, boolean alignCards) {
+        for (CardActor cardActor : cardsToPlay) {
+            addCardActorToStackGroup(cardActor);
+        }
+        endIfPlayerWon(player);
+        if (alignCards) {
+            player.moveCloserToStartingPosition();
+        }
+    }
+
     private void putChosenCardIfNecessary(AbilityReport abilityReport, PlayerHandGroup currentHandGroup, Play play) {
         if (abilityReport != null && (abilityReport.getChoosenCard() != null && !abilityReport.isDemanded()
                 || play.getCardPlayed().getRank().equals(Rank.JOKER))) {
-            putCard(cardActorFactory.createCardActor(abilityReport.getChoosenCard()), currentHandGroup,false);
+            putCard(cardActorFactory.createCardActor(abilityReport.getChoosenCard()), currentHandGroup, false);
         }
     }
 
     private void turnOnHumanInput() {
         setInputBlockActive(false);
+        endTurnButton.setActive(false);
         pullButton.setActive(true);
         Gdx.input.setInputProcessor(gameplayScreen.getStage());
     }
@@ -314,33 +329,33 @@ public class GameController {
     }
 }
 /*
-* todo To zrobić:
-*  Bez podświetlania (na razie)
-* Obiekt Play:
-* Okno może się uruchamiać ale może nie przepuścić
-* zagranie próba
-* zagranie normalne
-* zagranie normalne + wybór
-* dobranie karty (nie pozwoli Ci jeśli już zagrałeś) (Pierwsza karta ratuje)
-* kończę turę -> zapytanie na backendzie
-*
-*  Akcje:
-*  zagralem karte (próba lub prawdziwe zagranie)
-*    -> wybór
-*  kończe turę
-*  dobieram karte
-*
-* Umięjętności:
-* zadam figur (jopek)
-* zmiana koloru (as)
-* przeciwnik dobiera x (2,3, krol pik/kier)
-* przeciwnik czeka x tur (4)
-* joker ( zmienia sie w dowolna wybrana karte)
-*
-* //Abstrakcyjna klasa Event
-* //event dobierania -> aktywny, jakie karty
-* //event czekania
-* //event żądania -> aktywny, jaka karta (ranga)
-*
-*
-* */
+ * todo To zrobić:
+ *  Bez podświetlania (na razie)
+ * Obiekt Play:
+ * Okno może się uruchamiać ale może nie przepuścić
+ * zagranie próba
+ * zagranie normalne
+ * zagranie normalne + wybór
+ * dobranie karty (nie pozwoli Ci jeśli już zagrałeś) (Pierwsza karta ratuje)
+ * kończę turę -> zapytanie na backendzie
+ *
+ *  Akcje:
+ *  zagralem karte (próba lub prawdziwe zagranie)
+ *    -> wybór
+ *  kończe turę
+ *  dobieram karte
+ *
+ * Umięjętności:
+ * zadam figur (jopek)
+ * zmiana koloru (as)
+ * przeciwnik dobiera x (2,3, krol pik/kier)
+ * przeciwnik czeka x tur (4)
+ * joker ( zmienia sie w dowolna wybrana karte)
+ *
+ * //Abstrakcyjna klasa Event
+ * //event dobierania -> aktywny, jakie karty
+ * //event czekania
+ * //event żądania -> aktywny, jaka karta (ranga)
+ *
+ *
+ * */

@@ -89,6 +89,14 @@ public class PlayerHandGroup extends Group {
         return cardActors;
     }
 
+    public List<CardActor> getCardActors(List<Card> cards){
+        List<CardActor> cardActors = new ArrayList<>();
+        for (Card card : cards) {
+            cardActors.add(getCardActor(card));
+        }
+        return cardActors;
+    }
+
     public void setCardsAlignment(CardsAlignmentParams cardsAlignment) {
         this.cardsAlignment = cardsAlignment;
     }

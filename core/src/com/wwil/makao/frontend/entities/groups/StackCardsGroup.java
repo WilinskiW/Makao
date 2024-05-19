@@ -39,4 +39,8 @@ public class StackCardsGroup extends Group {
             MakaoBackend.gameDeck.add(cardActor.getCard());
         }
     }
+
+    public Stack getStack() {
+        return stack;
+    }
 }

@@ -42,12 +42,6 @@ public class Play {
         return action;
     }
 
-
-    public boolean endTurn(){
-        return action == Action.PULL || action == Action.END;
-    }
-
-
     public Play setAction(Action action) {
         this.action = action;
         return this;

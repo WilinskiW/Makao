@@ -1,8 +1,6 @@
 package com.wwil.makao.backend;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class MakaoBackend {
     private final int STARTING_CARDS = 5;
@@ -58,22 +56,25 @@ public class MakaoBackend {
 
     //////////// Logika:
     //Jedyna publiczna metoda (odbiera informacje, wykonuje działanie i wysyła)
-    private void startRound(){
+    private void startRound() {
         roundReport = new RoundReport();
     }
+
     public RoundReport executeAction(Play play) {
 
         //PUT + PULL(Pierwsza karta ratuje)
         //PUT - nie można kłaść tych samych kart
 
         if (play.getAction() == Action.PULL) {
-           roundReport.addPlayRaport(drawCard(play));
+            roundReport.addPlayRaport(executePlay(play));
             return roundReport;
         }
 
         if (play.getAction() == Action.END) {
-            playRound(play);
-            return roundReport;
+            playRound();
+            RoundReport report = roundReport;
+            startRound();
+            return report;
         }
 
         if (play.getAction() != Action.PUT) {
@@ -82,14 +83,13 @@ public class MakaoBackend {
 
         //scenario for put:
         roundReport.addPlayRaport(
-                new PlayReport(play)
+                new PlayReport(currentPlayer(), play)
                         .setCardCorrect(isCardCorrect(play)));
 
 
         if (isCardCorrect(play)) {
             putCard(play.getCardPlayed());
         }
-
         return roundReport;
     }
 
@@ -99,13 +99,13 @@ public class MakaoBackend {
         }
         Card drawn = takeCardFromGameDeck();
         players.get(currentPlayerIndex).addCardToHand(drawn);
-        return new PlayReport(play).setDrawn(drawn);
+        return new PlayReport(currentPlayer(), play).setDrawn(drawn);
     }
 
     private RoundReport createDragReport(Play play) {
         roundReport.addPlayRaport(
-                new PlayReport(play)
-                .setCardCorrect(true)
+                new PlayReport(currentPlayer(), play)
+                        .setCardCorrect(true)
         );
         return roundReport;
     }
@@ -151,8 +151,8 @@ public class MakaoBackend {
         return stackCard.getSuit() == chosenCard.getSuit() || stackCard.getRank() == chosenCard.getRank();
     }
 
-    private void playRound(Play humanPlay) {
-        roundReport.addPlayRaport(executePlay(humanPlay));
+    private void playRound() {
+        humanPlayedCards.clear();
         nextPlayer();
         for (int i = 1; i < players.size(); i++) {
             roundReport.addPlayRaport(executePlay(executeComputerPlay()));
@@ -161,17 +161,14 @@ public class MakaoBackend {
     }
 
     private PlayReport executePlay(Play play) {
-        if (play.endTurn()) {
-            return new PlayReport(play).setCardCorrect(true);
-        }
 
         //Skip turn
         if (play.isBlock()) {
-            return new PlayReport(play).setBlocked(true);
+            return new PlayReport(currentPlayer(), play).setBlocked(true);
         }
 
         if (play.isDemanding()) {
-            return new PlayReport(play).setCardCorrect(true);
+            return new PlayReport(currentPlayer(), play).setCardCorrect(true);
         }
 
         //Is demanded
@@ -180,7 +177,7 @@ public class MakaoBackend {
                 return drawCard(play);
             }
             putCard(play.getCardPlayed());
-            return new PlayReport(play).setCardCorrect(true);
+            return new PlayReport(currentPlayer(), play).setCardCorrect(true);
         }
 
         //Dobierz kartę
@@ -188,14 +185,20 @@ public class MakaoBackend {
             return drawCard(play);
         }
 
-        //Połóż kartę
-        AbilityReport abilityReport = putCard(play.getCardPlayed());
+        //Połóż kartę/karty
+        AbilityReport abilityReport = null;
+        if (play.getCardsPlayed().size() > 1) {
+            for (Card card : play.getCardsPlayed()) {
+                abilityReport = putCard(card);
+            }
+        } else {
+            abilityReport = putCard(play.getCardPlayed());
+        }
         roundReport.setBlockPullButton(true);
-        return new PlayReport(play)
+        return new PlayReport(currentPlayer(), play)
                 .setAbilityReport(abilityReport)
                 .setCardCorrect(true);
     }
-
 
 
     private AbilityReport putCard(Card cardPlayed) {
@@ -204,7 +207,8 @@ public class MakaoBackend {
         if (currentPlayerIndex == 0) {
             humanPlayedCards.add(cardPlayed);
         }
-        return useCardAbility(cardPlayed, null);
+        //return useCardAbility(cardPlayed, null);
+        return null;
     }
 
     private void nextPlayer() {
@@ -216,9 +220,7 @@ public class MakaoBackend {
 
     //Generator playa dla komputerów
     private Play executeComputerPlay() {
-        PlayerHand playerHand = currentPlayer();
         PlayReport lastReport = roundReport.getLastPlay();
-
         //Czy poprzedni żąda czegoś?
         if (demand.isActive()) {
             return getDemandPlay();
@@ -227,16 +229,15 @@ public class MakaoBackend {
         if (lastReport.getAbilityReport() != null && lastReport.getAbilityReport().isBlockNext()) {
             return new Play().setBlocked(true);
         }
-        //Znajdź poprawną kartę i ją zapisz
-        //todo komputer w trakcie swojej tury może położyć parę pasujących kart
-        for (Card card : playerHand.getCards()) {
-            if (isCorrectCard(card)) {
-                return new Play()
-                        .setCardsPlayed(Collections.singletonList(card));
-            }
+        //Znajdź karty do zagrania
+        List<Card> playableCards = getPlayableCards();
+        if (!playableCards.isEmpty()) {
+            return new Play().
+                    setCardsPlayed(playableCards)
+                    .setAction(Action.PUT);
         }
-        //Przypadek dobrania
-        return getPullCardPlay();
+        //Dobierz kartę
+        return new Play().setAction(Action.PULL);
     }
 
     private Play getDemandPlay() {
@@ -251,12 +252,59 @@ public class MakaoBackend {
         if (card != null) {
             //return new Play(Arrays.asList(card), true, false, false, false);
         }
-        return getPullCardPlay();
-    }
-
-    private Play getPullCardPlay() {
         return new Play().setAction(Action.PULL);
     }
+
+    private List<Card> getPlayableCards() {
+        List<Card> playableCards = new ArrayList<>();
+
+        //Dodajemy karty, które mogą być zagrane
+        for (Card card : currentPlayer().getCards()) {
+            if (isCorrectCard(card)) {
+                playableCards.add(card);
+            }
+        }
+
+        //Jeśli nie ma kart możliwych do zagrania, zwracamy pustą listę
+        if (playableCards.isEmpty()) {
+            return playableCards;
+        }
+
+        //Szukamy kart o tej samej randze
+        List<Card> cardsWithSameRank = currentPlayer().findCardsWithSameRank();
+
+        //Jeśli nie ma kart o tej samej randze, zwracamy listę kart możliwych do zagrania
+        if (cardsWithSameRank.isEmpty()) {
+            return playableCards;
+        }
+
+        //Sprawdzamy, czy są karty o tej samej randze wśród kart możliwych do zagrania
+        Rank chosenRank = null;
+        for (Card playableCard : playableCards) {
+            for (Card cardWithMultiple : cardsWithSameRank) {
+                if (playableCard.getRank() == cardWithMultiple.getRank()) {
+                    chosenRank = playableCard.getRank();
+                    break;
+                }
+            }
+            if (chosenRank != null) {
+                break;
+            }
+        }
+
+        //Jeśli znaleźliśmy powtórzenie, wybieramy karty z tą samą rangą
+        if (chosenRank != null) {
+            playableCards.clear();
+            for (Card cardToPlay : cardsWithSameRank) {
+                if (cardToPlay.getRank() == chosenRank) {
+                    playableCards.add(cardToPlay);
+                }
+            }
+        }
+
+        return playableCards;
+    }
+
 
     private AbilityReport useCardAbility(Card card, AbilityReport wildCardReport) {
         AbilityReport abilityReport = null;
@@ -371,6 +419,7 @@ public class MakaoBackend {
     private boolean notHumanPlaying() {
         return currentPlayer() != humanPlayer();
     }
+
     private PlayerHand currentPlayer() {
         return players.get(currentPlayerIndex);
     }
