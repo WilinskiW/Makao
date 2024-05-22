@@ -13,7 +13,7 @@ public class RoundReport {
     }
 
     public List<PlayReport> getComputerPlayReport(){
-        PlayerHand humanPlayer = playReports.get(0).getPlayer();
+        Player humanPlayer = playReports.get(0).getPlayer();
         List<PlayReport> computerPlayReports = new ArrayList<>();
         for(PlayReport playReport : playReports){
             if(playReport.getPlayer() != humanPlayer){

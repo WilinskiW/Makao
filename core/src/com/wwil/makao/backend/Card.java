@@ -8,6 +8,13 @@ public class Card {
         this.suit = suit;
     }
 
+    public boolean isBattleCard(){
+        return rank == Rank.TWO
+                || rank == Rank.THREE
+                || (rank == Rank.K && suit == Suit.HEART)
+                || (rank == Rank.K && suit == Suit.SPADE);
+    }
+
     public Rank getRank() {
         return rank;
     }

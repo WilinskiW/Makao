@@ -43,6 +43,10 @@ public class Play {
     }
 
     public Play setAction(Action action) {
+        if(this.action == Action.PULL && action == Action.PUT){
+            this.action = Action.PULL_PUT;
+            return this;
+        }
         this.action = action;
         return this;
     }

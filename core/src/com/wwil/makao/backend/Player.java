@@ -2,10 +2,11 @@ package com.wwil.makao.backend;
 
 import java.util.*;
 
-public class PlayerHand {
+public class Player {
     private final List<Card> cards;
+    private CardBattle cardBattle;
 
-    public PlayerHand(List<Card> cards) {
+    public Player(List<Card> cards) {
         this.cards = cards;
     }
 
@@ -25,7 +26,7 @@ public class PlayerHand {
         return cards.isEmpty();
     }
 
-    public List<Card> findCardsWithSameRank() {
+    public List<Card> findCardsWithSameRank(List<Card> cards) {
         List<Card> sameCards = new ArrayList<>();
         boolean isCurrentHasMultiple = false;
         boolean[] checkList = new boolean[cards.size()];
@@ -61,6 +62,48 @@ public class PlayerHand {
         return sameCards;
     }
 
+
+    //Obrona: Dowolna 2, 3 PIK, K PIK
+    //Atakujacy: 2 np. PIK
+
+    public List<Card> findDefensiveCards(CardBattle cardBattle){
+        List<Card> defensiveCards = new ArrayList<>();
+        Card attackingCard = cardBattle.getAttackingCard();
+
+        for(Card playerCard : cards){
+            //1. Szukamy karty o tej samej randze.
+            if(playerCard.getRank() == attackingCard.getRank()){
+                defensiveCards.add(playerCard);
+            }  //fixme: Karty już sprawdzone są pomijane np. Stack: 3 PIK| Pierwsza karta sprawdzona: 2 TREFL, Druga: 2 PIK. Druga trafia, pierwsza nie
+            else if(playerCard.getSuit() == attackingCard.getSuit() && playerCard.isBattleCard()){
+                defensiveCards.add(playerCard);
+            }
+        }
+
+        if(defensiveCards.isEmpty()){
+            return defensiveCards;
+        }
+
+        //Mamy wszystkie karty do obrony
+        //np. 2 PIK, 2 TREFL, K PIK
+        List<Card> cardsWithSameRank = findCardsWithSameRank(defensiveCards);
+        if(cardsWithSameRank.isEmpty()){
+            return Collections.singletonList(defensiveCards.get(new Random().nextInt(defensiveCards.size())));
+        }
+
+
+        return cardsWithSameRank;
+    }
+
+
+    //Atakujacy: 3 np. KIER
+    //Obrona: Dowolna 3, 2 KIER, K KIER
+
+    //Atakujący: K np. KIER
+    //Obrona: Dowolny K, 2 KIER, 3 KIER
+
+
+
     private boolean endSearching(boolean[]checkList){
         int trueValueCounter = 0;
         for (boolean checked : checkList) {
@@ -69,6 +112,12 @@ public class PlayerHand {
             }
         }
         return (checkList.length-trueValueCounter) <= 1;
+    }
+
+    public CardBattle moveCardBattle(){
+        CardBattle battle = cardBattle;
+        cardBattle = null;
+        return battle;
     }
 
 
@@ -119,7 +168,21 @@ public class PlayerHand {
         return Suit.values()[maxIndex]; // Zwracanie koloru z największą liczbą wystąpień
     }
 
+    public boolean isAttack(){
+        return cardBattle != null;
+    }
+
     public List<Card> getCards() {
         return cards;
+    }
+
+
+    public CardBattle getAttacker() {
+        return cardBattle;
+    }
+
+    public Player setAttacker(CardBattle cardBattle) {
+        this.cardBattle = cardBattle;
+        return this;
     }
 }

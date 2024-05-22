@@ -38,8 +38,6 @@ public class GameController {
         this.stage = gameplayScreen.getStage();
     }
 
-
-    //CardActor cardPlayed, boolean isDropped, boolean humanBlock, boolean isDemanding
     public void executePut(Play play, CardActor cardActor) {
         if (play.getAction() == Action.PUT && play.getCardPlayed().getRank().isRankActivateChooser()) {
             showCardChooser(cardActor);
@@ -63,7 +61,7 @@ public class GameController {
 
         switch (play.getAction()) {
             case DRAG:
-                //changeCardColor(report.getLastPlay().isCardCorrect(), choosenCardActor);
+                changeCardColor(report.getLastPlay().isCardCorrect(), choosenCardActor);
                 break;
             case PUT:
                 useCard(report.getLastPlay());
@@ -214,21 +212,31 @@ public class GameController {
                     // Sprawdź, czy to był ostatni ruch komputera
                     if (completedComputers.incrementAndGet() == numberOfComputers) {
                         turnOnHumanInput();
+                        //todo: Na razie czlowiek nie moze sie obronic
+                        if(getHumanHand().getPlayerHand().isAttack()){
+                            System.out.println("Czlowiek jest atakowany!");
+                            getHumanHand().getPlayerHand().setAttacker(null);
+
+                        }
                     }
                 }
             }, i * delta); // Opóźnienie względem indeksu
         }
     }
 
-    private void processComputerTurn(PlayReport currentPlayReport, PlayerHandGroup currentHandGroup) {
-        List<Card> cardsToPlay = currentPlayReport.getPlay().getCardsPlayed();
-        if (currentPlayReport.getPlay().getAction() == Action.PULL) {
-            pullCard(currentPlayReport.getDrawn(), currentHandGroup);
+    private void processComputerTurn(PlayReport playReport, PlayerHandGroup playerGroup) {
+        List<Card> cardsToPlay = playReport.getPlay().getCardsPlayed();
+
+        if (playReport.getCardsToPull() != null && !playReport.getCardsToPull().isEmpty()) {
+            pullCards(playReport, playerGroup);
         }
+        else if (playReport.getPlay().getAction() == Action.PULL) {
+            pullCard(playReport.getDrawn(), playerGroup);
+        }
+
         if (cardsToPlay != null) {
-            List<CardActor> cardActorsToPlay = currentHandGroup.getCardActors(currentPlayReport.getPlay().getCardsPlayed());
-            putCards(currentHandGroup, cardActorsToPlay, true);
-            //putChosenCardIfNecessary(currentPlayReport.getAbilityReport(), currentHandGroup, currentPlayReport.getPlay());
+            List<CardActor> cardActorsToPlay = playerGroup.getCardActors(playReport.getPlay().getCardsPlayed());
+            putCards(playerGroup, cardActorsToPlay, true);
         }
     }
 
@@ -243,12 +251,11 @@ public class GameController {
         }
     }
 
-//    private void putChosenCardIfNecessary(AbilityReport abilityReport, PlayerHandGroup currentHandGroup, Play play) {
-//        if (abilityReport != null && (abilityReport.getChoosenCard() != null && !abilityReport.isDemanded()
-//                || play.getCardPlayed().getRank().equals(Rank.JOKER))) {
-//            putCard(cardActorFactory.createCardActor(abilityReport.getChoosenCard()), currentHandGroup, false);
-//        }
-//    }
+    private void pullCards(PlayReport playReport, PlayerHandGroup playerGroup) {
+        for (Card card : playReport.getCardsToPull()) {
+            pullCard(card, playerGroup);
+        }
+    }
 
     private void turnOnHumanInput() {
         setInputBlockActive(false);
