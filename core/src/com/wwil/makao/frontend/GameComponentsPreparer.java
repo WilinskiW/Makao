@@ -91,21 +91,7 @@ public class GameComponentsPreparer {
         handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.TWO,Suit.DIAMOND)));
         handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE,Suit.HEART)));
         handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE,Suit.SPADE)));
-//        handGroups.get(subject+1).getPlayerHand().getCards().clear();
-//        handGroups.get(subject+1).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.EIGHT, Suit.HEART), new Card(Rank.EIGHT,Suit.SPADE)));
-//        handGroups.get(subject+1).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.NINE, Suit.HEART), new Card(Rank.NINE,Suit.SPADE)));
-//        handGroups.get(subject+1).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.AS, Suit.SPADE)));
-//        handGroups.get(subject).getPlayerHand().getCards().clear();
-//        handGroups.get(subject).getPlayerHand().addCardsToHand(Arrays.asList(new Card(Rank.J, Suit.CLUB),
-//                new Card(Rank.J, Suit.SPADE), new Card(Rank.J, Suit.DIAMOND), new Card(Rank.J, Suit.HEART)));
-//        Card jokerRed = new Card(Rank.JOKER, Suit.RED);
-//        Card jokerBlack = new Card(Rank.JOKER, Suit.BLACK);
-//        Card card3 = new Card(Rank.AS, Suit.SPADE);
-//        Card card4 = new Card(Rank.FIVE, Suit.HEART);
-//        handGroups.get(subject).getPlayerHand().addCardToHand(jokerRed);
-//        handGroups.get(0).getPlayerHand().addCardToHand(jokerBlack);
-//        //handGroups.get(subject).getPlayerHand().addCardToHand(card3);
-//        handGroups.get(subject).getPlayerHand().addCardToHand(card4);
+        handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K,Suit.HEART)));
     }
 
 

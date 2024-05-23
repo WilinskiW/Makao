@@ -26,56 +26,62 @@ public class Player {
         return cards.isEmpty();
     }
 
-    public List<Card> findCardsWithSameRank(List<Card> cards) {
-        List<Card> sameCards = new ArrayList<>();
-        boolean isCurrentHasMultiple = false;
-        boolean[] checkList = new boolean[cards.size()];
-        for (int i = 0; i < cards.size(); i++) {
-            for (int j = 0; j < cards.size(); j++) {
-                if(checkList[i]){
-                    break;
-                }
+    public List<Card> getPlayableWithSameRank(List<Card> cards) {
+        List<Card> playable = findCardsWithSameRank(cards);
+        if (playable.size() > 4) {
+            // Tworzymy mapę do zliczania wystąpień każdej rangi
+            Map<Rank, Integer> rankCount = new HashMap<>();
+            for (Card card : playable) {
+                rankCount.put(card.getRank(), rankCount.getOrDefault(card.getRank(), 0) + 1);
+            }
 
-                if (checkList[j]) {
-                    continue;
-                }
+            // Znajdujemy maksymalną liczbę wystąpień rangi
+            int maxCount = Collections.max(rankCount.values());
 
-                if (cards.get(i).getRank() == cards.get(j).getRank() && i != j) {
-                    sameCards.add(cards.get(j));
-                    checkList[j] = true;
-                    isCurrentHasMultiple = true;
+            // Zbieramy wszystkie rangi, które mają maksymalną liczbę wystąpień
+            List<Rank> maxRanks = new ArrayList<>();
+            for (Map.Entry<Rank, Integer> entry : rankCount.entrySet()) {
+                if (entry.getValue() == maxCount) {
+                    maxRanks.add(entry.getKey());
                 }
             }
 
-            if(isCurrentHasMultiple){
-                sameCards.add(cards.get(i));
+            // Zbieramy karty z najczęściej występującymi rangami
+            List<Card> maxPlayable = new ArrayList<>();
+            for (Card card : playable) {
+                if (maxRanks.contains(card.getRank())) {
+                    maxPlayable.add(card);
+                }
             }
 
-            checkList[i] = true;
-            isCurrentHasMultiple = false;
-
-            if(endSearching(checkList)){
-                break;
-            }
+            return maxPlayable;
         }
-
-        return sameCards;
+        return playable;
     }
 
+    public List<Card> findCardsWithSameRank(List<Card> cards) {
+        Map<Rank, List<Card>> rankToCards = new HashMap<>();
+        for (Card card : cards) {
+            rankToCards.computeIfAbsent(card.getRank(), k -> new ArrayList<>()).add(card);
+        }
 
-    //Obrona: Dowolna 2, 3 PIK, K PIK
-    //Atakujacy: 2 np. PIK
-
+        List<Card> sameRankCards = new ArrayList<>();
+        for (List<Card> cardList : rankToCards.values()) {
+            if (cardList.size() > 1) {
+                sameRankCards.addAll(cardList);
+            }
+        }
+        return sameRankCards;
+    }
     public List<Card> findDefensiveCards(CardBattle cardBattle){
         List<Card> defensiveCards = new ArrayList<>();
         Card attackingCard = cardBattle.getAttackingCard();
 
         for(Card playerCard : cards){
-            //1. Szukamy karty o tej samej randze.
             if(playerCard.getRank() == attackingCard.getRank()){
                 defensiveCards.add(playerCard);
             }  //fixme: Karty już sprawdzone są pomijane np. Stack: 3 PIK| Pierwsza karta sprawdzona: 2 TREFL, Druga: 2 PIK. Druga trafia, pierwsza nie
-            else if(playerCard.getSuit() == attackingCard.getSuit() && playerCard.isBattleCard()){
+            else if(playerCard.getSuit() == attackingCard.getSuit() && playerCard.isBattleCard() && !cardBattle.getAttackingCard().getRank().equals(Rank.K)){
                 defensiveCards.add(playerCard);
             }
         }
@@ -84,8 +90,6 @@ public class Player {
             return defensiveCards;
         }
 
-        //Mamy wszystkie karty do obrony
-        //np. 2 PIK, 2 TREFL, K PIK
         List<Card> cardsWithSameRank = findCardsWithSameRank(defensiveCards);
         if(cardsWithSameRank.isEmpty()){
             return Collections.singletonList(defensiveCards.get(new Random().nextInt(defensiveCards.size())));
@@ -95,31 +99,11 @@ public class Player {
         return cardsWithSameRank;
     }
 
-
-    //Atakujacy: 3 np. KIER
-    //Obrona: Dowolna 3, 2 KIER, K KIER
-
-    //Atakujący: K np. KIER
-    //Obrona: Dowolny K, 2 KIER, 3 KIER
-
-
-
-    private boolean endSearching(boolean[]checkList){
-        int trueValueCounter = 0;
-        for (boolean checked : checkList) {
-            if (checked) {
-                trueValueCounter++;
-            }
-        }
-        return (checkList.length-trueValueCounter) <= 1;
-    }
-
     public CardBattle moveCardBattle(){
         CardBattle battle = cardBattle;
         cardBattle = null;
         return battle;
     }
-
 
     public Card findCardToDemand() {
         List<Card> playerCards = cards;

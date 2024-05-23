@@ -216,8 +216,8 @@ public class GameController {
                         if(getHumanHand().getPlayerHand().isAttack()){
                             System.out.println("Czlowiek jest atakowany!");
                             getHumanHand().getPlayerHand().setAttacker(null);
-
                         }
+                        System.out.println("-----------------------");
                     }
                 }
             }, i * delta); // Opóźnienie względem indeksu

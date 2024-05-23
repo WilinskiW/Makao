@@ -86,20 +86,6 @@ public class MakaoBackend {
         return roundReport;
     }
 
-    private PlayReport drawCard(Play play) {
-        Card drawn = takeCardFromGameDeck();
-        players.get(currentPlayerIndex).addCardToHand(drawn);
-        return new PlayReport(currentPlayer(), play).setDrawn(drawn);
-    }
-
-    private RoundReport createDragReport(Play play) {
-        roundReport.addPlayRaport(
-                new PlayReport(currentPlayer(), play)
-                        .setCardCorrect(true)
-        );
-        return roundReport;
-    }
-
     private boolean isCardCorrect(Play humanPlay) {
         if (demand.isActive()) {
             return isCorrectCardForDemand(humanPlay);
@@ -159,7 +145,9 @@ public class MakaoBackend {
                 System.out.println("Gracz " + currentPlayerIndex + " broni sie :" + defensiveCards);
                 return play.setCardsPlayed(defensiveCards).setAction(Action.PUT);
             }
-            play.setAction(Action.PULL);
+            else {
+                play.setAction(Action.PULL);
+            }
         }
 
         //Znajdź karty do zagrania
@@ -172,44 +160,44 @@ public class MakaoBackend {
         //Dobierz kartę
         return play.setAction(Action.PULL);
     }
-
     private PlayReport executePlay(Play play) {
         PlayReport playReport = new PlayReport(currentPlayer(), play);
-
         //Dobierz kartę
         if (currentPlayer().isAttack()) {
-            takeFromPullDeck(playReport);
-            System.out.println("Gracz ciagnie karty");
+            drainPullDeck(playReport);
         } else if (play.getAction() == Action.PULL) {
-            Card drawn = takeCardFromGameDeck();
-            players.get(currentPlayerIndex).addCardToHand(drawn);
-            if (!isCorrectCard(drawn) || currentPlayer() == humanPlayer()) {
-                return new PlayReport(currentPlayer(), play).setDrawn(drawn);
-            }
-            playReport.setDrawn(drawn);
-            play.setCardsPlayed(Collections.singletonList(drawn));
-            System.out.println("Pierwsza karta ratuje!!!");
-            return playReport;
+            pull(playReport);
         }
-
 
         //Połóż kartę/karty
         if (play.getCardsPlayed() != null) {
             putCards(play);
         }
 
-
         roundReport.setBlockPullButton(true);
         return playReport.setCardCorrect(true);
     }
 
-    private void takeFromPullDeck(PlayReport playReport) {
+    private void drainPullDeck(PlayReport playReport) {
         List<Card> cardsToPull = new ArrayList<>(pullDeck);
+        System.out.println("Gracz ciagnie karty " + cardsToPull);
         playReport.setCardsToPull(cardsToPull);
         currentPlayer().addCardsToHand(cardsToPull);
         pullDeck.clear();
         currentPlayer().setAttacker(null);
     }
+
+    private void pull(PlayReport playReport){
+        Card drawn = takeCardFromGameDeck();
+        players.get(currentPlayerIndex).addCardToHand(drawn);
+        //Try Rescue
+        if (isCorrectCard(drawn) || currentPlayer() == humanPlayer()) {
+            playReport.getPlay().setCardsPlayed(Collections.singletonList(drawn));
+            System.out.println("Gracz " + currentPlayerIndex + " pierwsza karta ratuje!!!");
+        }
+        playReport.setDrawn(drawn);
+    }
+
 
     private void putCard(Card cardPlayed) {
         getStack().addCardToStack(cardPlayed);
@@ -219,7 +207,6 @@ public class MakaoBackend {
         }
         useCardAbility(cardPlayed);
     }
-
     private void putCards(Play play){
         if (play.getCardsPlayed().size() > 1) {
             for (Card card : play.getCardsPlayed()){
@@ -228,18 +215,6 @@ public class MakaoBackend {
         } else {
             putCard(play.getCardPlayed());
         }
-    }
-    private Play defend() {
-        List<Card> defensiveCards = currentPlayer().findDefensiveCards(currentPlayer().getAttacker());
-        if (!defensiveCards.isEmpty()) {
-            getNextPlayer().setAttacker(currentPlayer().moveCardBattle());
-            System.out.println("Gracz " + currentPlayerIndex + " broni sie :" + defensiveCards);
-            return new Play()
-                    .setCardsPlayed(defensiveCards)
-                    .setAction(Action.PUT);
-        }
-        System.out.println("Gracz " + currentPlayerIndex + " dobiera :" + currentPlayer().getAttacker().getCardToDraw());
-        return new Play().setAction(Action.PULL);
     }
 
     private List<Card> getPlayableCards() {
@@ -258,36 +233,19 @@ public class MakaoBackend {
         }
 
         //Szukamy kart o tej samej randze
-        List<Card> cardsWithSameRank = currentPlayer().findCardsWithSameRank(playableCards);
+        List<Card> cardsWithSameRank = currentPlayer().getPlayableWithSameRank(playableCards);
 
         //Jeśli nie ma kart o tej samej randze, zwracamy listę kart możliwych do zagrania
         if (cardsWithSameRank.isEmpty()) {
             return Collections.singletonList(playableCards.get(new Random().nextInt(playableCards.size())));
         }
-
-        return playableCards;
+        return cardsWithSameRank;
     }
-
-    private Play getDemandPlay() {
-        Card card;
-        if (currentPlayerIndex == demand.getPerformerIndex()) {
-            demand.setActive(false);
-            card = currentPlayer().findDemandedCard(demand.getCard(), false);
-        } else {
-            card = currentPlayer().findDemandedCard(demand.getCard(), stack.isJackOnTop());
-        }
-        //todo komputer w trakcie żądania może położyć parę pasujących kart
-        if (card != null) {
-            //return new Play(Arrays.asList(card), true, false, false, false);
-        }
-        return new Play().setAction(Action.PULL);
-    }
-
 
     private void useCardAbility(Card card) {
         switch (card.getRank().getAbility()) {
             case CHANGE_SUIT:
-                //abilityReport = useChangeSuitAbility();
+                //useChangeSuitAbility();
                 break;
             case PLUS_2:
                 attack(getNextPlayer(), 2, card);
@@ -302,19 +260,13 @@ public class MakaoBackend {
                 //useDemandAbility(wildCard); //ATAK
                 break;
             case KING:
-                //abilityReport = chooseAbilityForKing(card, abilityReport, wildCard); //ATAK
+                chooseAbilityForKing(card); //ATAK
                 break;
             case WILD_CARD:
                 //useWildCard(); //PRAWDOPODOBNY ATAK
         }
     }
 
-    private void useChangeSuitAbility() {
-        if (currentPlayerIndex != 0) {
-            Card choosenCard = new Card(Rank.AS, currentPlayer().giveMostDominantSuit());
-            stack.addCardToStack(choosenCard);
-        }
-    }
 
     private void attack(Player player, int amountOfCards, Card attackingCard) {
         pullDeck.addAll(giveCards(amountOfCards));
@@ -322,60 +274,16 @@ public class MakaoBackend {
         System.out.println("Gracz " + currentPlayerIndex + " atakuje Gracza: " + (currentPlayerIndex + 1));
     }
 
-    private void useWaitAbility(Card wildCard) {
-
-    }
-
-    private void useDemandAbility(Card wildCard) {
-        if (notHumanPlaying()) {
-            demand = new DemandManager(currentPlayerIndex, true, currentPlayer().findCardToDemand());
-            if (demand.getCard() == null) {
-                demand.setActive(false);
-                System.out.println("Gracz " + (currentPlayerIndex + 1) + " nie zada");
-            } else {
-                System.out.println("Gracz " + (currentPlayerIndex + 1) + " zada " + demand.getCard().getRank());
-            }
-            if (wildCard != null) {
-                //return new AbilityReport(currentPlayer(), null, wildCard, false, demand.isActive());
-            }
-            // new AbilityReport(currentPlayer(), null, demand.getCard(), false, demand.isActive());
-        }
-        //return new AbilityReport(humanPlayer(), null, demand.getCard(), false, true);
-    }
-
-    private void chooseAbilityForKing(Card card, Card wildCard) {
+    private void chooseAbilityForKing(Card card) {
         switch (card.getSuit()) {
             case HEART:
                 attack(getNextPlayer(), 5, card);
                 break;
             case SPADE:
-                usePlusFiveAbilityToPreviousPlayer(wildCard);
+                //todo: K PIK
+                //attack(playerBefore(),5,card);
+                break;
         }
-    }
-
-    private void usePlusFiveAbilityToPreviousPlayer(Card wilCard) {
-       /* List<Card> pulledCards = giveCards(5);
-        if (currentPlayerIndex != 0) {
-            players.get(currentPlayerIndex - 1).addCardsToHand(pulledCards);
-            return new AbilityReport(currentPlayerIndex - 1, pulledCards, wilCard, false, false);
-        } else {
-            playerBefore().addCardsToHand(pulledCards);
-            return new AbilityReport(3, pulledCards, null, false, false);
-        }*/
-        throw new IllegalStateException("Special events not supported in new version");
-    }
-
-    private void useWildCard() {
-        if (notHumanPlaying()) {
-            Card choosenCard = new Card(Rank.getRandomWithAbility(), currentPlayer().giveMostDominantSuit());
-            stack.addCardToStack(choosenCard);
-            //  return useCardAbility(choosenCard, new AbilityReport(currentPlayer(), null, choosenCard, false, false));
-        }
-        //return new AbilityReport(humanPlayer(), null, stack.peekCard(), false, false);
-    }
-
-    private boolean notHumanPlaying() {
-        return currentPlayer() != humanPlayer();
     }
 
     private Player currentPlayer() {
@@ -409,6 +317,4 @@ public class MakaoBackend {
     public List<Player> getPlayers() {
         return players;
     }
-
-
 }
