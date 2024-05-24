@@ -1,10 +1,11 @@
 package com.wwil.makao.backend;
 
+import com.wwil.makao.backend.events.Event;
+import com.wwil.makao.backend.events.AttackPreviousPlayerEvent;
+
 import java.util.*;
 
 public class MakaoBackend {
-    private final int STARTING_CARDS = 5;
-    private final int AMOUNT_OF_PLAYERS = 4;
     public static List<Card> gameDeck;
     private final Stack stack = new Stack();
     private final List<Player> players = new ArrayList<>();
@@ -14,6 +15,7 @@ public class MakaoBackend {
     private DemandManager demand = new DemandManager(0, false, null);
     private final List<Card> humanPlayedCards = new ArrayList<>();
     private final List<Card> pullDeck = new ArrayList<>();
+    private Event event;
 
     public MakaoBackend() {
         createCardsToGameDeck();
@@ -42,8 +44,8 @@ public class MakaoBackend {
     }
 
     private void createPlayers() {
-        for (int i = 0; i < AMOUNT_OF_PLAYERS; i++) {
-            Player player = new Player(giveCards(STARTING_CARDS));
+        for (int i = 0; i < RuleParams.AMOUNT_OF_PLAYERS; i++) {
+            Player player = new Player(giveCards(RuleParams.STARTING_CARDS));
             players.add(player);
         }
     }
@@ -94,54 +96,29 @@ public class MakaoBackend {
     private void playRound() {
         humanPlayedCards.clear();
         nextPlayer();
+        ComputerPlayMaker playMaker = new ComputerPlayMaker(this,validator);
         for (int i = 1; i < players.size(); i++) {
-            roundReport.addPlayRaport(executePlay(createComputerPlay()));
+            roundReport.addPlayRaport(executePlay(playMaker.create()));
+            //Scenariusz: Obecny gracz zagrywa K PIK. Poprzedni gracz jest atakowany
+            if(event != null){
+                event.startEvent();
+            }
             nextPlayer();
         }
     }
-
     private void nextPlayer() {
         currentPlayerIndex++;
-        if (currentPlayerIndex == AMOUNT_OF_PLAYERS) {
+        if (currentPlayerIndex == RuleParams.AMOUNT_OF_PLAYERS) {
             currentPlayerIndex = 0;
         }
     }
 
-    private Play createComputerPlay() {
-        Play play = new Play();
-        if (currentPlayer().isAttack()) {
-            handleDefense(play);
-        }
-
-        if(play.getCardsPlayed() == null) {
-            handlePlay(play);
-        }
-        return play;
-    }
-
-    private void handleDefense(Play play){
-        List<Card> defensiveCards = currentPlayer().findDefensiveCards(currentPlayer().getAttacker());
-        if (!defensiveCards.isEmpty()) {
-            getNextPlayer().setAttacker(currentPlayer().moveCardBattle());
-            System.out.println("Gracz " + currentPlayerIndex + " broni sie :" + defensiveCards);
-            play.setCardsPlayed(defensiveCards).setAction(Action.PUT);
-        } else {
-            play.setAction(Action.PULL);
+    private void previousPlayer(){
+        currentPlayerIndex--;
+        if (currentPlayerIndex == 0) {
+            currentPlayerIndex = RuleParams.AMOUNT_OF_PLAYERS;
         }
     }
-
-    private void handlePlay(Play play){
-        //Znajdź karty do zagrania
-        List<Card> playableCards = getPlayableCards();
-        if (!playableCards.isEmpty()) {
-             play.setCardsPlayed(playableCards).setAction(Action.PUT);
-        }
-        else {
-            //Dobierz kartę
-            play.setAction(Action.PULL);
-        }
-    }
-
 
 
     private PlayReport executePlay(Play play) {
@@ -157,7 +134,6 @@ public class MakaoBackend {
         if (play.getCardsPlayed() != null) {
             putCards(play);
         }
-        //Scenariusz: Obecny gracz zagrywa K PIK. Poprzedni gracz jest atakowany
 
         roundReport.setBlockPullButton(true);
         return playReport.setCardCorrect(true);
@@ -165,7 +141,6 @@ public class MakaoBackend {
 
     private void drainPullDeck(PlayReport playReport) {
         List<Card> cardsToPull = new ArrayList<>(pullDeck);
-        System.out.println("Gracz " + currentPlayerIndex + " ciagnie karty " + cardsToPull);
         playReport.setCardsToPull(cardsToPull);
         currentPlayer().addCardsToHand(cardsToPull);
         pullDeck.clear();
@@ -178,11 +153,16 @@ public class MakaoBackend {
         //Try Rescue
         if (validator.isValidCardForCurrentState(drawn)) {
             playReport.getPlay().setCardsPlayed(Collections.singletonList(drawn));
-            System.out.println("Gracz " + currentPlayerIndex + " pierwsza karta ratuje!!!");
         }
         playReport.setDrawn(drawn);
     }
 
+
+    private void putCards(Play play) {
+        for (Card card : play.getCardsPlayed()) {
+            putCard(card);
+        }
+    }
 
     private void putCard(Card cardPlayed) {
         getStack().addCardToStack(cardPlayed);
@@ -191,37 +171,6 @@ public class MakaoBackend {
             humanPlayedCards.add(cardPlayed);
         }
         useCardAbility(cardPlayed);
-    }
-
-    private void putCards(Play play) {
-        for (Card card : play.getCardsPlayed()) {
-            putCard(card);
-        }
-    }
-
-    private List<Card> getPlayableCards() {
-        List<Card> playableCards = new ArrayList<>();
-
-        //Dodajemy karty, które mogą być zagrane
-        for (Card card : currentPlayer().getCards()) {
-            if (validator.isValidCardForCurrentState(card)) {
-                playableCards.add(card);
-            }
-        }
-
-        //Jeśli nie ma kart możliwych do zagrania, zwracamy pustą listę
-        if (playableCards.isEmpty()) {
-            return playableCards;
-        }
-
-        //Szukamy kart o tej samej randze
-        List<Card> cardsWithSameRank = currentPlayer().getPlayableWithSameRank(playableCards);
-
-        //Jeśli nie ma kart o tej samej randze, zwracamy listę kart możliwych do zagrania
-        if (cardsWithSameRank.isEmpty()) {
-            return Collections.singletonList(playableCards.get(new Random().nextInt(playableCards.size())));
-        }
-        return cardsWithSameRank;
     }
 
     private void useCardAbility(Card card) {
@@ -253,7 +202,9 @@ public class MakaoBackend {
     private void attack(Player player, int amountOfCards, Card attackingCard) {
         pullDeck.addAll(giveCards(amountOfCards));
         player.setAttacker(new CardBattle(pullDeck, attackingCard));
-        System.out.println("Gracz " + currentPlayerIndex + " atakuje Gracza: " + (currentPlayerIndex + 1));
+        if(attackingCard.doesCardStartEvent()){
+            event = new AttackPreviousPlayerEvent(playerBefore());
+        }
     }
 
     private void chooseAbilityForKing(Card card) {
@@ -267,11 +218,11 @@ public class MakaoBackend {
         }
     }
 
-    private Player currentPlayer() {
+    protected Player currentPlayer() {
         return players.get(currentPlayerIndex);
     }
 
-    private Player playerBefore() {
+    protected Player playerBefore() {
         int playerBeforeIndex = currentPlayerIndex - 1;
         if (playerBeforeIndex < 0) {
             playerBeforeIndex = players.size() - 1;
@@ -279,7 +230,7 @@ public class MakaoBackend {
         return players.get(playerBeforeIndex);
     }
 
-    private Player getNextPlayer() {
+    protected Player getNextPlayer() {
         int playerBeforeIndex = currentPlayerIndex + 1;
         if (playerBeforeIndex >= players.size()) {
             playerBeforeIndex = 0;
