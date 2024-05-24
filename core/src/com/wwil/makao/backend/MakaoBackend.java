@@ -62,6 +62,8 @@ public class MakaoBackend {
         roundReport = new RoundReport();
     }
 
+    //todo: Pierwsza karta ratuje przy ciągniętych kart
+    //todo: K PIK
     public RoundReport executeAction(Play play) {
         if (play.getAction() == Action.PULL) {
             roundReport.addPlayRaport(executePlay(play));
@@ -108,26 +110,39 @@ public class MakaoBackend {
     private Play createComputerPlay() {
         Play play = new Play();
         if (currentPlayer().isAttack()) {
-            List<Card> defensiveCards = currentPlayer().findDefensiveCards(currentPlayer().getAttacker());
-            if (!defensiveCards.isEmpty()) {
-                getNextPlayer().setAttacker(currentPlayer().moveCardBattle());
-                System.out.println("Gracz " + currentPlayerIndex + " broni sie :" + defensiveCards);
-                return play.setCardsPlayed(defensiveCards).setAction(Action.PUT);
-            } else {
-                play.setAction(Action.PULL);
-            }
+            handleDefense(play);
         }
 
+        if(play.getCardsPlayed() == null) {
+            handlePlay(play);
+        }
+        return play;
+    }
+
+    private void handleDefense(Play play){
+        List<Card> defensiveCards = currentPlayer().findDefensiveCards(currentPlayer().getAttacker());
+        if (!defensiveCards.isEmpty()) {
+            getNextPlayer().setAttacker(currentPlayer().moveCardBattle());
+            System.out.println("Gracz " + currentPlayerIndex + " broni sie :" + defensiveCards);
+            play.setCardsPlayed(defensiveCards).setAction(Action.PUT);
+        } else {
+            play.setAction(Action.PULL);
+        }
+    }
+
+    private void handlePlay(Play play){
         //Znajdź karty do zagrania
         List<Card> playableCards = getPlayableCards();
         if (!playableCards.isEmpty()) {
-            return play
-                    .setCardsPlayed(playableCards)
-                    .setAction(Action.PUT);
+             play.setCardsPlayed(playableCards).setAction(Action.PUT);
         }
-        //Dobierz kartę
-        return play.setAction(Action.PULL);
+        else {
+            //Dobierz kartę
+            play.setAction(Action.PULL);
+        }
     }
+
+
 
     private PlayReport executePlay(Play play) {
         PlayReport playReport = new PlayReport(currentPlayer(), play);
@@ -142,6 +157,7 @@ public class MakaoBackend {
         if (play.getCardsPlayed() != null) {
             putCards(play);
         }
+        //Scenariusz: Obecny gracz zagrywa K PIK. Poprzedni gracz jest atakowany
 
         roundReport.setBlockPullButton(true);
         return playReport.setCardCorrect(true);
@@ -158,7 +174,7 @@ public class MakaoBackend {
 
     private void pull(PlayReport playReport) {
         Card drawn = takeCardFromGameDeck();
-        players.get(currentPlayerIndex).addCardToHand(drawn);
+        currentPlayer().addCardToHand(drawn);
         //Try Rescue
         if (validator.isValidCardForCurrentState(drawn)) {
             playReport.getPlay().setCardsPlayed(Collections.singletonList(drawn));
@@ -178,12 +194,8 @@ public class MakaoBackend {
     }
 
     private void putCards(Play play) {
-        if (play.getCardsPlayed().size() > 1) {
-            for (Card card : play.getCardsPlayed()) {
-                putCard(card);
-            }
-        } else {
-            putCard(play.getCardPlayed());
+        for (Card card : play.getCardsPlayed()) {
+            putCard(card);
         }
     }
 
@@ -250,8 +262,7 @@ public class MakaoBackend {
                 attack(getNextPlayer(), 5, card);
                 break;
             case SPADE:
-                //todo: K PIK
-                //attack(playerBefore(),5,card);
+                attack(playerBefore(), 5, card);
                 break;
         }
     }
