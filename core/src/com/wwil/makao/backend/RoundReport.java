@@ -27,7 +27,7 @@ public class RoundReport {
         return playReports.get(0);
     }
 
-    public PlayReport getLastPlay(){
+    public PlayReport getLastPlayReport(){
         return playReports.get(getPlayReports().size()-1);
     }
 
