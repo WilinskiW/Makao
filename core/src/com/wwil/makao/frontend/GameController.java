@@ -51,23 +51,17 @@ public class GameController {
         if (play.getAction() == Action.DRAG) {
             return;
         }
-        //jeśli isDropped = false -> jest to próba
-
-        //jeśli jest to karta wymagająca choosera to pokaż chooser i zatrzymaj grę
-
         RoundReport report;
         report = backend.executeAction(play);
-
-
         switch (play.getAction()) {
             case DRAG:
-                changeCardColor(report.getLastPlay().isCardCorrect(), choosenCardActor);
+                //changeCardColor(report.getLastPlay().isCardCorrect(), choosenCardActor);
                 break;
             case PUT:
-                useCard(report.getLastPlay());
+                useCard(report.getLastPlayReport());
                 break;
             case PULL:
-                pullCard(report.getLastPlay().getDrawn(), getHumanHand());
+                pullCards(report.getLastPlayReport(),getHumanHand());
                 break;
             case END:
                 endTurn(report);
@@ -97,14 +91,6 @@ public class GameController {
         }
     }
 
-    private RoundReport createWaitReport() {
-        return backend.executeAction(
-                new Play()
-                        .setBlocked(true)
-                        .setAction(Action.END)
-        );
-    }
-
     private void endTurn(RoundReport report) {
         cardChooser.setVisibility(false);
         dragAndDropManager.startListening();
@@ -112,31 +98,32 @@ public class GameController {
         executeComputersTurn(report);
     }
 
+    private void pullCards(PlayReport playReport, PlayerHandGroup playerGroup) {
+        if(playReport.getCardsToPull() != null) {
+            for (Card card : playReport.getCardsToPull()) {
+                pullCard(card, playerGroup);
+            }
+
+            if(playerGroup == getHumanHand()){
+                pullButton.setActive(true);
+                endTurnButton.setActive(false);
+            }
+        }
+        else{
+            pullCard(playReport.getDrawn(),playerGroup);
+            dragAndDropManager.focusOneCard(getHumanHand().getCardActor(playReport.getDrawn()));
+        }
+    }
+
     private void pullCard(Card card, PlayerHandGroup player) {
         CardActor drawnCard = cardActorFactory.createCardActor(card);
         if (player == getHumanHand()) {
             drawnCard.setUpSideDown(false);
-            dragAndDropManager.focusOneCard(drawnCard);
+            dragAndDropManager.prepareDragAndDrop(drawnCard);
             pullButton.setActive(false);
             endTurnButton.setActive(true);
         }
         player.addActor(drawnCard);
-    }
-
-    private RoundReport createDemandReport(Play humanPlay) {
-        getHumanHand().moveCloserToStartingPosition();
-        cardChooser.setVisibility(false);
-        endTurnButton.setActive(true);
-        return backend.executeAction(humanPlay);
-    }
-
-
-    public void changeCardColor(boolean isCardCorrect, CardActor chosenCardActor) {
-        if (isCardCorrect) {
-            chosenCardActor.setColor(Color.LIME);
-        } else {
-            chosenCardActor.setColor(Color.SCARLET);
-        }
     }
 
     private void showCardChooser(CardActor cardPlayed) {
@@ -155,7 +142,7 @@ public class GameController {
     private void endIfPlayerWon(PlayerHandGroup playerHandGroup) {
         //Do czasu wprowadzenia menu
         if (playerHandGroup.getPlayerHand().checkIfPlayerHaveNoCards()) {
-            System.out.println(playerHandGroup + " won");
+            System.out.println(playerHandGroup.getCardsAlignment() + " won");
             Gdx.app.exit();
         }
     }
@@ -182,17 +169,16 @@ public class GameController {
             moveCardBackToHumanGroup(getHumanHand(), card);
         }
     }
-
     public void turnOffHumanInput() {
         pullButton.setActive(false);
         endTurnButton.setActive(false);
         Gdx.input.setInputProcessor(null);
         setInputBlockActive(true);
     }
-
     ///////////////////////
 //     Komputer
 //////////////////////
+
     private void executeComputersTurn(final RoundReport roundReport) {
         float delta = 1.5f;
         final int numberOfComputers = handGroups.size() - 1;
@@ -212,10 +198,8 @@ public class GameController {
                     // Sprawdź, czy to był ostatni ruch komputera
                     if (completedComputers.incrementAndGet() == numberOfComputers) {
                         turnOnHumanInput();
-                        //todo: Na razie czlowiek nie moze sie obronic
                         if(getHumanHand().getPlayerHand().isAttack()){
                             System.out.println("Czlowiek jest atakowany!");
-                            getHumanHand().getPlayerHand().setAttacker(null);
                         }
                         System.out.println("-----------------------");
                     }
@@ -248,12 +232,6 @@ public class GameController {
         endIfPlayerWon(player);
         if (alignCards) {
             player.moveCloserToStartingPosition();
-        }
-    }
-
-    private void pullCards(PlayReport playReport, PlayerHandGroup playerGroup) {
-        for (Card card : playReport.getCardsToPull()) {
-            pullCard(card, playerGroup);
         }
     }
 
@@ -320,34 +298,3 @@ public class GameController {
         return gameplayScreen;
     }
 }
-/*
- * todo To zrobić:
- *  Bez podświetlania (na razie)
- * Obiekt Play:
- * Okno może się uruchamiać ale może nie przepuścić
- * zagranie próba
- * zagranie normalne
- * zagranie normalne + wybór
- * dobranie karty (nie pozwoli Ci jeśli już zagrałeś) (Pierwsza karta ratuje)
- * kończę turę -> zapytanie na backendzie
- *
- *  Akcje:
- *  zagralem karte (próba lub prawdziwe zagranie)
- *    -> wybór
- *  kończe turę
- *  dobieram karte
- *
- * Umięjętności:
- * zadam figur (jopek)
- * zmiana koloru (as)
- * przeciwnik dobiera x (2,3, krol pik/kier)
- * przeciwnik czeka x tur (4)
- * joker ( zmienia sie w dowolna wybrana karte)
- *
- * //Abstrakcyjna klasa Event
- * //event dobierania -> aktywny, jakie karty
- * //event czekania
- * //event żądania -> aktywny, jaka karta (ranga)
- *
- *
- * */

@@ -97,6 +97,10 @@ public class PlayerHandGroup extends Group {
         return cardActors;
     }
 
+    public CardsAlignmentParams getCardsAlignment() {
+        return cardsAlignment;
+    }
+
     public void setCardsAlignment(CardsAlignmentParams cardsAlignment) {
         this.cardsAlignment = cardsAlignment;
     }

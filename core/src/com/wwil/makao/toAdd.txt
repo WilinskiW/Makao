@@ -1,6 +1,6 @@
 Obrona
 Komunikaty akcji graczy
-Animacje rzucania kart przez boty
 Główne menu
+Animacje rzucania kart przez boty
 Dźwięk i muzyka
 Możliwość zmiany skinów do kart

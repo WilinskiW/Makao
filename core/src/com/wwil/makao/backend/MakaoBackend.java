@@ -10,6 +10,7 @@ public class MakaoBackend {
     private final List<Player> players = new ArrayList<>();
     private int currentPlayerIndex = 0;
     private RoundReport roundReport;
+    private final CardValidator validator = new CardValidator(this);
     private DemandManager demand = new DemandManager(0, false, null);
     private final List<Card> humanPlayedCards = new ArrayList<>();
     private final List<Card> pullDeck = new ArrayList<>();
@@ -75,50 +76,18 @@ public class MakaoBackend {
         }
 
         //scenario for put:
+        boolean isValid = validator.isValidCardForCurrentState(play.getCardPlayed());
         roundReport.addPlayRaport(
                 new PlayReport(currentPlayer(), play)
-                        .setCardCorrect(isCardCorrect(play)));
+                        .setCardCorrect(isValid));
 
 
-        if (isCardCorrect(play)) {
+        if (isValid) {
             putCard(play.getCardPlayed());
         }
         return roundReport;
     }
 
-    private boolean isCardCorrect(Play humanPlay) {
-        if (demand.isActive()) {
-            return isCorrectCardForDemand(humanPlay);
-        } else {
-            return isCorrectCard(humanPlay.getCardPlayed());
-        }
-    }
-
-    private boolean isCorrectCardForDemand(Play humanPlay) {
-        Rank chosenCardRank = humanPlay.getCardPlayed().getRank();
-        if (humanPlayedCards.size() == 1) {
-            return chosenCardRank == demand.getCard().getRank() ||
-                    chosenCardRank.equals(Rank.JOKER) ||
-                    (chosenCardRank.equals(Rank.J) && stack.isJackOnTop()) ||
-                    stack.isJackBeforeJoker() && chosenCardRank.equals(Rank.J);
-        }
-        return chosenCardRank == humanPlay.getCardsPlayed().get(0).getRank();
-    }
-
-
-    private boolean isCorrectCard(Card chosenCard) {
-        Card stackCard = stack.peekCard();
-        if (!humanPlayedCards.isEmpty()) {
-            return chosenCard.getRank() == humanPlayedCards.get(0).getRank();
-        }
-
-        if (stackCard.getRank().equals(Rank.Q) || chosenCard.getRank().equals(Rank.Q)
-                || chosenCard.getRank().equals(Rank.JOKER) || stackCard.getRank().equals(Rank.JOKER)) {
-            return true;
-        }
-
-        return stackCard.getSuit() == chosenCard.getSuit() || stackCard.getRank() == chosenCard.getRank();
-    }
 
     private void playRound() {
         humanPlayedCards.clear();
@@ -144,8 +113,7 @@ public class MakaoBackend {
                 getNextPlayer().setAttacker(currentPlayer().moveCardBattle());
                 System.out.println("Gracz " + currentPlayerIndex + " broni sie :" + defensiveCards);
                 return play.setCardsPlayed(defensiveCards).setAction(Action.PUT);
-            }
-            else {
+            } else {
                 play.setAction(Action.PULL);
             }
         }
@@ -160,6 +128,7 @@ public class MakaoBackend {
         //Dobierz kartę
         return play.setAction(Action.PULL);
     }
+
     private PlayReport executePlay(Play play) {
         PlayReport playReport = new PlayReport(currentPlayer(), play);
         //Dobierz kartę
@@ -180,18 +149,18 @@ public class MakaoBackend {
 
     private void drainPullDeck(PlayReport playReport) {
         List<Card> cardsToPull = new ArrayList<>(pullDeck);
-        System.out.println("Gracz ciagnie karty " + cardsToPull);
+        System.out.println("Gracz " + currentPlayerIndex + " ciagnie karty " + cardsToPull);
         playReport.setCardsToPull(cardsToPull);
         currentPlayer().addCardsToHand(cardsToPull);
         pullDeck.clear();
         currentPlayer().setAttacker(null);
     }
 
-    private void pull(PlayReport playReport){
+    private void pull(PlayReport playReport) {
         Card drawn = takeCardFromGameDeck();
         players.get(currentPlayerIndex).addCardToHand(drawn);
         //Try Rescue
-        if (isCorrectCard(drawn) || currentPlayer() == humanPlayer()) {
+        if (validator.isValidCardForCurrentState(drawn)) {
             playReport.getPlay().setCardsPlayed(Collections.singletonList(drawn));
             System.out.println("Gracz " + currentPlayerIndex + " pierwsza karta ratuje!!!");
         }
@@ -202,14 +171,15 @@ public class MakaoBackend {
     private void putCard(Card cardPlayed) {
         getStack().addCardToStack(cardPlayed);
         currentPlayer().removeCardFromHand(cardPlayed);
-        if (currentPlayer() == humanPlayer()) {
+        if (currentPlayer() == getHumanPlayer()) {
             humanPlayedCards.add(cardPlayed);
         }
         useCardAbility(cardPlayed);
     }
-    private void putCards(Play play){
+
+    private void putCards(Play play) {
         if (play.getCardsPlayed().size() > 1) {
-            for (Card card : play.getCardsPlayed()){
+            for (Card card : play.getCardsPlayed()) {
                 putCard(card);
             }
         } else {
@@ -222,7 +192,7 @@ public class MakaoBackend {
 
         //Dodajemy karty, które mogą być zagrane
         for (Card card : currentPlayer().getCards()) {
-            if (isCorrectCard(card)) {
+            if (validator.isValidCardForCurrentState(card)) {
                 playableCards.add(card);
             }
         }
@@ -306,7 +276,7 @@ public class MakaoBackend {
         return players.get(playerBeforeIndex);
     }
 
-    private Player humanPlayer() {
+    public Player getHumanPlayer() {
         return players.get(0);
     }
 
@@ -316,5 +286,13 @@ public class MakaoBackend {
 
     public List<Player> getPlayers() {
         return players;
+    }
+
+    public DemandManager getDemand() {
+        return demand;
+    }
+
+    public List<Card> getHumanPlayedCards() {
+        return humanPlayedCards;
     }
 }
