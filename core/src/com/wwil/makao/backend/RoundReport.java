@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 //Zebranie wszystkich ruchów graczy w jeden obiekt
 public class RoundReport {
-    private boolean attemptCorrect = true;
     private final List<PlayReport> playReports = new ArrayList<>();
-    private boolean blockPullButton = false;
 
     public void addPlayRaport(PlayReport playReport) {
         playReports.add(playReport);
@@ -23,10 +21,6 @@ public class RoundReport {
         return computerPlayReports;
     }
 
-    public PlayReport getHumanReport(){
-        return playReports.get(0);
-    }
-
     public PlayReport getLastPlayReport(){
         return playReports.get(getPlayReports().size()-1);
     }
@@ -35,19 +29,4 @@ public class RoundReport {
         return playReports;
     }
 
-    public void setIncorrect() {
-        attemptCorrect = false;
-    }
-
-    public void setBlockPullButton(boolean blockPullButton) {
-        this.blockPullButton = blockPullButton;
-    }
-
-    public boolean isPullButtonBlock() {
-        return blockPullButton;
-    }
-
-    public boolean isAttemptCorrect() {
-        return attemptCorrect;
-    }
 }

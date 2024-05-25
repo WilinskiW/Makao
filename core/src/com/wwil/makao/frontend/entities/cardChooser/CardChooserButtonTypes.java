@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend.entities.cardChooserElements;
+package com.wwil.makao.frontend.entities.cardChooser;
 
 import com.wwil.makao.frontend.GUIparams;
 
@@ -26,23 +26,23 @@ public enum CardChooserButtonTypes {
         this.rotation = rotation;
     }
 
-    public float getPosX() {
+    float getPosX() {
         return posX;
     }
 
-    public float getPosY() {
+    float getPosY() {
         return posY;
     }
 
-    public float getRotation() {
+    float getRotation() {
         return rotation;
     }
 
-    public float getWidth() {
+    float getWidth() {
         return width;
     }
 
-    public float getHeight() {
+    float getHeight() {
         return height;
     }
 }

@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend.entities.groups;
+package com.wwil.makao.frontend.entities.cardsGroup;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;

@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend.entities.cardChooserElements;
+package com.wwil.makao.frontend.entities.cardChooser;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -13,7 +13,6 @@ import com.wwil.makao.backend.Play;
 import com.wwil.makao.backend.Rank;
 import com.wwil.makao.frontend.GUIparams;
 import com.wwil.makao.frontend.GameController;
-import com.wwil.makao.frontend.entities.groups.CardChooserGroup;
 
 public class PutButtonActor extends Actor {
     private final CardChooserGroup cardChooser;

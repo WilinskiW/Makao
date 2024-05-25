@@ -15,7 +15,7 @@ public class Card {
                 || (rank == Rank.K && suit == Suit.SPADE);
     }
 
-    public boolean doesCardStartEvent(){
+    public boolean doesStartEvent(){
         return rank == Rank.K && suit == Suit.SPADE;
     }
 

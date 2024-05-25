@@ -1,8 +1,5 @@
 package com.wwil.makao.backend;
 
-import com.wwil.makao.backend.events.Event;
-import com.wwil.makao.backend.events.AttackPreviousPlayerEvent;
-
 import java.util.*;
 
 public class MakaoBackend {
@@ -15,11 +12,14 @@ public class MakaoBackend {
     private DemandManager demand = new DemandManager(0, false, null);
     private final List<Card> humanPlayedCards = new ArrayList<>();
     private final List<Card> pullDeck = new ArrayList<>();
+    final PlayMaker playMaker = new PlayMaker(this);
     private Event event;
 
     public MakaoBackend() {
         createCardsToGameDeck();
-        stack.addCardToStack(getStartStackCard());
+        //todo: Zmienic po testach
+        //stack.addCardToStack(getStartStackCard());
+        stack.addCardToStack(new Card(Rank.FIVE,Suit.SPADE));
         createPlayers();
         startRound();
     }
@@ -96,32 +96,29 @@ public class MakaoBackend {
     private void playRound() {
         humanPlayedCards.clear();
         nextPlayer();
-        ComputerPlayMaker playMaker = new ComputerPlayMaker(this,validator);
-        for (int i = 1; i < players.size(); i++) {
-            roundReport.addPlayRaport(executePlay(playMaker.create()));
+        while (currentPlayer() != getHumanPlayer()){
+            checkEvent();
+            roundReport.addPlayRaport(executePlay(playMaker.generate()));
             //Scenariusz: Obecny gracz zagrywa K PIK. Poprzedni gracz jest atakowany
-            if(event != null){
-                event.startEvent();
-            }
             nextPlayer();
         }
     }
-    private void nextPlayer() {
+
+    void playerBefore() {
+        currentPlayerIndex--;
+        if (currentPlayerIndex == 0) {
+            currentPlayerIndex = RuleParams.AMOUNT_OF_PLAYERS-1;
+        }
+    }
+
+    void nextPlayer() {
         currentPlayerIndex++;
         if (currentPlayerIndex == RuleParams.AMOUNT_OF_PLAYERS) {
             currentPlayerIndex = 0;
         }
     }
 
-    private void previousPlayer(){
-        currentPlayerIndex--;
-        if (currentPlayerIndex == 0) {
-            currentPlayerIndex = RuleParams.AMOUNT_OF_PLAYERS;
-        }
-    }
-
-
-    private PlayReport executePlay(Play play) {
+    PlayReport executePlay(Play play) {
         PlayReport playReport = new PlayReport(currentPlayer(), play);
         //Dobierz kartę
         if (currentPlayer().isAttack()) {
@@ -135,7 +132,6 @@ public class MakaoBackend {
             putCards(play);
         }
 
-        roundReport.setBlockPullButton(true);
         return playReport.setCardCorrect(true);
     }
 
@@ -202,8 +198,8 @@ public class MakaoBackend {
     private void attack(Player player, int amountOfCards, Card attackingCard) {
         pullDeck.addAll(giveCards(amountOfCards));
         player.setAttacker(new CardBattle(pullDeck, attackingCard));
-        if(attackingCard.doesCardStartEvent()){
-            event = new AttackPreviousPlayerEvent(playerBefore());
+        if(attackingCard.doesStartEvent()){
+            event = new AttackPreviousPlayerEvent(this);
         }
     }
 
@@ -213,16 +209,16 @@ public class MakaoBackend {
                 attack(getNextPlayer(), 5, card);
                 break;
             case SPADE:
-                attack(playerBefore(), 5, card);
+                attack(getPlayerBefore(), 5, card);
                 break;
         }
     }
 
-    protected Player currentPlayer() {
+    public Player currentPlayer() {
         return players.get(currentPlayerIndex);
     }
 
-    protected Player playerBefore() {
+    public Player getPlayerBefore() {
         int playerBeforeIndex = currentPlayerIndex - 1;
         if (playerBeforeIndex < 0) {
             playerBeforeIndex = players.size() - 1;
@@ -230,12 +226,30 @@ public class MakaoBackend {
         return players.get(playerBeforeIndex);
     }
 
-    protected Player getNextPlayer() {
+    public Player getNextPlayer() {
         int playerBeforeIndex = currentPlayerIndex + 1;
         if (playerBeforeIndex >= players.size()) {
             playerBeforeIndex = 0;
         }
         return players.get(playerBeforeIndex);
+    }
+    private void checkEvent(){
+        if(event != null){
+            event.startEvent();
+            event = null;
+        }
+    }
+
+    boolean isEventActive(){
+        return event != null;
+    }
+
+    CardValidator getValidator() {
+        return validator;
+    }
+
+    public RoundReport getRoundReport() {
+        return roundReport;
     }
 
     public Player getHumanPlayer() {

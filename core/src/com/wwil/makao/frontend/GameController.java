@@ -2,15 +2,14 @@ package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.Gdx;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Timer;
 import com.wwil.makao.backend.*;
 import com.wwil.makao.frontend.entities.gameButtons.GameButton;
-import com.wwil.makao.frontend.entities.groups.CardChooserGroup;
+import com.wwil.makao.frontend.entities.cardChooser.CardChooserGroup;
 import com.wwil.makao.frontend.entities.CardActor;
-import com.wwil.makao.frontend.entities.groups.PlayerHandGroup;
-import com.wwil.makao.frontend.entities.groups.StackCardsGroup;
+import com.wwil.makao.frontend.entities.cardsGroup.PlayerHandGroup;
+import com.wwil.makao.frontend.entities.cardsGroup.StackCardsGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +60,7 @@ public class GameController {
                 useCard(report.getLastPlayReport());
                 break;
             case PULL:
-                pullCards(report.getLastPlayReport(),getHumanHand());
+                pullCards(report.getLastPlayReport(), getHumanHand());
                 break;
             case END:
                 endTurn(report);
@@ -95,22 +94,21 @@ public class GameController {
         cardChooser.setVisibility(false);
         dragAndDropManager.startListening();
         turnOffHumanInput();
-        executeComputersTurn(report);
+        executeComputersPlayReport(report);
     }
 
     private void pullCards(PlayReport playReport, PlayerHandGroup playerGroup) {
-        if(playReport.getCardsToPull() != null) {
+        if (playReport.getCardsToPull() != null) {
             for (Card card : playReport.getCardsToPull()) {
                 pullCard(card, playerGroup);
             }
 
-            if(playerGroup == getHumanHand()){
+            if (playerGroup == getHumanHand()) {
                 pullButton.setActive(true);
                 endTurnButton.setActive(false);
             }
-        }
-        else{
-            pullCard(playReport.getDrawn(),playerGroup);
+        } else {
+            pullCard(playReport.getDrawn(), playerGroup);
             dragAndDropManager.focusOneCard(getHumanHand().getCardActor(playReport.getDrawn()));
         }
     }
@@ -169,6 +167,7 @@ public class GameController {
             moveCardBackToHumanGroup(getHumanHand(), card);
         }
     }
+
     public void turnOffHumanInput() {
         pullButton.setActive(false);
         endTurnButton.setActive(false);
@@ -179,26 +178,24 @@ public class GameController {
 //     Komputer
 //////////////////////
 
-    private void executeComputersTurn(final RoundReport roundReport) {
+    private void executeComputersPlayReport(final RoundReport roundReport) {
         float delta = 1.5f;
-        final int numberOfComputers = handGroups.size() - 1;
-        final AtomicInteger completedComputers = new AtomicInteger(0);
         final List<PlayReport> computerPlayReports = roundReport.getComputerPlayReport();
+        final int numberOfComputers = computerPlayReports.size();
+        final AtomicInteger completedComputers = new AtomicInteger(0);
 
-        for (int i = 1; i < handGroups.size(); i++) {
-            final PlayerHandGroup currentHandGroup = handGroups.get(i);
-            final PlayReport currentPlayReport = computerPlayReports.get(i - 1);
+        for (int i = 0; i < computerPlayReports.size(); i++) {
+            final PlayReport playReport = computerPlayReports.get(i);
+            final PlayerHandGroup handGroup = getHandGroup(playReport.getPlayer());
 
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
-                    if (!currentPlayReport.isBlocked()) {
-                        processComputerTurn(currentPlayReport, currentHandGroup);
-                    }
+                    processComputerTurn(playReport, handGroup);
                     // Sprawdź, czy to był ostatni ruch komputera
                     if (completedComputers.incrementAndGet() == numberOfComputers) {
                         turnOnHumanInput();
-                        if(getHumanHand().getPlayerHand().isAttack()){
+                        if (getHumanHand().getPlayerHand().isAttack()) {
                             System.out.println("Czlowiek jest atakowany!");
                         }
                         System.out.println("-----------------------");
@@ -213,8 +210,7 @@ public class GameController {
 
         if (playReport.getCardsToPull() != null && !playReport.getCardsToPull().isEmpty()) {
             pullCards(playReport, playerGroup);
-        }
-        else if (playReport.getPlay().getAction() == Action.PULL) {
+        } else if (playReport.getPlay().getAction() == Action.PULL) {
             pullCard(playReport.getDrawn(), playerGroup);
         }
 
@@ -228,11 +224,11 @@ public class GameController {
     private void putCards(PlayerHandGroup player, List<CardActor> cardsToPlay, boolean alignCards) {
         for (CardActor cardActor : cardsToPlay) {
             addCardActorToStackGroup(cardActor);
+            if (alignCards) {
+                player.moveCloserToStartingPosition();
+            }
         }
         endIfPlayerWon(player);
-        if (alignCards) {
-            player.moveCloserToStartingPosition();
-        }
     }
 
     private void turnOnHumanInput() {
@@ -240,6 +236,15 @@ public class GameController {
         endTurnButton.setActive(false);
         pullButton.setActive(true);
         Gdx.input.setInputProcessor(gameplayScreen.getStage());
+    }
+
+    private PlayerHandGroup getHandGroup(Player player) {
+        for (PlayerHandGroup handGroup : handGroups) {
+            if (handGroup.getPlayerHand() == player) {
+                return handGroup;
+            }
+        }
+        return null;
     }
 
     public CardActor peekStackCardActor() {

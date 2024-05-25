@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.wwil.makao.backend.Action;
 import com.wwil.makao.backend.Play;
 import com.wwil.makao.frontend.entities.CardActor;
-import com.wwil.makao.frontend.entities.groups.StackCardsGroup;
+import com.wwil.makao.frontend.entities.cardsGroup.StackCardsGroup;
 
 import java.util.Collections;
 

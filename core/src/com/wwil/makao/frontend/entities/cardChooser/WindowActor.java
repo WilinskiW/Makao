@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend.entities.cardChooserElements;
+package com.wwil.makao.frontend.entities.cardChooser;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;

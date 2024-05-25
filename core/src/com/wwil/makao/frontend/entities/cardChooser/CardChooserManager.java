@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend;
+package com.wwil.makao.frontend.entities.cardChooser;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -6,8 +6,6 @@ import com.wwil.makao.backend.Card;
 import com.wwil.makao.backend.Rank;
 import com.wwil.makao.backend.Suit;
 import com.wwil.makao.frontend.entities.CardActor;
-import com.wwil.makao.frontend.entities.cardChooserElements.ArrowButtonActor;
-import com.wwil.makao.frontend.entities.groups.CardChooserGroup;
 
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -60,7 +58,7 @@ public class CardChooserManager {
         return suitMap;
     }
 
-    public void changeRank(int indexChanger) {
+    void changeRank(int indexChanger) {
         SortedMap<Integer,String> map;
         if(cardChooser.getGameController().peekStackCardActor().getCard().getRank().equals(Rank.J)){
             map = mapForJ;
@@ -70,7 +68,7 @@ public class CardChooserManager {
         }
         changeRankIndex(indexChanger,map);
         String rank = map.get(currentRankIndex);
-        setCurrentRankName(rank);
+        currentRankName = rank;
         cardChooser.getDisplayCard().changeFrontSide(cardAtlas.findRegion(currentSuitName +rank));
     }
 
@@ -87,7 +85,7 @@ public class CardChooserManager {
     public void changeSuit(int indexChanger) {
         changeSuitIndex(indexChanger,suitMap);
         String suit = suitMap.get(currentSuitIndex);
-        setCurrentSuitName(suit);
+        currentSuitName = suit;
         cardChooser.getDisplayCard().changeFrontSide(cardAtlas.findRegion(suit+currentRankName));
     }
 
@@ -101,7 +99,7 @@ public class CardChooserManager {
         }
     }
 
-    public CardActor giveCardActor(){
+    CardActor giveCardActor(){
         return new CardActor(cardChooser.getDisplayCard().getFrontSide(),
                 new Card(Rank.getRank(currentRankName),Suit.getSuit(currentSuitName)));
     }
@@ -131,7 +129,7 @@ public class CardChooserManager {
     }
 
 
-    public void resetIndexes(){
+    void resetIndexes(){
         currentRankIndex = 1;
         currentSuitIndex = 1;
     }
@@ -144,11 +142,4 @@ public class CardChooserManager {
         }
     }
 
-    public void setCurrentRankName(String currentRankName) {
-        this.currentRankName = currentRankName;
-    }
-
-    public void setCurrentSuitName(String currentSuitName) {
-        this.currentSuitName = currentSuitName;
-    }
 }

@@ -7,12 +7,11 @@ import com.wwil.makao.backend.Rank;
 import com.wwil.makao.backend.Suit;
 import com.wwil.makao.frontend.entities.gameButtons.EndTurnButton;
 import com.wwil.makao.frontend.entities.gameButtons.GameButton;
-import com.wwil.makao.frontend.entities.groups.CardChooserGroup;
+import com.wwil.makao.frontend.entities.cardChooser.CardChooserGroup;
 import com.wwil.makao.frontend.entities.CardActor;
-import com.wwil.makao.frontend.entities.groups.PlayerHandGroup;
+import com.wwil.makao.frontend.entities.cardsGroup.PlayerHandGroup;
 import com.wwil.makao.frontend.entities.gameButtons.PullButton;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,8 +41,6 @@ public class GameComponentsPreparer {
 
     private void prepareStackCardsGroup() {
         controller.addCardActorToStackGroup(cardActorFactory.createCardActor(backend.getStack().peekCard()));
-        controller.addCardActorToStackGroup(cardActorFactory.createCardActor(backend.getStack().peekCard()));
-
         stage.addActor(controller.getStackCardsGroup());
         controller.getStackCardsGroup().setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
     }
@@ -91,7 +88,7 @@ public class GameComponentsPreparer {
         handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.TWO,Suit.DIAMOND)));
         handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE,Suit.HEART)));
         handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE,Suit.SPADE)));
-        handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K,Suit.HEART)));
+        //handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K,Suit.HEART)));
         handGroups.get(subject).getPlayerHand().getCards().clear();
         handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.TWO,Suit.CLUB)));
         handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.TWO,Suit.DIAMOND)));
