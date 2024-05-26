@@ -78,6 +78,9 @@ public class MakaoBackend {
         }
 
         if (play.getAction() == Action.END) {
+            if(doesEventExist()){
+                event.setActive(false);
+            }
             return endTurn();
         }
 
