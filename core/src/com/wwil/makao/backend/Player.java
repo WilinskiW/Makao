@@ -28,35 +28,48 @@ public class Player {
 
     public List<Card> getPlayableWithSameRank(List<Card> cards) {
         List<Card> playable = findCardsWithSameRank(cards);
-        if (playable.size() > 4) {
-            // Tworzymy mapę do zliczania wystąpień każdej rangi
-            Map<Rank, Integer> rankCount = new HashMap<>();
-            for (Card card : playable) {
-                rankCount.put(card.getRank(), rankCount.getOrDefault(card.getRank(), 0) + 1);
-            }
-
-            // Znajdujemy maksymalną liczbę wystąpień rangi
-            int maxCount = Collections.max(rankCount.values());
-
-            // Zbieramy wszystkie rangi, które mają maksymalną liczbę wystąpień
-            List<Rank> maxRanks = new ArrayList<>();
-            for (Map.Entry<Rank, Integer> entry : rankCount.entrySet()) {
-                if (entry.getValue() == maxCount) {
-                    maxRanks.add(entry.getKey());
-                }
-            }
-
-            // Zbieramy karty z najczęściej występującymi rangami
-            List<Card> maxPlayable = new ArrayList<>();
-            for (Card card : playable) {
-                if (maxRanks.contains(card.getRank())) {
-                    maxPlayable.add(card);
-                }
-            }
-
-            return maxPlayable;
+        if (playable.size() >= 4) {
+            return chooseRank(playable);
         }
         return playable;
+    }
+
+    private List<Card> chooseRank(List<Card> playable){
+        // Tworzymy mapę do zliczania wystąpień każdej rangi
+        Map<Rank, Integer> rankCount = new HashMap<>();
+        for (Card card : playable) {
+            rankCount.put(card.getRank(), rankCount.getOrDefault(card.getRank(), 0) + 1);
+        }
+
+        // Znajdujemy maksymalną liczbę wystąpień rangi
+        int maxCount = Collections.max(rankCount.values());
+
+        // Zbieramy wszystkie rangi, które mają maksymalną liczbę wystąpień
+        List<Rank> maxRanks = new ArrayList<>();
+        for (Map.Entry<Rank, Integer> entry : rankCount.entrySet()) {
+            if (entry.getValue() == maxCount) {
+                maxRanks.add(entry.getKey());
+            }
+        }
+
+        // Jeżeli mamy więcej niż jedną rangę o takiej samej liczbie wystąpień, wybieramy losowo jedną z nich
+        Rank chosenRank;
+        if (maxRanks.size() > 1) {
+            Random random = new Random();
+            chosenRank = maxRanks.get(random.nextInt(maxRanks.size()));
+        } else {
+            chosenRank = maxRanks.get(0);
+        }
+
+        // Zbieramy karty z najczęściej występującymi rangami
+        List<Card> maxPlayable = new ArrayList<>();
+        for (Card card : playable) {
+            if (card.getRank() == chosenRank) {
+                maxPlayable.add(card);
+            }
+        }
+
+        return maxPlayable;
     }
 
     public List<Card> findCardsWithSameRank(List<Card> cards) {

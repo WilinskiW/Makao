@@ -1,8 +1,6 @@
 package com.wwil.makao.backend;
 
 import java.util.List;
-
-//Raport karty, którą zagrał gracz lub dobrania
 public class PlayReport {
     private final Player player;
     private final Play play;
@@ -27,9 +25,8 @@ public class PlayReport {
         return drawn;
     }
 
-    public PlayReport setDrawn(Card drawn) {
+    public void setDrawn(Card drawn) {
         this.drawn = drawn;
-        return this;
     }
 
     public boolean isCardCorrect() {
@@ -44,8 +41,7 @@ public class PlayReport {
         return cardsToPull;
     }
 
-    public PlayReport setCardsToPull(List<Card> cardsToPull) {
+    public void setCardsToPull(List<Card> cardsToPull) {
         this.cardsToPull = cardsToPull;
-        return this;
     }
 }

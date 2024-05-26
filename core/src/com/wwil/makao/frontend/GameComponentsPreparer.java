@@ -72,7 +72,7 @@ public class GameComponentsPreparer {
         setPlayersCardActorsAlignmentParams();
 
         //todo metoda testowa:
-        test(0);
+        test(1);
 
         for (PlayerHandGroup handGroup : handGroups) {
             for (Card card : handGroup.getPlayerHand().getCards()) {
@@ -83,17 +83,17 @@ public class GameComponentsPreparer {
     }
 
     private void test(int subject) {
-        handGroups.get(3).getPlayerHand().getCards().clear();
-        handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.TWO,Suit.CLUB)));
-        handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.TWO,Suit.DIAMOND)));
-        handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE,Suit.HEART)));
-        handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE,Suit.SPADE)));
-        //handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K,Suit.HEART)));
+        handGroups.get(0).getPlayerHand().getCards().clear();
+        handGroups.get(0).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.TWO,Suit.CLUB)));
+        handGroups.get(0).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.TWO,Suit.DIAMOND)));
+        handGroups.get(0).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE,Suit.HEART)));
+        handGroups.get(0).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE,Suit.SPADE)));
+        handGroups.get(0).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K,Suit.HEART)));
         handGroups.get(subject).getPlayerHand().getCards().clear();
         handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.TWO,Suit.CLUB)));
         handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.TWO,Suit.DIAMOND)));
         handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE,Suit.HEART)));
-        handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE,Suit.SPADE)));
+        //handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE,Suit.SPADE)));
         handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K,Suit.SPADE)));
     }
 
@@ -137,7 +137,7 @@ public class GameComponentsPreparer {
                 GUIparams.HEIGHT / 2.0f);
         //North
         controller.getHandGroups().get(2).setPosition(GUIparams.WIDTH / 2f + GUIparams.CARD_WIDTH,
-                GUIparams.HEIGHT + GUIparams.CARD_HEIGHT - 25);
+                GUIparams.HEIGHT + GUIparams.CARD_HEIGHT - 5);
         //West
         controller.getHandGroups().get(3).setPosition(GUIparams.CARD_WIDTH / 5f - 32,
                 GUIparams.HEIGHT / 2f + GUIparams.CARD_HEIGHT / 2f + 25);

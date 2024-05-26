@@ -1,18 +1,27 @@
 package com.wwil.makao.backend;
 
 public class AttackPreviousPlayerEvent extends Event {
+    private final Player attackingPlayer;
 
     public AttackPreviousPlayerEvent(MakaoBackend backend) {
         super(backend);
+        this.attackingPlayer = backend.getCurrentPlayer();
     }
 
     @Override
     public void startEvent() {
-        System.out.println("Event begin");
         backend.playerBefore();
-        roundReport().addPlayRaport(backend.executePlay(backend.playMaker.generate()));
-        backend.nextPlayer();
-        backend.nextPlayer();
-        System.out.println("Event end");
+        if(backend.getCurrentPlayer() != backend.getHumanPlayer()) {
+            roundReport().addPlayRaport(backend.executePlay(backend.playMaker.generate()));
+            endEvent();
+        }
+    }
+
+    @Override
+    public void endEvent() {
+        backend.setCurrentPlayer(attackingPlayer);
+        if (!backend.getCurrentPlayer().isAttack()) {
+            backend.nextPlayer();
+        }
     }
 }

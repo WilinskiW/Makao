@@ -21,6 +21,10 @@ public class RoundReport {
         return computerPlayReports;
     }
 
+    public PlayReport getHumanPlay(){
+        return playReports.get(0);
+    }
+
     public PlayReport getLastPlayReport(){
         return playReports.get(getPlayReports().size()-1);
     }

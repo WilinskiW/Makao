@@ -20,7 +20,7 @@ public class PlayMaker {
             handleDefense(play);
         }
 
-        if(play.getCardsPlayed() == null && !backend.isEventActive()) {
+        if(play.getCardsPlayed() == null && !backend.doesEventExist()) {
             handlePlay(play);
         }
         return play;
@@ -29,7 +29,7 @@ public class PlayMaker {
     private void handleDefense(Play play){
         List<Card> defensiveCards = getCurrentPlayer().findDefensiveCards(getCurrentPlayer().getAttacker());
         if (!defensiveCards.isEmpty()) {
-            getNextPlayer().setAttacker(getNextPlayer().moveCardBattle());
+            getNextPlayer().setAttacker(getCurrentPlayer().moveCardBattle());
             play.setCardsPlayed(defensiveCards).setAction(Action.PUT);
         } else {
             play.setAction(Action.PULL);
@@ -59,7 +59,7 @@ public class PlayMaker {
         }
 
         //Jeśli nie ma kart możliwych do zagrania, zwracamy pustą listę
-        if (playableCards.isEmpty()) {
+        if (playableCards.size() <= 1) {
             return playableCards;
         }
 
@@ -74,7 +74,7 @@ public class PlayMaker {
     }
 
     private Player getCurrentPlayer() {
-        return backend.currentPlayer();
+        return backend.getCurrentPlayer();
     }
 
     private Player getNextPlayer() {

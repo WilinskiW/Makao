@@ -65,6 +65,10 @@ public class GameController {
             case END:
                 endTurn(report);
                 break;
+            case PULL_END:
+                pullCards(report.getHumanPlay(),getHumanHand());
+                endTurn(report);
+                break;
         }
     }
 
@@ -179,7 +183,7 @@ public class GameController {
 //////////////////////
 
     private void executeComputersPlayReport(final RoundReport roundReport) {
-        float delta = 1.5f;
+        float delta = 1.65f;
         final List<PlayReport> computerPlayReports = roundReport.getComputerPlayReport();
         final int numberOfComputers = computerPlayReports.size();
         final AtomicInteger completedComputers = new AtomicInteger(0);
@@ -195,13 +199,9 @@ public class GameController {
                     // Sprawdź, czy to był ostatni ruch komputera
                     if (completedComputers.incrementAndGet() == numberOfComputers) {
                         turnOnHumanInput();
-                        if (getHumanHand().getPlayerHand().isAttack()) {
-                            System.out.println("Czlowiek jest atakowany!");
-                        }
-                        System.out.println("-----------------------");
                     }
                 }
-            }, i * delta); // Opóźnienie względem indeksu
+            }, i+1 * delta); // Opóźnienie względem indeksu
         }
     }
 
