@@ -112,12 +112,13 @@ public class MakaoBackend {
             checkEvent();
             roundReport.addPlayRaport(executePlay(playMaker.generate()));
             checkEvent();
-            if (!getCurrentPlayer().isAttack()) {
-                nextPlayer();
-            }
 
             if (getCurrentPlayer().checkIfPlayerHaveNoCards()) {
                 break;
+            }
+
+            if (!getCurrentPlayer().isAttack()) {
+                nextPlayer();
             }
         }
     }

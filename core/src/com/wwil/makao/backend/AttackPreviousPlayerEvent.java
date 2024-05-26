@@ -13,7 +13,7 @@ public class AttackPreviousPlayerEvent extends Event {
         backend.playerBefore();
         if(backend.getCurrentPlayer() != backend.getHumanPlayer()) {
             roundReport().addPlayRaport(backend.executePlay(backend.playMaker.generate()));
-            endEvent();
+            setActive(false);
         }
     }
 
