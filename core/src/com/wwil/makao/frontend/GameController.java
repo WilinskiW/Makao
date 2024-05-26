@@ -51,7 +51,7 @@ public class GameController {
             return;
         }
         RoundReport report;
-        report = backend.executeAction(play);
+        report = backend.processHumanPlay(play);
         switch (play.getAction()) {
             case DRAG:
                 //changeCardColor(report.getLastPlay().isCardCorrect(), choosenCardActor);

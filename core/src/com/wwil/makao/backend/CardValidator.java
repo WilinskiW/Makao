@@ -10,9 +10,9 @@ private final MakaoBackend backend;
     }
 
     public boolean isValidCardForCurrentState(Card card) {
-        if (backend.getDemand().isActive()) {
-            return isValidForDemand(card);
-        }
+//        if (backend.getDemand().isActive()) {
+//            return isValidForDemand(card);
+//        }
 
         if(backend.getHumanPlayer().isAttack()){
             return isValidForDefence(card);
@@ -35,16 +35,16 @@ private final MakaoBackend backend;
         return stackCard.getSuit() == chosenCard.getSuit() || stackCard.getRank() == chosenCard.getRank();
     }
 
-    private boolean isValidForDemand(Card card) {
-        Rank chosenCardRank = card.getRank();
-        if (backend.getHumanPlayedCards().size() == 1) {
-            return chosenCardRank == backend.getDemand().getCard().getRank() ||
-                    chosenCardRank.equals(Rank.JOKER) ||
-                    (chosenCardRank.equals(Rank.J) && backend.getStack().isJackOnTop()) ||
-                    backend.getStack().isJackBeforeJoker() && chosenCardRank.equals(Rank.J);
-        }
-        return chosenCardRank == card.getRank();
-    }
+//    private boolean isValidForDemand(Card card) {
+//        Rank chosenCardRank = card.getRank();
+//        if (backend.getHumanPlayedCards().size() == 1) {
+//            return chosenCardRank == backend.getDemand().getCard().getRank() ||
+//                    chosenCardRank.equals(Rank.JOKER) ||
+//                    (chosenCardRank.equals(Rank.J) && backend.getStack().isJackOnTop()) ||
+//                    backend.getStack().isJackBeforeJoker() && chosenCardRank.equals(Rank.J);
+//        }
+//        return chosenCardRank == card.getRank();
+//    }
 
     private boolean isValidForDefence(Card chosenCard){
         List<Card> defensiveCards = backend.getHumanPlayer().findDefensiveCards(backend.getHumanPlayer().getAttacker());

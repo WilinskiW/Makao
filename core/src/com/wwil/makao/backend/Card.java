@@ -15,10 +15,6 @@ public class Card {
                 || (rank == Rank.K && suit == Suit.SPADE);
     }
 
-    public boolean doesStartEvent(){
-        return rank == Rank.K && suit == Suit.SPADE;
-    }
-
     public Rank getRank() {
         return rank;
     }

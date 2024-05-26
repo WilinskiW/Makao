@@ -5,22 +5,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class PlayMaker {
+public class ComputerPlayMaker {
    private final MakaoBackend backend;
    private final CardValidator validator;
 
-    public PlayMaker(MakaoBackend backend) {
+    public ComputerPlayMaker(MakaoBackend backend) {
         this.backend = backend;
         this.validator = backend.getValidator();
     }
 
-    public Play generate() {
+    public Play create() {
         Play play = new Play();
         if (getCurrentPlayer().isAttack()) {
             handleDefense(play);
         }
 
-        if(play.getCardsPlayed() == null && !backend.doesEventExist()) {
+        if(play.getCardsPlayed() == null) {
             handlePlay(play);
         }
         return play;
