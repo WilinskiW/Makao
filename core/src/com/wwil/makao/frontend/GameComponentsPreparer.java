@@ -87,7 +87,7 @@ public class GameComponentsPreparer {
         handGroups.get(0).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.SEVEN,Suit.CLUB)));
         handGroups.get(0).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K, Suit.SPADE)));
         handGroups.get(1).getPlayerHand().getCards().clear();
-        handGroups.get(1).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.SEVEN,Suit.HEART)));
+        handGroups.get(1).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.TWO,Suit.HEART)));
         handGroups.get(1).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.FIVE, Suit.HEART)));
         handGroups.get(2).getPlayerHand().getCards().clear();
         handGroups.get(2).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.SEVEN,Suit.HEART)));

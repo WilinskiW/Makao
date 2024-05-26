@@ -14,29 +14,17 @@ public class ComputerPlayMaker {
         this.validator = backend.getValidator();
     }
 
-    public Play create() {
-        Play play = new Play();
-        if (getCurrentPlayer().isAttack()) {
-            handleDefense(play);
-        }
-
-        if(play.getCardsPlayed() == null) {
-            handlePlay(play);
-        }
-        return play;
-    }
-
-    private void handleDefense(Play play){
-        List<Card> defensiveCards = getCurrentPlayer().findDefensiveCards(getCurrentPlayer().getAttacker());
+    public Play handleDefense(Play play, BattleEvent battleInfo){
+        List<Card> defensiveCards = getCurrentPlayer().findDefensiveCards(battleInfo);
         if (!defensiveCards.isEmpty()) {
-            getNextPlayer().setAttacker(getCurrentPlayer().moveCardBattle());
             play.setCardsPlayed(defensiveCards).setAction(Action.PUT);
         } else {
             play.setAction(Action.PULL);
         }
+        return play;
     }
 
-    private void handlePlay(Play play){
+    public Play putOrPull(Play play){
         //Znajdź karty do zagrania
         List<Card> playableCards = getPlayableCards();
         if (!playableCards.isEmpty()) {
@@ -46,11 +34,11 @@ public class ComputerPlayMaker {
             //Dobierz kartę
             play.setAction(Action.PULL);
         }
+        return play;
     }
 
     private List<Card> getPlayableCards() {
         List<Card> playableCards = new ArrayList<>();
-
         //Dodajemy karty, które mogą być zagrane
         for (Card card : getCurrentPlayer().getCards()) {
             if (validator.isValidCardForCurrentState(card)) {
@@ -74,7 +62,7 @@ public class ComputerPlayMaker {
     }
 
     private Player getCurrentPlayer() {
-        return backend.getCurrentPlayer();
+        return backend.currentPlayer();
     }
 
     private Player getNextPlayer() {

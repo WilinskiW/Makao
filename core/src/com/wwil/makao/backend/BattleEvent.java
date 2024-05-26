@@ -2,22 +2,16 @@ package com.wwil.makao.backend;
 
 import java.util.List;
 
-public class CardBattle {
+public abstract class BattleEvent extends Event {
     private final List<Card> cardToDraw;
     private final Card attackingCard;
-
-    public CardBattle(List<Card> cardToDraw, Card attackingCard) {
+    public BattleEvent(MakaoBackend backend, List<Card> cardToDraw, Card attackingCard) {
+        super(backend);
         this.cardToDraw = cardToDraw;
         this.attackingCard = attackingCard;
     }
 
-
-    public List<Card> getCardToDraw() {
-        return cardToDraw;
-    }
-
-    public Card getAttackingCard() {
+    Card getAttackingCard() {
         return attackingCard;
     }
-
 }

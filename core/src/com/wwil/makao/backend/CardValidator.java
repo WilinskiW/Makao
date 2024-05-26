@@ -14,9 +14,9 @@ private final MakaoBackend backend;
 //            return isValidForDemand(card);
 //        }
 
-        if(backend.getHumanPlayer().isAttack()){
-            return isValidForDefence(card);
-        }
+//        if(backend.getHumanPlayer().isAttack()){
+//            return isValidForDefence(card);
+//        }
 
         return isValidForRegularPlayCard(card);
     }
@@ -46,9 +46,9 @@ private final MakaoBackend backend;
 //        return chosenCardRank == card.getRank();
 //    }
 
-    private boolean isValidForDefence(Card chosenCard){
-        List<Card> defensiveCards = backend.getHumanPlayer().findDefensiveCards(backend.getHumanPlayer().getAttacker());
-        return defensiveCards.contains(chosenCard);
-    }
+//    private boolean isValidForDefence(Card chosenCard){
+//        List<Card> defensiveCards = backend.getHumanPlayer().findDefensiveCards(backend.getHumanPlayer().getAttacker());
+//        return defensiveCards.contains(chosenCard);
+//    }
 
 }

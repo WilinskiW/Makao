@@ -3,7 +3,7 @@ package com.wwil.makao.backend;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-//Tworzy z play'ów report
+
 public class PlayExecutor {
     private final MakaoBackend backend;
     private final List<Card> pullDeck = new ArrayList<>();
@@ -14,20 +14,25 @@ public class PlayExecutor {
         this.validator = backend.getValidator();
     }
 
-    public PlayReport executePlay(Play play) {
+    public PlayReport createReport(Play play) {
         PlayReport playReport = new PlayReport(currentPlayer(), play);
-        //Dobierz kartę
-        if (currentPlayer().isAttack()) {
-            drainPullDeck(playReport);
-        } else if (play.getAction() == Action.PULL) {
-            pull(playReport);
-        }
-
         //Połóż kartę/karty
         if (play.getCardsPlayed() != null) {
             putCards(play);
+            return playReport.setCardCorrect(true);
         }
-        return playReport.setCardCorrect(true);
+        //Dobierz karty
+        if (!pullDeck.isEmpty()) {
+            drainPullDeck(playReport);
+            backend.setEvent(new DefaultEvent(backend));
+        }
+
+        //Dobierz kartę
+        if (play.getAction() == Action.PULL) {
+            pull(playReport);
+        }
+
+        return playReport;
     }
 
     private void drainPullDeck(PlayReport playReport) {
@@ -35,7 +40,6 @@ public class PlayExecutor {
         playReport.setCardsToPull(cardsToPull);
         currentPlayer().addCardsToHand(cardsToPull);
         pullDeck.clear();
-        currentPlayer().setAttacker(null);
     }
 
     public void pull(PlayReport playReport) {
@@ -72,61 +76,56 @@ public class PlayExecutor {
                 //useChangeSuitAbility();
                 break;
             case PLUS_2:
-                attack(getNextPlayer(), 2, card);
+                attackNext(2, card);
                 break;
             case PLUS_3:
-                attack(getNextPlayer(), 3, card); //ATAK
+                attackPrevious(3, card);
                 break;
             case WAIT:
                 //useWaitAbility(wildCard);
                 break;
             case DEMAND:
-                //useDemandAbility(wildCard); //ATAK
+                //useDemandAbility(wildCard);
                 break;
             case KING:
-                chooseAbilityForKing(card); //ATAK
+                chooseAbilityForKing(card);
                 break;
             case WILD_CARD:
-                //useWildCard(); //PRAWDOPODOBNY ATAK
+                //useWildCard();
         }
     }
 
 
-    private void attack(Player player, int amountOfCards, Card attackingCard) {
+    private void attackNext(int amountOfCards, Card attackingCard) {
         pullDeck.addAll(backend.giveCards(amountOfCards));
-        player.setAttacker(new CardBattle(pullDeck, attackingCard));
-        if (attackingCard.isBattleCard()) {
-        }
+        backend.setEvent(new BattleNextEvent(backend, pullDeck, attackingCard));
+    }
+
+    private void attackPrevious(int amountOfCards, Card attackingCard) {
+        pullDeck.addAll(backend.giveCards(amountOfCards));
+        backend.setEvent(new BattlePreviousEvent(backend, pullDeck, attackingCard));
     }
 
     private void chooseAbilityForKing(Card card) {
         switch (card.getSuit()) {
             case HEART:
-                attack(getNextPlayer(), 5, card);
+                attackNext(5, card);
                 break;
             case SPADE:
-                attack(getPlayerBefore(), 5, card);
+                attackPrevious(5, card);
                 break;
         }
     }
 
-    public Stack getStack(){
+    public Stack getStack() {
         return backend.getStack();
     }
 
-    public Player humanPlayer(){
+    public Player humanPlayer() {
         return backend.getHumanPlayer();
     }
 
-    public Player currentPlayer(){
-        return backend.getCurrentPlayer();
-    }
-
-    public Player getNextPlayer(){
-        return backend.getNextPlayer();
-    }
-
-    public Player getPlayerBefore(){
-        return backend.getPlayerBefore();
+    public Player currentPlayer() {
+        return backend.currentPlayer();
     }
 }

@@ -1,8 +1,5 @@
 package com.wwil.makao.backend;
 
-import com.wwil.makao.backend.events.Event;
-import com.wwil.makao.backend.events.StandartTurn;
-
 import java.util.*;
 
 public class MakaoBackend {
@@ -12,10 +9,9 @@ public class MakaoBackend {
     private RoundReport roundReport;
     private final CardValidator validator = new CardValidator(this);
     protected final List<Card> humanPlayedCards = new ArrayList<>();
-    private final ComputerPlayMaker computerPlayMaker = new ComputerPlayMaker(this);
-    private final PlayExecutor reportCreator = new PlayExecutor(this);
+    private final PlayExecutor playExecutor = new PlayExecutor(this);
     private int currentPlayerIndex = 0;
-    private Event activeEvent = new StandartTurn(this);
+    private Event event = new DefaultEvent(this);
 
     public MakaoBackend() {
         createCardsToGameDeck();
@@ -68,13 +64,14 @@ public class MakaoBackend {
 
     public RoundReport processHumanPlay(Play humanPlay) {
         if (humanPlay.getAction() == Action.PULL) {
-            PlayReport humanReport = reportCreator.executePlay(humanPlay);
+            PlayReport humanReport = playExecutor.createReport(humanPlay);
             roundReport.addPlayRaport(humanReport);
             return roundReport;
         }
 
         if (humanPlay.getAction() == Action.END) {
             humanPlayedCards.clear();
+            event.start();
             return endTurn();
         }
 
@@ -86,7 +83,7 @@ public class MakaoBackend {
 
 
         if (isValid) {
-            reportCreator.putCard(humanPlay.getCardPlayed());
+            playExecutor.putCard(humanPlay.getCardPlayed());
         }
         return roundReport;
     }
@@ -99,10 +96,9 @@ public class MakaoBackend {
     }
 
     private void playRound() {
-        nextPlayer();
-        while (getCurrentPlayer() != getHumanPlayer() || getCurrentPlayer().checkIfPlayerHaveNoCards()) {
-            roundReport.addPlayRaport(reportCreator.executePlay(computerPlayMaker.create()));
-            nextPlayer();
+        while (currentPlayer() != getHumanPlayer() || currentPlayer().checkIfPlayerHaveNoCards()) {
+            roundReport.addPlayRaport(playExecutor.createReport(event.response()));
+            event.start();
         }
     }
 
@@ -120,7 +116,11 @@ public class MakaoBackend {
         }
     }
 
-    Player getCurrentPlayer() {
+    void setEvent(Event event){
+        this.event = event;
+    }
+
+    Player currentPlayer() {
         return players.get(currentPlayerIndex);
     }
 

@@ -4,7 +4,6 @@ import java.util.*;
 
 public class Player {
     private final List<Card> cards;
-    private CardBattle cardBattle;
 
     public Player(List<Card> cards) {
         this.cards = cards;
@@ -86,15 +85,15 @@ public class Player {
         }
         return sameRankCards;
     }
-    public List<Card> findDefensiveCards(CardBattle cardBattle){
+    public List<Card> findDefensiveCards(BattleEvent battleEvent){
         List<Card> defensiveCards = new ArrayList<>();
-        Card attackingCard = cardBattle.getAttackingCard();
+        Card attackingCard = battleEvent.getAttackingCard();
 
         for(Card playerCard : cards){
             if(playerCard.getRank() == attackingCard.getRank()){
                 defensiveCards.add(playerCard);
             }  //fixme: Karty już sprawdzone są pomijane np. Stack: 3 PIK| Pierwsza karta sprawdzona: 2 TREFL, Druga: 2 PIK. Druga trafia, pierwsza nie
-            else if(playerCard.getSuit() == attackingCard.getSuit() && playerCard.isBattleCard() && !cardBattle.getAttackingCard().getRank().equals(Rank.K)){
+            else if(playerCard.getSuit() == attackingCard.getSuit() && playerCard.isBattleCard() && !battleEvent.getAttackingCard().getRank().equals(Rank.K)){
                 defensiveCards.add(playerCard);
             }
         }
@@ -110,12 +109,6 @@ public class Player {
 
 
         return cardsWithSameRank;
-    }
-
-    public CardBattle moveCardBattle(){
-        CardBattle battle = cardBattle;
-        cardBattle = null;
-        return battle;
     }
 
     public Card findCardToDemand() {
@@ -164,22 +157,7 @@ public class Player {
 
         return Suit.values()[maxIndex]; // Zwracanie koloru z największą liczbą wystąpień
     }
-
-    public boolean isAttack(){
-        return cardBattle != null;
-    }
-
     public List<Card> getCards() {
         return cards;
-    }
-
-
-    public CardBattle getAttacker() {
-        return cardBattle;
-    }
-
-    public Player setAttacker(CardBattle cardBattle) {
-        this.cardBattle = cardBattle;
-        return this;
     }
 }
