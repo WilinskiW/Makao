@@ -21,6 +21,7 @@ public class PlayExecutor {
             putCards(play);
             return playReport.setCardCorrect(true);
         }
+
         //Dobierz karty
         if (!pullDeck.isEmpty()) {
             drainPullDeck(playReport);
@@ -31,6 +32,7 @@ public class PlayExecutor {
         if (play.getAction() == Action.PULL) {
             pull(playReport);
         }
+
 
         return playReport;
     }
@@ -45,12 +47,12 @@ public class PlayExecutor {
     public void pull(PlayReport playReport) {
         Card drawn = backend.takeCardFromGameDeck();
         currentPlayer().addCardToHand(drawn);
-        if (validator.isValidCardForCurrentState(drawn)) {
-            if (currentPlayer() != humanPlayer()) {
-                playReport.getPlay().setCardsPlayed(Collections.singletonList(drawn));
-                System.out.println("Pierwsza karta ratuje!");
-            }
-        }
+//        if (validator.isValidCardForCurrentEvent(drawn, backend.getEvent())) {
+//            if (currentPlayer() != humanPlayer()) {
+//                playReport.getPlay().setCardsPlayed(Collections.singletonList(drawn));
+//                System.out.println("Pierwsza karta ratuje!");
+//            }
+//        }
         playReport.setDrawn(drawn);
     }
 
@@ -79,7 +81,7 @@ public class PlayExecutor {
                 attackNext(2, card);
                 break;
             case PLUS_3:
-                attackPrevious(3, card);
+                attackNext(3, card);
                 break;
             case WAIT:
                 //useWaitAbility(wildCard);
@@ -98,12 +100,12 @@ public class PlayExecutor {
 
     private void attackNext(int amountOfCards, Card attackingCard) {
         pullDeck.addAll(backend.giveCards(amountOfCards));
-        backend.setEvent(new BattleNextEvent(backend, pullDeck, attackingCard));
+        backend.setEvent(new BattleNextEvent(backend, attackingCard));
     }
 
     private void attackPrevious(int amountOfCards, Card attackingCard) {
         pullDeck.addAll(backend.giveCards(amountOfCards));
-        backend.setEvent(new BattlePreviousEvent(backend, pullDeck, attackingCard));
+        backend.setEvent(new BattlePreviousEvent(backend, attackingCard));
     }
 
     private void chooseAbilityForKing(Card card) {

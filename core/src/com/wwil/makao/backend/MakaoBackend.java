@@ -76,7 +76,7 @@ public class MakaoBackend {
         }
 
         //scenario for put:
-        boolean isValid = validator.isValidCardForCurrentState(humanPlay.getCardPlayed());
+        boolean isValid = validator.isValidCardForCurrentEvent(humanPlay.getCardPlayed(), event);
         roundReport.addPlayRaport(
                 new PlayReport(getHumanPlayer(), humanPlay)
                         .setCardCorrect(isValid));
@@ -105,19 +105,23 @@ public class MakaoBackend {
     void playerBefore() {
         currentPlayerIndex--;
         if (currentPlayerIndex < 0) {
-            currentPlayerIndex = RuleParams.AMOUNT_OF_PLAYERS - 1;
+            currentPlayerIndex = players.size()-1;
         }
     }
 
     void nextPlayer() {
         currentPlayerIndex++;
-        if (currentPlayerIndex >= RuleParams.AMOUNT_OF_PLAYERS) {
+        if (currentPlayerIndex > players.size()-1) {
             currentPlayerIndex = 0;
         }
     }
 
     void setEvent(Event event){
         this.event = event;
+    }
+
+    Event getEvent(){
+        return event;
     }
 
     Player currentPlayer() {

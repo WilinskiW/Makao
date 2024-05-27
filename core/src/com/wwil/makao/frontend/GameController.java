@@ -65,10 +65,6 @@ public class GameController {
             case END:
                 endTurn(report);
                 break;
-            case PULL_END:
-                pullCards(report.getHumanPlay(),getHumanHand());
-                endTurn(report);
-                break;
         }
     }
 
@@ -201,7 +197,7 @@ public class GameController {
                         turnOnHumanInput();
                     }
                 }
-            }, i+1 * delta); // Opóźnienie względem indeksu
+            }, (i + 1) * delta); // Opóźnienie względem indeksu
         }
     }
 

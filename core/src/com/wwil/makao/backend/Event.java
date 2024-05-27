@@ -4,6 +4,7 @@ package com.wwil.makao.backend;
 public abstract class Event {
     protected final MakaoBackend backend;
     protected final ComputerPlayMaker playMaker;
+    protected boolean isAttack;
     public Event(MakaoBackend backend) {
         this.backend = backend;
         this.playMaker = new ComputerPlayMaker(backend);

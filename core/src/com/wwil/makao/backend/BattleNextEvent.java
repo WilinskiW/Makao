@@ -1,14 +1,8 @@
 package com.wwil.makao.backend;
 
-import java.util.List;
-
 public class BattleNextEvent extends BattleEvent {
-    public BattleNextEvent(MakaoBackend backend, List<Card> cardToDraw, Card attackingCard) {
-        super(backend, cardToDraw, attackingCard);
-    }
-    @Override
-    public Play response() {
-        return playMaker.handleDefense(new Play(), this);
+    public BattleNextEvent(MakaoBackend backend, Card attackingCard) {
+        super(backend, attackingCard);
     }
     @Override
     public void start() {

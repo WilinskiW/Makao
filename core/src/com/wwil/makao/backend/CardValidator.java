@@ -9,19 +9,20 @@ private final MakaoBackend backend;
         this.backend = backend;
     }
 
-    public boolean isValidCardForCurrentState(Card card) {
-//        if (backend.getDemand().isActive()) {
-//            return isValidForDemand(card);
-//        }
+    public boolean isValidCardForCurrentEvent(Card card, Event event) {
+        if(event.isAttack){
+             return isValidForBattle(card, (BattleEvent) event);
+        }
 
-//        if(backend.getHumanPlayer().isAttack()){
-//            return isValidForDefence(card);
-//        }
-
-        return isValidForRegularPlayCard(card);
+        return isValidForDefault(card);
     }
 
-    private boolean isValidForRegularPlayCard(Card chosenCard) {
+    private boolean isValidForBattle(Card chosenCard, BattleEvent battleInfo){
+        List<Card> defensiveCards = backend.currentPlayer().findDefensiveCards(battleInfo);
+        return defensiveCards.contains(chosenCard);
+    }
+
+    public boolean isValidForDefault(Card chosenCard) {
         Card stackCard = backend.getStack().peekCard();
         if (!backend.getHumanPlayedCards().isEmpty()) {
             return chosenCard.getRank() == backend.getHumanPlayedCards().get(0).getRank();
@@ -34,21 +35,4 @@ private final MakaoBackend backend;
 
         return stackCard.getSuit() == chosenCard.getSuit() || stackCard.getRank() == chosenCard.getRank();
     }
-
-//    private boolean isValidForDemand(Card card) {
-//        Rank chosenCardRank = card.getRank();
-//        if (backend.getHumanPlayedCards().size() == 1) {
-//            return chosenCardRank == backend.getDemand().getCard().getRank() ||
-//                    chosenCardRank.equals(Rank.JOKER) ||
-//                    (chosenCardRank.equals(Rank.J) && backend.getStack().isJackOnTop()) ||
-//                    backend.getStack().isJackBeforeJoker() && chosenCardRank.equals(Rank.J);
-//        }
-//        return chosenCardRank == card.getRank();
-//    }
-
-//    private boolean isValidForDefence(Card chosenCard){
-//        List<Card> defensiveCards = backend.getHumanPlayer().findDefensiveCards(backend.getHumanPlayer().getAttacker());
-//        return defensiveCards.contains(chosenCard);
-//    }
-
 }

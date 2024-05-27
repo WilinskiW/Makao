@@ -41,7 +41,7 @@ public class ComputerPlayMaker {
         List<Card> playableCards = new ArrayList<>();
         //Dodajemy karty, które mogą być zagrane
         for (Card card : getCurrentPlayer().getCards()) {
-            if (validator.isValidCardForCurrentState(card)) {
+            if (validator.isValidForDefault(card)) {
                 playableCards.add(card);
             }
         }
