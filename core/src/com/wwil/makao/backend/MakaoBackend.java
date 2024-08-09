@@ -135,11 +135,11 @@ public class MakaoBackend {
     }
 
     Player getNextPlayer() {
-        int playerBeforeIndex = currentPlayerIndex + 1;
-        if (playerBeforeIndex >= players.size()) {
-            playerBeforeIndex = 0;
+        int nextPlayerIndex = currentPlayerIndex + 1;
+        if (nextPlayerIndex >= players.size()) {
+            nextPlayerIndex = 0;
         }
-        return players.get(playerBeforeIndex);
+        return players.get(nextPlayerIndex);
     }
 
     CardValidator getValidator() {

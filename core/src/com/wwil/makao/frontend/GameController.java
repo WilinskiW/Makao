@@ -210,7 +210,6 @@ public class GameController {
             }, (i + 1) * delta); // Opóźnienie względem indeksu
         }
     }
-    //todo: Stworzyć takie same metody dla gracza i botów
     private void processComputerTurn(PlayReport playReport, PlayerHandGroup playerHand){
         Card card = playReport.getPlay().getCardPlayed();
 
@@ -219,8 +218,7 @@ public class GameController {
         } else if (playReport.getPlay().getAction() == Action.PULL) {
             pullCard(playReport.getCardsToPull().get(0), playerHand);
         }
-
-        if (card != null) {
+        else  {
             CardActor cardActor = playerHand.getCardActor(card);
             putCard(cardActor, playerHand, true);
         }

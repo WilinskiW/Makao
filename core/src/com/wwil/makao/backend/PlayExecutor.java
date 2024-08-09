@@ -15,7 +15,7 @@ public class PlayExecutor {
     public PlayReport createPlayReport(Play play) {
         PlayReport playReport = new PlayReport(currentPlayer(), play);
 
-        if(!pullDeck.isEmpty()){
+        if(currentPlayer().isAttack()){
             pullCardsFromAttack(playReport);
             return playReport;
         }
@@ -36,6 +36,7 @@ public class PlayExecutor {
     private void pullCardsFromAttack(PlayReport playReport){
         List<Card> cardsToPull = new ArrayList<>(pullDeck);
         currentPlayer().addCardsToHand(cardsToPull);
+        currentPlayer().setAttack(false);
         playReport.setCardsToPull(cardsToPull);
         pullDeck.clear();
     }

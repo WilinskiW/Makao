@@ -16,7 +16,6 @@ public class PlayMaker {
         //Dobierz karty z ataku
         if (player.isAttack()) {
             plays.add(new Play().setAction(Action.PULL));
-            player.setAttack(false);
         }
 
         //Znajdź karty do zagrania
