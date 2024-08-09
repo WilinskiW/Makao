@@ -1,7 +1,5 @@
 package com.wwil.makao.backend;
 
-import java.util.List;
-
 public class CardValidator {
 private final MakaoBackend backend;
 
@@ -9,20 +7,7 @@ private final MakaoBackend backend;
         this.backend = backend;
     }
 
-    public boolean isValidCardForCurrentEvent(Card card, Event event) {
-        if(event.isAttack){
-             return isValidForBattle(card, (BattleEvent) event);
-        }
-
-        return isValidForDefault(card);
-    }
-
-    private boolean isValidForBattle(Card chosenCard, BattleEvent battleInfo){
-        List<Card> defensiveCards = backend.currentPlayer().findDefensiveCards(battleInfo);
-        return defensiveCards.contains(chosenCard);
-    }
-
-    public boolean isValidForDefault(Card chosenCard) {
+    public boolean isValid(Card chosenCard) {
         Card stackCard = backend.getStack().peekCard();
         if (!backend.getHumanPlayedCards().isEmpty()) {
             return chosenCard.getRank() == backend.getHumanPlayedCards().get(0).getRank();

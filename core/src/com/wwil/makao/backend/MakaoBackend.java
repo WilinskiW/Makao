@@ -10,16 +10,70 @@ public class MakaoBackend {
     private final CardValidator validator = new CardValidator(this);
     protected final List<Card> humanPlayedCards = new ArrayList<>();
     private final PlayExecutor playExecutor = new PlayExecutor(this);
+    private final PlayMaker playMaker = new PlayMaker(this);
     private int currentPlayerIndex = 0;
-    private Event event = new DefaultEvent(this);
 
     public MakaoBackend() {
         createCardsToGameDeck();
         //todo: Zmienic po testach
-        //stack.addCardToStack(getStartStackCard());
-        stack.addCardToStack(new Card(Rank.FIVE, Suit.SPADE));
+        stack.addCardToStack(getStartStackCard());
+        //stack.addCardToStack(new Card(Rank.FIVE, Suit.SPADE));
         createPlayers();
         startRound();
+    }
+
+    public RoundReport processHumanPlay(Play humanPlay) {
+        if (humanPlay.getAction() == Action.PULL) {
+            roundReport.addPlayRaport(playExecutor.createPlayReport(humanPlay));
+            return roundReport;
+        }
+
+        //Gracz decyduje o końcu tury
+        if (humanPlay.getAction() == Action.END) {
+            humanPlayedCards.clear();
+            return endTurn();
+        }
+
+        //scenario for put:
+        boolean isValid = validator.isValid(humanPlay.getCardPlayed());
+        roundReport.addPlayRaport(
+                new PlayReport(getHumanPlayer(), humanPlay)
+                        .setCardCorrect(isValid));
+
+        if (isValid) {
+            playExecutor.putCard(humanPlay.getCardPlayed());
+        }
+        return roundReport;
+    }
+
+    private void startRound() {
+        roundReport = new RoundReport();
+    }
+
+    private RoundReport endTurn() {
+        nextPlayer();
+        playRound();
+        return sendRoundReport();
+    }
+
+    private void playRound() {
+        while (currentPlayer() != getHumanPlayer() || currentPlayer().checkIfPlayerHaveNoCards()) {
+            addPlayReports();
+            nextPlayer();
+        }
+    }
+
+    private void addPlayReports(){
+        List<Play> plays = playMaker.makePlays(currentPlayer());
+        for(Play play : plays){
+            roundReport.addPlayRaport(playExecutor.createPlayReport(play));
+        }
+    }
+
+    private RoundReport sendRoundReport(){
+        RoundReport report = roundReport;
+        startRound();
+        return report;
     }
 
     private void createCardsToGameDeck() {
@@ -47,59 +101,12 @@ public class MakaoBackend {
             players.add(player);
         }
     }
-
     protected List<Card> giveCards(int amount) {
         List<Card> cards = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             cards.add(takeCardFromGameDeck());
         }
         return cards;
-    }
-
-    //////////// Logika:
-    //Jedyna publiczna metoda (odbiera informacje, wykonuje działanie i wysyła)
-    private void startRound() {
-        roundReport = new RoundReport();
-    }
-
-    public RoundReport processHumanPlay(Play humanPlay) {
-        if (humanPlay.getAction() == Action.PULL) {
-            PlayReport humanReport = playExecutor.createReport(humanPlay);
-            roundReport.addPlayRaport(humanReport);
-            return roundReport;
-        }
-
-        if (humanPlay.getAction() == Action.END) {
-            humanPlayedCards.clear();
-            event.start();
-            return endTurn();
-        }
-
-        //scenario for put:
-        boolean isValid = validator.isValidCardForCurrentEvent(humanPlay.getCardPlayed(), event);
-        roundReport.addPlayRaport(
-                new PlayReport(getHumanPlayer(), humanPlay)
-                        .setCardCorrect(isValid));
-
-
-        if (isValid) {
-            playExecutor.putCard(humanPlay.getCardPlayed());
-        }
-        return roundReport;
-    }
-
-    private RoundReport endTurn() {
-        playRound();
-        RoundReport report = roundReport;
-        startRound();
-        return report;
-    }
-
-    private void playRound() {
-        while (currentPlayer() != getHumanPlayer() || currentPlayer().checkIfPlayerHaveNoCards()) {
-            roundReport.addPlayRaport(playExecutor.createReport(event.response()));
-            event.start();
-        }
     }
 
     void playerBefore() {
@@ -115,15 +122,6 @@ public class MakaoBackend {
             currentPlayerIndex = 0;
         }
     }
-
-    void setEvent(Event event){
-        this.event = event;
-    }
-
-    Event getEvent(){
-        return event;
-    }
-
     Player currentPlayer() {
         return players.get(currentPlayerIndex);
     }

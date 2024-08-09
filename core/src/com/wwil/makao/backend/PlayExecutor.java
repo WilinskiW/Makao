@@ -7,60 +7,43 @@ import java.util.List;
 public class PlayExecutor {
     private final MakaoBackend backend;
     private final List<Card> pullDeck = new ArrayList<>();
-    private final CardValidator validator;
 
     public PlayExecutor(MakaoBackend backend) {
         this.backend = backend;
-        this.validator = backend.getValidator();
     }
 
-    public PlayReport createReport(Play play) {
+    public PlayReport createPlayReport(Play play) {
         PlayReport playReport = new PlayReport(currentPlayer(), play);
+
+        if(!pullDeck.isEmpty()){
+            pullCardsFromAttack(playReport);
+            return playReport;
+        }
+
         //Połóż kartę/karty
-        if (play.getCardsPlayed() != null) {
-            putCards(play);
+        if (play.getCardPlayed() != null) {
+            putCard(play.getCardPlayed());
             return playReport.setCardCorrect(true);
         }
 
-        //Dobierz karty
-        if (!pullDeck.isEmpty()) {
-            drainPullDeck(playReport);
-            backend.setEvent(new DefaultEvent(backend));
-        }
-
-        //Dobierz kartę
         if (play.getAction() == Action.PULL) {
             pull(playReport);
         }
 
-
         return playReport;
     }
 
-    private void drainPullDeck(PlayReport playReport) {
+    private void pullCardsFromAttack(PlayReport playReport){
         List<Card> cardsToPull = new ArrayList<>(pullDeck);
-        playReport.setCardsToPull(cardsToPull);
         currentPlayer().addCardsToHand(cardsToPull);
+        playReport.setCardsToPull(cardsToPull);
         pullDeck.clear();
     }
 
-    public void pull(PlayReport playReport) {
+    private void pull(PlayReport playReport) {
         Card drawn = backend.takeCardFromGameDeck();
-        currentPlayer().addCardToHand(drawn);
-//        if (validator.isValidCardForCurrentEvent(drawn, backend.getEvent())) {
-//            if (currentPlayer() != humanPlayer()) {
-//                playReport.getPlay().setCardsPlayed(Collections.singletonList(drawn));
-//                System.out.println("Pierwsza karta ratuje!");
-//            }
-//        }
-        playReport.setDrawn(drawn);
-    }
-
-
-    private void putCards(Play play) {
-        for (Card card : play.getCardsPlayed()) {
-            putCard(card);
-        }
+        playReport.getPlayer().addCardToHand(drawn);
+        playReport.setCardsToPull(Collections.singletonList(drawn));
     }
 
     public void putCard(Card cardPlayed) {
@@ -78,10 +61,10 @@ public class PlayExecutor {
                 //useChangeSuitAbility();
                 break;
             case PLUS_2:
-                attackNext(2, card);
+                attack(2);
                 break;
             case PLUS_3:
-                attackNext(3, card);
+                attack(3);
                 break;
             case WAIT:
                 //useWaitAbility(wildCard);
@@ -98,23 +81,19 @@ public class PlayExecutor {
     }
 
 
-    private void attackNext(int amountOfCards, Card attackingCard) {
+    private void attack(int amountOfCards) {
         pullDeck.addAll(backend.giveCards(amountOfCards));
-        backend.setEvent(new BattleNextEvent(backend, attackingCard));
-    }
-
-    private void attackPrevious(int amountOfCards, Card attackingCard) {
-        pullDeck.addAll(backend.giveCards(amountOfCards));
-        backend.setEvent(new BattlePreviousEvent(backend, attackingCard));
+        getNextPlayer().setAttack(true);
     }
 
     private void chooseAbilityForKing(Card card) {
         switch (card.getSuit()) {
             case HEART:
-                attackNext(5, card);
+                attack(5);
                 break;
             case SPADE:
-                attackPrevious(5, card);
+                //attackPrevious(5);
+                attack(5);
                 break;
         }
     }
@@ -130,4 +109,5 @@ public class PlayExecutor {
     public Player currentPlayer() {
         return backend.currentPlayer();
     }
+    public Player getNextPlayer(){return backend.getNextPlayer();}
 }

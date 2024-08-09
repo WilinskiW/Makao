@@ -10,8 +10,6 @@ import com.wwil.makao.backend.Play;
 import com.wwil.makao.frontend.entities.CardActor;
 import com.wwil.makao.frontend.entities.cardsGroup.StackCardsGroup;
 
-import java.util.Collections;
-
 public class DragAndDropManager {
     private final GameController gameController;
     private final DragAndDrop.Target target;
@@ -22,38 +20,37 @@ public class DragAndDropManager {
     }
 
     private DragAndDrop.Target prepareTarget(final StackCardsGroup stackCardsGroup) {
-    return new DragAndDrop.Target(stackCardsGroup) {
-        @Override
-        public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-            CardActor chosenCardActor = (CardActor) source.getActor();
-            gameController.setChosenCardActor(chosenCardActor);
-            if(target != null) {
-                gameController.executeAction(
-                        new Play()
-                                .setCardsPlayed(Collections.singletonList(chosenCardActor.getCard()))
-                                .setAction(Action.DRAG)
-                );
+        return new DragAndDrop.Target(stackCardsGroup) {
+            @Override
+            public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+                CardActor chosenCardActor = (CardActor) source.getActor();
+                gameController.setChosenCardActor(chosenCardActor);
+                if (target != null) {
+                    gameController.executeAction(
+                            new Play()
+                                    .setCardPlayed(chosenCardActor.getCard())
+                                    .setAction(Action.DRAG)
+                    );
+                }
+                return true;
             }
-            return true;
-        }
 
-        @Override
-        public void reset(DragAndDrop.Source source, DragAndDrop.Payload payload) {
-            source.getActor().setColor(Color.WHITE);
-            super.reset(source, payload);
-        }
+            @Override
+            public void reset(DragAndDrop.Source source, DragAndDrop.Payload payload) {
+                source.getActor().setColor(Color.WHITE);
+                super.reset(source, payload);
+            }
 
-        @Override
-        public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-            CardActor chosenCardActor = (CardActor) source.getActor();
-            gameController.executePut(
-                    new Play()
-                            .setCardsPlayed(Collections.singletonList(chosenCardActor.getCard()))
-                            .setAction(Action.PUT),chosenCardActor
-            );
-        }
-    };
-}
+            @Override
+            public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+                CardActor chosenCardActor = (CardActor) source.getActor();
+                gameController.executePut(
+                        new Play()
+                                .setCardPlayed(chosenCardActor.getCard())
+                                .setAction(Action.PUT), chosenCardActor);
+            }
+        };
+    }
 
     public void prepareDragAndDrop(final CardActor card) {
         final DragAndDrop dragAndDrop = new DragAndDrop();
@@ -63,15 +60,15 @@ public class DragAndDropManager {
         dragAndDrop.addTarget(target);
     }
 
-    public void focusOneCard(final CardActor card){
-        for (Actor actor :  gameController.getHumanHand().getCardActors()) {
+    public void focusOneCard(final CardActor card) {
+        for (Actor actor : gameController.getHumanHand().getCardActors()) {
             actor.clearListeners();
         }
         prepareDragAndDrop(card);
     }
 
-    public void startListening(){
-        for (CardActor cardActor :  gameController.getHumanHand().getCardActors()) {
+    public void startListening() {
+        for (CardActor cardActor : gameController.getHumanHand().getCardActors()) {
             prepareDragAndDrop(cardActor);
         }
     }

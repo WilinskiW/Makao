@@ -39,8 +39,9 @@ public class GameController {
 
     public void executePut(Play play, CardActor cardActor) {
         if (play.getAction() == Action.PUT && play.getCardPlayed().getRank().isRankActivateChooser()) {
-            showCardChooser(cardActor);
-            return;
+            throw new UnsupportedOperationException("Card chooser jest nieaktywny");
+//            showCardChooser(cardActor);
+//            return;
         }
         choosenCardActor = cardActor;
         executeAction(play);
@@ -98,7 +99,7 @@ public class GameController {
     }
 
     private void pullCards(PlayReport playReport, PlayerHandGroup playerGroup) {
-        if (playReport.getCardsToPull() != null) {
+        if (playReport.getCardsToPull().size() > 1) {
             for (Card card : playReport.getCardsToPull()) {
                 pullCard(card, playerGroup);
             }
@@ -108,8 +109,12 @@ public class GameController {
                 endTurnButton.setActive(false);
             }
         } else {
-            pullCard(playReport.getDrawn(), playerGroup);
-            dragAndDropManager.focusOneCard(getHumanHand().getCardActor(playReport.getDrawn()));
+            pullCard(playReport.getCardsToPull().get(0), playerGroup);
+            if (playerGroup == getHumanHand()) {
+                pullButton.setActive(false);
+                endTurnButton.setActive(true);
+                dragAndDropManager.focusOneCard(getHumanHand().getCardActor(playReport.getCardsToPull().get(0)));
+            }
         }
     }
 
@@ -132,15 +137,20 @@ public class GameController {
     }
 
     public void addCardActorToStackGroup(CardActor cardActor) {
-        stage.addActor(cardActor);
+        try {
+            stage.addActor(cardActor);
+        }
+        catch (NullPointerException e){
+            throw new CardNotFoundException();
+        }
         cardActor.setUpSideDown(false);
         stackCardsGroup.addActor(cardActor);
     }
 
-    private void endIfPlayerWon(PlayerHandGroup playerHandGroup) {
+    private void endIfPlayerWon(PlayerHandGroup handGroup) {
         //Do czasu wprowadzenia menu
-        if (playerHandGroup.getPlayerHand().checkIfPlayerHaveNoCards()) {
-            System.out.println(playerHandGroup.getCardsAlignment() + " won");
+        if (handGroup.getPlayerHand().checkIfPlayerHaveNoCards() && handGroup.getChildren().isEmpty()) {
+            System.out.println(handGroup.getCardsAlignment() + " won");
             Gdx.app.exit();
         }
     }
@@ -180,7 +190,7 @@ public class GameController {
 
     private void executeComputersPlayReport(final RoundReport roundReport) {
         float delta = 1.65f;
-        final List<PlayReport> computerPlayReports = roundReport.getComputerPlayReport();
+        final List<PlayReport> computerPlayReports = roundReport.getComputerPlayReports();
         final int numberOfComputers = computerPlayReports.size();
         final AtomicInteger completedComputers = new AtomicInteger(0);
 
@@ -200,31 +210,20 @@ public class GameController {
             }, (i + 1) * delta); // Opóźnienie względem indeksu
         }
     }
-
-    private void processComputerTurn(PlayReport playReport, PlayerHandGroup playerGroup) {
-        List<Card> cardsToPlay = playReport.getPlay().getCardsPlayed();
+    //todo: Stworzyć takie same metody dla gracza i botów
+    private void processComputerTurn(PlayReport playReport, PlayerHandGroup playerHand){
+        Card card = playReport.getPlay().getCardPlayed();
 
         if (playReport.getCardsToPull() != null && !playReport.getCardsToPull().isEmpty()) {
-            pullCards(playReport, playerGroup);
+            pullCards(playReport, playerHand);
         } else if (playReport.getPlay().getAction() == Action.PULL) {
-            pullCard(playReport.getDrawn(), playerGroup);
+            pullCard(playReport.getCardsToPull().get(0), playerHand);
         }
 
-        if (cardsToPlay != null) {
-            List<CardActor> cardActorsToPlay = playerGroup.getCardActors(playReport.getPlay().getCardsPlayed());
-            putCards(playerGroup, cardActorsToPlay, true);
+        if (card != null) {
+            CardActor cardActor = playerHand.getCardActor(card);
+            putCard(cardActor, playerHand, true);
         }
-    }
-
-
-    private void putCards(PlayerHandGroup player, List<CardActor> cardsToPlay, boolean alignCards) {
-        for (CardActor cardActor : cardsToPlay) {
-            addCardActorToStackGroup(cardActor);
-            if (alignCards) {
-                player.moveCloserToStartingPosition();
-            }
-        }
-        endIfPlayerWon(player);
     }
 
     private void turnOnHumanInput() {

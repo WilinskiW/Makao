@@ -46,7 +46,7 @@ public class PutButtonActor extends Actor {
                 controller.executePut(
                         new Play()
                                 .setCardFromChooser(cardChooser.getManager().giveCardActor().getCard())
-                                .setDemanding(true)
+                                //.setDemanding(true)
                                 .setAction(Action.PUT)
                                 .setCardFromChooser(cardChooser.getDisplayCard().getCard()),cardChooser.getDisplayCard()
                 );

@@ -4,9 +4,8 @@ import java.util.List;
 public class PlayReport {
     private final Player player;
     private final Play play;
-    private Card drawn;
-    private boolean isCardCorrect;
     private List<Card> cardsToPull;
+    private boolean isCardCorrect;
 
     public PlayReport(Player player, Play play) {
         this.play = play;
@@ -19,14 +18,6 @@ public class PlayReport {
 
     public Play getPlay() {
         return play;
-    }
-
-    public Card getDrawn() {
-        return drawn;
-    }
-
-    public void setDrawn(Card drawn) {
-        this.drawn = drawn;
     }
 
     public boolean isCardCorrect() {

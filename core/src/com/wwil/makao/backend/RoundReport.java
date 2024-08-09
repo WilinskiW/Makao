@@ -9,8 +9,7 @@ public class RoundReport {
     public void addPlayRaport(PlayReport playReport) {
         playReports.add(playReport);
     }
-
-    public List<PlayReport> getComputerPlayReport(){
+    public List<PlayReport> getComputerPlayReports(){
         Player humanPlayer = playReports.get(0).getPlayer();
         List<PlayReport> computerPlayReports = new ArrayList<>();
         for(PlayReport playReport : playReports){
@@ -19,10 +18,6 @@ public class RoundReport {
             }
         }
         return computerPlayReports;
-    }
-
-    public PlayReport getHumanPlay(){
-        return playReports.get(0);
     }
 
     public PlayReport getLastPlayReport(){

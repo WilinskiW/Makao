@@ -1,42 +1,26 @@
 package com.wwil.makao.backend;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Play {
-    private List<Card> cardsPlayed;
+    private Card cardPlayed;
     private Action action;
-    private boolean blocked;
-    private boolean demanding;
+    private List<Card> pullDeck = new ArrayList<>();
     private Card cardFromChooser;
 
-    public Play(List<Card> cardsPlayed, boolean blocked, boolean demanding, Card cardFromChooser) {
-        this.cardsPlayed = cardsPlayed;
-        this.blocked = blocked;
-        this.demanding = demanding;
+    public Play(Card cardPlayed, Card cardFromChooser) {
+        this.cardPlayed = cardPlayed;
         this.cardFromChooser = cardFromChooser;
     }
 
     public Play() {
     }
 
-    public boolean isDemanding() {
-        return demanding;
-    }
-
-    public boolean isBlock() {
-        return blocked;
-    }
-
-    public List<Card> getCardsPlayed() {
-        return cardsPlayed;
-    }
-
     public Card getCardPlayed() {
-        if (cardsPlayed != null) {
-            return cardsPlayed.get(0);
-        }
-        return null;
+        return cardPlayed;
     }
+
 
     public Action getAction() {
         return action;
@@ -47,24 +31,26 @@ public class Play {
         return this;
     }
 
-    public Play setCardsPlayed(List<Card> cardsPlayed) {
-        this.cardsPlayed = cardsPlayed;
+    public Play setCardPlayed(Card cardPlayed) {
+        this.cardPlayed = cardPlayed;
         return this;
     }
-
-    public Play setBlocked(boolean blocked) {
-        this.blocked = blocked;
-        return this;
-    }
-
-    public Play setDemanding(boolean demanding) {
-        this.demanding = demanding;
-        return this;
-    }
-
 
     public Play setCardFromChooser(Card cardFromChooser) {
         this.cardFromChooser = cardFromChooser;
         return this;
+    }
+
+    List<Card> getPullDeck() {
+        return pullDeck;
+    }
+
+    Play setPullDeck(List<Card> pullDeck) {
+        this.pullDeck = pullDeck;
+        return this;
+    }
+
+    Card getCardFromChooser() {
+        return cardFromChooser;
     }
 }
