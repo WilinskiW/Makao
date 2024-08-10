@@ -115,7 +115,7 @@ public class GameStagePreparer {
 
 
     private void adjustHumanCards() {
-        for (CardActor card : controller.getHumanHand().getCardActors()) {
+        for (CardActor card : controller.humanHand().getCardActors()) {
             card.setUpSideDown(false);
             controller.getDragAndDropManager().prepareDragAndDrop(card);
         }

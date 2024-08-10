@@ -61,7 +61,7 @@ public class GameController {
                 useCard(report.getLastPlayReport());
                 break;
             case PULL:
-                pullCards(report.getLastPlayReport(), getHumanHand());
+                pullCards(report.getLastPlayReport(), humanHand());
                 break;
         }
     }
@@ -74,17 +74,24 @@ public class GameController {
         }
     }
 
+    private void endTurn(RoundReport report) {
+        cardChooser.setVisibility(false);
+        dragAndDropManager.startListening();
+        turnOffHumanInput();
+        executeComputersPlayReport(report);
+    }
+
     private void useCard(PlayReport playReport) {
         if (playReport.isCardCorrect()) {
-            putCard(choosenCardActor, getHumanHand(), true);
+            putCard(choosenCardActor, humanHand(), true);
             pullButton.setActive(false);
         } else {
-            positionCardInGroup(getHumanHand(), choosenCardActor);
+            positionCardInGroup(humanHand(), choosenCardActor);
         }
     }
 
     private void putCard(CardActor playedCard, PlayerHandGroup player, boolean alignCards) {
-        if (player == getHumanHand()) {
+        if (player == humanHand()) {
             playedCard.clearListeners();
             endTurnButton.setActive(true);
             pullButton.setActive(false);
@@ -98,25 +105,19 @@ public class GameController {
         }
     }
 
-    private void endTurn(RoundReport report) {
-        cardChooser.setVisibility(false);
-        dragAndDropManager.startListening();
-        turnOffHumanInput();
-        executeComputersPlayReport(report);
-    }
-
     private void pullCards(PlayReport playReport, PlayerHandGroup playerGroup) {
         Card singleDrawn = playReport.getSingleDrawn();
-        if(singleDrawn != null){
-            pullCard(singleDrawn,playerGroup);
-            activeRescueCard(singleDrawn);
-        }
-        else{
+        if (singleDrawn != null) {
+            pullCard(singleDrawn, playerGroup);
+            if (playerGroup == humanHand()) {
+                activeRescueCard(singleDrawn);
+            }
+        } else {
             for (Card card : playReport.getCardsToPull()) {
                 pullCard(card, playerGroup);
             }
 
-            if (playerGroup == getHumanHand()) {
+            if (playerGroup == humanHand()) {
                 pullButton.setActive(true);
                 endTurnButton.setActive(false);
             }
@@ -125,7 +126,7 @@ public class GameController {
 
     private void pullCard(Card card, PlayerHandGroup player) {
         CardActor drawnCard = cardActorFactory.createCardActor(card);
-        if (player == getHumanHand()) {
+        if (player == humanHand()) {
             drawnCard.setUpSideDown(false);
             dragAndDropManager.prepareDragAndDrop(drawnCard);
             pullButton.setActive(false);
@@ -134,15 +135,15 @@ public class GameController {
         player.addActor(drawnCard);
     }
 
-    private void activeRescueCard(Card singleDraw){
+    private void activeRescueCard(Card singleDraw) {
         pullButton.setActive(false);
         endTurnButton.setActive(true);
-        dragAndDropManager.focusOneCard(getHumanHand().getCardActor(singleDraw));
+        dragAndDropManager.focusOneCard(humanHand().getCardActor(singleDraw));
     }
 
     private void showCardChooser(CardActor cardPlayed) {
         CardActor stackCard = stackCardsGroup.peekCardActor();
-        putCard(cardPlayed, getHumanHand(), false);
+        putCard(cardPlayed, humanHand(), false);
         cardChooser.setVisibility(true);
         cardChooser.getManager().setDisplayCard(stackCard, cardPlayed);
     }
@@ -181,10 +182,10 @@ public class GameController {
     }
 
     public void executeDragStop(CardActor card) {
-        if (!getHumanHand().getChildren().isEmpty()) {
+        if (!humanHand().getChildren().isEmpty()) {
             card.beLastInGroup();
         } else {
-            moveCardBackToHumanGroup(getHumanHand(), card);
+            moveCardBackToHumanGroup(humanHand(), card);
         }
     }
 
@@ -192,6 +193,7 @@ public class GameController {
         pullButton.setActive(false);
         endTurnButton.setActive(false);
         Gdx.input.setInputProcessor(null);
+        humanHand().changeTransparencyOfGroup(0.25f);
         setInputBlockActive(true);
     }
     ///////////////////////
@@ -223,12 +225,11 @@ public class GameController {
 
     private void processComputerTurn(PlayReport playReport, PlayerHandGroup playerHand) {
         Card cardPlayed = playReport.getPlay().getCardPlayed();
-        if(cardPlayed != null){
+        if (cardPlayed != null) {
             CardActor cardActor = playerHand.getCardActor(cardPlayed);
-            putCard(cardActor,playerHand,true);
-        }
-        else{
-            pullCards(playReport,playerHand);
+            putCard(cardActor, playerHand, true);
+        } else {
+            pullCards(playReport, playerHand);
         }
     }
 
@@ -236,6 +237,7 @@ public class GameController {
         setInputBlockActive(false);
         endTurnButton.setActive(false);
         pullButton.setActive(true);
+        humanHand().changeTransparencyOfGroup(1f);
         Gdx.input.setInputProcessor(gameplayScreen.getStage());
     }
 
@@ -252,7 +254,7 @@ public class GameController {
         return stackCardsGroup.peekCardActor();
     }
 
-    public PlayerHandGroup getHumanHand() {
+    public PlayerHandGroup humanHand() {
         return handGroups.get(0);
     }
 

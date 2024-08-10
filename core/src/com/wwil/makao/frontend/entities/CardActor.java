@@ -1,18 +1,14 @@
 package com.wwil.makao.frontend.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.wwil.makao.backend.Card;
 import com.wwil.makao.frontend.GUIparams;
-
-import java.util.List;
 
 public class CardActor extends Actor {
     private Card card;
@@ -52,6 +48,10 @@ public class CardActor extends Actor {
         batch.draw(currentCardSide, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(),
                 getScaleX(), getScaleY(), getRotation(), true);
         batch.setColor(Color.WHITE);
+    }
+
+    public void changeTransparency(float alpha){
+        this.setColor(getColor().r,getColor().g,getColor().b,alpha);
     }
 
     public void changeFrontSide(TextureRegion textureRegion) {
