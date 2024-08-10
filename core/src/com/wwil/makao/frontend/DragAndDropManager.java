@@ -26,7 +26,7 @@ public class DragAndDropManager {
                 CardActor chosenCardActor = (CardActor) source.getActor();
                 gameController.setChosenCardActor(chosenCardActor);
                 if (target != null) {
-                    gameController.executeAction(
+                    gameController.executePlay(
                             new Play()
                                     .setCardPlayed(chosenCardActor.getCard())
                                     .setAction(Action.DRAG)

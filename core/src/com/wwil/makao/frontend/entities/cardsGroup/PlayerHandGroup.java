@@ -29,19 +29,19 @@ public class PlayerHandGroup extends Group {
 
     private void chooseWhereCardShouldBe(Actor actor) {
         if (getChildren().size % 2 == 1) {
-            placeCardAsFirst(actor);
+            placeCardFirst(actor);
         } else {
-            placeCardAsLast(actor);
+            placeCardLast(actor);
         }
     }
 
-    private void placeCardAsLast(Actor actor) {
+    private void placeCardLast(Actor actor) {
         float lastActorX = getChildren().peek().getX();
         actor.setX(lastActorX + GUIparams.DISTANCE_BETWEEN_CARDS);
         setPosition(getX() - cardsAlignment.xMove, getY() - cardsAlignment.yMove);
     }
 
-    private void placeCardAsFirst(Actor actor) {
+    private void placeCardFirst(Actor actor) {
         float firstActorX = getChildren().first().getX();
         actor.setX(firstActorX - GUIparams.DISTANCE_BETWEEN_CARDS);
         addActorAt(0, actor);
@@ -85,14 +85,6 @@ public class PlayerHandGroup extends Group {
         for (Actor actor : getChildren()) {
             CardActor cardActor = (CardActor) actor;
             cardActors.add(cardActor);
-        }
-        return cardActors;
-    }
-
-    public List<CardActor> getCardActors(List<Card> cards){
-        List<CardActor> cardActors = new ArrayList<>();
-        for (Card card : cards) {
-            cardActors.add(getCardActor(card));
         }
         return cardActors;
     }

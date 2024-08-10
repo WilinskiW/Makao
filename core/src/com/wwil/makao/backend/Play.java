@@ -1,12 +1,8 @@
 package com.wwil.makao.backend;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Play {
     private Card cardPlayed;
     private Action action;
-    private List<Card> pullDeck = new ArrayList<>();
     private Card cardFromChooser;
 
     public Play(Card cardPlayed, Card cardFromChooser) {
@@ -15,6 +11,10 @@ public class Play {
     }
 
     public Play() {
+    }
+
+    public boolean isDragging(){
+        return action == Action.DRAG;
     }
 
     public Card getCardPlayed() {
@@ -38,15 +38,6 @@ public class Play {
 
     public Play setCardFromChooser(Card cardFromChooser) {
         this.cardFromChooser = cardFromChooser;
-        return this;
-    }
-
-    List<Card> getPullDeck() {
-        return pullDeck;
-    }
-
-    Play setPullDeck(List<Card> pullDeck) {
-        this.pullDeck = pullDeck;
         return this;
     }
 

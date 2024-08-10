@@ -16,14 +16,14 @@ import java.util.Collections;
 import java.util.List;
 
 //Przygotowanie elementów graficznych ekranu
-public class GameComponentsPreparer {
+public class GameStagePreparer {
     private final GameController controller;
     private final MakaoBackend backend;
     private final List<PlayerHandGroup> handGroups;
     private final CardActorFactory cardActorFactory;
     private final Stage stage;
 
-    public GameComponentsPreparer(GameController controller, Stage stage) {
+    public GameStagePreparer(GameController controller, Stage stage) {
         this.controller = controller;
         this.backend = controller.getBackend();
         this.handGroups = controller.getHandGroups();
@@ -66,37 +66,51 @@ public class GameComponentsPreparer {
     }
 
     public void createHandGroups() {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < backend.getPlayers().size(); i++) {
             handGroups.add(new PlayerHandGroup(backend.getPlayers().get(i)));
-        }
-        setPlayersCardActorsAlignmentParams();
-
-        //todo metoda testowa:
-        //test(0);
-
-        for (PlayerHandGroup handGroup : handGroups) {
-            for (Card card : handGroup.getPlayerHand().getCards()) {
-                CardActor cardActor = controller.getCardActorFactory().createCardActor(card);
-                handGroup.addActor(cardActor);
-            }
+            preparePlayer(i);
         }
     }
 
-    private void test(int subject) {
-        handGroups.get(subject).getPlayerHand().getCards().clear();
-        handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.SEVEN,Suit.CLUB)));
-        handGroups.get(subject).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE, Suit.SPADE)));
-        handGroups.get(1).getPlayerHand().getCards().clear();
-        handGroups.get(1).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.SEVEN,Suit.CLUB)));
-        handGroups.get(1).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE, Suit.SPADE)));
+    private void preparePlayer(int index) {
+        PlayerHandGroup handGroup = handGroups.get(index);
+        handGroup.setCardsAlignment(CardsAlignmentParams.getParamFromOrdinal(index));
+
+        //todo  Metoda tylko wyłącznie do testów! Usuń po testach
+        test(index);
+
+        for (Card card : handGroup.getPlayerHand().getCards()) {
+            CardActor cardActor = controller.getCardActorFactory().createCardActor(card);
+            handGroup.addActor(cardActor);
+        }
     }
 
-
-    private void setPlayersCardActorsAlignmentParams() {
-        handGroups.get(0).setCardsAlignment(CardsAlignmentParams.SOUTH);
-        handGroups.get(1).setCardsAlignment(CardsAlignmentParams.EAST);
-        handGroups.get(2).setCardsAlignment(CardsAlignmentParams.NORTH);
-        handGroups.get(3).setCardsAlignment(CardsAlignmentParams.WEST);
+    private void test(int index) {
+        switch (index) {
+            case 0:
+//                handGroups.get(index).getPlayerHand().getCards().clear();
+//                handGroups.get(index).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.SEVEN, Suit.CLUB)));
+//                handGroups.get(index).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE, Suit.SPADE)));
+                break;
+            case 1:
+//                handGroups.get(1).getPlayerHand().getCards().clear();
+//                handGroups.get(1).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.SEVEN, Suit.CLUB)));
+//                handGroups.get(1).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE, Suit.SPADE)));
+                break;
+            case 2:
+//                handGroups.get(2).getPlayerHand().getCards().clear();
+//                handGroups.get(2).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.SEVEN, Suit.CLUB)));
+//                handGroups.get(2).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE, Suit.SPADE)));
+                break;
+            case 3:
+                handGroups.get(3).getPlayerHand().getCards().clear();
+                handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K, Suit.CLUB)));
+                handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K, Suit.SPADE)));
+                handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K, Suit.DIAMOND)));
+                handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K, Suit.HEART)));
+                handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.FIVE, Suit.HEART)));
+                break;
+        }
     }
 
 
@@ -128,7 +142,7 @@ public class GameComponentsPreparer {
                         0);
         //East
         controller.getHandGroups().get(1).setPosition(GUIparams.WIDTH + GUIparams.CARD_HEIGHT - 10,
-                GUIparams.HEIGHT / 2.0f);
+                GUIparams.HEIGHT / 2f);
         //North
         controller.getHandGroups().get(2).setPosition(GUIparams.WIDTH / 2f + GUIparams.CARD_WIDTH,
                 GUIparams.HEIGHT + GUIparams.CARD_HEIGHT - 5);

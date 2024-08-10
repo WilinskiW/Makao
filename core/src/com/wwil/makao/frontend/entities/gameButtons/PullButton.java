@@ -16,7 +16,7 @@ public class PullButton extends GameButton {
 
     @Override
     public void sendInput() {
-        controller.executeAction(
+        controller.executePlay(
                 new Play()
                 .setAction(Action.PULL)
         );

@@ -1,10 +1,10 @@
 package com.wwil.makao.frontend;
 
 public enum CardsAlignmentParams {
-    SOUTH (GUIparams.DISTANCE_BETWEEN_CARDS/2f,0),
-    EAST(0,GUIparams.DISTANCE_BETWEEN_CARDS/2f),
-    NORTH (-GUIparams.DISTANCE_BETWEEN_CARDS/2f,0),
-    WEST(0,-GUIparams.DISTANCE_BETWEEN_CARDS/2f);
+    SOUTH(GUIparams.DISTANCE_BETWEEN_CARDS / 2f, 0),
+    EAST(0, GUIparams.DISTANCE_BETWEEN_CARDS / 2f),
+    NORTH(-GUIparams.DISTANCE_BETWEEN_CARDS / 2f, 0),
+    WEST(0, -GUIparams.DISTANCE_BETWEEN_CARDS / 2f);
 
     public final float xMove;
     public final float yMove;
@@ -12,5 +12,9 @@ public enum CardsAlignmentParams {
     CardsAlignmentParams(float xMove, float yMove) {
         this.xMove = xMove;
         this.yMove = yMove;
+    }
+
+    public static CardsAlignmentParams getParamFromOrdinal(int ordinal) {
+        return values()[ordinal];
     }
 }

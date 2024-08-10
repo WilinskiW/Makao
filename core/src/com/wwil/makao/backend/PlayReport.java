@@ -4,6 +4,7 @@ import java.util.List;
 public class PlayReport {
     private final Player player;
     private final Play play;
+    private Card singleDrawn;
     private List<Card> cardsToPull;
     private boolean isCardCorrect;
 
@@ -34,5 +35,13 @@ public class PlayReport {
 
     public void setCardsToPull(List<Card> cardsToPull) {
         this.cardsToPull = cardsToPull;
+    }
+
+    public Card getSingleDrawn() {
+        return singleDrawn;
+    }
+
+    public void setSingleDrawn(Card singleDrawn) {
+        this.singleDrawn = singleDrawn;
     }
 }

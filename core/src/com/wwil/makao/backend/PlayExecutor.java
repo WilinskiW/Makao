@@ -1,7 +1,6 @@
 package com.wwil.makao.backend;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class PlayExecutor {
@@ -15,25 +14,27 @@ public class PlayExecutor {
     public PlayReport createPlayReport(Play play) {
         PlayReport playReport = new PlayReport(currentPlayer(), play);
 
+        //1. Jeżeli gracz jest atakowany to dobierz karty
         if(currentPlayer().isAttack()){
-            pullCardsFromAttack(playReport);
+            multiPull(playReport);
             return playReport;
         }
 
-        //Połóż kartę/karty
+        //2. Jeżeli masz kartę do zagrania to połóż ją
         if (play.getCardPlayed() != null) {
             putCard(play.getCardPlayed());
             return playReport.setCardCorrect(true);
         }
 
+        //3. Jeżeli nie spełniłeś powyższych kroków to dobierz jedną kartę
         if (play.getAction() == Action.PULL) {
-            pull(playReport);
+            singlePull(playReport);
         }
 
         return playReport;
     }
 
-    private void pullCardsFromAttack(PlayReport playReport){
+    private void multiPull(PlayReport playReport){
         List<Card> cardsToPull = new ArrayList<>(pullDeck);
         currentPlayer().addCardsToHand(cardsToPull);
         currentPlayer().setAttack(false);
@@ -41,10 +42,10 @@ public class PlayExecutor {
         pullDeck.clear();
     }
 
-    private void pull(PlayReport playReport) {
+    private void singlePull(PlayReport playReport) {
         Card drawn = backend.takeCardFromGameDeck();
         playReport.getPlayer().addCardToHand(drawn);
-        playReport.setCardsToPull(Collections.singletonList(drawn));
+        playReport.setSingleDrawn(drawn);
     }
 
     public void putCard(Card cardPlayed) {

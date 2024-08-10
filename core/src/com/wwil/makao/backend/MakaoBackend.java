@@ -40,7 +40,7 @@ public class MakaoBackend {
                 new PlayReport(getHumanPlayer(), humanPlay)
                         .setCardCorrect(isValid));
 
-        if (isValid) {
+        if (isValid && !humanPlay.isDragging()) {
             playExecutor.putCard(humanPlay.getCardPlayed());
         }
         return roundReport;

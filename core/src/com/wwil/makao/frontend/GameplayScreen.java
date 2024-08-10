@@ -17,13 +17,12 @@ public class GameplayScreen implements Screen {
     //tworzy główny ekran gry
     public GameplayScreen(Makao makao) {
         this.makao = makao;
-        setGraphicComponents();
-        GameController controller = new GameController(this);
-        GameComponentsPreparer preparer = new GameComponentsPreparer(controller, stage);
+        createStage();
+        GameStagePreparer preparer = new GameStagePreparer(new GameController(this), stage);
         preparer.execute();
     }
 
-    private void setGraphicComponents() {
+    private void createStage() {
         this.camera = new OrthographicCamera();
         camera.setToOrtho(false, GUIparams.WIDTH, GUIparams.HEIGHT);
 

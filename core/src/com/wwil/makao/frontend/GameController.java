@@ -2,6 +2,7 @@ package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.Gdx;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Timer;
 import com.wwil.makao.backend.*;
@@ -31,7 +32,6 @@ public class GameController {
     private CardActor choosenCardActor;
     private boolean inputBlockActive = false;
 
-    //Frontend może jedynie odczytywać.
     public GameController(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
         this.stage = gameplayScreen.getStage();
@@ -44,18 +44,18 @@ public class GameController {
 //            return;
         }
         choosenCardActor = cardActor;
-        executeAction(play);
+        executePlay(play);
     }
 
-    public void executeAction(Play play) {
-        if (play.getAction() == Action.DRAG) {
-            return;
-        }
+    public void executePlay(Play play) {
         RoundReport report;
         report = backend.processHumanPlay(play);
         switch (play.getAction()) {
             case DRAG:
-                //changeCardColor(report.getLastPlay().isCardCorrect(), choosenCardActor);
+                changeCardColor(report.getLastPlayReport().isCardCorrect(), choosenCardActor);
+                break;
+            case END:
+                endTurn(report);
                 break;
             case PUT:
                 useCard(report.getLastPlayReport());
@@ -63,9 +63,14 @@ public class GameController {
             case PULL:
                 pullCards(report.getLastPlayReport(), getHumanHand());
                 break;
-            case END:
-                endTurn(report);
-                break;
+        }
+    }
+
+    private void changeCardColor(boolean isValid, CardActor cardActor) {
+        if (isValid) {
+            cardActor.setColor(Color.LIME);
+        } else {
+            cardActor.setColor(Color.SCARLET);
         }
     }
 
@@ -84,8 +89,10 @@ public class GameController {
             endTurnButton.setActive(true);
             pullButton.setActive(false);
         }
+
         addCardActorToStackGroup(playedCard);
         endIfPlayerWon(player);
+
         if (alignCards) {
             player.moveCloserToStartingPosition();
         }
@@ -99,7 +106,12 @@ public class GameController {
     }
 
     private void pullCards(PlayReport playReport, PlayerHandGroup playerGroup) {
-        if (playReport.getCardsToPull().size() > 1) {
+        Card singleDrawn = playReport.getSingleDrawn();
+        if(singleDrawn != null){
+            pullCard(singleDrawn,playerGroup);
+            activeRescueCard(singleDrawn);
+        }
+        else{
             for (Card card : playReport.getCardsToPull()) {
                 pullCard(card, playerGroup);
             }
@@ -107,13 +119,6 @@ public class GameController {
             if (playerGroup == getHumanHand()) {
                 pullButton.setActive(true);
                 endTurnButton.setActive(false);
-            }
-        } else {
-            pullCard(playReport.getCardsToPull().get(0), playerGroup);
-            if (playerGroup == getHumanHand()) {
-                pullButton.setActive(false);
-                endTurnButton.setActive(true);
-                dragAndDropManager.focusOneCard(getHumanHand().getCardActor(playReport.getCardsToPull().get(0)));
             }
         }
     }
@@ -129,6 +134,12 @@ public class GameController {
         player.addActor(drawnCard);
     }
 
+    private void activeRescueCard(Card singleDraw){
+        pullButton.setActive(false);
+        endTurnButton.setActive(true);
+        dragAndDropManager.focusOneCard(getHumanHand().getCardActor(singleDraw));
+    }
+
     private void showCardChooser(CardActor cardPlayed) {
         CardActor stackCard = stackCardsGroup.peekCardActor();
         putCard(cardPlayed, getHumanHand(), false);
@@ -139,8 +150,7 @@ public class GameController {
     public void addCardActorToStackGroup(CardActor cardActor) {
         try {
             stage.addActor(cardActor);
-        }
-        catch (NullPointerException e){
+        } catch (NullPointerException e) {
             throw new CardNotFoundException();
         }
         cardActor.setUpSideDown(false);
@@ -210,17 +220,15 @@ public class GameController {
             }, (i + 1) * delta); // Opóźnienie względem indeksu
         }
     }
-    private void processComputerTurn(PlayReport playReport, PlayerHandGroup playerHand){
-        Card card = playReport.getPlay().getCardPlayed();
 
-        if (playReport.getCardsToPull() != null && !playReport.getCardsToPull().isEmpty()) {
-            pullCards(playReport, playerHand);
-        } else if (playReport.getPlay().getAction() == Action.PULL) {
-            pullCard(playReport.getCardsToPull().get(0), playerHand);
+    private void processComputerTurn(PlayReport playReport, PlayerHandGroup playerHand) {
+        Card cardPlayed = playReport.getPlay().getCardPlayed();
+        if(cardPlayed != null){
+            CardActor cardActor = playerHand.getCardActor(cardPlayed);
+            putCard(cardActor,playerHand,true);
         }
-        else  {
-            CardActor cardActor = playerHand.getCardActor(card);
-            putCard(cardActor, playerHand, true);
+        else{
+            pullCards(playReport,playerHand);
         }
     }
 
