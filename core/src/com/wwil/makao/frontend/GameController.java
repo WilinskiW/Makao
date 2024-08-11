@@ -29,6 +29,7 @@ public class GameController {
     private GameButton pullButton;
     private GameButton endTurnButton;
     private final DragAndDropManager dragAndDropManager = new DragAndDropManager(this);
+    private final SoundManager soundManager = new SoundManager();
     private CardActor choosenCardActor;
     private boolean inputBlockActive = false;
 
@@ -98,6 +99,7 @@ public class GameController {
         }
 
         addCardActorToStackGroup(playedCard);
+        soundManager.play("put.wav");
         endIfPlayerWon(player);
 
         if (alignCards) {
@@ -122,6 +124,7 @@ public class GameController {
                 endTurnButton.setActive(false);
             }
         }
+        soundManager.play("pull.wav");
     }
 
     private void pullCard(Card card, PlayerHandGroup player) {
@@ -304,5 +307,9 @@ public class GameController {
 
     public GameplayScreen getGameplayScreen() {
         return gameplayScreen;
+    }
+
+    public SoundManager getSoundManager() {
+        return soundManager;
     }
 }
