@@ -23,6 +23,10 @@ public class MakaoBackend {
     }
 
     public RoundReport processHumanPlay(Play humanPlay) {
+        if(humanPlay.getAction() == Action.DRAG && roundReport.haveManyPlayReports()){
+            deleteUnnecessaryDrags();
+        }
+
         if (humanPlay.getAction() == Action.PULL) {
             roundReport.addPlayRaport(playExecutor.createPlayReport(humanPlay));
             return roundReport;
@@ -44,6 +48,12 @@ public class MakaoBackend {
             playExecutor.putCard(humanPlay.getCardPlayed());
         }
         return roundReport;
+    }
+
+    private void deleteUnnecessaryDrags(){
+        PlayReport dragReport = roundReport.getLastPlayReport();
+        roundReport.getPlayReports().removeIf(playReport -> playReport.getPlay().getAction() == Action.DRAG);
+        roundReport.addPlayRaport(dragReport);
     }
 
     private void startRound() {

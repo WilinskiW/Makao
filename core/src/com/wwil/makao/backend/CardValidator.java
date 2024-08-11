@@ -9,6 +9,8 @@ private final MakaoBackend backend;
 
     public boolean isValid(Card chosenCard) {
         Card stackCard = backend.getStack().peekCard();
+
+        // Sprawdzanie, czy gracz może położyć kolejną kartę o tej samej randze
         if (!backend.getHumanPlayedCards().isEmpty()) {
             return chosenCard.getRank() == backend.getHumanPlayedCards().get(0).getRank();
         }

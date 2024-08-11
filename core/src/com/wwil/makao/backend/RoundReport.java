@@ -20,6 +20,10 @@ public class RoundReport {
         return computerPlayReports;
     }
 
+    public boolean haveManyPlayReports(){
+        return playReports.size() > 1;
+    }
+
     public PlayReport getLastPlayReport(){
         return playReports.get(getPlayReports().size()-1);
     }
