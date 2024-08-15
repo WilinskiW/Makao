@@ -1,11 +1,9 @@
 package com.wwil.makao.backend;
 
-import java.util.List;
 public class PlayReport {
     private final Player player;
     private final Play play;
     private Card singleDrawn;
-    private List<Card> cardsToPull;
     private boolean isCardCorrect;
 
     public PlayReport(Player player, Play play) {
@@ -28,13 +26,6 @@ public class PlayReport {
     public PlayReport setCardCorrect(boolean cardCorrect) {
         isCardCorrect = cardCorrect;
         return this;
-    }
-    public List<Card> getCardsToPull() {
-        return cardsToPull;
-    }
-
-    public void setCardsToPull(List<Card> cardsToPull) {
-        this.cardsToPull = cardsToPull;
     }
 
     public Card getSingleDrawn() {

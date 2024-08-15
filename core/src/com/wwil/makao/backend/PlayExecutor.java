@@ -5,47 +5,33 @@ import java.util.List;
 
 public class PlayExecutor {
     private final MakaoBackend backend;
-    private final List<Card> pullDeck = new ArrayList<>();
 
     public PlayExecutor(MakaoBackend backend) {
         this.backend = backend;
     }
 
-    public PlayReport createPlayReport(Play play) {
-        PlayReport playReport = new PlayReport(currentPlayer(), play);
+    public PlayReport createPlayReport(Player player,Play play) {
+        PlayReport playReport = new PlayReport(player, play);
 
-        //1. Jeżeli gracz jest atakowany to dobierz karty
-        if(currentPlayer().isAttack()){
-            multiPull(playReport);
-            return playReport;
-        }
-
-        //2. Jeżeli masz kartę do zagrania to połóż ją
-        if (play.getCardPlayed() != null) {
-            putCard(play.getCardPlayed());
-            return playReport.setCardCorrect(true);
-        }
-
-        //3. Jeżeli nie spełniłeś powyższych kroków to dobierz jedną kartę
-        if (play.getAction() == Action.PULL) {
-            singlePull(playReport);
+        switch (play.getAction()){
+            case END:
+                return end(playReport);
+            case PUT:
+                putCard(play.getCardPlayed());
+                return playReport.setCardCorrect(true);
+            case PULL:
+               return pull(playReport);
         }
 
         return playReport;
     }
 
-    private void multiPull(PlayReport playReport){
-        List<Card> cardsToPull = new ArrayList<>(pullDeck);
-        currentPlayer().addCardsToHand(cardsToPull);
-        currentPlayer().setAttack(false);
-        playReport.setCardsToPull(cardsToPull);
-        pullDeck.clear();
-    }
-
-    private void singlePull(PlayReport playReport) {
-        Card drawn = backend.takeCardFromGameDeck();
-        playReport.getPlayer().addCardToHand(drawn);
-        playReport.setSingleDrawn(drawn);
+    private PlayReport end(PlayReport playReport){
+        //Sprawdź czy player nie został po zmieniony
+        if(playReport.getPlayer() == currentPlayer()){
+            backend.nextPlayer();
+        }
+        return playReport;
     }
 
     public void putCard(Card cardPlayed) {
@@ -55,6 +41,12 @@ public class PlayExecutor {
             backend.humanPlayedCards.add(cardPlayed);
         }
         useCardAbility(cardPlayed);
+    }
+
+    private PlayReport pull(PlayReport playReport) {
+        playReport.getPlayer().addCardToHand(playReport.getPlay().getDrawnCard());
+        playReport.setSingleDrawn(playReport.getPlay().getDrawnCard());
+        return playReport;
     }
 
     private void useCardAbility(Card card) {
@@ -84,7 +76,7 @@ public class PlayExecutor {
 
 
     private void attack(int amountOfCards) {
-        pullDeck.addAll(backend.giveCards(amountOfCards));
+        backend.getPlayMaker().increaseAmountOfPulls(amountOfCards);
         getNextPlayer().setAttack(true);
     }
 
@@ -94,10 +86,16 @@ public class PlayExecutor {
                 attack(5);
                 break;
             case SPADE:
-                //attackPrevious(5);
+                attackPrevious();
                 attack(5);
                 break;
         }
+    }
+
+    private void attackPrevious(){
+        backend.getPlayMaker().increaseAmountOfPulls(5);
+        backend.playerBefore();
+        backend.currentPlayer().setAttack(true);
     }
 
     public Stack getStack() {
@@ -111,5 +109,9 @@ public class PlayExecutor {
     public Player currentPlayer() {
         return backend.currentPlayer();
     }
-    public Player getNextPlayer(){return backend.getNextPlayer();}
+
+    public Player getNextPlayer() {
+        return backend.getNextPlayer();
+    }
+    public Player getPlayerBefore(){return backend.getPlayerBefore();}
 }

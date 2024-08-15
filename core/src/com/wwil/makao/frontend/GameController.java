@@ -39,47 +39,40 @@ public class GameController {
     }
 
     public void executePut(Play play, CardActor cardActor) {
-        if (play.getAction() == Action.PUT && play.getCardPlayed().getRank().isRankActivateChooser()) {
-            throw new UnsupportedOperationException("Card chooser jest nieaktywny");
-//            showCardChooser(cardActor);
-//            return;
+        if (play.getAction() == Action.PUT && play.isCardActivateChooser()) {
+            showCardChooser(cardActor);
+            return;
         }
         choosenCardActor = cardActor;
         executePlay(play);
     }
 
     public void executePlay(Play play) {
-        RoundReport report;
-        report = backend.processHumanPlay(play);
+        RoundReport report = backend.processHumanPlay(play);
+        showHumanPlay(play, report);
+        if (play.getAction() == Action.END) {
+            executeComputersPlayReport(report);
+        }
+    }
+
+    private void showHumanPlay(Play play, RoundReport report) {
         switch (play.getAction()) {
-            case DRAG:
-                changeCardColor(report.getLastPlayReport().isCardCorrect(), choosenCardActor);
-                break;
             case END:
-                endTurn(report);
+                endHumanTurn();
                 break;
             case PUT:
                 useCard(report.getLastPlayReport());
                 break;
             case PULL:
-                pullCards(report.getLastPlayReport(), humanHand());
+                pull(report.getLastPlayReport(), humanHand());
                 break;
         }
     }
 
-    private void changeCardColor(boolean isValid, CardActor cardActor) {
-        if (isValid) {
-            cardActor.setColor(Color.LIME);
-        } else {
-            cardActor.setColor(Color.SCARLET);
-        }
-    }
-
-    private void endTurn(RoundReport report) {
+    private void endHumanTurn() {
         cardChooser.setVisibility(false);
         dragAndDropManager.startListening();
         turnOffHumanInput();
-        executeComputersPlayReport(report);
     }
 
     private void useCard(PlayReport playReport) {
@@ -107,41 +100,28 @@ public class GameController {
         }
     }
 
-    private void pullCards(PlayReport playReport, PlayerHandGroup playerGroup) {
-        Card singleDrawn = playReport.getSingleDrawn();
-        if (singleDrawn != null) {
-            pullCard(singleDrawn, playerGroup);
-            if (playerGroup == humanHand()) {
-                activeRescueCard(singleDrawn);
-            }
-        } else {
-            for (Card card : playReport.getCardsToPull()) {
-                pullCard(card, playerGroup);
-            }
 
-            if (playerGroup == humanHand()) {
-                pullButton.setActive(true);
-                endTurnButton.setActive(false);
-            }
+    private void pull(PlayReport playReport, PlayerHandGroup player) {
+        CardActor drawnCardActor = cardActorFactory.createCardActor(playReport.getSingleDrawn());
+        if (player == humanHand()) {
+            adjustHumanPull(drawnCardActor);
         }
+        player.addActor(drawnCardActor);
         soundManager.play("pull.wav");
     }
 
-    private void pullCard(Card card, PlayerHandGroup player) {
-        CardActor drawnCard = cardActorFactory.createCardActor(card);
-        if (player == humanHand()) {
-            drawnCard.setUpSideDown(false);
-            dragAndDropManager.prepareDragAndDrop(drawnCard);
-            pullButton.setActive(false);
-            endTurnButton.setActive(true);
-        }
-        player.addActor(drawnCard);
-    }
-
-    private void activeRescueCard(Card singleDraw) {
+    private void adjustHumanPull(CardActor drawnCardActor) {
+        drawnCardActor.setUpSideDown(false);
+        dragAndDropManager.prepareDragAndDrop(drawnCardActor);
         pullButton.setActive(false);
         endTurnButton.setActive(true);
-        dragAndDropManager.focusOneCard(humanHand().getCardActor(singleDraw));
+        activeRescueCard(drawnCardActor);
+    }
+
+    private void activeRescueCard(CardActor rescueCardActor) {
+        // pullButton.setActive(false);
+        endTurnButton.setActive(true);
+        dragAndDropManager.focusRescueCard(rescueCardActor);
     }
 
     private void showCardChooser(CardActor cardPlayed) {
@@ -149,6 +129,14 @@ public class GameController {
         putCard(cardPlayed, humanHand(), false);
         cardChooser.setVisibility(true);
         cardChooser.getManager().setDisplayCard(stackCard, cardPlayed);
+    }
+
+    protected void changeCardColor(boolean isValid, CardActor cardActor) {
+        if (isValid) {
+            cardActor.setColor(Color.LIME);
+        } else {
+            cardActor.setColor(Color.SCARLET);
+        }
     }
 
     public void addCardActorToStackGroup(CardActor cardActor) {
@@ -204,7 +192,7 @@ public class GameController {
 //////////////////////
 
     private void executeComputersPlayReport(final RoundReport roundReport) {
-        float delta = 1.65f;
+        float delta = 1.50f;
         final List<PlayReport> computerPlayReports = roundReport.getComputerPlayReports();
         final int numberOfComputers = computerPlayReports.size();
         final AtomicInteger completedComputers = new AtomicInteger(0);
@@ -227,12 +215,17 @@ public class GameController {
     }
 
     private void processComputerTurn(PlayReport playReport, PlayerHandGroup playerHand) {
-        Card cardPlayed = playReport.getPlay().getCardPlayed();
-        if (cardPlayed != null) {
-            CardActor cardActor = playerHand.getCardActor(cardPlayed);
-            putCard(cardActor, playerHand, true);
-        } else {
-            pullCards(playReport, playerHand);
+        switch (playReport.getPlay().getAction()) {
+            case END:
+                endHumanTurn();
+                break;
+            case PUT:
+                Card cardPlayed = playReport.getPlay().getCardPlayed();
+                putCard(playerHand.getCardActor(cardPlayed), playerHand, true);
+                break;
+            case PULL:
+                pull(playReport, playerHand);
+                break;
         }
     }
 

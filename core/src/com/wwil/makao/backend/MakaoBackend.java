@@ -16,71 +16,79 @@ public class MakaoBackend {
     public MakaoBackend() {
         createCardsToGameDeck();
         //todo: Zmienic po testach
-        stack.addCardToStack(getStartStackCard());
-        //stack.addCardToStack(new Card(Rank.FIVE, Suit.SPADE));
+        //stack.addCardToStack(getStartStackCard());
+        stack.addCardToStack(new Card(Rank.FIVE, Suit.SPADE));
         createPlayers();
         startRound();
     }
 
+    //todo: Wyłączyć draga z wrzucaniem go do reportu i oddzielenie go od action
+    //todo: Schemat aktywacji przycisków (Multi pull i single pull)
+    //todo: Report mówi co powinno być aktywne (boolean putActive, boolean pullActive, boolean endActive)
+    //todo: Animacje
+
     public RoundReport processHumanPlay(Play humanPlay) {
-        if(humanPlay.getAction() == Action.DRAG && roundReport.haveManyPlayReports()){
-            deleteUnnecessaryDrags();
+        switch (humanPlay.getAction()) {
+            case PULL:
+                return pullCard(humanPlay);
+            case END:
+                return endTurn(humanPlay);
+            case PUT:
+                return putCard(humanPlay);
+            default:
+                throw new IllegalArgumentException("Unsupported action");
         }
+    }
 
-        if (humanPlay.getAction() == Action.PULL) {
-            roundReport.addPlayRaport(playExecutor.createPlayReport(humanPlay));
-            return roundReport;
-        }
+    private RoundReport pullCard(Play humanPlay){
+        humanPlay.setDrawnCard(takeCardFromGameDeck());
+        roundReport.addPlayRaport(playExecutor.createPlayReport(currentPlayer(),humanPlay));
+        return roundReport;
+    }
 
-        //Gracz decyduje o końcu tury
-        if (humanPlay.getAction() == Action.END) {
-            humanPlayedCards.clear();
-            return endTurn();
-        }
+    private RoundReport endTurn(Play humanPlay){
+        humanPlayedCards.clear();
+        roundReport.addPlayRaport(playExecutor.createPlayReport(currentPlayer(),humanPlay));
+        playRound();
+        return sendRoundReport();
+    }
 
-        //scenario for put:
+    private RoundReport putCard(Play humanPlay){
         boolean isValid = validator.isValid(humanPlay.getCardPlayed());
         roundReport.addPlayRaport(
                 new PlayReport(getHumanPlayer(), humanPlay)
                         .setCardCorrect(isValid));
 
-        if (isValid && !humanPlay.isDragging()) {
+        if (isValid) {
             playExecutor.putCard(humanPlay.getCardPlayed());
         }
         return roundReport;
     }
 
-    private void deleteUnnecessaryDrags(){
-        PlayReport dragReport = roundReport.getLastPlayReport();
-        roundReport.getPlayReports().removeIf(playReport -> playReport.getPlay().getAction() == Action.DRAG);
-        roundReport.addPlayRaport(dragReport);
+    public boolean isDraggedCardValid(Card choosenCard){
+        return validator.isValid(choosenCard);
     }
 
     private void startRound() {
         roundReport = new RoundReport();
     }
 
-    private RoundReport endTurn() {
-        nextPlayer();
-        playRound();
-        return sendRoundReport();
-    }
 
     private void playRound() {
         while (currentPlayer() != getHumanPlayer() || currentPlayer().checkIfPlayerHaveNoCards()) {
-            addPlayReports();
-            nextPlayer();
+            addPlayReports(currentPlayer());
         }
     }
 
-    private void addPlayReports(){
-        List<Play> plays = playMaker.makePlays(currentPlayer());
-        for(Play play : plays){
-            roundReport.addPlayRaport(playExecutor.createPlayReport(play));
+    private void addPlayReports(Player player) {
+        List<Play> plays = playMaker.makePlays(player);
+        for (Play play : plays) {
+            roundReport.addPlayRaport(playExecutor.createPlayReport(player,play));
         }
+
     }
 
-    private RoundReport sendRoundReport(){
+    private RoundReport sendRoundReport() {
         RoundReport report = roundReport;
         startRound();
         return report;
@@ -111,6 +119,7 @@ public class MakaoBackend {
             players.add(player);
         }
     }
+
     protected List<Card> giveCards(int amount) {
         List<Card> cards = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
@@ -119,24 +128,25 @@ public class MakaoBackend {
         return cards;
     }
 
-    void playerBefore() {
-        currentPlayerIndex--;
-        if (currentPlayerIndex < 0) {
-            currentPlayerIndex = players.size()-1;
-        }
-    }
-
-    void nextPlayer() {
-        currentPlayerIndex++;
-        if (currentPlayerIndex > players.size()-1) {
-            currentPlayerIndex = 0;
-        }
-    }
-    Player currentPlayer() {
+    protected Player currentPlayer() {
         return players.get(currentPlayerIndex);
     }
 
-    Player getPlayerBefore() {
+    protected void nextPlayer() {
+        currentPlayerIndex++;
+        if (currentPlayerIndex > players.size() - 1) {
+            currentPlayerIndex = 0;
+        }
+    }
+
+    protected void playerBefore() {
+        currentPlayerIndex--;
+        if (currentPlayerIndex < 0) {
+            currentPlayerIndex = players.size() - 1;
+        }
+    }
+
+    protected Player getPlayerBefore() {
         int playerBeforeIndex = currentPlayerIndex - 1;
         if (playerBeforeIndex < 0) {
             playerBeforeIndex = players.size() - 1;
@@ -170,5 +180,9 @@ public class MakaoBackend {
 
     public List<Player> getPlayers() {
         return players;
+    }
+
+    public PlayMaker getPlayMaker() {
+        return playMaker;
     }
 }

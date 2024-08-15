@@ -88,14 +88,16 @@ public class GameStagePreparer {
     private void test(int index) {
         switch (index) {
             case 0:
-//                handGroups.get(index).getPlayerHand().getCards().clear();
-//                handGroups.get(index).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.SEVEN, Suit.CLUB)));
-//                handGroups.get(index).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE, Suit.SPADE)));
+                handGroups.get(index).getPlayerHand().getCards().clear();
+                handGroups.get(index).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.TWO, Suit.CLUB)));
+                handGroups.get(index).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.TWO, Suit.SPADE)));
+                handGroups.get(index).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.TWO, Suit.DIAMOND)));
+                handGroups.get(index).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.TWO, Suit.HEART)));
                 break;
             case 1:
-//                handGroups.get(1).getPlayerHand().getCards().clear();
-//                handGroups.get(1).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.SEVEN, Suit.CLUB)));
-//                handGroups.get(1).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE, Suit.SPADE)));
+                handGroups.get(1).getPlayerHand().getCards().clear();
+                handGroups.get(1).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.SEVEN, Suit.CLUB)));
+                handGroups.get(1).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K, Suit.SPADE)));
                 break;
             case 2:
 //                handGroups.get(2).getPlayerHand().getCards().clear();
@@ -103,12 +105,12 @@ public class GameStagePreparer {
 //                handGroups.get(2).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.THREE, Suit.SPADE)));
                 break;
             case 3:
-                handGroups.get(3).getPlayerHand().getCards().clear();
-                handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K, Suit.CLUB)));
-                handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K, Suit.SPADE)));
-                handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K, Suit.DIAMOND)));
-                handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K, Suit.HEART)));
-                handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.FIVE, Suit.HEART)));
+//                handGroups.get(3).getPlayerHand().getCards().clear();
+//                handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K, Suit.CLUB)));
+//                handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K, Suit.SPADE)));
+//                handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K, Suit.DIAMOND)));
+//                handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.K, Suit.HEART)));
+//                handGroups.get(3).getPlayerHand().addCardsToHand(Collections.singletonList(new Card(Rank.FIVE, Suit.HEART)));
                 break;
         }
     }

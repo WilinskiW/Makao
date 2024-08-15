@@ -2,6 +2,7 @@ package com.wwil.makao.backend;
 
 public class Play {
     private Card cardPlayed;
+    private Card drawnCard;
     private Action action;
     private Card cardFromChooser;
 
@@ -12,9 +13,8 @@ public class Play {
 
     public Play() {
     }
-
-    public boolean isDragging(){
-        return action == Action.DRAG;
+    public boolean isCardActivateChooser(){
+        return cardPlayed.getRank().isRankActivateChooser();
     }
 
     public Card getCardPlayed() {
@@ -36,12 +36,12 @@ public class Play {
         return this;
     }
 
-    public Play setCardFromChooser(Card cardFromChooser) {
-        this.cardFromChooser = cardFromChooser;
-        return this;
+    public Card getDrawnCard() {
+        return drawnCard;
     }
 
-    Card getCardFromChooser() {
-        return cardFromChooser;
+    public Play setDrawnCard(Card drawnCard) {
+        this.drawnCard = drawnCard;
+        return this;
     }
 }
