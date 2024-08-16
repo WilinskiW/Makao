@@ -4,34 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayMaker {
-    private final MakaoBackend backend;
+    private final RoundManager roundManager;
     private final CardFinder cardFinder;
-    private List<Play> plays;
     private int amountOfPulls = 0;
 
-    public PlayMaker(MakaoBackend backend) {
-        this.backend = backend;
-        this.cardFinder = new CardFinder(backend.getValidator());
+    public PlayMaker(RoundManager roundManager) {
+        this.roundManager = roundManager;
+        this.cardFinder = new CardFinder(roundManager.getValidator());
     }
 
     public List<Play> makePlays(Player player) {
-        plays = new ArrayList<>();
+        List<Play> plays = new ArrayList<>();
 
         // Obsługa tury - atak lub tura domyślna
-        handleTurn(player);
+        handleTurn(player, plays);
 
-        if (lastPlayIsEnd()) {
-            return plays;
+        if (!lastPlayIsEnd(plays)) {
+            // Jeśli tura obronna zakończyła się, wykonaj turę domyślną
+            handleTurn(player, plays);
         }
-
-        // Jeśli tura obronna zakończyła się, wykonaj turę domyślną
-        handleTurn(player);
 
         return plays;
     }
 
-    private void handleTurn(Player player) {
-        List<Card> validCards = cardFinder.giveValidCards(player, backend.getStack().peekCard());
+    private void handleTurn(Player player, List<Play> plays) {
+        List<Card> validCards = cardFinder.giveValidCards(player, roundManager.getDeckManager().peekStackCard());
 
         if (!validCards.isEmpty()) {
             plays.addAll(createPutPlays(validCards));
@@ -43,49 +40,79 @@ public class PlayMaker {
     private List<Play> createPutPlays(List<Card> cards) {
         List<Play> plays = new ArrayList<>();
         for (Card card : cards) {
-            plays.add(new Play().setCardPlayed(card).setAction(Action.PUT));
+            plays.add(createPutPlay(card));
         }
-        plays.add(new Play().setAction(Action.END));
+        plays.add(createEndPlay());
         return plays;
+    }
+
+    private Play createPutPlay(Card card){
+        return new Play().setCardPlayed(card).setAction(Action.PUT);
+    }
+
+    private Play createEndPlay(){
+        return new Play().setAction(Action.END);
     }
 
     private List<Play> pullRescueCard(Player player) {
         List<Play> plays = new ArrayList<>();
-        Card rescueCard = backend.takeCardFromGameDeck();
+        Card rescueCard = pullCard();
 
-        plays.add(new Play().setDrawnCard(rescueCard).setAction(Action.PULL));
+        plays.add(createPullPlay(rescueCard));
 
-        if (backend.getValidator().isValid(rescueCard)) {
-            plays.add(new Play().setCardPlayed(rescueCard).setAction(Action.PUT));
-            plays.add(new Play().setAction(Action.END));
-
-            if (player.isAttack()) {
-                player.setAttack(false);
-                backend.getNextPlayer().setAttack(true);
-            }
-
-            return plays;
+        if (roundManager.getValidator().isValid(rescueCard)) {
+            plays.addAll(createValidRescuePlays(player ,rescueCard));
         }
-
-        if (player.isAttack()) {
-            pullTheRestOfTheCards(player);
+        else if (player.isAttack()) {
+            pullRemainingCards(player, plays);
         } else {
-            plays.add(new Play().setAction(Action.END));
+            plays.add(createEndPlay());
         }
         return plays;
     }
 
-    private void pullTheRestOfTheCards(Player player) {
+    private Card pullCard(){
+        return roundManager.getDeckManager().takeCardFromGameDeck();
+    }
+
+    private Play createPullPlay(Card card){
+        return new Play().setDrawnCard(card).setAction(Action.PULL);
+    }
+
+    private List<Play> createValidRescuePlays(Player player, Card rescueCard){
+        List<Play> plays = new ArrayList<>();
+        plays.add(createPutPlay(rescueCard));
+        plays.add(createEndPlay());
+
+        if (player.isAttack()) {
+            player.setAttack(false);
+            roundManager.getPlayerManager().getNextPlayer().setAttack(true);
+        }
+
+        return plays;
+    }
+
+    private void pullRemainingCards(Player player, List<Play> plays) {
+        plays.addAll(createPullPlays());
+        resetAttackState(player);
+    }
+
+    private List<Play> createPullPlays(){
+        List<Play> plays = new ArrayList<>();
         amountOfPulls--;
         for (int i = 0; i < amountOfPulls; i++) {
-            plays.add(new Play().setAction(Action.PULL).setDrawnCard(backend.takeCardFromGameDeck()));
+            plays.add(createPullPlay(pullCard()));
         }
+        return plays;
+    }
+
+    private void resetAttackState(Player player){
         amountOfPulls = 0;
         player.setAttack(false);
     }
 
 
-    private boolean lastPlayIsEnd() {
+    private boolean lastPlayIsEnd(List<Play> plays) {
         return plays.get(plays.size() - 1).getAction() == Action.END;
     }
 

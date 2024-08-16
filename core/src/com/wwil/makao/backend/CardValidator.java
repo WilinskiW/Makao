@@ -1,21 +1,23 @@
 package com.wwil.makao.backend;
 
 public class CardValidator {
-private final MakaoBackend backend;
+private final RoundManager roundManager;
+private final DeckManager deckManager;
 
-    public CardValidator(MakaoBackend backend) {
-        this.backend = backend;
+    public CardValidator(RoundManager roundManager, DeckManager deckManager) {
+        this.roundManager = roundManager;
+        this.deckManager = deckManager;
     }
 
     public boolean isValid(Card chosenCard) {
-        Card stackCard = backend.getStack().peekCard();
+        Card stackCard = deckManager.peekStackCard();
 
         // Sprawdzanie, czy gracz może położyć kolejną kartę o tej samej randze
-        if (!backend.getHumanPlayedCards().isEmpty()) {
-            return chosenCard.getRank() == backend.getHumanPlayedCards().get(0).getRank();
+        if (!roundManager.getHumanPlayedCards().isEmpty()) {
+            return chosenCard.getRank() == roundManager.getHumanPlayedCards().get(0).getRank();
         }
 
-       if(backend.currentPlayer().isAttack()){
+       if(roundManager.getPlayerManager().getCurrentPlayer().isAttack()){
            return isValidForDefence(chosenCard,stackCard);
        }
        else{

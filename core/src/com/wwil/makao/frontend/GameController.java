@@ -24,7 +24,7 @@ public class GameController {
     private final MakaoBackend backend = new MakaoBackend();
     private final CardActorFactory cardActorFactory = new CardActorFactory();
     private final List<PlayerHandGroup> handGroups = new ArrayList<>();
-    private final StackCardsGroup stackCardsGroup = new StackCardsGroup(backend.getStack());
+    private final StackCardsGroup stackCardsGroup = new StackCardsGroup(backend.getDeckManager());
     private CardChooserGroup cardChooser;
     private GameButton pullButton;
     private GameButton endTurnButton;
@@ -51,7 +51,7 @@ public class GameController {
         RoundReport report = backend.processHumanPlay(play);
         showHumanPlay(play, report);
         if (play.getAction() == Action.END) {
-            executeComputersPlayReport(report);
+            showComputersPlays(report);
         }
     }
 
@@ -113,14 +113,10 @@ public class GameController {
     private void adjustHumanPull(CardActor drawnCardActor) {
         drawnCardActor.setUpSideDown(false);
         dragAndDropManager.prepareDragAndDrop(drawnCardActor);
-        pullButton.setActive(false);
-        endTurnButton.setActive(true);
         activeRescueCard(drawnCardActor);
     }
 
     private void activeRescueCard(CardActor rescueCardActor) {
-        // pullButton.setActive(false);
-        endTurnButton.setActive(true);
         dragAndDropManager.focusRescueCard(rescueCardActor);
     }
 
@@ -151,7 +147,7 @@ public class GameController {
 
     private void endIfPlayerWon(PlayerHandGroup handGroup) {
         //Do czasu wprowadzenia menu
-        if (handGroup.getPlayerHand().checkIfPlayerHaveNoCards() && handGroup.getChildren().isEmpty()) {
+        if (handGroup.getPlayer().checkIfPlayerHaveNoCards() && handGroup.getChildren().isEmpty()) {
             System.out.println(handGroup.getCardsAlignment() + " won");
             Gdx.app.exit();
         }
@@ -191,7 +187,7 @@ public class GameController {
 //     Komputer
 //////////////////////
 
-    private void executeComputersPlayReport(final RoundReport roundReport) {
+    private void showComputersPlays(final RoundReport roundReport) {
         float delta = 1.50f;
         final List<PlayReport> computerPlayReports = roundReport.getComputerPlayReports();
         final int numberOfComputers = computerPlayReports.size();
@@ -239,7 +235,7 @@ public class GameController {
 
     private PlayerHandGroup getHandGroup(Player player) {
         for (PlayerHandGroup handGroup : handGroups) {
-            if (handGroup.getPlayerHand() == player) {
+            if (handGroup.getPlayer() == player) {
                 return handGroup;
             }
         }

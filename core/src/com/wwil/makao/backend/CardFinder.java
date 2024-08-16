@@ -7,19 +7,19 @@ public class CardFinder {
     private final CardValidator validator;
     private List<Card> playerCards;
 
-    CardFinder(CardValidator validator) {
+    public CardFinder(CardValidator validator) {
         this.validator = validator;
     }
 
     public List<Card> giveValidCards(Player player, Card stackcard) {
         this.playerCards = player.getCards();
         if(player.isAttack()){
-            return findOnlyDefensiveCards(stackcard);
+            return findCardsForDefenceTurn(stackcard);
         }
-        return findAllPlayableCards(stackcard);
+        return findCardForNormalTurn(stackcard);
     }
 
-    private List<Card> findAllPlayableCards(Card stackCard) {
+    private List<Card> findCardForNormalTurn(Card stackCard) {
         List<Card> playableCards = new ArrayList<>();
         //Dodajemy karty, które mogą być zagrane
         for (Card card : playerCards) {
@@ -137,7 +137,7 @@ public class CardFinder {
     }
 
     //todo Aktywować obronę przed kartami
-    private List<Card> findOnlyDefensiveCards(Card attackingCard) {
+    private List<Card> findCardsForDefenceTurn(Card attackingCard) {
         List<Card> defensiveCards = new ArrayList<>();
 
         for (Card playerCard : playerCards) {

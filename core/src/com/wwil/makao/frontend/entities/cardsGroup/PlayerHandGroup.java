@@ -73,7 +73,7 @@ public class PlayerHandGroup extends Group {
         }
     }
 
-    public Player getPlayerHand() {
+    public Player getPlayer() {
         return player;
     }
 

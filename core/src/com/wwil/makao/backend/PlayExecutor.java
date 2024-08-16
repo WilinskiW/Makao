@@ -1,117 +1,69 @@
 package com.wwil.makao.backend;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class PlayExecutor {
-    private final MakaoBackend backend;
+    private final RoundManager roundManager;
+    private final AbilityHandler abilityHandler;
 
-    public PlayExecutor(MakaoBackend backend) {
-        this.backend = backend;
+    public PlayExecutor(RoundManager roundManager) {
+        this.roundManager = roundManager;
+        this.abilityHandler = new AbilityHandler(this.roundManager.getPlayerManager(), this.roundManager.getPlayMaker());
     }
 
-    public PlayReport createPlayReport(Player player,Play play) {
+    public PlayReport createPlayReport(Player player, Play play) {
         PlayReport playReport = new PlayReport(player, play);
 
-        switch (play.getAction()){
+        switch (play.getAction()) {
             case END:
-                return end(playReport);
+                return executeEndPlay(playReport);
             case PUT:
-                putCard(play.getCardPlayed());
-                return playReport.setCardCorrect(true);
+                return executePutPlay(playReport, play.getCardPlayed());
             case PULL:
-               return pull(playReport);
+                return executePullPlay(playReport);
+            default:
+                throw new IllegalArgumentException("Unsupported action");
         }
+    }
 
+    private PlayReport executeEndPlay(PlayReport playReport) {
+        if (roundManager.getPlayerManager().shouldProceedToNextPlayer(playReport.getPlayer())) {
+            roundManager.getPlayerManager().nextPlayer();
+        }
         return playReport;
     }
 
-    private PlayReport end(PlayReport playReport){
-        //Sprawdź czy player nie został po zmieniony
-        if(playReport.getPlayer() == currentPlayer()){
-            backend.nextPlayer();
-        }
-        return playReport;
+    private PlayReport executePutPlay(PlayReport playReport, Card cardPlayed) {
+        putCard(cardPlayed);
+        return playReport.setCardCorrect(true);
     }
 
     public void putCard(Card cardPlayed) {
-        getStack().addCardToStack(cardPlayed);
-        currentPlayer().removeCardFromHand(cardPlayed);
-        if (currentPlayer() == humanPlayer()) {
-            backend.humanPlayedCards.add(cardPlayed);
+        addToStack(cardPlayed);
+        removeCardFromPlayerHand(cardPlayed);
+        if (isHumanPlayer()) {
+            addCardToHumanPlayed(cardPlayed);
         }
-        useCardAbility(cardPlayed);
+        abilityHandler.useCardAbility(cardPlayed);
     }
 
-    private PlayReport pull(PlayReport playReport) {
+    private void addToStack(Card cardPlayed) {
+        roundManager.getDeckManager().getStack().addCardToStack(cardPlayed);
+    }
+
+    private void removeCardFromPlayerHand(Card cardPlayed) {
+        roundManager.getPlayerManager().getCurrentPlayer().removeCardFromHand(cardPlayed);
+    }
+
+    private boolean isHumanPlayer() {
+        return roundManager.getPlayerManager().getCurrentPlayer() == roundManager.getPlayerManager().getHumanPlayer();
+    }
+
+    private void addCardToHumanPlayed(Card cardPlayed) {
+        roundManager.getHumanPlayedCards().add(cardPlayed);
+    }
+
+    private PlayReport executePullPlay(PlayReport playReport) {
         playReport.getPlayer().addCardToHand(playReport.getPlay().getDrawnCard());
         playReport.setSingleDrawn(playReport.getPlay().getDrawnCard());
         return playReport;
     }
-
-    private void useCardAbility(Card card) {
-        switch (card.getRank().getAbility()) {
-            case CHANGE_SUIT:
-                //useChangeSuitAbility();
-                break;
-            case PLUS_2:
-                attack(2);
-                break;
-            case PLUS_3:
-                attack(3);
-                break;
-            case WAIT:
-                //useWaitAbility(wildCard);
-                break;
-            case DEMAND:
-                //useDemandAbility(wildCard);
-                break;
-            case KING:
-                chooseAbilityForKing(card);
-                break;
-            case WILD_CARD:
-                //useWildCard();
-        }
-    }
-
-
-    private void attack(int amountOfCards) {
-        backend.getPlayMaker().increaseAmountOfPulls(amountOfCards);
-        getNextPlayer().setAttack(true);
-    }
-
-    private void chooseAbilityForKing(Card card) {
-        switch (card.getSuit()) {
-            case HEART:
-                attack(5);
-                break;
-            case SPADE:
-                attackPrevious();
-                attack(5);
-                break;
-        }
-    }
-
-    private void attackPrevious(){
-        backend.getPlayMaker().increaseAmountOfPulls(5);
-        backend.playerBefore();
-        backend.currentPlayer().setAttack(true);
-    }
-
-    public Stack getStack() {
-        return backend.getStack();
-    }
-
-    public Player humanPlayer() {
-        return backend.getHumanPlayer();
-    }
-
-    public Player currentPlayer() {
-        return backend.currentPlayer();
-    }
-
-    public Player getNextPlayer() {
-        return backend.getNextPlayer();
-    }
-    public Player getPlayerBefore(){return backend.getPlayerBefore();}
 }

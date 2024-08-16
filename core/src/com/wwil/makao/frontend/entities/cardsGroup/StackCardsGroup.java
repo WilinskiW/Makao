@@ -3,15 +3,16 @@ package com.wwil.makao.frontend.entities.cardsGroup;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.wwil.makao.backend.DeckManager;
 import com.wwil.makao.backend.MakaoBackend;
 import com.wwil.makao.backend.Stack;
 import com.wwil.makao.frontend.entities.CardActor;
 
 public class StackCardsGroup extends Group {
-    private final Stack stack;
+    private final DeckManager deckManager;
 
-    public StackCardsGroup(Stack stack) {
-        this.stack = stack;
+    public StackCardsGroup(DeckManager deckManager) {
+        this.deckManager = deckManager;
     }
 
     @Override
@@ -22,7 +23,7 @@ public class StackCardsGroup extends Group {
             actor.setY(getChildren().get(0).getY());
         }
 
-        if(stack.isRefreshNeeded()){
+        if(deckManager.getStack().isRefreshNeeded()){
             dismantleCardActors();
         }
 
@@ -36,11 +37,7 @@ public class StackCardsGroup extends Group {
     private void dismantleCardActors(){
         for(int i = 0; i < getChildren().size-1; i++){
             CardActor cardActor = (CardActor) getChildren().removeIndex(i);
-            MakaoBackend.gameDeck.add(cardActor.getCard());
+            deckManager.getGameDeck().add(cardActor.getCard());
         }
-    }
-
-    public Stack getStack() {
-        return stack;
     }
 }
