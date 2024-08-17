@@ -10,6 +10,7 @@ public class RoundManager {
     private final PlayExecutor playExecutor;
     private final CardValidator validator;
     private RoundReport roundReport;
+    private int amountOfPulls = 0;
     private final List<Card> humanPlayedCards = new ArrayList<>();
 
     public RoundManager(PlayerManager playerManager, DeckManager deckManager) {
@@ -36,10 +37,14 @@ public class RoundManager {
 
     private RoundReport putCard(Play humanPlay) {
         boolean isValid = validator.isValid(humanPlay.getCardPlayed());
-        roundReport.addPlayRaport(new PlayReport(playerManager.getHumanPlayer(), humanPlay).setCardCorrect(isValid));
+        PlayReport putPlayReport = new PlayReport(playerManager.getHumanPlayer(), humanPlay).setCardCorrect(isValid);
+        roundReport.addPlayRaport(putPlayReport);
 
         if (isValid) {
-            playExecutor.putCard(humanPlay.getCardPlayed());
+            playExecutor.executePutPlay(putPlayReport,humanPlay.getCardPlayed());
+        }
+        else{
+            putPlayReport.setPutActive().setPullActive();
         }
         return roundReport;
     }
@@ -100,8 +105,20 @@ public class RoundManager {
         return playMaker;
     }
 
+    protected RoundReport getRoundReport() {
+        return roundReport;
+    }
+
     protected PlayerManager getPlayerManager() {
         return playerManager;
+    }
+
+    protected int getAmountOfPulls() {
+        return amountOfPulls;
+    }
+
+    protected void setAmountOfPulls(int amountOfPulls) {
+        this.amountOfPulls = amountOfPulls;
     }
 
     public List<Card> getHumanPlayedCards() {

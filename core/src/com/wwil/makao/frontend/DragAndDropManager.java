@@ -56,12 +56,16 @@ public class DragAndDropManager {
     }
 
     public void focusRescueCard(final CardActor card) {
+        deactivatedCardActors();
+        prepareDragAndDrop(card);
+        card.changeTransparency(1);
+    }
+
+    public void deactivatedCardActors(){
         for (CardActor cardActor : gameController.humanHand().getCardActors()) {
             cardActor.clearListeners();
             cardActor.changeTransparency(0.25f);
         }
-        prepareDragAndDrop(card);
-        card.changeTransparency(1);
     }
 
     public void startListening() {

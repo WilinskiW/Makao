@@ -11,8 +11,7 @@ public class RoundReport {
         playReports.add(playReport);
     }
 
-    public List<PlayReport> getComputerPlayReports() {
-        Player humanPlayer = playReports.get(0).getPlayer();
+    public List<PlayReport> getComputerPlayReports(Player humanPlayer) {
         List<PlayReport> computerPlayReports = new ArrayList<>();
         for (PlayReport playReport : playReports) {
             if (playReport.getPlayer() != humanPlayer) {
@@ -21,16 +20,24 @@ public class RoundReport {
         }
         return computerPlayReports;
     }
-
-    public boolean hasHumanPulLRescueCard() {
-        Player humanPlayer = playReports.get(0).getPlayer();
-        int counter = 0;
+    
+    public List<PlayReport> getHumanPlayReports(Player humanPlayer){
+        List<PlayReport> computerPlayReports = new ArrayList<>();
         for (PlayReport playReport : playReports) {
-            if (playReport.getPlayer() == humanPlayer && playReport.getPlay().getAction() == Action.PULL){
-                counter ++;
+            if (playReport.getPlayer() == humanPlayer) {
+                computerPlayReports.add(playReport);
             }
         }
-        return counter > 1;
+        return computerPlayReports;
+    }
+
+    public boolean hasPlayerPullBefore(Player player) {
+        for (PlayReport playReport : playReports) {
+            if (playReport.getPlayer() == player && playReport.getPlay().getAction() == Action.PULL){
+                return true;
+            }
+        }
+        return false;
     }
 
     public PlayReport getLastPlayReport() {

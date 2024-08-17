@@ -56,17 +56,21 @@ public class GameController {
     }
 
     private void showHumanPlay(Play play, RoundReport report) {
+        PlayReport currentPlayReport = report.getLastPlayReport();
         switch (play.getAction()) {
             case END:
                 endHumanTurn();
                 break;
             case PUT:
-                useCard(report.getLastPlayReport());
+                useCard(currentPlayReport);
                 break;
             case PULL:
-                pull(report.getLastPlayReport(), humanHand());
+                pull(currentPlayReport, humanHand(),report.hasPlayerPullBefore(humanHand().getPlayer()));
                 break;
         }
+
+        updateDragAndDropState(currentPlayReport);
+        updateButtonStates(currentPlayReport);
     }
 
     private void endHumanTurn() {
@@ -78,7 +82,6 @@ public class GameController {
     private void useCard(PlayReport playReport) {
         if (playReport.isCardCorrect()) {
             putCard(choosenCardActor, humanHand(), true);
-            pullButton.setActive(false);
         } else {
             positionCardInGroup(humanHand(), choosenCardActor);
         }
@@ -87,8 +90,6 @@ public class GameController {
     private void putCard(CardActor playedCard, PlayerHandGroup player, boolean alignCards) {
         if (player == humanHand()) {
             playedCard.clearListeners();
-            endTurnButton.setActive(true);
-            pullButton.setActive(false);
         }
 
         addCardActorToStackGroup(playedCard);
@@ -101,23 +102,37 @@ public class GameController {
     }
 
 
-    private void pull(PlayReport playReport, PlayerHandGroup player) {
+    private void pull(PlayReport playReport, PlayerHandGroup player, boolean hasHumanPullBefore) {
         CardActor drawnCardActor = cardActorFactory.createCardActor(playReport.getSingleDrawn());
         if (player == humanHand()) {
-            adjustHumanPull(drawnCardActor);
+            adjustHumanPull(drawnCardActor, hasHumanPullBefore);
         }
         player.addActor(drawnCardActor);
         soundManager.play("pull.wav");
     }
 
-    private void adjustHumanPull(CardActor drawnCardActor) {
+    private void adjustHumanPull(CardActor drawnCardActor, boolean hasHumanPullBefore) {
         drawnCardActor.setUpSideDown(false);
         dragAndDropManager.prepareDragAndDrop(drawnCardActor);
-        activeRescueCard(drawnCardActor);
+        if(!hasHumanPullBefore){
+            dragAndDropManager.focusRescueCard(drawnCardActor);
+        }
+        else{
+            dragAndDropManager.deactivatedCardActors();
+        }
     }
 
-    private void activeRescueCard(CardActor rescueCardActor) {
-        dragAndDropManager.focusRescueCard(rescueCardActor);
+    private void updateDragAndDropState(PlayReport lastPlayReport){
+        if (lastPlayReport.isPutActive()) {
+            dragAndDropManager.startListening();
+        } else {
+            dragAndDropManager.deactivatedCardActors();
+        }
+    }
+
+    private void updateButtonStates(PlayReport lastPlayReport) {
+        pullButton.setActive(lastPlayReport.isPullActive());
+        endTurnButton.setActive(lastPlayReport.isEndActive());
     }
 
     private void showCardChooser(CardActor cardPlayed) {
@@ -177,8 +192,6 @@ public class GameController {
     }
 
     public void turnOffHumanInput() {
-        pullButton.setActive(false);
-        endTurnButton.setActive(false);
         Gdx.input.setInputProcessor(null);
         humanHand().changeTransparencyOfGroup(0.25f);
         setInputBlockActive(true);
@@ -189,7 +202,7 @@ public class GameController {
 
     private void showComputersPlays(final RoundReport roundReport) {
         float delta = 1.50f;
-        final List<PlayReport> computerPlayReports = roundReport.getComputerPlayReports();
+        final List<PlayReport> computerPlayReports = roundReport.getComputerPlayReports(humanHand().getPlayer());
         final int numberOfComputers = computerPlayReports.size();
         final AtomicInteger completedComputers = new AtomicInteger(0);
 
@@ -220,19 +233,22 @@ public class GameController {
                 putCard(playerHand.getCardActor(cardPlayed), playerHand, true);
                 break;
             case PULL:
-                pull(playReport, playerHand);
+                pull(playReport, playerHand,false);
                 break;
         }
     }
 
     private void turnOnHumanInput() {
         setInputBlockActive(false);
-        endTurnButton.setActive(false);
-        pullButton.setActive(true);
+        resetButtonsState();
         humanHand().changeTransparencyOfGroup(1f);
         Gdx.input.setInputProcessor(gameplayScreen.getStage());
     }
 
+    private void resetButtonsState(){
+        endTurnButton.setActive(false);
+        pullButton.setActive(true);
+    }
     private PlayerHandGroup getHandGroup(Player player) {
         for (PlayerHandGroup handGroup : handGroups) {
             if (handGroup.getPlayer() == player) {

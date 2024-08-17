@@ -18,7 +18,7 @@ public class PlayExecutor {
             case PUT:
                 return executePutPlay(playReport, play.getCardPlayed());
             case PULL:
-                return executePullPlay(playReport);
+                return executePullPlay(player, playReport);
             default:
                 throw new IllegalArgumentException("Unsupported action");
         }
@@ -31,12 +31,12 @@ public class PlayExecutor {
         return playReport;
     }
 
-    private PlayReport executePutPlay(PlayReport playReport, Card cardPlayed) {
+    protected PlayReport executePutPlay(PlayReport playReport, Card cardPlayed) {
         putCard(cardPlayed);
-        return playReport.setCardCorrect(true);
+        return playReport.setCardCorrect(true).setPutActive().setEndActive();
     }
 
-    public void putCard(Card cardPlayed) {
+    private void putCard(Card cardPlayed) {
         addToStack(cardPlayed);
         removeCardFromPlayerHand(cardPlayed);
         if (isHumanPlayer()) {
@@ -61,9 +61,62 @@ public class PlayExecutor {
         roundManager.getHumanPlayedCards().add(cardPlayed);
     }
 
-    private PlayReport executePullPlay(PlayReport playReport) {
-        playReport.getPlayer().addCardToHand(playReport.getPlay().getDrawnCard());
-        playReport.setSingleDrawn(playReport.getPlay().getDrawnCard());
-        return playReport;
+    private PlayReport executePullPlay(Player player, PlayReport playReport) {
+        pullCard(player, playReport);
+        return evaluateHumanAvailableActions(player, playReport);
+    }
+
+    private void pullCard(Player player, PlayReport playReport) {
+        Card drawnCard = playReport.getPlay().getDrawnCard();
+        player.addCardToHand(drawnCard);
+        playReport.setSingleDrawn(drawnCard);
+
+        if (player.isAttack()) {
+            decreaseAmountOfPulls();
+        }
+    }
+
+    private void decreaseAmountOfPulls() {
+        roundManager.setAmountOfPulls(roundManager.getAmountOfPulls() - 1);
+    }
+
+    private PlayReport evaluateHumanAvailableActions(Player player, PlayReport playReport) {
+        if (!isHumanPlayer()) {
+            return playReport;
+        }
+
+        if (player.isAttack()) {
+            return evaluateActionsWhileAttack(player, playReport);
+        } else {
+            return evaluateActionsInNormalTurn(player, playReport);
+        }
+    }
+
+    private PlayReport evaluateActionsWhileAttack(Player player, PlayReport playReport) {
+        if (isFirstPull(player)) {
+            return playReport.setPutActive().setPullActive();
+        }
+
+        if (hasRemainingPulls()) {
+            return playReport.setPullActive();
+        }
+
+        player.setAttack(false);
+        return playReport.setEndActive();
+    }
+
+    private boolean isFirstPull(Player player) {
+        return !roundManager.getRoundReport().hasPlayerPullBefore(player);
+    }
+
+    private boolean hasRemainingPulls() {
+        return roundManager.getAmountOfPulls() > 0;
+    }
+
+    private PlayReport evaluateActionsInNormalTurn(Player player, PlayReport playReport) {
+        if (isFirstPull(player)) {
+            return playReport.setPutActive().setEndActive();
+        }
+        return playReport.setPutActive().setPullActive();
     }
 }

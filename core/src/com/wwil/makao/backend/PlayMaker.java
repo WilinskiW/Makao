@@ -6,7 +6,6 @@ import java.util.List;
 public class PlayMaker {
     private final RoundManager roundManager;
     private final CardFinder cardFinder;
-    private int amountOfPulls = 0;
 
     public PlayMaker(RoundManager roundManager) {
         this.roundManager = roundManager;
@@ -46,11 +45,11 @@ public class PlayMaker {
         return plays;
     }
 
-    private Play createPutPlay(Card card){
+    private Play createPutPlay(Card card) {
         return new Play().setCardPlayed(card).setAction(Action.PUT);
     }
 
-    private Play createEndPlay(){
+    private Play createEndPlay() {
         return new Play().setAction(Action.END);
     }
 
@@ -61,9 +60,8 @@ public class PlayMaker {
         plays.add(createPullPlay(rescueCard));
 
         if (roundManager.getValidator().isValid(rescueCard)) {
-            plays.addAll(createValidRescuePlays(player ,rescueCard));
-        }
-        else if (player.isAttack()) {
+            plays.addAll(createValidRescuePlays(player, rescueCard));
+        } else if (player.isAttack()) {
             pullRemainingCards(player, plays);
         } else {
             plays.add(createEndPlay());
@@ -71,15 +69,15 @@ public class PlayMaker {
         return plays;
     }
 
-    private Card pullCard(){
+    private Card pullCard() {
         return roundManager.getDeckManager().takeCardFromGameDeck();
     }
 
-    private Play createPullPlay(Card card){
+    private Play createPullPlay(Card card) {
         return new Play().setDrawnCard(card).setAction(Action.PULL);
     }
 
-    private List<Play> createValidRescuePlays(Player player, Card rescueCard){
+    private List<Play> createValidRescuePlays(Player player, Card rescueCard) {
         List<Play> plays = new ArrayList<>();
         plays.add(createPutPlay(rescueCard));
         plays.add(createEndPlay());
@@ -97,17 +95,21 @@ public class PlayMaker {
         resetAttackState(player);
     }
 
-    private List<Play> createPullPlays(){
+    private List<Play> createPullPlays() {
         List<Play> plays = new ArrayList<>();
-        amountOfPulls--;
-        for (int i = 0; i < amountOfPulls; i++) {
+        roundManager.setAmountOfPulls(getAmountOfPulls() - 1);
+        for (int i = 0; i < roundManager.getAmountOfPulls(); i++) {
             plays.add(createPullPlay(pullCard()));
         }
         return plays;
     }
 
-    private void resetAttackState(Player player){
-        amountOfPulls = 0;
+    private int getAmountOfPulls() {
+        return roundManager.getAmountOfPulls();
+    }
+
+    private void resetAttackState(Player player) {
+        roundManager.setAmountOfPulls(0);
         player.setAttack(false);
     }
 
@@ -117,6 +119,6 @@ public class PlayMaker {
     }
 
     public void increaseAmountOfPulls(int amount) {
-        amountOfPulls += amount;
+        roundManager.setAmountOfPulls(getAmountOfPulls() + amount);
     }
 }

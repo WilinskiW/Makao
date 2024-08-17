@@ -46,7 +46,6 @@ public class AbilityHandler {
                 break;
             case SPADE:
                 attackPrevious();
-                attack(5);
                 break;
         }
     }
