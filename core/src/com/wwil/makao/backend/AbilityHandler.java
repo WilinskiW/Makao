@@ -9,10 +9,12 @@ public class AbilityHandler {
         this.playMaker = playMaker;
     }
 
-    protected void useCardAbility(Card card) {
+    protected void useCardAbility(PlayReport playReport) {
+        Card card = playReport.getPlay().getCardPlayed();
+
         switch (card.getRank().getAbility()) {
             case CHANGE_SUIT:
-                //useChangeSuitAbility();
+                changeSuit(playReport);
                 break;
             case PLUS_2:
                 attack(2);
@@ -24,19 +26,36 @@ public class AbilityHandler {
                 //useWaitAbility(wildCard);
                 break;
             case DEMAND:
-                //useDemandAbility(wildCard);
+                demand(playReport);
                 break;
             case KING:
                 chooseAbilityForKing(card);
                 break;
             case WILD_CARD:
-                //useWildCard();
+                createCard(playReport);
+                break;
+        }
+    }
+
+    private void changeSuit(PlayReport playReport){
+        if(playReport.getPlayer() == playerManager.getHumanPlayer()){
+            if (!playReport.getPlay().isChooserActive()) {
+                playReport.setChooserActive(true);
+            }
         }
     }
 
     private void attack(int amountOfCards) {
         playMaker.increaseAmountOfPulls(amountOfCards);
         playerManager.getNextPlayer().setAttack(true);
+    }
+
+    private void demand(PlayReport playReport){
+        if(playReport.getPlayer() == playerManager.getHumanPlayer()){
+            if (!playReport.isChooserActive()) {
+                playReport.setChooserActive(true);
+            }
+        }
     }
 
     private void chooseAbilityForKing(Card card) {
@@ -54,5 +73,13 @@ public class AbilityHandler {
         playMaker.increaseAmountOfPulls(5);
         playerManager.playerBefore();
         playerManager.getCurrentPlayer().setAttack(true);
+    }
+
+    private void createCard(PlayReport playReport){
+        if(playReport.getPlayer() == playerManager.getHumanPlayer()){
+            if (!playReport.isChooserActive()) {
+                playReport.setChooserActive(true);
+            }
+        }
     }
 }

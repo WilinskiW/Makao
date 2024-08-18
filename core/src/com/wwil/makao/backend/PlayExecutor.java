@@ -16,7 +16,7 @@ public class PlayExecutor {
             case END:
                 return executeEndPlay(playReport);
             case PUT:
-                return executePutPlay(playReport, play.getCardPlayed());
+                return executePutPlay(playReport);
             case PULL:
                 return executePullPlay(player, playReport);
             default:
@@ -31,18 +31,19 @@ public class PlayExecutor {
         return playReport;
     }
 
-    protected PlayReport executePutPlay(PlayReport playReport, Card cardPlayed) {
-        putCard(cardPlayed);
+    protected PlayReport executePutPlay(PlayReport playReport) {
+        putCard(playReport);
         return playReport.setCardCorrect(true).setPutActive().setEndActive();
     }
 
-    private void putCard(Card cardPlayed) {
-        addToStack(cardPlayed);
+    private void putCard(PlayReport playReport) {
+        Card cardPlayed = playReport.getPlay().getCardPlayed();
         removeCardFromPlayerHand(cardPlayed);
+        addToStack(cardPlayed);
         if (isHumanPlayer()) {
             addCardToHumanPlayed(cardPlayed);
         }
-        abilityHandler.useCardAbility(cardPlayed);
+        abilityHandler.useCardAbility(playReport);
     }
 
     private void addToStack(Card cardPlayed) {
@@ -69,7 +70,7 @@ public class PlayExecutor {
     private void pullCard(Player player, PlayReport playReport) {
         Card drawnCard = playReport.getPlay().getDrawnCard();
         player.addCardToHand(drawnCard);
-        playReport.setSingleDrawn(drawnCard);
+        playReport.setDrawn(drawnCard);
 
         if (player.isAttack()) {
             decreaseAmountOfPulls();

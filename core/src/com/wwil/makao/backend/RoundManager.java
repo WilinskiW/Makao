@@ -36,12 +36,12 @@ public class RoundManager {
     }
 
     private RoundReport putCard(Play humanPlay) {
-        boolean isValid = validator.isValid(humanPlay.getCardPlayed());
+        boolean isValid = validator.isValid(humanPlay.getCardPlayed(),humanPlay.isChooserActive());
         PlayReport putPlayReport = new PlayReport(playerManager.getHumanPlayer(), humanPlay).setCardCorrect(isValid);
         roundReport.addPlayRaport(putPlayReport);
 
         if (isValid) {
-            playExecutor.executePutPlay(putPlayReport,humanPlay.getCardPlayed());
+            playExecutor.executePutPlay(putPlayReport);
         }
         else{
             putPlayReport.setPutActive().setPullActive();

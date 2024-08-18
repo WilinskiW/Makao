@@ -34,6 +34,10 @@ public class StackCardsGroup extends Group {
         return (CardActor) getChildren().peek();
     }
 
+    public CardActor peekBeforeLastCardActor(){
+        return (CardActor) getChildren().get(getChildren().size - 2);
+    }
+
     private void dismantleCardActors(){
         for(int i = 0; i < getChildren().size-1; i++){
             CardActor cardActor = (CardActor) getChildren().removeIndex(i);

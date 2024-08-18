@@ -39,10 +39,11 @@ public class DragAndDropManager {
             @Override
             public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
                 CardActor chosenCardActor = (CardActor) source.getActor();
-                gameController.executePut(
+                gameController.setChoosenCardActor(chosenCardActor);
+                gameController.executePlay(
                         new Play()
                                 .setCardPlayed(chosenCardActor.getCard())
-                                .setAction(Action.PUT), chosenCardActor);
+                                .setAction(Action.PUT));
             }
         };
     }

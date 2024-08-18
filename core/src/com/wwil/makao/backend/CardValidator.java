@@ -9,12 +9,12 @@ private final DeckManager deckManager;
         this.deckManager = deckManager;
     }
 
-    public boolean isValid(Card chosenCard) {
-        Card stackCard = deckManager.peekStackCard();
+    public boolean isValid(Card chosenCard, boolean isChooserActive) {
+        Card stackCard = getStackCard(chosenCard,isChooserActive);
 
         // Sprawdzanie, czy gracz może położyć kolejną kartę o tej samej randze
-        if (!roundManager.getHumanPlayedCards().isEmpty()) {
-            return chosenCard.getRank() == roundManager.getHumanPlayedCards().get(0).getRank();
+        if (!roundManager.getHumanPlayedCards().isEmpty() && !isChooserActive) {
+            return isValidForMultiplePut(chosenCard);
         }
 
        if(roundManager.getPlayerManager().getCurrentPlayer().isAttack()){
@@ -23,6 +23,19 @@ private final DeckManager deckManager;
        else{
            return isValidForNormalTurn(chosenCard,stackCard);
        }
+    }
+
+    private Card getStackCard(Card chosenCard,boolean isChooserActive){
+        if(chosenCard.getRank() == Rank.J && isChooserActive){
+            return deckManager.peekStackCardBeforeLast();
+        }
+        else{
+            return deckManager.peekStackCard();
+        }
+    }
+
+    private boolean isValidForMultiplePut(Card chosenCard){
+        return chosenCard.getRank() == roundManager.getHumanPlayedCards().get(0).getRank();
     }
 
     private boolean isValidForNormalTurn(Card chosenCard, Card stackCard){

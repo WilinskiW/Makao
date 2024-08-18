@@ -59,7 +59,7 @@ public class PlayMaker {
 
         plays.add(createPullPlay(rescueCard));
 
-        if (roundManager.getValidator().isValid(rescueCard)) {
+        if (roundManager.getValidator().isValid(rescueCard,false)) {
             plays.addAll(createValidRescuePlays(player, rescueCard));
         } else if (player.isAttack()) {
             pullRemainingCards(player, plays);

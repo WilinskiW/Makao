@@ -23,7 +23,7 @@ public class CardFinder {
         List<Card> playableCards = new ArrayList<>();
         //Dodajemy karty, które mogą być zagrane
         for (Card card : playerCards) {
-            if (validator.isValid(card)) {
+            if (validator.isValid(card,false)) {
                 playableCards.add(card);
             }
         }

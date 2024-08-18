@@ -9,12 +9,9 @@ public class Stack {
     public void addCardToStack(Card card){
         cards.add(card);
     }
-    public boolean isJackOnTop(){
-        return peekCard().getRank().equals(Rank.J);
-    }
 
-    public boolean isJackBeforeJoker(){
-        return peekCard().getRank().equals(Rank.JOKER) && getCards().get(getCards().size()-2).getRank().equals(Rank.J);
+    public Card peekCardBeforeLast(){
+        return cards.get(getCards().size()-2);
     }
     public Card peekCard(){
         return cards.get(getCards().size()-1);

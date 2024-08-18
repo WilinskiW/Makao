@@ -11,17 +11,12 @@ public class MakaoBackend {
         this.playerManager = new PlayerManager(RuleParams.AMOUNT_OF_PLAYERS, RuleParams.STARTING_CARDS, deckManager);
         this.roundManager = new RoundManager(playerManager, deckManager);
     }
-
-    //todo: Schemat aktywacji przycisków (Multi pull i single pull)
-    //todo: Report mówi co powinno być aktywne (boolean putActive, boolean pullActive, boolean endActive)
-    //todo: Animacje
-
     public RoundReport processHumanPlay(Play humanPlay) {
         return roundManager.processHumanPlay(humanPlay);
     }
 
     public boolean isDraggedCardValid(Card choosenCard) {
-        return roundManager.getValidator().isValid(choosenCard);
+        return roundManager.getValidator().isValid(choosenCard,false);
     }
 
     public DeckManager getDeckManager() {

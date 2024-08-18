@@ -8,8 +8,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.wwil.makao.backend.Action;
+import com.wwil.makao.backend.Play;
 import com.wwil.makao.frontend.GUIparams;
 import com.wwil.makao.frontend.GameController;
+import com.wwil.makao.frontend.entities.CardActor;
 
 public class PutButtonActor extends Actor {
     private final CardChooserGroup cardChooser;
@@ -39,7 +42,13 @@ public class PutButtonActor extends Actor {
     private class PutListener extends ClickListener {
         @Override
         public void clicked(InputEvent event, float x, float y) {
-            //todo
+            CardActor chosenCardActor = cardChooser.getManager().giveCardActor();
+            controller.setChosenCardActor(chosenCardActor);
+            controller.executePlay(
+                    new Play()
+                            .setCardPlayed(chosenCardActor.getCard())
+                            .setAction(Action.PUT)
+                            .setChooserActive());
             super.clicked(event, x, y);
         }
     }

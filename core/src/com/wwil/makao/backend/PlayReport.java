@@ -3,11 +3,12 @@ package com.wwil.makao.backend;
 public class PlayReport {
     private final Player player;
     private final Play play;
-    private Card singleDrawn;
+    private Card drawn;
     private boolean isCardCorrect;
     private boolean isPutActive;
     private boolean isPullActive;
     private boolean isEndActive;
+    private boolean isChooserActive;
 
     public PlayReport(Player player, Play play) {
         this.play = play;
@@ -31,12 +32,12 @@ public class PlayReport {
         return this;
     }
 
-    public Card getSingleDrawn() {
-        return singleDrawn;
+    public Card getDrawn() {
+        return drawn;
     }
 
-    public void setSingleDrawn(Card singleDrawn) {
-        this.singleDrawn = singleDrawn;
+    public void setDrawn(Card drawn) {
+        this.drawn = drawn;
     }
 
     public boolean isPutActive() {
@@ -64,5 +65,13 @@ public class PlayReport {
     protected PlayReport setEndActive() {
         isEndActive = true;
         return this;
+    }
+
+    public boolean isChooserActive() {
+        return isChooserActive;
+    }
+
+    public void setChooserActive(boolean isChooserActive) {
+        this.isChooserActive = isChooserActive;
     }
 }

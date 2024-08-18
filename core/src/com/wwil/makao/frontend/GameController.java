@@ -38,15 +38,6 @@ public class GameController {
         this.stage = gameplayScreen.getStage();
     }
 
-    public void executePut(Play play, CardActor cardActor) {
-        if (play.getAction() == Action.PUT && play.isCardActivateChooser()) {
-            showCardChooser(cardActor);
-            return;
-        }
-        choosenCardActor = cardActor;
-        executePlay(play);
-    }
-
     public void executePlay(Play play) {
         RoundReport report = backend.processHumanPlay(play);
         showHumanPlay(play, report);
@@ -65,8 +56,12 @@ public class GameController {
                 useCard(currentPlayReport);
                 break;
             case PULL:
-                pull(currentPlayReport, humanHand(),report.hasPlayerPullBefore(humanHand().getPlayer()));
+                pull(currentPlayReport, humanHand(), report.hasPlayerPullBefore(humanHand().getPlayer()));
                 break;
+        }
+
+        if (currentPlayReport.isChooserActive()) {
+            showCardChooser(choosenCardActor);
         }
 
         updateDragAndDropState(currentPlayReport);
@@ -81,10 +76,20 @@ public class GameController {
 
     private void useCard(PlayReport playReport) {
         if (playReport.isCardCorrect()) {
-            putCard(choosenCardActor, humanHand(), true);
+            if (cardChooser.isVisible()) {
+                putCardFromChooser(playReport);
+            } else {
+                putCard(choosenCardActor, humanHand(), true);
+            }
         } else {
             positionCardInGroup(humanHand(), choosenCardActor);
         }
+    }
+
+    private void putCardFromChooser(PlayReport playReport){
+        cardChooser.setVisibility(false);
+        playReport.setChooserActive(false);
+        putCard(choosenCardActor, humanHand(), false);
     }
 
     private void putCard(CardActor playedCard, PlayerHandGroup player, boolean alignCards) {
@@ -103,7 +108,7 @@ public class GameController {
 
 
     private void pull(PlayReport playReport, PlayerHandGroup player, boolean hasHumanPullBefore) {
-        CardActor drawnCardActor = cardActorFactory.createCardActor(playReport.getSingleDrawn());
+        CardActor drawnCardActor = cardActorFactory.createCardActor(playReport.getDrawn());
         if (player == humanHand()) {
             adjustHumanPull(drawnCardActor, hasHumanPullBefore);
         }
@@ -114,15 +119,14 @@ public class GameController {
     private void adjustHumanPull(CardActor drawnCardActor, boolean hasHumanPullBefore) {
         drawnCardActor.setUpSideDown(false);
         dragAndDropManager.prepareDragAndDrop(drawnCardActor);
-        if(!hasHumanPullBefore){
+        if (!hasHumanPullBefore) {
             dragAndDropManager.focusRescueCard(drawnCardActor);
-        }
-        else{
+        } else {
             dragAndDropManager.deactivatedCardActors();
         }
     }
 
-    private void updateDragAndDropState(PlayReport lastPlayReport){
+    private void updateDragAndDropState(PlayReport lastPlayReport) {
         if (lastPlayReport.isPutActive()) {
             dragAndDropManager.startListening();
         } else {
@@ -136,7 +140,7 @@ public class GameController {
     }
 
     private void showCardChooser(CardActor cardPlayed) {
-        CardActor stackCard = stackCardsGroup.peekCardActor();
+        CardActor stackCard = stackCardsGroup.peekBeforeLastCardActor();
         putCard(cardPlayed, humanHand(), false);
         cardChooser.setVisibility(true);
         cardChooser.getManager().setDisplayCard(stackCard, cardPlayed);
@@ -233,7 +237,7 @@ public class GameController {
                 putCard(playerHand.getCardActor(cardPlayed), playerHand, true);
                 break;
             case PULL:
-                pull(playReport, playerHand,false);
+                pull(playReport, playerHand, false);
                 break;
         }
     }
@@ -245,10 +249,11 @@ public class GameController {
         Gdx.input.setInputProcessor(gameplayScreen.getStage());
     }
 
-    private void resetButtonsState(){
+    private void resetButtonsState() {
         endTurnButton.setActive(false);
         pullButton.setActive(true);
     }
+
     private PlayerHandGroup getHandGroup(Player player) {
         for (PlayerHandGroup handGroup : handGroups) {
             if (handGroup.getPlayer() == player) {
@@ -316,5 +321,9 @@ public class GameController {
 
     public SoundManager getSoundManager() {
         return soundManager;
+    }
+
+    protected void setChoosenCardActor(CardActor choosenCardActor) {
+        this.choosenCardActor = choosenCardActor;
     }
 }

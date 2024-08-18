@@ -37,6 +37,9 @@ public class DeckManager {
         return cards;
     }
     public Card peekStackCard(){return stack.peekCard();}
+    public Card peekStackCardBeforeLast(){
+        return stack.peekCardBeforeLast();
+    }
     protected Card takeCardFromGameDeck() {
         return gameDeck.remove(0);
     }

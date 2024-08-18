@@ -4,19 +4,14 @@ public class Play {
     private Card cardPlayed;
     private Card drawnCard;
     private Action action;
-    private Card cardFromChooser;
+    private boolean isChooserActive;
 
-    public Play(Card cardPlayed, Card cardFromChooser) {
+    public Play(Card cardPlayed) {
         this.cardPlayed = cardPlayed;
-        this.cardFromChooser = cardFromChooser;
     }
 
     public Play() {
     }
-    public boolean isCardActivateChooser(){
-        return cardPlayed.getRank().isRankActivateChooser();
-    }
-
     public Card getCardPlayed() {
         return cardPlayed;
     }
@@ -42,6 +37,15 @@ public class Play {
 
     public Play setDrawnCard(Card drawnCard) {
         this.drawnCard = drawnCard;
+        return this;
+    }
+
+    public boolean isChooserActive() {
+        return isChooserActive;
+    }
+
+    public Play setChooserActive() {
+        isChooserActive = true;
         return this;
     }
 }
