@@ -1,12 +1,12 @@
 package com.wwil.makao.backend;
 
 public class AbilityHandler {
+    private final RoundManager roundManager;
     private final PlayerManager playerManager;
-    private final PlayMaker playMaker;
 
-    public AbilityHandler(PlayerManager playerManager, PlayMaker playMaker) {
-        this.playerManager = playerManager;
-        this.playMaker = playMaker;
+    public AbilityHandler(RoundManager roundManager) {
+        this.roundManager = roundManager;
+        this.playerManager = roundManager.getPlayerManager();
     }
 
     protected void useCardAbility(PlayReport playReport) {
@@ -23,7 +23,6 @@ public class AbilityHandler {
                 attack(3);
                 break;
             case WAIT:
-                //useWaitAbility(wildCard);
                 break;
             case DEMAND:
                 demand(playReport);
@@ -46,7 +45,7 @@ public class AbilityHandler {
     }
 
     private void attack(int amountOfCards) {
-        playMaker.increaseAmountOfPulls(amountOfCards);
+        roundManager.increaseAmountOfPulls(amountOfCards);
         playerManager.getNextPlayer().setAttack(true);
     }
 
@@ -70,7 +69,7 @@ public class AbilityHandler {
     }
 
     private void attackPrevious(){
-        playMaker.increaseAmountOfPulls(5);
+        roundManager.increaseAmountOfPulls(5);
         playerManager.playerBefore();
         playerManager.getCurrentPlayer().setAttack(true);
     }

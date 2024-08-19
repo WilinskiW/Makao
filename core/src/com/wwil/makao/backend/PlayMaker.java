@@ -113,12 +113,7 @@ public class PlayMaker {
         player.setAttack(false);
     }
 
-
     private boolean lastPlayIsEnd(List<Play> plays) {
         return plays.get(plays.size() - 1).getAction() == Action.END;
-    }
-
-    public void increaseAmountOfPulls(int amount) {
-        roundManager.setAmountOfPulls(getAmountOfPulls() + amount);
     }
 }

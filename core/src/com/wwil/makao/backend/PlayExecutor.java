@@ -6,7 +6,7 @@ public class PlayExecutor {
 
     public PlayExecutor(RoundManager roundManager) {
         this.roundManager = roundManager;
-        this.abilityHandler = new AbilityHandler(this.roundManager.getPlayerManager(), this.roundManager.getPlayMaker());
+        this.abilityHandler = new AbilityHandler(this.roundManager);
     }
 
     public PlayReport createPlayReport(Player player, Play play) {
@@ -73,12 +73,8 @@ public class PlayExecutor {
         playReport.setDrawn(drawnCard);
 
         if (player.isAttack()) {
-            decreaseAmountOfPulls();
+            roundManager.decreaseAmountOfPulls();
         }
-    }
-
-    private void decreaseAmountOfPulls() {
-        roundManager.setAmountOfPulls(roundManager.getAmountOfPulls() - 1);
     }
 
     private PlayReport evaluateHumanAvailableActions(Player player, PlayReport playReport) {

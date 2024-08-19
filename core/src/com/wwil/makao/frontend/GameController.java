@@ -322,8 +322,4 @@ public class GameController {
     public SoundManager getSoundManager() {
         return soundManager;
     }
-
-    protected void setChoosenCardActor(CardActor choosenCardActor) {
-        this.choosenCardActor = choosenCardActor;
-    }
 }

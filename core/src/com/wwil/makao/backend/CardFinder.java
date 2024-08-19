@@ -19,6 +19,59 @@ public class CardFinder {
         return findCardForNormalTurn(stackcard);
     }
 
+    private List<Card> findCardsForDefenceTurn(Card attackingCard) {
+        List<Card> defensiveCards = new ArrayList<>();
+
+        for (Card playerCard : playerCards) {
+            if (playerCard.getRank() == attackingCard.getRank()) {
+                defensiveCards.add(playerCard);
+            }  //fixme: Karty już sprawdzone są pomijane np. Stack: 3 PIK| Pierwsza karta sprawdzona: 2 TREFL, Druga: 2 PIK. Druga trafia, pierwsza nie
+            else if (playerCard.getSuit() == attackingCard.getSuit() && playerCard.isBattleCard() && attackingCard.getRank().equals(Rank.K)) {
+                defensiveCards.add(playerCard);
+            }
+        }
+
+        if (defensiveCards.isEmpty()) {
+            return defensiveCards;
+        }
+
+        List<Card> cardsWithSameRank = findCardsWithSameRank(defensiveCards);
+        if (cardsWithSameRank.isEmpty()) {
+            return Collections.singletonList(getRandomElement(defensiveCards));
+        }
+
+        return cardsWithSameRank;
+    }
+
+    private List<Card> findCardsWithSameRank(List<Card> cards) {
+        Map<Rank, List<Card>> rankToCards = new HashMap<>();
+        for (Card card : cards) {
+            rankToCards.computeIfAbsent(card.getRank(), k -> new ArrayList<>()).add(card);
+        }
+
+        List<Card> sameRankCards = new ArrayList<>();
+        for (List<Card> cardList : rankToCards.values()) {
+            if (cardList.size() > 1) {
+                sameRankCards.addAll(cardList);
+            }
+        }
+        return sameRankCards;
+    }
+
+    private <T> T getRandomElement(List<T> elements) {
+        return elements.get(new Random().nextInt(elements.size()));
+    }
+
+    private List<Card> findCardAgainstBlockAttack(){
+        List<Card> cards = new ArrayList<>();
+        for(Card card : playerCards){
+            if(card.getRank() == Rank.FOUR){
+                cards.add(card);
+            }
+        }
+        return cards;
+    }
+
     private List<Card> findCardForNormalTurn(Card stackCard) {
         List<Card> playableCards = new ArrayList<>();
         //Dodajemy karty, które mogą być zagrane
@@ -51,29 +104,6 @@ public class CardFinder {
         }
         //Jeżeli takich nie znajdziemy to zwracamy losową możliwą kartę
         return Collections.singletonList(getRandomElement(playableCards));
-    }
-
-    private <T> T getRandomElement(List<T> elements) {
-        return elements.get(new Random().nextInt(elements.size()));
-    }
-
-    private void segregate(List<Card> cards, Card stackCard) {
-        // Sprawdź, czy pierwsza karta na liście pasuje do karty ze stosu
-        if (!isFirstCardLikeStackCard(cards.get(0), stackCard)) {
-            for (int i = 1; i < cards.size(); i++) {
-                Card card = cards.get(i);
-                // Jeśli znajdziesz kartę, która pasuje do karty ze stosu
-                if (isFirstCardLikeStackCard(card, stackCard)) {
-                    // Przenieś ją na początek listy
-                    Collections.swap(cards, 0, i);
-                    break;
-                }
-            }
-        }
-    }
-
-    private boolean isFirstCardLikeStackCard(Card card, Card stackCard) {
-        return card.getRank() == stackCard.getRank() || card.getSuit() == stackCard.getSuit();
     }
 
     private List<Card> getPlayableWithSameRank(List<Card> cards) {
@@ -121,48 +151,25 @@ public class CardFinder {
         return maxPlayable;
     }
 
-    private List<Card> findCardsWithSameRank(List<Card> cards) {
-        Map<Rank, List<Card>> rankToCards = new HashMap<>();
-        for (Card card : cards) {
-            rankToCards.computeIfAbsent(card.getRank(), k -> new ArrayList<>()).add(card);
-        }
-
-        List<Card> sameRankCards = new ArrayList<>();
-        for (List<Card> cardList : rankToCards.values()) {
-            if (cardList.size() > 1) {
-                sameRankCards.addAll(cardList);
+    private void segregate(List<Card> cards, Card stackCard) {
+        // Sprawdź, czy pierwsza karta na liście pasuje do karty ze stosu
+        if (!isFirstCardLikeStackCard(cards.get(0), stackCard)) {
+            for (int i = 1; i < cards.size(); i++) {
+                Card card = cards.get(i);
+                // Jeśli znajdziesz kartę, która pasuje do karty ze stosu
+                if (isFirstCardLikeStackCard(card, stackCard)) {
+                    // Przenieś ją na początek listy
+                    Collections.swap(cards, 0, i);
+                    break;
+                }
             }
         }
-        return sameRankCards;
     }
 
-    //todo Aktywować obronę przed kartami
-    private List<Card> findCardsForDefenceTurn(Card attackingCard) {
-        List<Card> defensiveCards = new ArrayList<>();
-
-        for (Card playerCard : playerCards) {
-            if (playerCard.getRank() == attackingCard.getRank()) {
-                defensiveCards.add(playerCard);
-            }  //fixme: Karty już sprawdzone są pomijane np. Stack: 3 PIK| Pierwsza karta sprawdzona: 2 TREFL, Druga: 2 PIK. Druga trafia, pierwsza nie
-            else if (playerCard.getSuit() == attackingCard.getSuit() && playerCard.isBattleCard() && attackingCard.getRank().equals(Rank.K)) {
-                defensiveCards.add(playerCard);
-            }
-        }
-
-        if (defensiveCards.isEmpty()) {
-            return defensiveCards;
-        }
-
-        List<Card> cardsWithSameRank = findCardsWithSameRank(defensiveCards);
-        if (cardsWithSameRank.isEmpty()) {
-            return Collections.singletonList(defensiveCards.get(new Random().nextInt(defensiveCards.size())));
-        }
-
-
-        return cardsWithSameRank;
+    private boolean isFirstCardLikeStackCard(Card card, Card stackCard) {
+        return card.getRank() == stackCard.getRank() || card.getSuit() == stackCard.getSuit();
     }
 
-    //todo Aktywować przy wprowadzaniu znowu: J, AS, JOKER
     public Card findCardToDemand() {
         List<Card> cards = playerCards;
         Collections.shuffle(cards);
@@ -209,14 +216,4 @@ public class CardFinder {
 
         return Suit.values()[maxIndex]; // Zwracanie koloru z największą liczbą wystąpień
     }
-
-//    public Play defend(Play play) {
-//        List<Card> defensiveCards = getCurrentPlayer().findDefensiveCards(battleInfo);
-//        if (!defensiveCards.isEmpty()) {
-//            play.setCardsPlayed(defensiveCards).setAction(Action.PUT);
-//        } else {
-//            play.setAction(Action.PULL);
-//        }
-//        return play;
-//    }
 }

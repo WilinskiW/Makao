@@ -93,16 +93,20 @@ public class RoundManager {
         roundReport = new RoundReport();
     }
 
+    public void increaseAmountOfPulls(int amount) {
+        amountOfPulls += amount;
+    }
+
+    public void decreaseAmountOfPulls() {
+        amountOfPulls--;
+    }
+
     protected CardValidator getValidator() {
         return validator;
     }
 
     protected DeckManager getDeckManager() {
         return deckManager;
-    }
-
-    protected PlayMaker getPlayMaker() {
-        return playMaker;
     }
 
     protected RoundReport getRoundReport() {
@@ -120,7 +124,6 @@ public class RoundManager {
     protected void setAmountOfPulls(int amountOfPulls) {
         this.amountOfPulls = amountOfPulls;
     }
-
     public List<Card> getHumanPlayedCards() {
         return humanPlayedCards;
     }
