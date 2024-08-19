@@ -28,7 +28,7 @@ public class DragAndDropManager {
                 CardActor chosenCardActor = (CardActor) source.getActor();
                 inputManager.setChosenCardActor(chosenCardActor);
                 if (target != null) {
-                    gameController.changeCardColor(gameController.getBackend().isDraggedCardValid(chosenCardActor),chosenCardActor);
+                    uiManager.changeCardColor(gameController.getBackend().isDraggedCardValid(chosenCardActor),chosenCardActor);
                 }
                 return true;
             }
@@ -73,7 +73,7 @@ public class DragAndDropManager {
     }
 
     public void startListening() {
-        for (CardActor cardActor : gameController.humanHand().getCardActors()) {
+        for (CardActor cardActor : uiManager.getHumanHandGroup().getCardActors()) {
             prepareDragAndDrop(cardActor);
         }
     }

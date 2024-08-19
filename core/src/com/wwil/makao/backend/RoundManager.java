@@ -51,7 +51,7 @@ public class RoundManager {
 
     private RoundReport pullCard(Play humanPlay) {
         humanPlay.setDrawnCard(deckManager.takeCardFromGameDeck());
-        roundReport.addPlayRaport(playExecutor.createPlayReport(playerManager.getCurrentPlayer(),humanPlay));
+        roundReport.addPlayRaport(playExecutor.createPlayReport(playerManager.getCurrentPlayer(), humanPlay));
         return roundReport;
     }
 
@@ -68,11 +68,11 @@ public class RoundManager {
         }
     }
 
-    private boolean isComputerTurn(){
+    private boolean isComputerTurn() {
         return playerManager.getCurrentPlayer() != playerManager.getHumanPlayer();
     }
 
-    private boolean hasSomeoneWon(){
+    private boolean hasSomeoneWon() {
         return playerManager.getCurrentPlayer().checkIfPlayerHaveNoCards();
     }
 
@@ -124,6 +124,7 @@ public class RoundManager {
     protected void setAmountOfPulls(int amountOfPulls) {
         this.amountOfPulls = amountOfPulls;
     }
+
     public List<Card> getHumanPlayedCards() {
         return humanPlayedCards;
     }

@@ -1,5 +1,6 @@
 package com.wwil.makao.frontend;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.wwil.makao.backend.PlayReport;
 import com.wwil.makao.frontend.entities.CardActor;
@@ -37,6 +38,14 @@ public class UIManager {
     public void updateButtonStates(PlayReport lastPlayReport) {
         pullButton.setActive(lastPlayReport.isPullActive());
         endTurnButton.setActive(lastPlayReport.isEndActive());
+    }
+
+    public void changeCardColor(boolean isValid, CardActor cardActor) {
+        if (isValid) {
+            cardActor.setColor(Color.LIME);
+        } else {
+            cardActor.setColor(Color.SCARLET);
+        }
     }
 
     public void positionCardInGroup(PlayerHandGroup human, CardActor chosenCard) {

@@ -35,6 +35,7 @@ public class InputManager {
     public void turnOnHumanInput() {
         inputBlockActive = false;
         resetButtonsState();
+        dragAndDropManager.startListening();
         uiManager.changeTransparencyOfPlayerGroup(uiManager.getHumanHandGroup(), 1f);
         Gdx.input.setInputProcessor(uiManager.getGameplayScreen().getStage());
     }

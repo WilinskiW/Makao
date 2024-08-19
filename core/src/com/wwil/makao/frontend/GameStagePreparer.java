@@ -120,7 +120,7 @@ public class GameStagePreparer {
 
 
     private void adjustHumanCards() {
-        for (CardActor card : uiManager.getController().humanHand().getCardActors()) {
+        for (CardActor card : uiManager.getHumanHandGroup().getCardActors()) {
             card.setUpSideDown(false);
             uiManager.getController().getInputManager().getDragAndDropManager().prepareDragAndDrop(card);
         }
