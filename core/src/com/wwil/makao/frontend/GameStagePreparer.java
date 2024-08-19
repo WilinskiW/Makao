@@ -17,18 +17,16 @@ import java.util.List;
 
 //Przygotowanie elementów graficznych ekranu
 public class GameStagePreparer {
-    private final GameController controller;
-    private final MakaoBackend backend;
-    private final List<PlayerHandGroup> handGroups;
+    private final UIManager uiManager;
+    private final BackendFacade backend;
     private final CardActorFactory cardActorFactory;
     private final Stage stage;
 
-    public GameStagePreparer(GameController controller, Stage stage) {
-        this.controller = controller;
-        this.backend = controller.getBackend();
-        this.handGroups = controller.getHandGroups();
-        this.cardActorFactory = controller.getCardActorFactory();
-        this.stage = stage;
+    public GameStagePreparer(UIManager uiManager, BackendFacade backend) {
+        this.uiManager = uiManager;
+        this.backend = backend;
+        this.cardActorFactory = uiManager.getCardActorFactory();
+        this.stage = uiManager.getGameplayScreen().getStage();
     }
 
     public void execute() {
@@ -40,23 +38,23 @@ public class GameStagePreparer {
     }
 
     private void prepareStackCardsGroup() {
-        controller.addCardActorToStackGroup(cardActorFactory.createCardActor(backend.getDeckManager().peekStackCard()));
-        stage.addActor(controller.getStackCardsGroup());
-        controller.getStackCardsGroup().setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
+        uiManager.addCardActorToStackGroup(cardActorFactory.createCardActor(backend.getDeckManager().peekStackCard()));
+        stage.addActor(uiManager.getStackCardsGroup());
+        uiManager.getStackCardsGroup().setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
     }
 
     private void preparePullButton() {
-        GameButton pullButton = new PullButton(controller);
+        GameButton pullButton = new PullButton(uiManager.getController());
         stage.addActor(pullButton);
         pullButton.setPosition(GUIparams.WIDTH / 2f - 300, GUIparams.HEIGHT / 2f - 100);
-        controller.setPullButton(pullButton);
+        uiManager.setPullButton(pullButton);
     }
 
     private void prepareEndTurnButton() {
-        GameButton endTurnButton = new EndTurnButton(controller);
+        GameButton endTurnButton = new EndTurnButton(uiManager.getController());
         stage.addActor(endTurnButton);
         endTurnButton.setPosition(GUIparams.WIDTH / 2f - 300, GUIparams.HEIGHT / 2f - 25);
-        controller.setEndTurnButton(endTurnButton);
+        uiManager.setEndTurnButton(endTurnButton);
     }
 
     private void prepareHandGroups() {
@@ -66,21 +64,21 @@ public class GameStagePreparer {
     }
 
     public void createHandGroups() {
-        for (int i = 0; i < backend.getPlayerManager().getPlayers().size(); i++) {
-            handGroups.add(new PlayerHandGroup(backend.getPlayerManager().getPlayers().get(i)));
+        for (int i = 0; i < backend.getPlayers().size(); i++) {
+            uiManager.getHandGroups().add(new PlayerHandGroup(backend.getPlayers().get(i)));
             preparePlayer(i);
         }
     }
 
     private void preparePlayer(int index) {
-        PlayerHandGroup handGroup = handGroups.get(index);
+        PlayerHandGroup handGroup = uiManager.getHandGroups().get(index);
         handGroup.setCardsAlignment(CardsAlignmentParams.getParamFromOrdinal(index));
 
         //todo  Metoda tylko wyłącznie do testów! Usuń po testach
         test(index);
 
         for (Card card : handGroup.getPlayer().getCards()) {
-            CardActor cardActor = controller.getCardActorFactory().createCardActor(card);
+            CardActor cardActor = cardActorFactory.createCardActor(card);
             handGroup.addActor(cardActor);
         }
     }
@@ -88,16 +86,16 @@ public class GameStagePreparer {
     private void test(int index) {
         switch (index) {
             case 0:
-                handGroups.get(index).getPlayer().getCards().clear();
-                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.J, Suit.CLUB)));
-                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.J, Suit.SPADE)));
-                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.J, Suit.DIAMOND)));
-                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.J, Suit.HEART)));
-                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.AS, Suit.CLUB)));
-                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.AS, Suit.SPADE)));
-                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.AS, Suit.DIAMOND)));
-                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.AS, Suit.HEART)));
-                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.JOKER, Suit.RED)));
+//                handGroups.get(index).getPlayer().getCards().clear();
+//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.J, Suit.CLUB)));
+//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.J, Suit.SPADE)));
+//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.J, Suit.DIAMOND)));
+//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.J, Suit.HEART)));
+//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.AS, Suit.CLUB)));
+//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.AS, Suit.SPADE)));
+//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.AS, Suit.DIAMOND)));
+//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.AS, Suit.HEART)));
+//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.JOKER, Suit.RED)));
                 break;
             case 1:
 //                handGroups.get(index).getPlayer().getCards().clear();
@@ -122,14 +120,14 @@ public class GameStagePreparer {
 
 
     private void adjustHumanCards() {
-        for (CardActor card : controller.humanHand().getCardActors()) {
+        for (CardActor card : uiManager.getController().humanHand().getCardActors()) {
             card.setUpSideDown(false);
-            controller.getDragAndDropManager().prepareDragAndDrop(card);
+            uiManager.getController().getDragAndDropManager().prepareDragAndDrop(card);
         }
     }
 
     private void positionHandGroupsOnStage() {
-        for (PlayerHandGroup handGroup : controller.getHandGroups()) {
+        for (PlayerHandGroup handGroup : uiManager.getHandGroups()) {
             stage.addActor(handGroup);
         }
         setRotationOfHandGroups();
@@ -137,31 +135,31 @@ public class GameStagePreparer {
     }
 
     private void setRotationOfHandGroups() {
-        controller.getHandGroups().get(1).setRotation(90);
-        controller.getHandGroups().get(2).setRotation(180);
-        controller.getHandGroups().get(3).setRotation(-90);
+        uiManager.getHandGroups().get(1).setRotation(90);
+        uiManager.getHandGroups().get(2).setRotation(180);
+        uiManager.getHandGroups().get(3).setRotation(-90);
     }
 
     private void setPositionOfHandGroups() {
         //South
-        controller.getHandGroups().get(0).setPosition
+        uiManager.getHandGroups().get(0).setPosition
                 (GUIparams.WIDTH / 2f,
                         0);
         //East
-        controller.getHandGroups().get(1).setPosition(GUIparams.WIDTH + GUIparams.CARD_HEIGHT - 10,
+        uiManager.getHandGroups().get(1).setPosition(GUIparams.WIDTH + GUIparams.CARD_HEIGHT - 10,
                 GUIparams.HEIGHT / 2f);
         //North
-        controller.getHandGroups().get(2).setPosition(GUIparams.WIDTH / 2f + GUIparams.CARD_WIDTH,
+        uiManager.getHandGroups().get(2).setPosition(GUIparams.WIDTH / 2f + GUIparams.CARD_WIDTH,
                 GUIparams.HEIGHT + GUIparams.CARD_HEIGHT - 5);
         //West
-        controller.getHandGroups().get(3).setPosition(GUIparams.CARD_WIDTH / 5f - 32,
+        uiManager.getHandGroups().get(3).setPosition(GUIparams.CARD_WIDTH / 5f - 32,
                 GUIparams.HEIGHT / 2f + GUIparams.CARD_HEIGHT / 2f + 25);
     }
 
     private void createCardChooser() {
-        CardChooserGroup cardChooser = new CardChooserGroup(controller);
+        CardChooserGroup cardChooser = new CardChooserGroup(uiManager.getController());
         stage.addActor(cardChooser);
         cardChooser.setPosition(0, 0);
-        controller.setCardChooser(cardChooser);
+        uiManager.setCardChooser(cardChooser);
     }
 }

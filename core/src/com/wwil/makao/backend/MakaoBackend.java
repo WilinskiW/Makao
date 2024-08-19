@@ -15,8 +15,8 @@ public class MakaoBackend {
         return roundManager.processHumanPlay(humanPlay);
     }
 
-    public boolean isDraggedCardValid(Card choosenCard) {
-        return roundManager.getValidator().isValid(choosenCard,false);
+    public boolean isCardValid(Card chosenCard) {
+        return roundManager.getValidator().isValid(chosenCard,false);
     }
 
     public DeckManager getDeckManager() {

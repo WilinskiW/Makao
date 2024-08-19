@@ -19,23 +19,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 //Komunikacja miedzy back endem a front endem
 
 public class GameController {
-    private final GameplayScreen gameplayScreen;
-    private final Stage stage;
-    private final MakaoBackend backend = new MakaoBackend();
-    private final CardActorFactory cardActorFactory = new CardActorFactory();
-    private final List<PlayerHandGroup> handGroups = new ArrayList<>();
-    private final StackCardsGroup stackCardsGroup = new StackCardsGroup(backend.getDeckManager());
-    private CardChooserGroup cardChooser;
-    private GameButton pullButton;
-    private GameButton endTurnButton;
-    private final DragAndDropManager dragAndDropManager = new DragAndDropManager(this);
-    private final SoundManager soundManager = new SoundManager();
+    private final BackendFacade backend;
+    private final UIManager uiManager;
+    private final DragAndDropManager dragAndDropManager;
+    private final SoundManager soundManager;
     private CardActor choosenCardActor;
-    private boolean inputBlockActive = false;
+    private boolean inputBlockActive;
 
     public GameController(GameplayScreen gameplayScreen) {
-        this.gameplayScreen = gameplayScreen;
-        this.stage = gameplayScreen.getStage();
+        this.backend = new BackendFacade();
+        this.uiManager = new UIManager(this, gameplayScreen);
+        this.dragAndDropManager = new DragAndDropManager(this);
+        this.soundManager = new SoundManager();
     }
 
     public void executePlay(Play play) {
@@ -69,14 +64,14 @@ public class GameController {
     }
 
     private void endHumanTurn() {
-        cardChooser.setVisibility(false);
+        uiManager.getCardChooser().setVisibility(false);
         dragAndDropManager.startListening();
         turnOffHumanInput();
     }
 
     private void useCard(PlayReport playReport) {
         if (playReport.isCardCorrect()) {
-            if (cardChooser.isVisible()) {
+            if (uiManager.getCardChooser().isVisible()) {
                 putCardFromChooser(playReport);
             } else {
                 putCard(choosenCardActor, humanHand(), true);
@@ -87,7 +82,7 @@ public class GameController {
     }
 
     private void putCardFromChooser(PlayReport playReport){
-        cardChooser.setVisibility(false);
+        uiManager.getCardChooser().setVisibility(false);
         playReport.setChooserActive(false);
         putCard(choosenCardActor, humanHand(), false);
     }
@@ -97,7 +92,7 @@ public class GameController {
             playedCard.clearListeners();
         }
 
-        addCardActorToStackGroup(playedCard);
+        uiManager.addCardActorToStackGroup(playedCard);
         soundManager.play("put.wav");
         endIfPlayerWon(player);
 
@@ -108,7 +103,7 @@ public class GameController {
 
 
     private void pull(PlayReport playReport, PlayerHandGroup player, boolean hasHumanPullBefore) {
-        CardActor drawnCardActor = cardActorFactory.createCardActor(playReport.getDrawn());
+        CardActor drawnCardActor = uiManager.getCardActorFactory().createCardActor(playReport.getDrawn());
         if (player == humanHand()) {
             adjustHumanPull(drawnCardActor, hasHumanPullBefore);
         }
@@ -135,15 +130,15 @@ public class GameController {
     }
 
     private void updateButtonStates(PlayReport lastPlayReport) {
-        pullButton.setActive(lastPlayReport.isPullActive());
-        endTurnButton.setActive(lastPlayReport.isEndActive());
+        uiManager.getPullButton().setActive(lastPlayReport.isPullActive());
+        uiManager.getEndTurnButton().setActive(lastPlayReport.isEndActive());
     }
 
     private void showCardChooser(CardActor cardPlayed) {
-        CardActor stackCard = stackCardsGroup.peekBeforeLastCardActor();
+        CardActor stackCard = uiManager.getStackCardsGroup().peekBeforeLastCardActor();
         putCard(cardPlayed, humanHand(), false);
-        cardChooser.setVisibility(true);
-        cardChooser.getManager().setDisplayCard(stackCard, cardPlayed);
+        uiManager.getCardChooser().setVisibility(true);
+        uiManager.getCardChooser().getManager().setDisplayCard(stackCard, cardPlayed);
     }
 
     protected void changeCardColor(boolean isValid, CardActor cardActor) {
@@ -152,16 +147,6 @@ public class GameController {
         } else {
             cardActor.setColor(Color.SCARLET);
         }
-    }
-
-    public void addCardActorToStackGroup(CardActor cardActor) {
-        try {
-            stage.addActor(cardActor);
-        } catch (NullPointerException e) {
-            throw new CardNotFoundException();
-        }
-        cardActor.setUpSideDown(false);
-        stackCardsGroup.addActor(cardActor);
     }
 
     private void endIfPlayerWon(PlayerHandGroup handGroup) {
@@ -246,16 +231,16 @@ public class GameController {
         setInputBlockActive(false);
         resetButtonsState();
         humanHand().changeTransparencyOfGroup(1f);
-        Gdx.input.setInputProcessor(gameplayScreen.getStage());
+       // Gdx.input.setInputProcessor(gameplayScreen.getStage());
     }
 
     private void resetButtonsState() {
-        endTurnButton.setActive(false);
-        pullButton.setActive(true);
+        uiManager.getEndTurnButton().setActive(false);
+        uiManager.getPullButton().setActive(true);
     }
 
     private PlayerHandGroup getHandGroup(Player player) {
-        for (PlayerHandGroup handGroup : handGroups) {
+        for (PlayerHandGroup handGroup : uiManager.getHandGroups()) {
             if (handGroup.getPlayer() == player) {
                 return handGroup;
             }
@@ -263,32 +248,18 @@ public class GameController {
         return null;
     }
 
-    public CardActor peekStackCardActor() {
-        return stackCardsGroup.peekCardActor();
-    }
+
 
     public PlayerHandGroup humanHand() {
-        return handGroups.get(0);
+        return uiManager.getHandGroups().get(0);
     }
 
-    public StackCardsGroup getStackCardsGroup() {
-        return stackCardsGroup;
-    }
-
-    public void setPullButton(GameButton pullButton) {
-        this.pullButton = pullButton;
-    }
-
-    public void setEndTurnButton(GameButton endTurnButton) {
-        this.endTurnButton = endTurnButton;
+    public UIManager getUiManager() {
+        return uiManager;
     }
 
     public void setInputBlockActive(boolean inputBlockActive) {
         this.inputBlockActive = inputBlockActive;
-    }
-
-    public void setCardChooser(CardChooserGroup cardChooser) {
-        this.cardChooser = cardChooser;
     }
 
     public void setChosenCardActor(CardActor choosenCardActor) {
@@ -299,26 +270,13 @@ public class GameController {
         return inputBlockActive;
     }
 
-    public CardActorFactory getCardActorFactory() {
-        return cardActorFactory;
-    }
-
-    public List<PlayerHandGroup> getHandGroups() {
-        return handGroups;
-    }
-
-    public MakaoBackend getBackend() {
+    public BackendFacade getBackend() {
         return backend;
     }
 
     public DragAndDropManager getDragAndDropManager() {
         return dragAndDropManager;
     }
-
-    public GameplayScreen getGameplayScreen() {
-        return gameplayScreen;
-    }
-
     public SoundManager getSoundManager() {
         return soundManager;
     }

@@ -18,8 +18,8 @@ public class GameplayScreen implements Screen {
     public GameplayScreen(Makao makao) {
         this.makao = makao;
         createStage();
-        GameStagePreparer preparer = new GameStagePreparer(new GameController(this), stage);
-        preparer.execute();
+        GameController gameController = new GameController(this);
+        gameController.getUiManager().prepareStage();
     }
 
     private void createStage() {

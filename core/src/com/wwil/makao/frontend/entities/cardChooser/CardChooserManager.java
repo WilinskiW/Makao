@@ -60,7 +60,7 @@ public class CardChooserManager {
 
     void changeRank(int indexChanger) {
         SortedMap<Integer,String> map;
-        if(cardChooser.getGameController().peekStackCardActor().getCard().getRank().equals(Rank.J)){
+        if(cardChooser.getGameController().getUiManager().peekStackCardActor().getCard().getRank().equals(Rank.J)){
             map = mapForJ;
         }
         else  {

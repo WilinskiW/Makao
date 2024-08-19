@@ -15,7 +15,7 @@ public class DragAndDropManager {
 
     public DragAndDropManager(GameController gameController) {
         this.gameController = gameController;
-        this.target = prepareTarget(gameController.getStackCardsGroup());
+        this.target = prepareTarget(gameController.getUiManager().getStackCardsGroup());
     }
 
     private DragAndDrop.Target prepareTarget(final StackCardsGroup stackCardsGroup) {
@@ -25,7 +25,7 @@ public class DragAndDropManager {
                 CardActor chosenCardActor = (CardActor) source.getActor();
                 gameController.setChosenCardActor(chosenCardActor);
                 if (target != null) {
-                    gameController.changeCardColor(gameController.getBackend().isDraggedCardValid(chosenCardActor.getCard()),chosenCardActor);
+                    gameController.changeCardColor(gameController.getBackend().isDraggedCardValid(chosenCardActor),chosenCardActor);
                 }
                 return true;
             }
@@ -90,7 +90,7 @@ public class DragAndDropManager {
             private void prepareCardToStage() {
                 card.saveGroup();
                 card.setLastPositionBeforeRemove(new Vector3(card.getX(), card.getY(), card.getZIndex()));
-                gameController.getGameplayScreen().getStage().addActor(card);
+                gameController.getUiManager().getGameplayScreen().getStage().addActor(card);
             }
 
             @Override
