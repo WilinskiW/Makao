@@ -43,7 +43,7 @@ public abstract class GameButton extends Actor {
     private class ButtonListener extends ClickListener {
         @Override
         public void clicked(InputEvent event, float x, float y) {
-            if(!controller.isInputBlockActive() && isActive) {
+            if(!controller.getInputManager().isInputBlockActive() && isActive) {
                 performButtonClick();
             }
             super.clicked(event, x, y);
@@ -82,10 +82,6 @@ public abstract class GameButton extends Actor {
     private void changeTransparency(float transparency){
         setColor(getColor().r,getColor().g,getColor().b,transparency);
     }
-    public boolean isClick() {
-        return isClick;
-    }
-
     public void setClick(boolean click) {
         isClick = click;
     }

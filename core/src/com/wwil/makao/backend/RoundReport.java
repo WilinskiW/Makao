@@ -32,11 +32,17 @@ public class RoundReport {
     }
 
     public boolean hasPlayerPullBefore(Player player) {
+        int counter = 0;
         for (PlayReport playReport : playReports) {
             if (playReport.getPlayer() == player && playReport.getPlay().getAction() == Action.PULL){
+                counter++;
+            }
+
+            if(counter >= 2){
                 return true;
             }
         }
+
         return false;
     }
 

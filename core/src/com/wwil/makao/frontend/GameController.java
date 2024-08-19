@@ -3,16 +3,11 @@ package com.wwil.makao.frontend;
 import com.badlogic.gdx.Gdx;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Timer;
 import com.wwil.makao.backend.*;
-import com.wwil.makao.frontend.entities.gameButtons.GameButton;
-import com.wwil.makao.frontend.entities.cardChooser.CardChooserGroup;
 import com.wwil.makao.frontend.entities.CardActor;
 import com.wwil.makao.frontend.entities.cardsGroup.PlayerHandGroup;
-import com.wwil.makao.frontend.entities.cardsGroup.StackCardsGroup;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,15 +16,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class GameController {
     private final BackendFacade backend;
     private final UIManager uiManager;
-    private final DragAndDropManager dragAndDropManager;
+    private final InputManager inputManager;
     private final SoundManager soundManager;
-    private CardActor choosenCardActor;
-    private boolean inputBlockActive;
 
     public GameController(GameplayScreen gameplayScreen) {
         this.backend = new BackendFacade();
         this.uiManager = new UIManager(this, gameplayScreen);
-        this.dragAndDropManager = new DragAndDropManager(this);
+        this.inputManager = new InputManager(this);
         this.soundManager = new SoundManager();
     }
 
@@ -56,17 +49,17 @@ public class GameController {
         }
 
         if (currentPlayReport.isChooserActive()) {
-            showCardChooser(choosenCardActor);
+            showCardChooser(inputManager.getChoosenCardActor());
         }
 
-        updateDragAndDropState(currentPlayReport);
-        updateButtonStates(currentPlayReport);
+        inputManager.updateDragAndDropState(currentPlayReport);
+        uiManager.updateButtonStates(currentPlayReport);
     }
 
     private void endHumanTurn() {
         uiManager.getCardChooser().setVisibility(false);
-        dragAndDropManager.startListening();
-        turnOffHumanInput();
+        inputManager.getDragAndDropManager().startListening();
+        inputManager.turnOffHumanInput();
     }
 
     private void useCard(PlayReport playReport) {
@@ -74,17 +67,17 @@ public class GameController {
             if (uiManager.getCardChooser().isVisible()) {
                 putCardFromChooser(playReport);
             } else {
-                putCard(choosenCardActor, humanHand(), true);
+                putCard(inputManager.getChoosenCardActor(), humanHand(), true);
             }
         } else {
-            positionCardInGroup(humanHand(), choosenCardActor);
+            uiManager.positionCardInGroup(humanHand(), inputManager.getChoosenCardActor());
         }
     }
 
-    private void putCardFromChooser(PlayReport playReport){
+    private void putCardFromChooser(PlayReport playReport) {
         uiManager.getCardChooser().setVisibility(false);
         playReport.setChooserActive(false);
-        putCard(choosenCardActor, humanHand(), false);
+        putCard(inputManager.getChoosenCardActor(), humanHand(), false);
     }
 
     private void putCard(CardActor playedCard, PlayerHandGroup player, boolean alignCards) {
@@ -105,33 +98,10 @@ public class GameController {
     private void pull(PlayReport playReport, PlayerHandGroup player, boolean hasHumanPullBefore) {
         CardActor drawnCardActor = uiManager.getCardActorFactory().createCardActor(playReport.getDrawn());
         if (player == humanHand()) {
-            adjustHumanPull(drawnCardActor, hasHumanPullBefore);
+            inputManager.handleDragAndDrop(drawnCardActor, hasHumanPullBefore);
         }
         player.addActor(drawnCardActor);
         soundManager.play("pull.wav");
-    }
-
-    private void adjustHumanPull(CardActor drawnCardActor, boolean hasHumanPullBefore) {
-        drawnCardActor.setUpSideDown(false);
-        dragAndDropManager.prepareDragAndDrop(drawnCardActor);
-        if (!hasHumanPullBefore) {
-            dragAndDropManager.focusRescueCard(drawnCardActor);
-        } else {
-            dragAndDropManager.deactivatedCardActors();
-        }
-    }
-
-    private void updateDragAndDropState(PlayReport lastPlayReport) {
-        if (lastPlayReport.isPutActive()) {
-            dragAndDropManager.startListening();
-        } else {
-            dragAndDropManager.deactivatedCardActors();
-        }
-    }
-
-    private void updateButtonStates(PlayReport lastPlayReport) {
-        uiManager.getPullButton().setActive(lastPlayReport.isPullActive());
-        uiManager.getEndTurnButton().setActive(lastPlayReport.isEndActive());
     }
 
     private void showCardChooser(CardActor cardPlayed) {
@@ -157,34 +127,6 @@ public class GameController {
         }
     }
 
-    private void positionCardInGroup(PlayerHandGroup human, CardActor chosenCard) {
-        if (!human.getChildren().isEmpty()) {
-            chosenCard.beLastInGroup();
-        } else {
-            moveCardBackToHumanGroup(human, chosenCard);
-        }
-    }
-
-    private void moveCardBackToHumanGroup(PlayerHandGroup humanGroup, CardActor card) {
-        humanGroup.addActor(card);
-        card.setX(card.getLastPositionBeforeRemove().x);
-        card.setY(card.getLastPositionBeforeRemove().y);
-        card.setZIndex((int) card.getLastPositionBeforeRemove().z);
-    }
-
-    public void executeDragStop(CardActor card) {
-        if (!humanHand().getChildren().isEmpty()) {
-            card.beLastInGroup();
-        } else {
-            moveCardBackToHumanGroup(humanHand(), card);
-        }
-    }
-
-    public void turnOffHumanInput() {
-        Gdx.input.setInputProcessor(null);
-        humanHand().changeTransparencyOfGroup(0.25f);
-        setInputBlockActive(true);
-    }
     ///////////////////////
 //     Komputer
 //////////////////////
@@ -205,7 +147,7 @@ public class GameController {
                     processComputerTurn(playReport, handGroup);
                     // Sprawdź, czy to był ostatni ruch komputera
                     if (completedComputers.incrementAndGet() == numberOfComputers) {
-                        turnOnHumanInput();
+                        inputManager.turnOnHumanInput();
                     }
                 }
             }, (i + 1) * delta); // Opóźnienie względem indeksu
@@ -227,18 +169,6 @@ public class GameController {
         }
     }
 
-    private void turnOnHumanInput() {
-        setInputBlockActive(false);
-        resetButtonsState();
-        humanHand().changeTransparencyOfGroup(1f);
-       // Gdx.input.setInputProcessor(gameplayScreen.getStage());
-    }
-
-    private void resetButtonsState() {
-        uiManager.getEndTurnButton().setActive(false);
-        uiManager.getPullButton().setActive(true);
-    }
-
     private PlayerHandGroup getHandGroup(Player player) {
         for (PlayerHandGroup handGroup : uiManager.getHandGroups()) {
             if (handGroup.getPlayer() == player) {
@@ -248,7 +178,9 @@ public class GameController {
         return null;
     }
 
-
+    public InputManager getInputManager() {
+        return inputManager;
+    }
 
     public PlayerHandGroup humanHand() {
         return uiManager.getHandGroups().get(0);
@@ -258,25 +190,10 @@ public class GameController {
         return uiManager;
     }
 
-    public void setInputBlockActive(boolean inputBlockActive) {
-        this.inputBlockActive = inputBlockActive;
-    }
-
-    public void setChosenCardActor(CardActor choosenCardActor) {
-        this.choosenCardActor = choosenCardActor;
-    }
-
-    public boolean isInputBlockActive() {
-        return inputBlockActive;
-    }
-
     public BackendFacade getBackend() {
         return backend;
     }
 
-    public DragAndDropManager getDragAndDropManager() {
-        return dragAndDropManager;
-    }
     public SoundManager getSoundManager() {
         return soundManager;
     }

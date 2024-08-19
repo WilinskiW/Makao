@@ -67,12 +67,6 @@ public class PlayerHandGroup extends Group {
         }
     }
 
-    public void changeTransparencyOfGroup(float alpha){
-        for(CardActor cardActor : getCardActors()){
-            cardActor.changeTransparency(alpha);
-        }
-    }
-
     public Player getPlayer() {
         return player;
     }

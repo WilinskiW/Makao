@@ -43,7 +43,7 @@ public class PutButtonActor extends Actor {
         @Override
         public void clicked(InputEvent event, float x, float y) {
             CardActor chosenCardActor = cardChooser.getManager().giveCardActor();
-            controller.setChosenCardActor(chosenCardActor);
+            controller.getInputManager().setChosenCardActor(chosenCardActor);
             controller.executePlay(
                     new Play()
                             .setCardPlayed(chosenCardActor.getCard())

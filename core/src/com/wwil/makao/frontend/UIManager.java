@@ -1,5 +1,7 @@
 package com.wwil.makao.frontend;
 
+import com.badlogic.gdx.math.Vector3;
+import com.wwil.makao.backend.PlayReport;
 import com.wwil.makao.frontend.entities.CardActor;
 import com.wwil.makao.frontend.entities.cardChooser.CardChooserGroup;
 import com.wwil.makao.frontend.entities.cardsGroup.PlayerHandGroup;
@@ -20,7 +22,7 @@ public class UIManager {
     private GameButton endTurnButton;
 
 
-    public UIManager(GameController controller,GameplayScreen gameplayScreen) {
+    public UIManager(GameController controller, GameplayScreen gameplayScreen) {
         this.controller = controller;
         this.gameplayScreen = gameplayScreen;
         this.stackCardsGroup = new StackCardsGroup(controller.getBackend().getDeckManager());
@@ -28,8 +30,46 @@ public class UIManager {
         this.handGroups = new ArrayList<>();
     }
 
-    public void prepareStage(){
+    public void prepareStage() {
         new GameStagePreparer(this, controller.getBackend()).execute();
+    }
+
+    public void updateButtonStates(PlayReport lastPlayReport) {
+        pullButton.setActive(lastPlayReport.isPullActive());
+        endTurnButton.setActive(lastPlayReport.isEndActive());
+    }
+
+    public void positionCardInGroup(PlayerHandGroup human, CardActor chosenCard) {
+        if (!human.getChildren().isEmpty()) {
+            chosenCard.beLastInGroup();
+        } else {
+            moveCardBackToHumanGroup(human, chosenCard);
+        }
+    }
+
+    private void moveCardBackToHumanGroup(PlayerHandGroup humanGroup, CardActor card) {
+        humanGroup.addActor(card);
+        card.setX(card.getLastPositionBeforeRemove().x);
+        card.setY(card.getLastPositionBeforeRemove().y);
+        card.setZIndex((int) card.getLastPositionBeforeRemove().z);
+    }
+
+    public void deployCardToStage(CardActor card){
+        card.saveGroup();
+        card.setLastPositionBeforeRemove(new Vector3(card.getX(), card.getY(), card.getZIndex()));
+        gameplayScreen.getStage().addActor(card);
+    }
+
+    public GameController getController() {
+        return controller;
+    }
+
+    public void positionCardInHumanHandGroup(CardActor card) {
+        if (!getHumanHandGroup().getChildren().isEmpty()) {
+            card.beLastInGroup();
+        } else {
+            moveCardBackToHumanGroup(getHumanHandGroup(), card);
+        }
     }
 
     public void addCardActorToStackGroup(CardActor cardActor) {
@@ -42,51 +82,57 @@ public class UIManager {
         stackCardsGroup.addActor(cardActor);
     }
 
-    public GameController getController() {
-        return controller;
+    public void changeTransparencyOfPlayerGroup(PlayerHandGroup playerHandGroup, float alpha) {
+        for (CardActor cardActor : playerHandGroup.getCardActors()) {
+            cardActor.changeTransparency(alpha);
+        }
     }
 
-    public void setCardChooser(CardChooserGroup cardChooser) {
-        this.cardChooser = cardChooser;
-    }
-
-    public void setPullButton(GameButton pullButton) {
-        this.pullButton = pullButton;
-    }
-
-    public void setEndTurnButton(GameButton endTurnButton) {
-        this.endTurnButton = endTurnButton;
-    }
-
-    public List<PlayerHandGroup> getHandGroups() {
-        return handGroups;
-    }
-
-    public CardChooserGroup getCardChooser() {
-        return cardChooser;
-    }
-
-    public GameButton getPullButton() {
-        return pullButton;
-    }
-
-    public GameButton getEndTurnButton() {
-        return endTurnButton;
-    }
-
-    public CardActor peekStackCardActor() {
-        return stackCardsGroup.peekCardActor();
+    public GameplayScreen getGameplayScreen() {
+        return gameplayScreen;
     }
 
     public StackCardsGroup getStackCardsGroup() {
         return stackCardsGroup;
     }
 
+    public CardActor peekStackCardActor() {
+        return stackCardsGroup.peekCardActor();
+    }
+
     public CardActorFactory getCardActorFactory() {
         return cardActorFactory;
     }
 
-    public GameplayScreen getGameplayScreen() {
-        return gameplayScreen;
+    public List<PlayerHandGroup> getHandGroups() {
+        return handGroups;
+    }
+
+    public PlayerHandGroup getHumanHandGroup(){
+        return handGroups.get(0);
+    }
+
+    public CardChooserGroup getCardChooser() {
+        return cardChooser;
+    }
+
+    public void setCardChooser(CardChooserGroup cardChooser) {
+        this.cardChooser = cardChooser;
+    }
+
+    public GameButton getPullButton() {
+        return pullButton;
+    }
+
+    public void setPullButton(GameButton pullButton) {
+        this.pullButton = pullButton;
+    }
+
+    public GameButton getEndTurnButton() {
+        return endTurnButton;
+    }
+
+    public void setEndTurnButton(GameButton endTurnButton) {
+        this.endTurnButton = endTurnButton;
     }
 }

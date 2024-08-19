@@ -1,7 +1,6 @@
 package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.wwil.makao.backend.Action;
@@ -11,11 +10,15 @@ import com.wwil.makao.frontend.entities.cardsGroup.StackCardsGroup;
 
 public class DragAndDropManager {
     private final GameController gameController;
+    private final UIManager uiManager;
+    private final InputManager inputManager;
     private final DragAndDrop.Target target;
 
-    public DragAndDropManager(GameController gameController) {
+    public DragAndDropManager(GameController gameController, InputManager inputManager, StackCardsGroup target) {
         this.gameController = gameController;
-        this.target = prepareTarget(gameController.getUiManager().getStackCardsGroup());
+        this.inputManager = inputManager;
+        this.uiManager = gameController.getUiManager();
+        this.target = prepareTarget(target);
     }
 
     private DragAndDrop.Target prepareTarget(final StackCardsGroup stackCardsGroup) {
@@ -23,7 +26,7 @@ public class DragAndDropManager {
             @Override
             public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
                 CardActor chosenCardActor = (CardActor) source.getActor();
-                gameController.setChosenCardActor(chosenCardActor);
+                inputManager.setChosenCardActor(chosenCardActor);
                 if (target != null) {
                     gameController.changeCardColor(gameController.getBackend().isDraggedCardValid(chosenCardActor),chosenCardActor);
                 }
@@ -39,7 +42,7 @@ public class DragAndDropManager {
             @Override
             public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
                 CardActor chosenCardActor = (CardActor) source.getActor();
-                gameController.setChosenCardActor(chosenCardActor);
+                inputManager.setChosenCardActor(chosenCardActor);
                 gameController.executePlay(
                         new Play()
                                 .setCardPlayed(chosenCardActor.getCard())
@@ -57,13 +60,13 @@ public class DragAndDropManager {
     }
 
     public void focusRescueCard(final CardActor card) {
-        deactivatedCardActors();
+        stopListening();
         prepareDragAndDrop(card);
         card.changeTransparency(1);
     }
 
-    public void deactivatedCardActors(){
-        for (CardActor cardActor : gameController.humanHand().getCardActors()) {
+    public void stopListening(){
+        for (CardActor cardActor : uiManager.getHumanHandGroup().getCardActors()) {
             cardActor.clearListeners();
             cardActor.changeTransparency(0.25f);
         }
@@ -83,20 +86,13 @@ public class DragAndDropManager {
                 DragAndDrop.Payload payload = new DragAndDrop.Payload();
                 payload.setDragActor(card);
                 payload.setObject(card);
-                prepareCardToStage();
+                uiManager.deployCardToStage(card);
                 return payload;
             }
-
-            private void prepareCardToStage() {
-                card.saveGroup();
-                card.setLastPositionBeforeRemove(new Vector3(card.getX(), card.getY(), card.getZIndex()));
-                gameController.getUiManager().getGameplayScreen().getStage().addActor(card);
-            }
-
             @Override
             public void dragStop(InputEvent event, float x, float y, int pointer, DragAndDrop.Payload payload, DragAndDrop.Target target) {
                 if (target == null) {
-                    gameController.executeDragStop(card);
+                    uiManager.positionCardInHumanHandGroup(card);
                 }
                 super.dragStop(event, x, y, pointer, payload, target);
             }
