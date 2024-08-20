@@ -2,6 +2,7 @@ package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.PlayerManager;
+import com.wwil.makao.backend.states.DefenseState;
 
 public class AbilityHandler {
     private final RoundManager roundManager;
@@ -49,7 +50,7 @@ public class AbilityHandler {
 
     private void attack(int amountOfCards) {
         roundManager.increaseAmountOfPulls(amountOfCards);
-        playerManager.getNextPlayer().setAttack(true);
+        playerManager.getNextPlayer().changeState(new DefenseState());
     }
 
     private void demand(PlayReport playReport){
@@ -74,7 +75,7 @@ public class AbilityHandler {
     private void attackPrevious(){
         roundManager.increaseAmountOfPulls(5);
         playerManager.playerBefore();
-        playerManager.getCurrentPlayer().setAttack(true);
+        playerManager.getPreviousPlayer().changeState(new DefenseState());
     }
 
     private void createCard(PlayReport playReport){

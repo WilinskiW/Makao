@@ -1,15 +1,18 @@
 package com.wwil.makao.backend.model.player;
 
 import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.backend.states.DefaultState;
+import com.wwil.makao.backend.states.PlayerState;
 
 import java.util.*;
 
 public class Player {
     private final List<Card> cards;
-    private boolean isAttack;
+    private PlayerState state;
 
     public Player(List<Card> cards) {
         this.cards = cards;
+        this.state = new DefaultState();
     }
 
     public void addCardToHand(Card card) {
@@ -23,15 +26,12 @@ public class Player {
     public boolean checkIfPlayerHaveNoCards() {
         return cards.isEmpty();
     }
-
-    public boolean isAttack() {
-        return isAttack;
+    public void changeState(PlayerState state){
+        this.state = state;
     }
-
-    public void setAttack(boolean attack) {
-        isAttack = attack;
+    public PlayerState getState(){
+        return state;
     }
-
     public List<Card> getCards() {
         return cards;
     }

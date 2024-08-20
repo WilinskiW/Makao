@@ -66,31 +66,31 @@ public class PlayExecutor {
     }
 
     private PlayReport executePullPlay(Player player, PlayReport playReport) {
-        pullCard(player, playReport);
-        return evaluateHumanAvailableActions(player, playReport);
+        return pullCard(player, playReport);
     }
 
-    private void pullCard(Player player, PlayReport playReport) {
+    private PlayReport pullCard(Player player, PlayReport playReport) {
         Card drawnCard = playReport.getPlay().getDrawnCard();
         player.addCardToHand(drawnCard);
         playReport.setDrawn(drawnCard);
-
-        if (player.isAttack()) {
-            roundManager.decreaseAmountOfPulls();
-        }
+        playReport.setPutActive().setEndActive();
+        return playReport;
+//        if (player.isAttack()) {
+//            roundManager.decreaseAmountOfPulls();
+//        }
     }
 
-    private PlayReport evaluateHumanAvailableActions(Player player, PlayReport playReport) {
-        if (!isHumanPlayer()) {
-            return playReport;
-        }
-
-        if (player.isAttack()) {
-            return evaluateActionsWhileAttack(player, playReport);
-        } else {
-            return evaluateActionsInNormalTurn(player, playReport);
-        }
-    }
+//    private PlayReport evaluateHumanAvailableActions(Player player, PlayReport playReport) {
+//        if (!isHumanPlayer()) {
+//            return playReport;
+//        }
+//
+////        if (player.isAttack()) {
+////            return evaluateActionsWhileAttack(player, playReport);
+////        } else {
+////            return evaluateActionsInNormalTurn(player, playReport);
+////        }
+//    }
 
     private PlayReport evaluateActionsWhileAttack(Player player, PlayReport playReport) {
         if (isFirstPull(player)) {
@@ -101,7 +101,7 @@ public class PlayExecutor {
             return playReport.setPullActive();
         }
 
-        player.setAttack(false);
+//        player.setAttack(false);
         return playReport.setEndActive();
     }
 

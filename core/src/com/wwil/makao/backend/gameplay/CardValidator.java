@@ -13,20 +13,18 @@ private final DeckManager deckManager;
         this.deckManager = deckManager;
     }
 
-    public boolean isValid(Card chosenCard, boolean isChooserActive) {
-        Card stackCard = getStackCard(chosenCard,isChooserActive);
+    public boolean isValidForMultiplePut(Card chosenCard){
+        return chosenCard.getRank() == roundManager.getHumanPlayedCards().get(0).getRank();
+    }
 
-        // Sprawdzanie, czy gracz może położyć kolejną kartę o tej samej randze
-        if (!roundManager.getHumanPlayedCards().isEmpty() && !isChooserActive) {
-            return isValidForMultiplePut(chosenCard);
+    public boolean isValidForNormalTurn(Card chosenCard){
+        Card stackCard = getStackCard(chosenCard,false);
+        if (stackCard.getRank().equals(Rank.Q) || chosenCard.getRank().equals(Rank.Q)
+                || chosenCard.getRank().equals(Rank.JOKER) || stackCard.getRank().equals(Rank.JOKER)) {
+            return true;
         }
 
-       if(roundManager.getPlayerManager().getCurrentPlayer().isAttack()){
-           return isValidForDefence(chosenCard,stackCard);
-       }
-       else{
-           return isValidForNormalTurn(chosenCard,stackCard);
-       }
+        return stackCard.getSuit() == chosenCard.getSuit() || stackCard.getRank() == chosenCard.getRank();
     }
 
     private Card getStackCard(Card chosenCard,boolean isChooserActive){
@@ -38,21 +36,9 @@ private final DeckManager deckManager;
         }
     }
 
-    private boolean isValidForMultiplePut(Card chosenCard){
-        return chosenCard.getRank() == roundManager.getHumanPlayedCards().get(0).getRank();
-    }
 
-    private boolean isValidForNormalTurn(Card chosenCard, Card stackCard){
-        if (stackCard.getRank().equals(Rank.Q) || chosenCard.getRank().equals(Rank.Q)
-                || chosenCard.getRank().equals(Rank.JOKER) || stackCard.getRank().equals(Rank.JOKER)) {
-            return true;
-        }
-
-        return stackCard.getSuit() == chosenCard.getSuit() || stackCard.getRank() == chosenCard.getRank();
-    }
-
-
-    private boolean isValidForDefence(Card chosenCard, Card stackCard){
+    public boolean isValidForDefence(Card chosenCard){
+        Card stackCard = getStackCard(chosenCard,false);
         if(chosenCard.getRank() == stackCard.getRank()){
             return true;
         }

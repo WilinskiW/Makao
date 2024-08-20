@@ -42,7 +42,7 @@ public class PlayerManager {
         }
     }
 
-    public Player getPlayerBefore() {
+    public Player getPreviousPlayer() {
         int playerBeforeIndex = currentPlayerIndex - 1;
         if (playerBeforeIndex < 0) {
             playerBeforeIndex = players.size() - 1;

@@ -16,6 +16,7 @@ public class RoundManager {
     private final CardValidator validator;
     private RoundReport roundReport;
     private int amountOfPulls = 0;
+    private int amountOfWaits = 0;
     private final List<Card> humanPlayedCards = new ArrayList<>();
 
     public RoundManager(PlayerManager playerManager, DeckManager deckManager) {
@@ -28,7 +29,7 @@ public class RoundManager {
     }
 
     public boolean isCardValid(Card cardPlayed, boolean isChooserActive) {
-        return validator.isValid(cardPlayed, isChooserActive);
+        return playerManager.getHumanPlayer().getState().isValid(cardPlayed,validator);
     }
 
     public RoundReport processHumanPlay(Play humanPlay) {
@@ -70,7 +71,7 @@ public class RoundManager {
         return sendRoundReport();
     }
 
-    private void playRound() {
+    void playRound() {
         while (isComputerTurn() || hasSomeoneWon()) {
             executePlays(playerManager.getCurrentPlayer());
         }
@@ -91,7 +92,7 @@ public class RoundManager {
         }
     }
 
-    private RoundReport sendRoundReport() {
+    RoundReport sendRoundReport() {
         RoundReport report = roundReport;
         startNewRound();
         return report;
@@ -101,19 +102,27 @@ public class RoundManager {
         roundReport = new RoundReport();
     }
 
-    void increaseAmountOfPulls(int amount) {
+    public void increaseAmountOfPulls(int amount) {
         amountOfPulls += amount;
     }
 
-    void decreaseAmountOfPulls() {
+    public void decreaseAmountOfPulls() {
         amountOfPulls--;
     }
 
-    CardValidator getValidator() {
+    void increaseAmountOfWaits() {
+        amountOfWaits++;
+    }
+
+    void decreaseAmountOfWaits() {
+        amountOfWaits--;
+    }
+
+    public CardValidator getValidator() {
         return validator;
     }
 
-    DeckManager getDeckManager() {
+    public DeckManager getDeckManager() {
         return deckManager;
     }
 
@@ -125,12 +134,20 @@ public class RoundManager {
         return playerManager;
     }
 
-    int getAmountOfPulls() {
+    public int getAmountOfPulls() {
         return amountOfPulls;
     }
 
-    void setAmountOfPulls(int amountOfPulls) {
+    public void setAmountOfPulls(int amountOfPulls) {
         this.amountOfPulls = amountOfPulls;
+    }
+
+    public int getAmountOfWaits() {
+        return amountOfWaits;
+    }
+
+    public void setAmountOfWaits(int amountOfWaits) {
+        this.amountOfWaits = amountOfWaits;
     }
 
     List<Card> getHumanPlayedCards() {

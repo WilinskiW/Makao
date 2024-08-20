@@ -8,21 +8,13 @@ import java.util.*;
 //Szuka kart dla gracza
 public class CardFinder {
     private final CardValidator validator;
-    private List<Card> playerCards;
 
     public CardFinder(CardValidator validator) {
         this.validator = validator;
     }
 
-    public List<Card> giveValidCards(Player player, Card stackcard) {
-        this.playerCards = player.getCards();
-        if(player.isAttack()){
-            return findCardsForDefenceTurn(stackcard);
-        }
-        return findCardForNormalTurn(stackcard);
-    }
-
-    private List<Card> findCardsForDefenceTurn(Card attackingCard) {
+    public List<Card> findCardsForDefenceState(Player player,Card attackingCard) {
+        List<Card> playerCards = player.getCards();
         List<Card> defensiveCards = new ArrayList<>();
 
         for (Card playerCard : playerCards) {
@@ -65,8 +57,10 @@ public class CardFinder {
         return elements.get(new Random().nextInt(elements.size()));
     }
 
-    private List<Card> findCardAgainstBlockAttack(){
+    public List<Card> findCardAgainstBlockAttack(Player player){
+        List<Card> playerCards = player.getCards();
         List<Card> cards = new ArrayList<>();
+
         for(Card card : playerCards){
             if(card.getRank() == Rank.FOUR){
                 cards.add(card);
@@ -75,11 +69,13 @@ public class CardFinder {
         return cards;
     }
 
-    private List<Card> findCardForNormalTurn(Card stackCard) {
+    public List<Card> findCardForDefaultState(Player player,Card stackCard) {
+        List<Card> playerCards = player.getCards();
         List<Card> playableCards = new ArrayList<>();
+
         //Dodajemy karty, które mogą być zagrane
         for (Card card : playerCards) {
-            if (validator.isValid(card,false)) {
+            if (player.getState().isValid(card,validator)) {
                 playableCards.add(card);
             }
         }
@@ -173,50 +169,50 @@ public class CardFinder {
         return card.getRank() == stackCard.getRank() || card.getSuit() == stackCard.getSuit();
     }
 
-    public Card findCardToDemand() {
-        List<Card> cards = playerCards;
-        Collections.shuffle(cards);
-        for (Card card : cards) {
-            if (card.getRank().getAbility() == Ability.NONE) {
-                return card;
-            }
-        }
-        return null;
-    }
+//    public Card findCardToDemand(Player player) {
+//        List<Card> cards = player.getCards();
+//        Collections.shuffle(cards);
+//        for (Card card : cards) {
+//            if (card.getRank().getAbility() == Ability.NONE) {
+//                return card;
+//            }
+//        }
+//        return null;
+//    }
 
-    public Card findDemandedCard(Card demanded, boolean lookForJ) {
-        List<Card> cards = playerCards;
-        Collections.shuffle(cards);
-        Card cardToPlay = null;
-        for (Card card : cards) {
-            if (lookForJ && card.getRank().equals(Rank.J)) {
-                return card;
-            }
-
-            if (card.getRank() == demanded.getRank()) {
-                cardToPlay = card;
-            }
-        }
-        return cardToPlay;
-    }
-
-    public Suit giveMostDominantSuit() {
-        int[] counts = new int[4]; // Tablica przechowująca liczbę wystąpień dla każdego koloru
-
-        for (Card card : playerCards) {
-            Suit cardSuit = card.getSuit();
-            if (cardSuit != Suit.BLACK && cardSuit != Suit.RED) { // Pomijanie BLACK i RED
-                counts[cardSuit.ordinal()]++; // Inkrementacja odpowiedniego licznika
-            }
-        }
-
-        int maxIndex = 0;
-        for (int i = 1; i < counts.length; i++) {
-            if (counts[i] > counts[maxIndex]) {
-                maxIndex = i;
-            }
-        }
-
-        return Suit.values()[maxIndex]; // Zwracanie koloru z największą liczbą wystąpień
-    }
+//    public Card findDemandedCard(Card demanded, boolean lookForJ) {
+//        List<Card> cards = playerCards;
+//        Collections.shuffle(cards);
+//        Card cardToPlay = null;
+//        for (Card card : cards) {
+//            if (lookForJ && card.getRank().equals(Rank.J)) {
+//                return card;
+//            }
+//
+//            if (card.getRank() == demanded.getRank()) {
+//                cardToPlay = card;
+//            }
+//        }
+//        return cardToPlay;
+//    }
+//
+//    public Suit giveMostDominantSuit() {
+//        int[] counts = new int[4]; // Tablica przechowująca liczbę wystąpień dla każdego koloru
+//
+//        for (Card card : playerCards) {
+//            Suit cardSuit = card.getSuit();
+//            if (cardSuit != Suit.BLACK && cardSuit != Suit.RED) { // Pomijanie BLACK i RED
+//                counts[cardSuit.ordinal()]++; // Inkrementacja odpowiedniego licznika
+//            }
+//        }
+//
+//        int maxIndex = 0;
+//        for (int i = 1; i < counts.length; i++) {
+//            if (counts[i] > counts[maxIndex]) {
+//                maxIndex = i;
+//            }
+//        }
+//
+//        return Suit.values()[maxIndex]; // Zwracanie koloru z największą liczbą wystąpień
+//    }
 }
