@@ -1,4 +1,6 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.gameplay;
+
+import com.wwil.makao.backend.model.card.Card;
 
 public class Play {
     private Card cardPlayed;
@@ -31,16 +33,16 @@ public class Play {
         return this;
     }
 
-    public Card getDrawnCard() {
+    Card getDrawnCard() {
         return drawnCard;
     }
 
-    public Play setDrawnCard(Card drawnCard) {
+    Play setDrawnCard(Card drawnCard) {
         this.drawnCard = drawnCard;
         return this;
     }
 
-    public boolean isChooserActive() {
+    boolean isChooserActive() {
         return isChooserActive;
     }
 

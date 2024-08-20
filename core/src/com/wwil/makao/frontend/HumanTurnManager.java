@@ -1,10 +1,9 @@
 package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.wwil.makao.backend.Play;
-import com.wwil.makao.backend.PlayReport;
-import com.wwil.makao.backend.RoundReport;
+import com.wwil.makao.backend.gameplay.Play;
+import com.wwil.makao.backend.gameplay.PlayReport;
+import com.wwil.makao.backend.gameplay.RoundReport;
 import com.wwil.makao.frontend.entities.CardActor;
 import com.wwil.makao.frontend.entities.cardsGroup.PlayerHandGroup;
 

@@ -1,10 +1,9 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.model.card;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CardFactory {
-
     public List<Card> createCards(){
         List<Card> cards = new ArrayList<>();
         List<Suit> normalSuits = Suit.getNormalSuits();

@@ -1,5 +1,7 @@
 package com.wwil.makao.frontend;
-import com.wwil.makao.backend.*;
+import com.wwil.makao.backend.gameplay.Action;
+import com.wwil.makao.backend.gameplay.Play;
+import com.wwil.makao.backend.gameplay.RoundReport;
 
 //Komunikacja miedzy back endem a front endem
 

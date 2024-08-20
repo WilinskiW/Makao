@@ -1,4 +1,7 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.model.card;
+
+import com.wwil.makao.backend.gameplay.CardValidator;
+import com.wwil.makao.backend.model.player.Player;
 
 import java.util.*;
 

@@ -1,10 +1,14 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.gameplay;
+
+import com.wwil.makao.backend.core.DeckManager;
+import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.backend.model.card.Rank;
 
 public class CardValidator {
 private final RoundManager roundManager;
 private final DeckManager deckManager;
 
-    public CardValidator(RoundManager roundManager, DeckManager deckManager) {
+    CardValidator(RoundManager roundManager, DeckManager deckManager) {
         this.roundManager = roundManager;
         this.deckManager = deckManager;
     }

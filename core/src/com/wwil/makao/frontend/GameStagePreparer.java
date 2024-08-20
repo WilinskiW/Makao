@@ -1,19 +1,13 @@
 package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.wwil.makao.backend.MakaoBackend;
-import com.wwil.makao.backend.Card;
-import com.wwil.makao.backend.Rank;
-import com.wwil.makao.backend.Suit;
+import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.frontend.entities.gameButtons.EndTurnButton;
 import com.wwil.makao.frontend.entities.gameButtons.GameButton;
 import com.wwil.makao.frontend.entities.cardChooser.CardChooserGroup;
 import com.wwil.makao.frontend.entities.CardActor;
 import com.wwil.makao.frontend.entities.cardsGroup.PlayerHandGroup;
 import com.wwil.makao.frontend.entities.gameButtons.PullButton;
-
-import java.util.Collections;
-import java.util.List;
 
 //Przygotowanie elementów graficznych ekranu
 public class GameStagePreparer {

@@ -1,7 +1,7 @@
 package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.wwil.makao.backend.Card;
+import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.frontend.entities.CardActor;
 
 public class CardActorFactory {

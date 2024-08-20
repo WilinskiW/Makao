@@ -2,7 +2,7 @@ package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
-import com.wwil.makao.backend.PlayReport;
+import com.wwil.makao.backend.gameplay.PlayReport;
 import com.wwil.makao.frontend.entities.CardActor;
 import com.wwil.makao.frontend.entities.cardChooser.CardChooserGroup;
 import com.wwil.makao.frontend.entities.cardsGroup.PlayerHandGroup;

@@ -1,4 +1,4 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.model.card;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,11 +40,6 @@ public enum Rank {
         }
         return null;
     }
-
-    public boolean isRankActivateChooser() {
-        return this.equals(J) || this.equals(AS) || this.equals(JOKER);
-    }
-
     public Ability getAbility() {
         return ability;
     }

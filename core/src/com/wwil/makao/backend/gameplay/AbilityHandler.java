@@ -1,15 +1,18 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.gameplay;
+
+import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.backend.model.player.PlayerManager;
 
 public class AbilityHandler {
     private final RoundManager roundManager;
     private final PlayerManager playerManager;
 
-    public AbilityHandler(RoundManager roundManager) {
+    AbilityHandler(RoundManager roundManager) {
         this.roundManager = roundManager;
         this.playerManager = roundManager.getPlayerManager();
     }
 
-    protected void useCardAbility(PlayReport playReport) {
+    void useCardAbility(PlayReport playReport) {
         Card card = playReport.getPlay().getCardPlayed();
 
         switch (card.getRank().getAbility()) {

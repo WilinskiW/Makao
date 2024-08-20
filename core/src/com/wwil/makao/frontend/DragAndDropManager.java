@@ -3,8 +3,8 @@ package com.wwil.makao.frontend;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
-import com.wwil.makao.backend.Action;
-import com.wwil.makao.backend.Play;
+import com.wwil.makao.backend.gameplay.Action;
+import com.wwil.makao.backend.gameplay.Play;
 import com.wwil.makao.frontend.entities.CardActor;
 import com.wwil.makao.frontend.entities.cardsGroup.StackCardsGroup;
 

@@ -1,7 +1,7 @@
 package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.Gdx;
-import com.wwil.makao.backend.PlayReport;
+import com.wwil.makao.backend.gameplay.PlayReport;
 import com.wwil.makao.frontend.entities.CardActor;
 
 public class InputManager {

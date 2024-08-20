@@ -2,8 +2,8 @@ package com.wwil.makao.frontend.entities.gameButtons;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.wwil.makao.backend.Action;
-import com.wwil.makao.backend.Play;
+import com.wwil.makao.backend.gameplay.Action;
+import com.wwil.makao.backend.gameplay.Play;
 import com.wwil.makao.frontend.GameController;
 
 public class EndTurnButton extends GameButton {

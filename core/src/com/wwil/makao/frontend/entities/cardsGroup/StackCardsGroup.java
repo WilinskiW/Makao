@@ -3,9 +3,7 @@ package com.wwil.makao.frontend.entities.cardsGroup;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.wwil.makao.backend.DeckManager;
-import com.wwil.makao.backend.MakaoBackend;
-import com.wwil.makao.backend.Stack;
+import com.wwil.makao.backend.core.DeckManager;
 import com.wwil.makao.frontend.entities.CardActor;
 
 public class StackCardsGroup extends Group {
@@ -23,7 +21,7 @@ public class StackCardsGroup extends Group {
             actor.setY(getChildren().get(0).getY());
         }
 
-        if(deckManager.getStack().isRefreshNeeded()){
+        if(deckManager.isRefreshNeeded()){
             dismantleCardActors();
         }
 

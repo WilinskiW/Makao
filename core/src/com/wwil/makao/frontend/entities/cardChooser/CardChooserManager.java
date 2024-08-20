@@ -2,9 +2,9 @@ package com.wwil.makao.frontend.entities.cardChooser;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.wwil.makao.backend.Card;
-import com.wwil.makao.backend.Rank;
-import com.wwil.makao.backend.Suit;
+import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.backend.model.card.Rank;
+import com.wwil.makao.backend.model.card.Suit;
 import com.wwil.makao.frontend.entities.CardActor;
 
 import java.util.SortedMap;

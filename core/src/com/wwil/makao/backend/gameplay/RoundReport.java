@@ -1,4 +1,6 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.gameplay;
+
+import com.wwil.makao.backend.model.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +9,7 @@ import java.util.List;
 public class RoundReport {
     private final List<PlayReport> playReports = new ArrayList<>();
 
-    public void addPlayRaport(PlayReport playReport) {
+    void addPlayRaport(PlayReport playReport) {
         playReports.add(playReport);
     }
 
@@ -47,11 +49,6 @@ public class RoundReport {
     }
 
     public PlayReport getLastPlayReport() {
-        return playReports.get(getPlayReports().size() - 1);
+        return playReports.get(playReports.size() - 1);
     }
-
-    public List<PlayReport> getPlayReports() {
-        return playReports;
-    }
-
 }

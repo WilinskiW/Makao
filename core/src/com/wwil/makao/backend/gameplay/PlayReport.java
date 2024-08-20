@@ -1,4 +1,7 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.gameplay;
+
+import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.backend.model.player.Player;
 
 public class PlayReport {
     private final Player player;
@@ -27,7 +30,7 @@ public class PlayReport {
         return isCardCorrect;
     }
 
-    public PlayReport setCardCorrect(boolean cardCorrect) {
+    PlayReport setCardCorrect(boolean cardCorrect) {
         isCardCorrect = cardCorrect;
         return this;
     }
@@ -36,7 +39,7 @@ public class PlayReport {
         return drawn;
     }
 
-    public void setDrawn(Card drawn) {
+    void setDrawn(Card drawn) {
         this.drawn = drawn;
     }
 
@@ -44,7 +47,7 @@ public class PlayReport {
         return isPutActive;
     }
 
-    protected PlayReport setPutActive() {
+    PlayReport setPutActive() {
         isPutActive = true;
         return this;
     }
@@ -53,7 +56,7 @@ public class PlayReport {
         return isPullActive;
     }
 
-    protected PlayReport setPullActive() {
+    PlayReport setPullActive() {
         isPullActive = true;
         return this;
     }

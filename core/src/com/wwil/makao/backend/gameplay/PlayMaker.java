@@ -1,4 +1,8 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.gameplay;
+
+import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.backend.model.card.CardFinder;
+import com.wwil.makao.backend.model.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;

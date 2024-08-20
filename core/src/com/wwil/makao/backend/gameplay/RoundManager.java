@@ -1,4 +1,9 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.gameplay;
+
+import com.wwil.makao.backend.core.DeckManager;
+import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.backend.model.player.Player;
+import com.wwil.makao.backend.model.player.PlayerManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +27,11 @@ public class RoundManager {
         startNewRound();
     }
 
-    protected RoundReport processHumanPlay(Play humanPlay) {
+    public boolean isCardValid(Card cardPlayed, boolean isChooserActive) {
+        return validator.isValid(cardPlayed, isChooserActive);
+    }
+
+    public RoundReport processHumanPlay(Play humanPlay) {
         switch (humanPlay.getAction()) {
             case PUT:
                 return putCard(humanPlay);
@@ -36,14 +45,13 @@ public class RoundManager {
     }
 
     private RoundReport putCard(Play humanPlay) {
-        boolean isValid = validator.isValid(humanPlay.getCardPlayed(),humanPlay.isChooserActive());
+        boolean isValid = isCardValid(humanPlay.getCardPlayed(), humanPlay.isChooserActive());
         PlayReport putPlayReport = new PlayReport(playerManager.getHumanPlayer(), humanPlay).setCardCorrect(isValid);
         roundReport.addPlayRaport(putPlayReport);
 
         if (isValid) {
             playExecutor.executePutPlay(putPlayReport);
-        }
-        else{
+        } else {
             putPlayReport.setPutActive().setPullActive();
         }
         return roundReport;
@@ -93,39 +101,39 @@ public class RoundManager {
         roundReport = new RoundReport();
     }
 
-    public void increaseAmountOfPulls(int amount) {
+    void increaseAmountOfPulls(int amount) {
         amountOfPulls += amount;
     }
 
-    public void decreaseAmountOfPulls() {
+    void decreaseAmountOfPulls() {
         amountOfPulls--;
     }
 
-    protected CardValidator getValidator() {
+    CardValidator getValidator() {
         return validator;
     }
 
-    protected DeckManager getDeckManager() {
+    DeckManager getDeckManager() {
         return deckManager;
     }
 
-    protected RoundReport getRoundReport() {
+    RoundReport getRoundReport() {
         return roundReport;
     }
 
-    protected PlayerManager getPlayerManager() {
+    PlayerManager getPlayerManager() {
         return playerManager;
     }
 
-    protected int getAmountOfPulls() {
+    int getAmountOfPulls() {
         return amountOfPulls;
     }
 
-    protected void setAmountOfPulls(int amountOfPulls) {
+    void setAmountOfPulls(int amountOfPulls) {
         this.amountOfPulls = amountOfPulls;
     }
 
-    public List<Card> getHumanPlayedCards() {
+    List<Card> getHumanPlayedCards() {
         return humanPlayedCards;
     }
 }

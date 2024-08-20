@@ -1,4 +1,6 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.model.player;
+
+import com.wwil.makao.backend.core.DeckManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,36 +13,36 @@ public class PlayerManager {
         createPlayers(amountOfPlayers, startingCards, deckManager);
     }
 
-    private void createPlayers(int amountOfPlayers, int startingCards, DeckManager deckManager  ) {
+    public void createPlayers(int amountOfPlayers, int startingCards, DeckManager deckManager) {
         for (int i = 0; i < amountOfPlayers; i++) {
             Player player = new Player(deckManager.giveCards(startingCards));
             players.add(player);
         }
     }
 
-    protected boolean shouldProceedToNextPlayer(Player player){
+    public boolean shouldProceedToNextPlayer(Player player) {
         return player == getCurrentPlayer();
     }
 
-    protected Player getCurrentPlayer() {
+    public Player getCurrentPlayer() {
         return players.get(currentPlayerIndex);
     }
 
-    protected void nextPlayer() {
+    public void nextPlayer() {
         currentPlayerIndex++;
         if (currentPlayerIndex > players.size() - 1) {
             currentPlayerIndex = 0;
         }
     }
 
-    protected void playerBefore() {
+    public void playerBefore() {
         currentPlayerIndex--;
         if (currentPlayerIndex < 0) {
             currentPlayerIndex = players.size() - 1;
         }
     }
 
-    protected Player getPlayerBefore() {
+    public Player getPlayerBefore() {
         int playerBeforeIndex = currentPlayerIndex - 1;
         if (playerBeforeIndex < 0) {
             playerBeforeIndex = players.size() - 1;
@@ -48,7 +50,7 @@ public class PlayerManager {
         return players.get(playerBeforeIndex);
     }
 
-    protected Player getNextPlayer() {
+    public Player getNextPlayer() {
         int nextPlayerIndex = currentPlayerIndex + 1;
         if (nextPlayerIndex >= players.size()) {
             nextPlayerIndex = 0;
@@ -59,6 +61,7 @@ public class PlayerManager {
     public List<Player> getPlayers() {
         return players;
     }
+
     public Player getHumanPlayer() {
         return players.get(0);
     }

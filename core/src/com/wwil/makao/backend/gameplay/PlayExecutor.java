@@ -1,15 +1,18 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.gameplay;
+
+import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.backend.model.player.Player;
 
 public class PlayExecutor {
     private final RoundManager roundManager;
     private final AbilityHandler abilityHandler;
 
-    public PlayExecutor(RoundManager roundManager) {
+    PlayExecutor(RoundManager roundManager) {
         this.roundManager = roundManager;
         this.abilityHandler = new AbilityHandler(this.roundManager);
     }
 
-    public PlayReport createPlayReport(Player player, Play play) {
+    PlayReport createPlayReport(Player player, Play play) {
         PlayReport playReport = new PlayReport(player, play);
 
         switch (play.getAction()) {
@@ -31,7 +34,7 @@ public class PlayExecutor {
         return playReport;
     }
 
-    protected PlayReport executePutPlay(PlayReport playReport) {
+    PlayReport executePutPlay(PlayReport playReport) {
         putCard(playReport);
         return playReport.setCardCorrect(true).setPutActive().setEndActive();
     }

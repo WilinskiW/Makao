@@ -1,4 +1,6 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.model.player;
+
+import com.wwil.makao.backend.model.card.Card;
 
 import java.util.*;
 
@@ -14,10 +16,6 @@ public class Player {
         cards.add(card);
     }
 
-    public void addCardsToHand(List<Card> newCards) {
-        cards.addAll(newCards);
-    }
-
     public void removeCardFromHand(Card card) {
         cards.remove(card);
     }
@@ -25,11 +23,12 @@ public class Player {
     public boolean checkIfPlayerHaveNoCards() {
         return cards.isEmpty();
     }
-    public boolean isAttack(){
+
+    public boolean isAttack() {
         return isAttack;
     }
 
-    void setAttack(boolean attack) {
+    public void setAttack(boolean attack) {
         isAttack = attack;
     }
 

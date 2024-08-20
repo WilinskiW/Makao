@@ -1,4 +1,6 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.core;
+
+import com.wwil.makao.backend.model.card.Card;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,17 +12,14 @@ public class Stack {
         cards.add(card);
     }
 
-    public Card peekCardBeforeLast(){
+    protected Card peekCardBeforeLast(){
         return cards.get(getCards().size()-2);
     }
-    public Card peekCard(){
+    protected Card peekCard(){
         return cards.get(getCards().size()-1);
     }
-    public boolean isRefreshNeeded(){
-        return getCards().size() > 3;
-    }
 
-    public List<Card> getCards() {
+    protected List<Card> getCards() {
         return cards;
     }
 }

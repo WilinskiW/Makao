@@ -1,5 +1,11 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.core;
 
+
+import com.wwil.makao.backend.gameplay.Play;
+import com.wwil.makao.backend.gameplay.RoundManager;
+import com.wwil.makao.backend.gameplay.RoundReport;
+import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.backend.model.player.PlayerManager;
 
 public class MakaoBackend {
     private final DeckManager deckManager;
@@ -16,7 +22,7 @@ public class MakaoBackend {
     }
 
     public boolean isCardValid(Card chosenCard) {
-        return roundManager.getValidator().isValid(chosenCard,false);
+        return roundManager.isCardValid(chosenCard,false);
     }
 
     public DeckManager getDeckManager() {

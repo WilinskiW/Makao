@@ -1,4 +1,6 @@
-package com.wwil.makao.backend;
+package com.wwil.makao.backend.core;
+
+import com.wwil.makao.backend.model.card.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,7 +9,8 @@ import java.util.List;
 public class DeckManager {
     private final List<Card> gameDeck;
     private final Stack stack = new Stack();
-    public DeckManager(){
+
+    DeckManager() {
         this.gameDeck = createCardsToGameDeck();
         //todo: Zmienic po testach
         //stack.addCardToStack(getStartStackCard());
@@ -29,24 +32,33 @@ public class DeckManager {
         return null;
     }
 
-    protected List<Card> giveCards(int amount) {
+    public List<Card> giveCards(int amount) {
         List<Card> cards = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             cards.add(takeCardFromGameDeck());
         }
         return cards;
     }
-    public Card peekStackCard(){return stack.peekCard();}
-    public Card peekStackCardBeforeLast(){
+
+    public Card peekStackCard() {
+        return stack.peekCard();
+    }
+
+    public Card peekStackCardBeforeLast() {
         return stack.peekCardBeforeLast();
     }
-    protected Card takeCardFromGameDeck() {
+
+    public Card takeCardFromGameDeck() {
         return gameDeck.remove(0);
+    }
+    public boolean isRefreshNeeded(){
+        return stack.getCards().size() > 3;
     }
 
     public List<Card> getGameDeck() {
         return gameDeck;
     }
+
     public Stack getStack() {
         return stack;
     }
