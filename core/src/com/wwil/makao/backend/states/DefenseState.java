@@ -1,6 +1,7 @@
 package com.wwil.makao.backend.states;
 
 import com.wwil.makao.backend.gameplay.CardValidator;
+import com.wwil.makao.backend.gameplay.PlayReport;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.CardFinder;
 import com.wwil.makao.backend.model.player.Player;
@@ -18,15 +19,9 @@ public class DefenseState extends PlayerState {
     protected List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
         return cardFinder.findCardsForDefenceState(player,attackingCard);
     }
-
     @Override
-    protected boolean isRescueAllow() {
-        return true;
-    }
-
-    @Override
-    protected boolean hasToPunishAfterFailRescue() {
-        return true;
+    PlayReport setActionActivations(PlayReport playReport) {
+        return playReport.setPutActive().setPullActive();
     }
 
     @Override
@@ -34,4 +29,7 @@ public class DefenseState extends PlayerState {
         return false;
     }
 
+    Card getAttackingCard() {
+        return attackingCard;
+    }
 }

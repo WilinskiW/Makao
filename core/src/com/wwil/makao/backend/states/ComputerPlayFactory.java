@@ -4,6 +4,7 @@ import com.wwil.makao.backend.core.DeckManager;
 import com.wwil.makao.backend.gameplay.Action;
 import com.wwil.makao.backend.gameplay.Play;
 import com.wwil.makao.backend.gameplay.RoundManager;
+import com.wwil.makao.backend.model.card.Ability;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.CardFinder;
 import com.wwil.makao.backend.model.player.Player;
@@ -27,15 +28,55 @@ public class ComputerPlayFactory {
         this.currentPlayer = currentPlayer;
         List<Play> plays = new ArrayList<>();
 
-        List<Card> validCards = this.currentPlayer.getState().findValidCards(cardFinder, this.currentPlayer, roundManager.getDeckManager().peekStackCard());
+        //Sprawdzenie czy gracz jest zablokowany
+        if (stateManager.isPlayerBlocked(currentPlayer)) {
+           return handleBlocked(plays);
+        }
+
+        //Sprawdzenie czy gracz ma jakieś karty do zagrania
+        List<Card> validCards = currentPlayer.getState().
+                findValidCards(cardFinder, currentPlayer, roundManager.getDeckManager().peekStackCard());
 
         if (!validCards.isEmpty()) {
+            //Kładzie prawidłowe karty
             createPutPlays(plays, validCards);
-        } else if (this.currentPlayer.getState().isRescueAllow()) {
+            handleDefenseCardPlay(plays);
+        } else if (isAllowRescue()) {
+            //Sprawdzamy czy stan zezwala na ratunek. Jeżeli tak to:
+            //Dobieramy jedną kartę. Jeżeli zgadza trzeba ją od razu położyć.
             createRescuePlays(plays);
         }
+        else{
+            blockPlayer();
+        }
+
         plays.add(createEndPlay());
         return plays;
+    }
+
+
+    private List<Play> handleBlocked(List<Play> plays){
+        plays.add(createEndPlay());
+        BlockedState blockedState = (BlockedState) currentPlayer.getState();
+        blockedState.decreasePunishes();
+        if(blockedState.canUnblock()){
+            stateManager.applyDefaultState(currentPlayer);
+        }
+        return plays;
+    }
+
+    private boolean isAllowRescue() {
+        if (stateManager.isDefenseState(currentPlayer)) {
+            DefenseState defenseState = (DefenseState) currentPlayer.getState();
+            return defenseState.getAttackingCard().getRank().getAbility() != Ability.WAIT;
+        }
+        return true;
+    }
+
+    private void handleDefenseCardPlay(List<Play> plays) {
+        if (stateManager.isDefenseState(currentPlayer)) {
+            stateManager.transferDefenceState(currentPlayer, plays.get(plays.size() - 1).getCardPlayed());
+        }
     }
 
 
@@ -54,8 +95,11 @@ public class ComputerPlayFactory {
         plays.add(createPullPlay(rescueCard));
 
         if (currentPlayer.getState().isValid(rescueCard, roundManager.getValidator())) {
+            //Próba udana
             plays.add(createPutPlay(rescueCard));
-        } else if (currentPlayer.getState().hasToPunishAfterFailRescue()) {
+            handleDefenseCardPlay(plays);
+        } else if (stateManager.isDefenseState(currentPlayer)) {
+            //Próba nieudana. Dodaj konsekwencje
             punish(plays);
         }
     }
@@ -71,7 +115,7 @@ public class ComputerPlayFactory {
     private void punish(List<Play> plays) {
         if (roundManager.getAmountOfPulls() > 0) {
             pullRemainingCards(plays);
-            generatePlaysForDefaultState(plays);
+            addDefaultStatePlays(plays);
         } else {
             blockPlayer();
         }
@@ -79,7 +123,7 @@ public class ComputerPlayFactory {
 
     private void pullRemainingCards(List<Play> plays) {
         stateManager.applyPullingState(currentPlayer);
-        PunishState pullState = (PunishState) currentPlayer.getState();
+        PullingState pullState = (PullingState) currentPlayer.getState();
         int amountOfPulls = pullState.amountOfPunishes;
 
         for (int i = 0; i < amountOfPulls; i++) {
@@ -88,13 +132,18 @@ public class ComputerPlayFactory {
         }
     }
 
-    private void generatePlaysForDefaultState(List<Play> plays){
+    private void addDefaultStatePlays(List<Play> plays) {
         stateManager.applyDefaultState(currentPlayer);
-        plays.addAll(this.generatePlays(currentPlayer,roundManager));
+        plays.addAll(this.generatePlays(currentPlayer, roundManager));
     }
 
-    private void blockPlayer(){
+    private void blockPlayer() {
         stateManager.applyBlockedState(currentPlayer);
+        BlockedState blockedState = (BlockedState) currentPlayer.getState();
+        blockedState.decreasePunishes();
+        if(blockedState.canUnblock()){
+            stateManager.applyDefaultState(currentPlayer);
+        }
     }
 
 

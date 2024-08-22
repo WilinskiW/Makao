@@ -2,6 +2,7 @@ package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
+import com.wwil.makao.backend.states.PlayerState;
 
 public class PlayExecutor {
     private final RoundManager roundManager;
@@ -75,9 +76,6 @@ public class PlayExecutor {
         playReport.setDrawn(drawnCard);
         playReport.setPutActive().setEndActive();
         return playReport;
-//        if (player.isAttack()) {
-//            roundManager.decreaseAmountOfPulls();
-//        }
     }
 
 //    private PlayReport evaluateHumanAvailableActions(Player player, PlayReport playReport) {

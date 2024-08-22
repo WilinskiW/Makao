@@ -17,12 +17,12 @@ public class CardFinder {
         List<Card> playerCards = player.getCards();
         List<Card> defensiveCards = new ArrayList<>();
 
-        for (Card playerCard : playerCards) {
-            if (playerCard.getRank() == attackingCard.getRank()) {
-                defensiveCards.add(playerCard);
-            }  //fixme: Karty już sprawdzone są pomijane np. Stack: 3 PIK| Pierwsza karta sprawdzona: 2 TREFL, Druga: 2 PIK. Druga trafia, pierwsza nie
-            else if (playerCard.getSuit() == attackingCard.getSuit() && playerCard.isBattleCard() && attackingCard.getRank().equals(Rank.K)) {
-                defensiveCards.add(playerCard);
+        for (Card card : playerCards) {
+            if (card.getRank() == attackingCard.getRank()) {
+                defensiveCards.add(card);
+            }
+            else if (card.getSuit() == attackingCard.getSuit() && card.isBattleCard() && attackingCard.getRank().equals(Rank.K)) {
+                defensiveCards.add(card);
             }
         }
 

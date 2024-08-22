@@ -2,6 +2,8 @@ package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.backend.model.card.Rank;
+import com.wwil.makao.backend.model.card.Suit;
 import com.wwil.makao.frontend.entities.gameButtons.EndTurnButton;
 import com.wwil.makao.frontend.entities.gameButtons.GameButton;
 import com.wwil.makao.frontend.entities.cardChooser.CardChooserGroup;
@@ -80,16 +82,12 @@ public class GameStagePreparer {
     private void test(int index) {
         switch (index) {
             case 0:
-//                handGroups.get(index).getPlayer().getCards().clear();
-//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.J, Suit.CLUB)));
-//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.J, Suit.SPADE)));
-//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.J, Suit.DIAMOND)));
-//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.J, Suit.HEART)));
-//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.AS, Suit.CLUB)));
-//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.AS, Suit.SPADE)));
-//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.AS, Suit.DIAMOND)));
-//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.AS, Suit.HEART)));
-//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.JOKER, Suit.RED)));
+                backend.getPlayers().get(index).getCards().clear();
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.FOUR, Suit.CLUB));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.FOUR, Suit.SPADE));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.FOUR, Suit.HEART));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.FOUR, Suit.DIAMOND));
+
                 break;
             case 1:
 //                handGroups.get(index).getPlayer().getCards().clear();

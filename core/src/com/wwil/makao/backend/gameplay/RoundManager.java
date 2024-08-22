@@ -24,7 +24,7 @@ public class RoundManager {
         this.playerManager = playerManager;
         this.deckManager = deckManager;
         this.validator = new CardValidator(this, deckManager);
-        this.stateManager = new StateManager(this);
+        this.stateManager = new StateManager(this, playerManager);
         this.playExecutor = new PlayExecutor(this);
         startNewRound();
     }
@@ -103,7 +103,7 @@ public class RoundManager {
         roundReport = new RoundReport();
     }
 
-    public void increaseAmountOfPulls(int amount) {
+    void increaseAmountOfPulls(int amount) {
         amountOfPulls += amount;
     }
 
@@ -115,6 +115,9 @@ public class RoundManager {
 
     public CardValidator getValidator() {
         return validator;
+    }
+    void increaseAmountOfWaits() {
+        amountOfWaits++;
     }
 
     public int giveAmountOfWaits(){

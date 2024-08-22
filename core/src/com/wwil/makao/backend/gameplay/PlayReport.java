@@ -47,7 +47,7 @@ public class PlayReport {
         return isPutActive;
     }
 
-    PlayReport setPutActive() {
+    public PlayReport setPutActive() {
         isPutActive = true;
         return this;
     }
@@ -56,7 +56,7 @@ public class PlayReport {
         return isPullActive;
     }
 
-    PlayReport setPullActive() {
+    public PlayReport setPullActive() {
         isPullActive = true;
         return this;
     }
@@ -65,7 +65,7 @@ public class PlayReport {
         return isEndActive;
     }
 
-    protected PlayReport setEndActive() {
+    public PlayReport setEndActive() {
         isEndActive = true;
         return this;
     }

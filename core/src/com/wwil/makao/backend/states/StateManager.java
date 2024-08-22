@@ -4,16 +4,19 @@ import com.wwil.makao.backend.gameplay.Play;
 import com.wwil.makao.backend.gameplay.RoundManager;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
+import com.wwil.makao.backend.model.player.PlayerManager;
 
 import java.util.List;
 
 public class StateManager {
     private final RoundManager roundManager;
     private final ComputerPlayFactory computerPlayFactory;
+    private final PlayerManager playerManager;
 
-    public StateManager(RoundManager roundManager) {
+    public StateManager(RoundManager roundManager, PlayerManager playerManager) {
         this.roundManager = roundManager;
         this.computerPlayFactory = new ComputerPlayFactory(roundManager, this);
+        this.playerManager = playerManager;
     }
 
     public List<Play> generatePlays(Player currentPlayer) {
@@ -24,15 +27,25 @@ public class StateManager {
         changePlayerState(player, new DefenseState(attackingCard));
     }
 
-    public void applyDefaultState(Player player){
+    void transferDefenceState(Player currentPlayer, Card cardPlayed) {
+        applyDefaultState(currentPlayer);
+        if (cardPlayed.isKingSpade()) {
+            applyDefenceState(playerManager.getPreviousPlayer(), cardPlayed);
+        } else {
+            applyDefenceState(playerManager.getNextPlayer(), cardPlayed);
+        }
+    }
+
+    void applyDefaultState(Player player) {
         changePlayerState(player, new DefaultState());
     }
 
-    void applyPullingState(Player player){
-        changePlayerState(player, new PullingState(roundManager.giveAmountOfPulls()));
+    void applyPullingState(Player player) {
+        changePlayerState(player, new PullingState(roundManager.giveAmountOfPulls() - 1));
+        //-1, bo odejmujemy pociągnięcie rescue card
     }
 
-    void applyBlockedState(Player player){
+    void applyBlockedState(Player player) {
         changePlayerState(player, new BlockedState(roundManager.giveAmountOfWaits()));
     }
 
@@ -40,4 +53,11 @@ public class StateManager {
         player.changeState(newState);
     }
 
+    boolean isPlayerBlocked(Player player) {
+        return player.getState() instanceof BlockedState;
+    }
+
+    boolean isDefenseState(Player player) {
+        return player.getState() instanceof DefenseState;
+    }
 }

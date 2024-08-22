@@ -27,16 +27,6 @@ public abstract class PunishState extends PlayerState {
     }
 
     @Override
-    protected boolean isRescueAllow() {
-        return false;
-    }
-
-    @Override
-    protected boolean hasToPunishAfterFailRescue() {
-        return false;
-    }
-
-    @Override
     public boolean isValid(Card chosenCard, CardValidator validator) {
         return false;
     }

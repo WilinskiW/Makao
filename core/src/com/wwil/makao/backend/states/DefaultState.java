@@ -1,6 +1,7 @@
 package com.wwil.makao.backend.states;
 
 import com.wwil.makao.backend.gameplay.CardValidator;
+import com.wwil.makao.backend.gameplay.PlayReport;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.CardFinder;
 import com.wwil.makao.backend.model.player.Player;
@@ -15,13 +16,8 @@ public class DefaultState extends PlayerState {
     }
 
     @Override
-    protected boolean isRescueAllow() {
-        return true;
-    }
-
-    @Override
-    protected boolean hasToPunishAfterFailRescue() {
-        return false;
+    PlayReport setActionActivations(PlayReport playReport) {
+        return playReport.setPutActive().setPullActive();
     }
 
     @Override

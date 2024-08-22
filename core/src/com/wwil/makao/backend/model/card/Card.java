@@ -12,7 +12,11 @@ public class Card {
         return rank == Rank.TWO
                 || rank == Rank.THREE
                 || (rank == Rank.K && suit == Suit.HEART)
-                || (rank == Rank.K && suit == Suit.SPADE);
+                || isKingSpade();
+    }
+
+    public boolean isKingSpade(){
+        return rank == Rank.K && suit == Suit.SPADE;
     }
 
     public Rank getRank() {

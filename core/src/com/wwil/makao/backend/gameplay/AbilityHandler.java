@@ -29,6 +29,7 @@ public class AbilityHandler {
                 attackNext(3, card);
                 break;
             case WAIT:
+                blockNext(card);
                 break;
             case DEMAND:
                 demand(playReport);
@@ -52,6 +53,11 @@ public class AbilityHandler {
 
     private void attackNext(int amountOfCards, Card card) {
         roundManager.increaseAmountOfPulls(amountOfCards);
+        stateManager.applyDefenceState(playerManager.getNextPlayer(), card);
+    }
+
+    private void blockNext(Card card){
+        roundManager.increaseAmountOfWaits();
         stateManager.applyDefenceState(playerManager.getNextPlayer(), card);
     }
 
