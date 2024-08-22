@@ -9,7 +9,7 @@ public class PlayExecutor {
 
     PlayExecutor(RoundManager roundManager) {
         this.roundManager = roundManager;
-        this.abilityHandler = new AbilityHandler(this.roundManager);
+        this.abilityHandler = new AbilityHandler(this.roundManager, roundManager.getStateManager());
     }
 
     PlayReport createPlayReport(Player player, Play play) {
@@ -29,7 +29,7 @@ public class PlayExecutor {
 
     private PlayReport executeEndPlay(PlayReport playReport) {
         if (roundManager.getPlayerManager().shouldProceedToNextPlayer(playReport.getPlayer())) {
-            roundManager.getPlayerManager().nextPlayer();
+            roundManager.getPlayerManager().goToNextPlayer();
         }
         return playReport;
     }

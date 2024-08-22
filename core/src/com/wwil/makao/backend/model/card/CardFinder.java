@@ -69,7 +69,7 @@ public class CardFinder {
         return cards;
     }
 
-    public List<Card> findCardForDefaultState(Player player,Card stackCard) {
+    public List<Card> findCardsForDefaultState(Player player, Card stackCard) {
         List<Card> playerCards = player.getCards();
         List<Card> playableCards = new ArrayList<>();
 

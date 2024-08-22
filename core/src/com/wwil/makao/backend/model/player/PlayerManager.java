@@ -28,14 +28,14 @@ public class PlayerManager {
         return players.get(currentPlayerIndex);
     }
 
-    public void nextPlayer() {
+    public void goToNextPlayer() {
         currentPlayerIndex++;
         if (currentPlayerIndex > players.size() - 1) {
             currentPlayerIndex = 0;
         }
     }
 
-    public void playerBefore() {
+    public void goToPreviousPlayer() {
         currentPlayerIndex--;
         if (currentPlayerIndex < 0) {
             currentPlayerIndex = players.size() - 1;

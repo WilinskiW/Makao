@@ -4,6 +4,7 @@ import com.wwil.makao.backend.core.DeckManager;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.model.player.PlayerManager;
+import com.wwil.makao.backend.states.StateManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 public class RoundManager {
     private final PlayerManager playerManager;
     private final DeckManager deckManager;
-    private final PlayMaker playMaker;
+    private final StateManager stateManager;
     private final PlayExecutor playExecutor;
     private final CardValidator validator;
     private RoundReport roundReport;
@@ -23,7 +24,7 @@ public class RoundManager {
         this.playerManager = playerManager;
         this.deckManager = deckManager;
         this.validator = new CardValidator(this, deckManager);
-        this.playMaker = new PlayMaker(this);
+        this.stateManager = new StateManager(this);
         this.playExecutor = new PlayExecutor(this);
         startNewRound();
     }
@@ -86,7 +87,7 @@ public class RoundManager {
     }
 
     private void executePlays(Player player) {
-        List<Play> plays = playMaker.makePlays(player);
+        List<Play> plays = stateManager.generatePlays(player);
         for (Play play : plays) {
             roundReport.addPlayRaport(playExecutor.createPlayReport(player, play));
         }
@@ -106,20 +107,20 @@ public class RoundManager {
         amountOfPulls += amount;
     }
 
-    public void decreaseAmountOfPulls() {
-        amountOfPulls--;
-    }
-
-    void increaseAmountOfWaits() {
-        amountOfWaits++;
-    }
-
-    void decreaseAmountOfWaits() {
-        amountOfWaits--;
+    public int giveAmountOfPulls(){
+        int amount = amountOfPulls;
+        amountOfPulls = 0;
+        return amount;
     }
 
     public CardValidator getValidator() {
         return validator;
+    }
+
+    public int giveAmountOfWaits(){
+        int amount = amountOfWaits;
+        amountOfWaits = 0;
+        return amount;
     }
 
     public DeckManager getDeckManager() {
@@ -138,16 +139,8 @@ public class RoundManager {
         return amountOfPulls;
     }
 
-    public void setAmountOfPulls(int amountOfPulls) {
-        this.amountOfPulls = amountOfPulls;
-    }
-
-    public int getAmountOfWaits() {
-        return amountOfWaits;
-    }
-
-    public void setAmountOfWaits(int amountOfWaits) {
-        this.amountOfWaits = amountOfWaits;
+    StateManager getStateManager() {
+        return stateManager;
     }
 
     List<Card> getHumanPlayedCards() {

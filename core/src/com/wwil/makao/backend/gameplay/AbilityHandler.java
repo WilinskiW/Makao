@@ -2,15 +2,17 @@ package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.PlayerManager;
-import com.wwil.makao.backend.states.DefenseState;
+import com.wwil.makao.backend.states.StateManager;
 
 public class AbilityHandler {
     private final RoundManager roundManager;
     private final PlayerManager playerManager;
+    private final StateManager stateManager;
 
-    AbilityHandler(RoundManager roundManager) {
+    AbilityHandler(RoundManager roundManager, StateManager stateManager) {
         this.roundManager = roundManager;
         this.playerManager = roundManager.getPlayerManager();
+        this.stateManager = stateManager;
     }
 
     void useCardAbility(PlayReport playReport) {
@@ -21,10 +23,10 @@ public class AbilityHandler {
                 changeSuit(playReport);
                 break;
             case PLUS_2:
-                attack(2);
+                attackNext(2, card);
                 break;
             case PLUS_3:
-                attack(3);
+                attackNext(3, card);
                 break;
             case WAIT:
                 break;
@@ -40,21 +42,21 @@ public class AbilityHandler {
         }
     }
 
-    private void changeSuit(PlayReport playReport){
-        if(playReport.getPlayer() == playerManager.getHumanPlayer()){
+    private void changeSuit(PlayReport playReport) {
+        if (playReport.getPlayer() == playerManager.getHumanPlayer()) {
             if (!playReport.getPlay().isChooserActive()) {
                 playReport.setChooserActive(true);
             }
         }
     }
 
-    private void attack(int amountOfCards) {
+    private void attackNext(int amountOfCards, Card card) {
         roundManager.increaseAmountOfPulls(amountOfCards);
-        playerManager.getNextPlayer().changeState(new DefenseState());
+        stateManager.applyDefenceState(playerManager.getNextPlayer(), card);
     }
 
-    private void demand(PlayReport playReport){
-        if(playReport.getPlayer() == playerManager.getHumanPlayer()){
+    private void demand(PlayReport playReport) {
+        if (playReport.getPlayer() == playerManager.getHumanPlayer()) {
             if (!playReport.isChooserActive()) {
                 playReport.setChooserActive(true);
             }
@@ -64,22 +66,22 @@ public class AbilityHandler {
     private void chooseAbilityForKing(Card card) {
         switch (card.getSuit()) {
             case HEART:
-                attack(5);
+                attackNext(5, card);
                 break;
             case SPADE:
-                attackPrevious();
+                attackPrevious(card);
                 break;
         }
     }
 
-    private void attackPrevious(){
+    private void attackPrevious(Card card) {
         roundManager.increaseAmountOfPulls(5);
-        playerManager.playerBefore();
-        playerManager.getPreviousPlayer().changeState(new DefenseState());
+        stateManager.applyDefenceState(playerManager.getPreviousPlayer(), card);
+        playerManager.goToPreviousPlayer();
     }
 
-    private void createCard(PlayReport playReport){
-        if(playReport.getPlayer() == playerManager.getHumanPlayer()){
+    private void createCard(PlayReport playReport) {
+        if (playReport.getPlayer() == playerManager.getHumanPlayer()) {
             if (!playReport.isChooserActive()) {
                 playReport.setChooserActive(true);
             }

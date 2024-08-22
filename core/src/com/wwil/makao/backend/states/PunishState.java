@@ -7,16 +7,28 @@ import com.wwil.makao.backend.model.player.Player;
 
 import java.util.List;
 
-public class DefaultState extends PlayerState {
+public abstract class PunishState extends PlayerState {
+
+    int amountOfPunishes;
+
+    protected PunishState(int amountOfPunishes) {
+        this.amountOfPunishes = amountOfPunishes;
+    }
+
+    protected void decreasePunishes() {
+        if (amountOfPunishes > 0) {
+            amountOfPunishes--;
+        }
+    }
 
     @Override
     protected List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
-        return cardFinder.findCardsForDefaultState(player, stackCard);
+        return null;
     }
 
     @Override
     protected boolean isRescueAllow() {
-        return true;
+        return false;
     }
 
     @Override
@@ -26,6 +38,6 @@ public class DefaultState extends PlayerState {
 
     @Override
     public boolean isValid(Card chosenCard, CardValidator validator) {
-        return validator.isValidForNormalTurn(chosenCard);
+        return false;
     }
 }
