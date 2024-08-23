@@ -1,11 +1,13 @@
-package com.wwil.makao.frontend.entities.cardChooser;
+package com.wwil.makao.frontend.entities.cardChooser.managers;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
 import com.wwil.makao.backend.model.card.Suit;
-import com.wwil.makao.frontend.entities.CardActor;
+import com.wwil.makao.frontend.entities.cards.CardActor;
+import com.wwil.makao.frontend.entities.cardChooser.actors.ArrowButtonActor;
+import com.wwil.makao.frontend.entities.cardChooser.actors.CardChooserGroup;
 
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -58,7 +60,7 @@ public class CardChooserManager {
         return suitMap;
     }
 
-    void changeRank(int indexChanger) {
+    public void changeRank(int indexChanger) {
         SortedMap<Integer,String> map;
         if(cardChooser.getGameController().getUiManager().peekStackCardActor().getCard().getRank().equals(Rank.J)){
             map = mapForJ;
@@ -99,7 +101,7 @@ public class CardChooserManager {
         }
     }
 
-    CardActor giveCardActor(){
+    public CardActor giveCardActor(){
         return new CardActor(cardChooser.getDisplayCard().getFrontSide(),
                 new Card(Rank.getRank(currentRankName),Suit.getSuit(currentSuitName)));
     }
@@ -129,7 +131,7 @@ public class CardChooserManager {
     }
 
 
-    void resetIndexes(){
+    public void resetIndexes(){
         currentRankIndex = 1;
         currentSuitIndex = 1;
     }

@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend.entities;
+package com.wwil.makao.frontend.entities.cards;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.wwil.makao.backend.model.card.Card;
-import com.wwil.makao.frontend.GUIparams;
+import com.wwil.makao.frontend.utils.params.GUIparams;
 
 public class CardActor extends Actor {
     private Card card;

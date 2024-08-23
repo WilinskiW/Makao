@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend;
+package com.wwil.makao.frontend.utils.params;
 
 public enum CardsAlignmentParams {
     SOUTH(GUIparams.DISTANCE_BETWEEN_CARDS / 2f, 0),

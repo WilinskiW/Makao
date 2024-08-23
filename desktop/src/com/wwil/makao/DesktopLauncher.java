@@ -2,8 +2,8 @@ package com.wwil.makao;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.wwil.makao.frontend.GUIparams;
-import com.wwil.makao.frontend.Makao;
+import com.wwil.makao.frontend.utils.params.GUIparams;
+import com.wwil.makao.frontend.controllers.gameplay.Makao;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {

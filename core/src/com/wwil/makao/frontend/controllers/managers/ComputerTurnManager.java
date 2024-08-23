@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend;
+package com.wwil.makao.frontend.controllers.managers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Timer;
@@ -6,8 +6,9 @@ import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.gameplay.PlayReport;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.gameplay.RoundReport;
-import com.wwil.makao.frontend.entities.CardActor;
-import com.wwil.makao.frontend.entities.cardsGroup.PlayerHandGroup;
+import com.wwil.makao.frontend.utils.sound.SoundManager;
+import com.wwil.makao.frontend.entities.cards.CardActor;
+import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;

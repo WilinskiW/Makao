@@ -1,11 +1,11 @@
-package com.wwil.makao.frontend.entities.cardChooser;
+package com.wwil.makao.frontend.entities.cardChooser.actors;
 
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.wwil.makao.frontend.entities.cardChooser.CardChooserManager;
-import com.wwil.makao.frontend.entities.CardActor;
-import com.wwil.makao.frontend.GUIparams;
-import com.wwil.makao.frontend.GameController;
-import com.wwil.makao.frontend.entities.cardChooser.*;
+import com.wwil.makao.frontend.entities.cardChooser.managers.CardChooserManager;
+import com.wwil.makao.frontend.entities.cards.CardActor;
+import com.wwil.makao.frontend.utils.params.GUIparams;
+import com.wwil.makao.frontend.controllers.gameplay.GameController;
+import com.wwil.makao.frontend.entities.cardChooser.models.CardChooserButtonTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,15 +67,15 @@ public class CardChooserGroup extends Group {
         return manager;
     }
 
-    GameController getGameController() {
+    public GameController getGameController() {
         return gameController;
     }
 
-    CardActor getDisplayCard() {
+    public CardActor getDisplayCard() {
         return displayCard;
     }
 
-    List<ArrowButtonActor> getArrowButtons() {
+    public List<ArrowButtonActor> getArrowButtons() {
         return arrowButtons;
     }
 }

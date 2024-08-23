@@ -1,8 +1,8 @@
-package com.wwil.makao.frontend;
+package com.wwil.makao.frontend.entities.cards;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.wwil.makao.backend.model.card.Card;
-import com.wwil.makao.frontend.entities.CardActor;
+import com.wwil.makao.frontend.utils.exceptions.CardNotFoundException;
 
 public class CardActorFactory {
     private final TextureAtlas textureAtlas;

@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend.entities.cardChooser;
+package com.wwil.makao.frontend.entities.cardChooser.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -8,7 +8,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.wwil.makao.frontend.GUIparams;
+import com.wwil.makao.frontend.utils.params.GUIparams;
+import com.wwil.makao.frontend.entities.cardChooser.managers.CardChooserManager;
+import com.wwil.makao.frontend.entities.cardChooser.models.CardChooserButtonTypes;
 
 public class ArrowButtonActor extends Actor {
     private final CardChooserManager chooserManager;
@@ -54,7 +56,7 @@ public class ArrowButtonActor extends Actor {
         }
     }
 
-    protected CardChooserButtonTypes getType() {
+    public CardChooserButtonTypes getType() {
         return type;
     }
 }

@@ -7,8 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Timer;
-import com.wwil.makao.frontend.GUIparams;
-import com.wwil.makao.frontend.GameController;
+import com.wwil.makao.frontend.utils.params.GUIparams;
+import com.wwil.makao.frontend.controllers.gameplay.GameController;
 
 public abstract class GameButton extends Actor {
     private final GameController controller;

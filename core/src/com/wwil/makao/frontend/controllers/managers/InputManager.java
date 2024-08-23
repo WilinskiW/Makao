@@ -1,8 +1,10 @@
-package com.wwil.makao.frontend;
+package com.wwil.makao.frontend.controllers.managers;
 
 import com.badlogic.gdx.Gdx;
 import com.wwil.makao.backend.states.PlayerState;
-import com.wwil.makao.frontend.entities.CardActor;
+import com.wwil.makao.frontend.utils.dragAndDrop.DragAndDropManager;
+import com.wwil.makao.frontend.controllers.gameplay.GameController;
+import com.wwil.makao.frontend.entities.cards.CardActor;
 
 public class InputManager {
     private final UIManager uiManager;

@@ -1,10 +1,9 @@
-package com.wwil.makao.frontend.entities.cardsGroup;
+package com.wwil.makao.frontend.entities.cards;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.wwil.makao.backend.core.DeckManager;
-import com.wwil.makao.frontend.entities.CardActor;
 
 public class StackCardsGroup extends Group {
     private final DeckManager deckManager;

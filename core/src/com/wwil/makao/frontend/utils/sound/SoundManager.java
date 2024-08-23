@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend;
+package com.wwil.makao.frontend.utils.sound;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;

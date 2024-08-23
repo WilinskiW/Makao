@@ -1,12 +1,16 @@
-package com.wwil.makao.frontend;
+package com.wwil.makao.frontend.utils.dragAndDrop;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.wwil.makao.backend.gameplay.Action;
 import com.wwil.makao.backend.gameplay.Play;
-import com.wwil.makao.frontend.entities.CardActor;
-import com.wwil.makao.frontend.entities.cardsGroup.StackCardsGroup;
+import com.wwil.makao.frontend.utils.params.GUIparams;
+import com.wwil.makao.frontend.controllers.gameplay.GameController;
+import com.wwil.makao.frontend.controllers.managers.InputManager;
+import com.wwil.makao.frontend.controllers.managers.UIManager;
+import com.wwil.makao.frontend.entities.cards.CardActor;
+import com.wwil.makao.frontend.entities.cards.StackCardsGroup;
 
 public class DragAndDropManager {
     private final GameController gameController;

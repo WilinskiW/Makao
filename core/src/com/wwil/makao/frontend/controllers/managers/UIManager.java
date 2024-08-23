@@ -1,14 +1,18 @@
-package com.wwil.makao.frontend;
+package com.wwil.makao.frontend.controllers.managers;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
-import com.wwil.makao.backend.gameplay.PlayReport;
 import com.wwil.makao.backend.states.PlayerState;
-import com.wwil.makao.frontend.entities.CardActor;
-import com.wwil.makao.frontend.entities.cardChooser.CardChooserGroup;
-import com.wwil.makao.frontend.entities.cardsGroup.PlayerHandGroup;
-import com.wwil.makao.frontend.entities.cardsGroup.StackCardsGroup;
+import com.wwil.makao.frontend.controllers.gameplay.GameController;
+import com.wwil.makao.frontend.controllers.gameplay.GameStagePreparer;
+import com.wwil.makao.frontend.controllers.gameplay.GameplayScreen;
+import com.wwil.makao.frontend.entities.cards.CardActor;
+import com.wwil.makao.frontend.entities.cardChooser.actors.CardChooserGroup;
+import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
+import com.wwil.makao.frontend.entities.cards.StackCardsGroup;
 import com.wwil.makao.frontend.entities.gameButtons.GameButton;
+import com.wwil.makao.frontend.entities.cards.CardActorFactory;
+import com.wwil.makao.frontend.utils.exceptions.CardNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,17 +133,8 @@ public class UIManager {
     public void setCardChooser(CardChooserGroup cardChooser) {
         this.cardChooser = cardChooser;
     }
-
-    public GameButton getPullButton() {
-        return pullButton;
-    }
-
     public void setPullButton(GameButton pullButton) {
         this.pullButton = pullButton;
-    }
-
-    public GameButton getEndTurnButton() {
-        return endTurnButton;
     }
 
     public void setEndTurnButton(GameButton endTurnButton) {

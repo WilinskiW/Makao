@@ -1,7 +1,7 @@
-package com.wwil.makao.frontend;
+package com.wwil.makao.frontend.utils.exceptions;
 
 public class CardNotFoundException extends RuntimeException{
-    CardNotFoundException() {
+    public CardNotFoundException() {
         super("Card not found in backend. Rank and suit are null.");
     }
 }

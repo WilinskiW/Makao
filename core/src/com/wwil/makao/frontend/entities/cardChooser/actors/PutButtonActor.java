@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend.entities.cardChooser;
+package com.wwil.makao.frontend.entities.cardChooser.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -10,9 +10,10 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.wwil.makao.backend.gameplay.Action;
 import com.wwil.makao.backend.gameplay.Play;
-import com.wwil.makao.frontend.GUIparams;
-import com.wwil.makao.frontend.GameController;
-import com.wwil.makao.frontend.entities.CardActor;
+import com.wwil.makao.frontend.utils.params.GUIparams;
+import com.wwil.makao.frontend.controllers.gameplay.GameController;
+import com.wwil.makao.frontend.entities.cards.CardActor;
+import com.wwil.makao.frontend.entities.cardChooser.models.CardChooserButtonTypes;
 
 public class PutButtonActor extends Actor {
     private final CardChooserGroup cardChooser;

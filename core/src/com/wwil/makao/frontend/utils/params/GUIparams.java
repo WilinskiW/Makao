@@ -1,4 +1,4 @@
-package com.wwil.makao.frontend;
+package com.wwil.makao.frontend.utils.params;
 
 public class GUIparams {
    public static int WIDTH = 1680;

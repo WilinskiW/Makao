@@ -1,14 +1,19 @@
-package com.wwil.makao.frontend;
+package com.wwil.makao.frontend.controllers.gameplay;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
 import com.wwil.makao.backend.model.card.Suit;
+import com.wwil.makao.frontend.entities.cards.CardActorFactory;
+import com.wwil.makao.frontend.utils.params.CardsAlignmentParams;
+import com.wwil.makao.frontend.utils.params.GUIparams;
+import com.wwil.makao.frontend.controllers.facedes.BackendFacade;
+import com.wwil.makao.frontend.controllers.managers.UIManager;
 import com.wwil.makao.frontend.entities.gameButtons.EndTurnButton;
 import com.wwil.makao.frontend.entities.gameButtons.GameButton;
-import com.wwil.makao.frontend.entities.cardChooser.CardChooserGroup;
-import com.wwil.makao.frontend.entities.CardActor;
-import com.wwil.makao.frontend.entities.cardsGroup.PlayerHandGroup;
+import com.wwil.makao.frontend.entities.cardChooser.actors.CardChooserGroup;
+import com.wwil.makao.frontend.entities.cards.CardActor;
+import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
 import com.wwil.makao.frontend.entities.gameButtons.PullButton;
 
 //Przygotowanie elementów graficznych ekranu
