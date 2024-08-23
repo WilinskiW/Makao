@@ -37,16 +37,18 @@ public class PlayExecutor {
 
     PlayReport executePutPlay(PlayReport playReport) {
         putCard(playReport);
-        return playReport.setCardCorrect(true).setPutActive().setEndActive();
+        return playReport.setCardCorrect(true);
     }
 
     private void putCard(PlayReport playReport) {
         Card cardPlayed = playReport.getPlay().getCardPlayed();
         removeCardFromPlayerHand(cardPlayed);
         addToStack(cardPlayed);
-        if (isHumanPlayer()) {
+
+        if (playReport.getPlayer().isHuman()) {
             addCardToHumanPlayed(cardPlayed);
         }
+
         abilityHandler.useCardAbility(playReport);
     }
 
@@ -56,10 +58,6 @@ public class PlayExecutor {
 
     private void removeCardFromPlayerHand(Card cardPlayed) {
         roundManager.getPlayerManager().getCurrentPlayer().removeCardFromHand(cardPlayed);
-    }
-
-    private boolean isHumanPlayer() {
-        return roundManager.getPlayerManager().getCurrentPlayer() == roundManager.getPlayerManager().getHumanPlayer();
     }
 
     private void addCardToHumanPlayed(Card cardPlayed) {
@@ -74,47 +72,7 @@ public class PlayExecutor {
         Card drawnCard = playReport.getPlay().getDrawnCard();
         player.addCardToHand(drawnCard);
         playReport.setDrawn(drawnCard);
-        playReport.setPutActive().setEndActive();
+        //playReport.setPutActive().setEndActive();
         return playReport;
-    }
-
-//    private PlayReport evaluateHumanAvailableActions(Player player, PlayReport playReport) {
-//        if (!isHumanPlayer()) {
-//            return playReport;
-//        }
-//
-////        if (player.isAttack()) {
-////            return evaluateActionsWhileAttack(player, playReport);
-////        } else {
-////            return evaluateActionsInNormalTurn(player, playReport);
-////        }
-//    }
-
-    private PlayReport evaluateActionsWhileAttack(Player player, PlayReport playReport) {
-        if (isFirstPull(player)) {
-            return playReport.setPutActive().setPullActive();
-        }
-
-        if (hasRemainingPulls()) {
-            return playReport.setPullActive();
-        }
-
-//        player.setAttack(false);
-        return playReport.setEndActive();
-    }
-
-    private boolean isFirstPull(Player player) {
-        return !roundManager.getRoundReport().hasPlayerPullBefore(player);
-    }
-
-    private boolean hasRemainingPulls() {
-        return roundManager.getAmountOfPulls() > 0;
-    }
-
-    private PlayReport evaluateActionsInNormalTurn(Player player, PlayReport playReport) {
-        if (isFirstPull(player)) {
-            return playReport.setPutActive().setEndActive();
-        }
-        return playReport.setPutActive().setPullActive();
     }
 }

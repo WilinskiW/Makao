@@ -4,6 +4,7 @@ import com.wwil.makao.backend.core.DeckManager;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.model.player.PlayerManager;
+import com.wwil.makao.backend.states.PlayerState;
 import com.wwil.makao.backend.states.StateManager;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class RoundManager {
     }
 
     public boolean isCardValid(Card cardPlayed, boolean isChooserActive) {
-        return playerManager.getHumanPlayer().getState().isValid(cardPlayed,validator);
+        return stateManager.getHumanState().isValid(cardPlayed, validator);
     }
 
     public RoundReport processHumanPlay(Play humanPlay) {
@@ -53,8 +54,13 @@ public class RoundManager {
 
         if (isValid) {
             playExecutor.executePutPlay(putPlayReport);
+            stateManager.getHumanState().setPullActive(false);
+            stateManager.getHumanState().setEndActive(true);
         } else {
-            putPlayReport.setPutActive().setPullActive();
+            if (!stateManager.getHumanState().isPullActive()) {
+                stateManager.getHumanState().setPutActive(true); // Gracz może próbować położyć kartę ponownie
+                stateManager.getHumanState().setPullActive(true); // Gracz może również pociągnąć kartę
+            }
         }
         return roundReport;
     }
@@ -62,11 +68,14 @@ public class RoundManager {
     private RoundReport pullCard(Play humanPlay) {
         humanPlay.setDrawnCard(deckManager.takeCardFromGameDeck());
         roundReport.addPlayRaport(playExecutor.createPlayReport(playerManager.getCurrentPlayer(), humanPlay));
+        stateManager.getHumanState().setPullActive(false);
+        stateManager.getHumanState().setEndActive(true);
         return roundReport;
     }
 
     private RoundReport endTurn(Play humanPlay) {
         humanPlayedCards.clear();
+        stateManager.deactivateAllActions(stateManager.getHumanState());
         roundReport.addPlayRaport(playExecutor.createPlayReport(playerManager.getHumanPlayer(), humanPlay));
         playRound();
         return sendRoundReport();
@@ -107,7 +116,7 @@ public class RoundManager {
         amountOfPulls += amount;
     }
 
-    public int giveAmountOfPulls(){
+    public int giveAmountOfPulls() {
         int amount = amountOfPulls;
         amountOfPulls = 0;
         return amount;
@@ -116,11 +125,12 @@ public class RoundManager {
     public CardValidator getValidator() {
         return validator;
     }
+
     void increaseAmountOfWaits() {
         amountOfWaits++;
     }
 
-    public int giveAmountOfWaits(){
+    public int giveAmountOfWaits() {
         int amount = amountOfWaits;
         amountOfWaits = 0;
         return amount;
@@ -129,11 +139,6 @@ public class RoundManager {
     public DeckManager getDeckManager() {
         return deckManager;
     }
-
-    RoundReport getRoundReport() {
-        return roundReport;
-    }
-
     PlayerManager getPlayerManager() {
         return playerManager;
     }

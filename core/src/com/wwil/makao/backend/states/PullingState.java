@@ -1,15 +1,14 @@
 package com.wwil.makao.backend.states;
 
-
-import com.wwil.makao.backend.gameplay.PlayReport;
+import com.wwil.makao.backend.model.player.Player;
 
 public class PullingState extends PunishState{
-    protected PullingState(int amountOfPunishes) {
-        super(amountOfPunishes);
+    protected PullingState(Player player, int amountOfPunishes) {
+        super(player, amountOfPunishes);
     }
 
     @Override
-    PlayReport setActionActivations(PlayReport playReport) {
-        return playReport.setPullActive();
+    void setDefaultValueOfActivations() {
+        setPullActive(true);
     }
 }

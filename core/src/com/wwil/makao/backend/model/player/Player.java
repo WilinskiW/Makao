@@ -6,14 +6,16 @@ import com.wwil.makao.backend.states.PlayerState;
 
 import java.util.*;
 
-public class Player {
+public abstract class Player {
     private final List<Card> cards;
     private PlayerState state;
 
     public Player(List<Card> cards) {
         this.cards = cards;
-        this.state = new DefaultState();
+        this.state = new DefaultState(this);
     }
+
+    public abstract boolean isHuman();
 
     public void addCardToHand(Card card) {
         cards.add(card);

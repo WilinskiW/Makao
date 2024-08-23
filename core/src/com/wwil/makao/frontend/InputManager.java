@@ -1,7 +1,7 @@
 package com.wwil.makao.frontend;
 
 import com.badlogic.gdx.Gdx;
-import com.wwil.makao.backend.gameplay.PlayReport;
+import com.wwil.makao.backend.states.PlayerState;
 import com.wwil.makao.frontend.entities.CardActor;
 
 public class InputManager {
@@ -13,13 +13,7 @@ public class InputManager {
 
     public InputManager(GameController controller) {
         this.uiManager = controller.getUiManager();
-        this.dragAndDropManager = new DragAndDropManager(controller,this, uiManager.getStackCardsGroup());
-    }
-
-    public void updateDragAndDropState(PlayReport lastPlayReport) {
-        if (!lastPlayReport.isPutActive()) {
-            dragAndDropManager.stopListening();
-        }
+        this.dragAndDropManager = new DragAndDropManager(controller, this, uiManager.getStackCardsGroup());
     }
 
     public void handleDragAndDrop(CardActor drawnCardActor, boolean hasHumanPullBefore) {
@@ -34,21 +28,34 @@ public class InputManager {
 
     public void turnOnHumanInput() {
         inputBlockActive = false;
-        resetButtonsState();
-        dragAndDropManager.startListening();
+        PlayerState state = uiManager.getHumanHandGroup().getPlayer().getState();
+        state.resetActionFlags();
+        updateHumanAvailableActions();
         uiManager.changeTransparencyOfPlayerGroup(uiManager.getHumanHandGroup(), 1f);
         Gdx.input.setInputProcessor(uiManager.getGameplayScreen().getStage());
     }
+
+    public void updateHumanAvailableActions(){
+        PlayerState state = uiManager.getHumanHandGroup().getPlayer().getState();
+        updateDragAndDropState(state);
+        uiManager.updateButtonStates(state);
+    }
+
+
+    private void updateDragAndDropState(PlayerState state) {
+        if (state.isPutActive()) {
+            dragAndDropManager.startListening();
+        }
+        else{
+            dragAndDropManager.stopListening();
+        }
+    }
+
 
     public void turnOffHumanInput() {
         inputBlockActive = true;
         Gdx.input.setInputProcessor(null);
         uiManager.changeTransparencyOfPlayerGroup(uiManager.getHumanHandGroup(), 0.25f);
-    }
-
-    private void resetButtonsState() {
-        uiManager.getEndTurnButton().setActive(false);
-        uiManager.getPullButton().setActive(true);
     }
 
     public DragAndDropManager getDragAndDropManager() {

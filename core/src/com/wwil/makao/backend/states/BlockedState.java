@@ -1,18 +1,21 @@
 package com.wwil.makao.backend.states;
 
-import com.wwil.makao.backend.gameplay.PlayReport;
+
+import com.wwil.makao.backend.model.player.Player;
 
 public class BlockedState extends PunishState {
-    protected BlockedState(int amountOfPunishes) {
-        super(amountOfPunishes);
+
+
+    BlockedState(Player player, int amountOfPunishes) {
+        super(player, amountOfPunishes);
     }
 
-    protected boolean canUnblock(){
+    boolean canUnblock(){
         return amountOfPunishes == 0;
     }
 
     @Override
-    PlayReport setActionActivations(PlayReport playReport) {
-        return playReport.setEndActive();
+    void setDefaultValueOfActivations() {
+        setEndActive(true);
     }
 }

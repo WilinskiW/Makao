@@ -23,8 +23,18 @@ public class StateManager {
         return computerPlayFactory.generatePlays(currentPlayer, roundManager);
     }
 
+    public void deactivateAllActions(PlayerState state) {
+        state.setPutActive(false);
+        state.setPullActive(false);
+        state.setEndActive(false);
+    }
+
+    public PlayerState getHumanState() {
+        return playerManager.getHumanPlayer().getState();
+    }
+
     public void applyDefenceState(Player player, Card attackingCard) {
-        changePlayerState(player, new DefenseState(attackingCard));
+        changePlayerState(player, new DefenseState(player, attackingCard));
     }
 
     void transferDefenceState(Player currentPlayer, Card cardPlayed) {
@@ -37,16 +47,16 @@ public class StateManager {
     }
 
     void applyDefaultState(Player player) {
-        changePlayerState(player, new DefaultState());
+        changePlayerState(player, new DefaultState(player));
     }
 
     void applyPullingState(Player player) {
-        changePlayerState(player, new PullingState(roundManager.giveAmountOfPulls() - 1));
+        changePlayerState(player, new PullingState(player, roundManager.giveAmountOfPulls() - 1));
         //-1, bo odejmujemy pociągnięcie rescue card
     }
 
     void applyBlockedState(Player player) {
-        changePlayerState(player, new BlockedState(roundManager.giveAmountOfWaits()));
+        changePlayerState(player, new BlockedState(player, roundManager.giveAmountOfWaits()));
     }
 
     private void changePlayerState(Player player, PlayerState newState) {

@@ -7,15 +7,22 @@ import java.util.List;
 
 public class PlayerManager {
     private final List<Player> players = new ArrayList<>();
+    private Human humanPlayer;
     private int currentPlayerIndex = 0;
 
     public PlayerManager(int amountOfPlayers, int startingCards, DeckManager deckManager) {
-        createPlayers(amountOfPlayers, startingCards, deckManager);
+        createHumanPlayer(startingCards,deckManager);
+        createComputerPlayers(amountOfPlayers, startingCards, deckManager);
     }
 
-    public void createPlayers(int amountOfPlayers, int startingCards, DeckManager deckManager) {
-        for (int i = 0; i < amountOfPlayers; i++) {
-            Player player = new Player(deckManager.giveCards(startingCards));
+    private void createHumanPlayer(int startingCards, DeckManager deckManager){
+        humanPlayer = new Human(deckManager.giveCards(startingCards));
+        players.add(humanPlayer);
+    }
+
+    private void createComputerPlayers(int amountOfPlayers, int startingCards, DeckManager deckManager) {
+        for (int i = 0; i < amountOfPlayers - 1; i++) {
+            Player player = new Computer(deckManager.giveCards(startingCards));
             players.add(player);
         }
     }
@@ -62,8 +69,7 @@ public class PlayerManager {
         return players;
     }
 
-    public Player getHumanPlayer() {
-        return players.get(0);
+    public Human getHumanPlayer(){
+        return humanPlayer;
     }
-
 }

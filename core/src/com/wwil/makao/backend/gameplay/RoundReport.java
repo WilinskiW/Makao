@@ -48,7 +48,12 @@ public class RoundReport {
         return false;
     }
 
-    public PlayReport getLastPlayReport() {
-        return playReports.get(playReports.size() - 1);
+    public PlayReport getHumanLastPlayReport() {
+        for(int i = playReports.size()-1; i >= 0; i--){
+            if(playReports.get(i).getPlayer().isHuman()){
+                return playReports.get(i);
+            }
+        }
+        throw new IllegalArgumentException("Human nie żadnego playreporta");
     }
 }

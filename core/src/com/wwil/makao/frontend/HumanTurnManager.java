@@ -17,7 +17,7 @@ public class HumanTurnManager {
         this.soundManager = soundManager;
     }
     public void showHumanPlay(Play play, RoundReport report) {
-        PlayReport currentPlayReport = report.getLastPlayReport();
+        PlayReport currentPlayReport = report.getHumanLastPlayReport();
         switch (play.getAction()) {
             case END:
                 endTurn();
@@ -34,8 +34,8 @@ public class HumanTurnManager {
             showCardChooser(inputManager.getChoosenCardActor());
         }
 
-        inputManager.updateDragAndDropState(currentPlayReport);
-        uiManager.updateButtonStates(currentPlayReport);
+
+        inputManager.updateHumanAvailableActions();
     }
 
     private void endTurn() {

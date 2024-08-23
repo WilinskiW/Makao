@@ -11,7 +11,8 @@ public abstract class PunishState extends PlayerState {
 
     int amountOfPunishes;
 
-    protected PunishState(int amountOfPunishes) {
+    protected PunishState(Player player,int amountOfPunishes) {
+        super(player);
         this.amountOfPunishes = amountOfPunishes;
     }
 

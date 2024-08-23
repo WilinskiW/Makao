@@ -24,7 +24,7 @@ public class ComputerTurnManager {
     }
 
     public void showComputersPlays(final RoundReport roundReport) {
-        float delta = 1.50f;
+        float delta = 1.25f;
         final List<PlayReport> computerPlayReports = roundReport.getComputerPlayReports(humanHand().getPlayer());
         final int numberOfComputers = computerPlayReports.size();
         final AtomicInteger completedComputers = new AtomicInteger(0);
@@ -49,7 +49,7 @@ public class ComputerTurnManager {
     private void processComputerTurn(PlayReport playReport, PlayerHandGroup playerHand) {
         switch (playReport.getPlay().getAction()) {
             case END:
-                //endTurn();
+                endTurn();
                 break;
             case PUT:
                 Card cardPlayed = playReport.getPlay().getCardPlayed();

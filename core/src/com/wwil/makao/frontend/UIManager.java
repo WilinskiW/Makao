@@ -3,6 +3,7 @@ package com.wwil.makao.frontend;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.wwil.makao.backend.gameplay.PlayReport;
+import com.wwil.makao.backend.states.PlayerState;
 import com.wwil.makao.frontend.entities.CardActor;
 import com.wwil.makao.frontend.entities.cardChooser.CardChooserGroup;
 import com.wwil.makao.frontend.entities.cardsGroup.PlayerHandGroup;
@@ -35,9 +36,9 @@ public class UIManager {
         new GameStagePreparer(this, controller.getBackend()).execute();
     }
 
-    public void updateButtonStates(PlayReport lastPlayReport) {
-        pullButton.setActive(lastPlayReport.isPullActive());
-        endTurnButton.setActive(lastPlayReport.isEndActive());
+    public void updateButtonStates(PlayerState state) {
+        pullButton.setActive(state.isPullActive());
+        endTurnButton.setActive(state.isEndActive());
     }
 
     public void changeCardColor(boolean isValid, CardActor cardActor) {

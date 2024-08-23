@@ -8,9 +8,6 @@ public class PlayReport {
     private final Play play;
     private Card drawn;
     private boolean isCardCorrect;
-    private boolean isPutActive;
-    private boolean isPullActive;
-    private boolean isEndActive;
     private boolean isChooserActive;
 
     public PlayReport(Player player, Play play) {
@@ -41,33 +38,6 @@ public class PlayReport {
 
     void setDrawn(Card drawn) {
         this.drawn = drawn;
-    }
-
-    public boolean isPutActive() {
-        return isPutActive;
-    }
-
-    public PlayReport setPutActive() {
-        isPutActive = true;
-        return this;
-    }
-
-    public boolean isPullActive() {
-        return isPullActive;
-    }
-
-    public PlayReport setPullActive() {
-        isPullActive = true;
-        return this;
-    }
-
-    public boolean isEndActive() {
-        return isEndActive;
-    }
-
-    public PlayReport setEndActive() {
-        isEndActive = true;
-        return this;
     }
 
     public boolean isChooserActive() {
