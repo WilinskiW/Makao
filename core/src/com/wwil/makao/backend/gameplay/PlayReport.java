@@ -2,9 +2,11 @@ package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
+import com.wwil.makao.backend.states.PlayerState;
 
 public class PlayReport {
     private final Player player;
+    private final PlayerState playerState;
     private final Play play;
     private Card drawn;
     private boolean isCardCorrect;
@@ -13,6 +15,7 @@ public class PlayReport {
     public PlayReport(Player player, Play play) {
         this.play = play;
         this.player = player;
+        this.playerState = player.getState();
     }
 
     public Player getPlayer() {
@@ -42,6 +45,10 @@ public class PlayReport {
 
     public boolean isChooserActive() {
         return isChooserActive;
+    }
+
+    public PlayerState getPlayerState() {
+        return playerState;
     }
 
     public void setChooserActive(boolean isChooserActive) {

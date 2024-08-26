@@ -58,7 +58,7 @@ public class ComputerPlayFactory {
     private List<Play> handleBlocked(List<Play> plays){
         plays.add(createEndPlay());
         BlockedState blockedState = (BlockedState) currentPlayer.getState();
-        blockedState.decreasePunishes();
+        blockedState.decreaseAmount();
         if(blockedState.canUnblock()){
             stateManager.applyDefaultState(currentPlayer);
         }
@@ -128,7 +128,7 @@ public class ComputerPlayFactory {
 
         for (int i = 0; i < amountOfPulls; i++) {
             plays.add(createPullPlay(pullCard(roundManager.getDeckManager())));
-            pullState.decreasePunishes();
+            pullState.decreaseAmount();
         }
     }
 
@@ -140,7 +140,7 @@ public class ComputerPlayFactory {
     private void blockPlayer() {
         stateManager.applyBlockedState(currentPlayer);
         BlockedState blockedState = (BlockedState) currentPlayer.getState();
-        blockedState.decreasePunishes();
+        blockedState.decreaseAmount();
         if(blockedState.canUnblock()){
             stateManager.applyDefaultState(currentPlayer);
         }

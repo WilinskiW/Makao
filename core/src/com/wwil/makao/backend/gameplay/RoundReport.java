@@ -1,5 +1,6 @@
 package com.wwil.makao.backend.gameplay;
 
+import com.wwil.makao.backend.model.player.Human;
 import com.wwil.makao.backend.model.player.Player;
 
 import java.util.ArrayList;
@@ -17,16 +18,6 @@ public class RoundReport {
         List<PlayReport> computerPlayReports = new ArrayList<>();
         for (PlayReport playReport : playReports) {
             if (playReport.getPlayer() != humanPlayer) {
-                computerPlayReports.add(playReport);
-            }
-        }
-        return computerPlayReports;
-    }
-    
-    public List<PlayReport> getHumanPlayReports(Player humanPlayer){
-        List<PlayReport> computerPlayReports = new ArrayList<>();
-        for (PlayReport playReport : playReports) {
-            if (playReport.getPlayer() == humanPlayer) {
                 computerPlayReports.add(playReport);
             }
         }

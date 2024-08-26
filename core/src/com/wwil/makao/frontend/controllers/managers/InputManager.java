@@ -28,17 +28,18 @@ public class InputManager {
         }
     }
 
+    public void turnOffHumanInput() {
+        inputBlockActive = true;
+        Gdx.input.setInputProcessor(null);
+    }
+
     public void turnOnHumanInput() {
         inputBlockActive = false;
-        PlayerState state = uiManager.getHumanHandGroup().getPlayer().getState();
-        state.resetActionFlags();
-        updateHumanAvailableActions();
-        uiManager.changeTransparencyOfPlayerGroup(uiManager.getHumanHandGroup(), 1f);
+        updateHumanAvailableActions(uiManager.getHumanHandGroup().getPlayer().getState());
         Gdx.input.setInputProcessor(uiManager.getGameplayScreen().getStage());
     }
 
-    public void updateHumanAvailableActions(){
-        PlayerState state = uiManager.getHumanHandGroup().getPlayer().getState();
+    public void updateHumanAvailableActions(PlayerState state){
         updateDragAndDropState(state);
         uiManager.updateButtonStates(state);
     }
@@ -47,18 +48,14 @@ public class InputManager {
     private void updateDragAndDropState(PlayerState state) {
         if (state.isPutActive()) {
             dragAndDropManager.startListening();
+            uiManager.changeTransparencyOfPlayerGroup(uiManager.getHumanHandGroup(), 1f);
         }
         else{
             dragAndDropManager.stopListening();
+            uiManager.changeTransparencyOfPlayerGroup(uiManager.getHumanHandGroup(), 0.25f);
         }
     }
 
-
-    public void turnOffHumanInput() {
-        inputBlockActive = true;
-        Gdx.input.setInputProcessor(null);
-        uiManager.changeTransparencyOfPlayerGroup(uiManager.getHumanHandGroup(), 0.25f);
-    }
 
     public DragAndDropManager getDragAndDropManager() {
         return dragAndDropManager;

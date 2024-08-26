@@ -35,8 +35,7 @@ public class HumanTurnManager {
             showCardChooser(inputManager.getChoosenCardActor());
         }
 
-
-        inputManager.updateHumanAvailableActions();
+        inputManager.updateHumanAvailableActions(report.getHumanLastPlayReport().getPlayerState());
     }
 
     private void endTurn() {

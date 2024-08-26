@@ -16,7 +16,7 @@ public abstract class PunishState extends PlayerState {
         this.amountOfPunishes = amountOfPunishes;
     }
 
-    protected void decreasePunishes() {
+    public void decreaseAmount() {
         if (amountOfPunishes > 0) {
             amountOfPunishes--;
         }
@@ -30,5 +30,9 @@ public abstract class PunishState extends PlayerState {
     @Override
     public boolean isValid(Card chosenCard, CardValidator validator) {
         return false;
+    }
+
+    public int getAmountOfPunishes() {
+        return amountOfPunishes;
     }
 }

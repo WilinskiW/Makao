@@ -72,7 +72,6 @@ public class PlayExecutor {
         Card drawnCard = playReport.getPlay().getDrawnCard();
         player.addCardToHand(drawnCard);
         playReport.setDrawn(drawnCard);
-        //playReport.setPutActive().setEndActive();
         return playReport;
     }
 }

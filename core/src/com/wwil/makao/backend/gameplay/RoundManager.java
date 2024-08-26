@@ -2,9 +2,12 @@ package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.core.DeckManager;
 import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.backend.model.player.Human;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.model.player.PlayerManager;
-import com.wwil.makao.backend.states.PlayerState;
+import com.wwil.makao.backend.states.BlockedState;
+import com.wwil.makao.backend.states.PullingState;
+import com.wwil.makao.backend.states.PunishState;
 import com.wwil.makao.backend.states.StateManager;
 
 import java.util.ArrayList;
@@ -54,29 +57,34 @@ public class RoundManager {
 
         if (isValid) {
             playExecutor.executePutPlay(putPlayReport);
-            stateManager.getHumanState().setPullActive(false);
-            stateManager.getHumanState().setEndActive(true);
+            stateManager.setActionsActivation(true, false, true);
         } else {
-            if (!stateManager.getHumanState().isPullActive()) {
-                stateManager.getHumanState().setPutActive(true); // Gracz może próbować położyć kartę ponownie
-                stateManager.getHumanState().setPullActive(true); // Gracz może również pociągnąć kartę
+            //Sprawdzenie czy gracz położył już wcześniej kartę. Jeżeli pull jest aktywny to znaczy że już pociągnął
+            if (stateManager.getHumanState().isPullActive()) {
+                stateManager.setActionsActivation(true, true, false);
             }
         }
         return roundReport;
     }
 
     private RoundReport pullCard(Play humanPlay) {
+        Human humanPlayer = playerManager.getHumanPlayer();
         humanPlay.setDrawnCard(deckManager.takeCardFromGameDeck());
-        roundReport.addPlayRaport(playExecutor.createPlayReport(playerManager.getCurrentPlayer(), humanPlay));
-        stateManager.getHumanState().setPullActive(false);
-        stateManager.getHumanState().setEndActive(true);
+        stateManager.handlePullAction(roundReport.hasPlayerPullBefore(humanPlayer));
+        roundReport.addPlayRaport(playExecutor.createPlayReport(humanPlayer, humanPlay));
         return roundReport;
     }
 
     private RoundReport endTurn(Play humanPlay) {
         humanPlayedCards.clear();
-        stateManager.deactivateAllActions(stateManager.getHumanState());
+        stateManager.setActionsActivation(false, false, false);
         roundReport.addPlayRaport(playExecutor.createPlayReport(playerManager.getHumanPlayer(), humanPlay));
+
+        if (stateManager.isPlayerBlocked(playerManager.getHumanPlayer())) {
+            PunishState blockedState = (BlockedState) stateManager.getHumanState();
+            blockedState.decreaseAmount();
+        }
+
         playRound();
         return sendRoundReport();
     }
@@ -139,6 +147,7 @@ public class RoundManager {
     public DeckManager getDeckManager() {
         return deckManager;
     }
+
     PlayerManager getPlayerManager() {
         return playerManager;
     }
