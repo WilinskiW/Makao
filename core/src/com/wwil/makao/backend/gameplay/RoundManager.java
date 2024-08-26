@@ -1,15 +1,10 @@
 package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.core.DeckManager;
-import com.wwil.makao.backend.model.card.Card;
-import com.wwil.makao.backend.model.player.Human;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.model.player.PlayerManager;
-import com.wwil.makao.backend.states.BlockedState;
-import com.wwil.makao.backend.states.PunishState;
 import com.wwil.makao.backend.states.StateManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RoundManager {
@@ -19,9 +14,9 @@ public class RoundManager {
     private final PlayExecutor playExecutor;
     private final CardValidator validator;
     private RoundReport roundReport;
-    private int amountOfPulls = 0;
-    private int amountOfWaits = 0;
-    private final List<Card> humanPlayedCards = new ArrayList<>();
+    private final HumanPlayAnalyzer humanPlayAnalyzer;
+    private int pullsCount = 0;
+    private int waitsCount = 0;
 
     public RoundManager(PlayerManager playerManager, DeckManager deckManager) {
         this.playerManager = playerManager;
@@ -29,70 +24,15 @@ public class RoundManager {
         this.validator = new CardValidator(this, deckManager);
         this.stateManager = new StateManager(this, playerManager);
         this.playExecutor = new PlayExecutor(this);
+        this.humanPlayAnalyzer = new HumanPlayAnalyzer(this);
         startNewRound();
     }
 
-    public boolean isCardValid(Card cardPlayed, boolean isChooserActive) {
-        return stateManager.getHumanState().isValid(cardPlayed, validator);
-    }
-
-    public RoundReport processHumanPlay(Play humanPlay) {
-        switch (humanPlay.getAction()) {
-            case PUT:
-                return putCard(humanPlay);
-            case PULL:
-                return pullCard(humanPlay);
-            case END:
-                return endTurn(humanPlay);
-            default:
-                throw new IllegalArgumentException("Unsupported action");
-        }
-    }
-
-    private RoundReport putCard(Play humanPlay) {
-        boolean isValid = isCardValid(humanPlay.getCardPlayed(), humanPlay.isChooserActive());
-        PlayReport putPlayReport = new PlayReport(playerManager.getHumanPlayer(), humanPlay).setCardCorrect(isValid);
-        roundReport.addPlayRaport(putPlayReport);
-
-        if (isValid) {
-            playExecutor.executePutPlay(putPlayReport);
-            stateManager.setActionsActivation(true, false, true);
-        } else {
-            //Sprawdzenie czy gracz położył już wcześniej kartę.
-            // Jeżeli pull jest aktywny to znaczy że jeszcze nie położył poprawnej karty
-            if (stateManager.getHumanState().isPullActive()) {
-                stateManager.setActionsActivation(true, true, false);
-            }
-        }
-        return roundReport;
-    }
-
-    private RoundReport pullCard(Play humanPlay) {
-        Human humanPlayer = playerManager.getHumanPlayer();
-        humanPlay.setDrawnCard(deckManager.takeCardFromGameDeck());
-        stateManager.handlePullAction(roundReport.whetherPlayerPulledRescue(humanPlayer));
-        roundReport.addPlayRaport(playExecutor.createPlayReport(humanPlayer, humanPlay));
-        return roundReport;
-    }
-
-    private RoundReport endTurn(Play humanPlay) {
-        humanPlayedCards.clear();
-        stateManager.setActionsActivation(false, false, false);
-        roundReport.addPlayRaport(playExecutor.createPlayReport(playerManager.getHumanPlayer(), humanPlay));
-
-        if (stateManager.isPlayerBlocked(playerManager.getHumanPlayer())) {
-            PunishState blockedState = (BlockedState) stateManager.getHumanState();
-            blockedState.decreaseAmount();
-        }
-
-        playRound();
-        return sendRoundReport();
-    }
-
-    void playRound() {
+    RoundReport playRound() {
         while (isComputerTurn() || hasSomeoneWon()) {
             executePlays(playerManager.getCurrentPlayer());
         }
+        return sendRoundReport();
     }
 
     private boolean isComputerTurn() {
@@ -122,12 +62,12 @@ public class RoundManager {
     }
 
     void increaseAmountOfPulls(int amount) {
-        amountOfPulls += amount;
+        pullsCount += amount;
     }
 
     public int giveAmountOfPulls() {
-        int amount = amountOfPulls;
-        amountOfPulls = 0;
+        int amount = pullsCount;
+        pullsCount = 0;
         return amount;
     }
 
@@ -136,12 +76,12 @@ public class RoundManager {
     }
 
     void increaseAmountOfWaits() {
-        amountOfWaits++;
+        waitsCount++;
     }
 
     public int giveAmountOfWaits() {
-        int amount = amountOfWaits;
-        amountOfWaits = 0;
+        int amount = waitsCount;
+        waitsCount = 0;
         return amount;
     }
 
@@ -153,8 +93,8 @@ public class RoundManager {
         return playerManager;
     }
 
-    public int getAmountOfPulls() {
-        return amountOfPulls;
+    public int getPullsCount() {
+        return pullsCount;
     }
 
     StateManager getStateManager() {
@@ -165,7 +105,11 @@ public class RoundManager {
         return roundReport;
     }
 
-    List<Card> getHumanPlayedCards() {
-        return humanPlayedCards;
+    public HumanPlayAnalyzer getHumanPlayAnalyzer() {
+        return humanPlayAnalyzer;
+    }
+
+    PlayExecutor getPlayExecutor() {
+        return playExecutor;
     }
 }

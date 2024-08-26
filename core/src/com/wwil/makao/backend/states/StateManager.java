@@ -28,7 +28,7 @@ public class StateManager {
         Human humanPlayer = playerManager.getHumanPlayer();
         if (isDefenseState(humanPlayer)) {
             if (hasPullBefore) {
-                if (roundManager.getAmountOfPulls() > 0) {
+                if (roundManager.getPullsCount() > 0) {
                     applyPullingState(humanPlayer);
                 } else {
                     applyBlockedState(humanPlayer);

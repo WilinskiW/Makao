@@ -18,11 +18,11 @@ public class MakaoBackend {
         this.roundManager = new RoundManager(playerManager, deckManager);
     }
     public RoundReport processHumanPlay(Play humanPlay) {
-        return roundManager.processHumanPlay(humanPlay);
+        return roundManager.getHumanPlayAnalyzer().processHumanPlay(humanPlay);
     }
 
     public boolean isCardValid(Card chosenCard) {
-        return roundManager.isCardValid(chosenCard,false);
+        return roundManager.getHumanPlayAnalyzer().isCardValid(chosenCard,false);
     }
 
     public DeckManager getDeckManager() {

@@ -61,7 +61,7 @@ public class PlayExecutor {
     }
 
     private void addCardToHumanPlayed(Card cardPlayed) {
-        roundManager.getHumanPlayedCards().add(cardPlayed);
+        roundManager.getHumanPlayAnalyzer().getHumanPlayedCards().add(cardPlayed);
     }
 
     private PlayReport executePullPlay(Player player, PlayReport playReport) {

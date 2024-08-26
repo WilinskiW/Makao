@@ -14,7 +14,7 @@ private final DeckManager deckManager;
     }
 
     public boolean isValidForMultiplePut(Card chosenCard){
-        return chosenCard.getRank() == roundManager.getHumanPlayedCards().get(0).getRank();
+        return chosenCard.getRank() == roundManager.getHumanPlayAnalyzer().getHumanPlayedCards().get(0).getRank();
     }
 
     public boolean isValidForNormalTurn(Card chosenCard){

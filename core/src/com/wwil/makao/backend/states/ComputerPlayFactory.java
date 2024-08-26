@@ -113,7 +113,7 @@ public class ComputerPlayFactory {
     }
 
     private void punish(List<Play> plays) {
-        if (roundManager.getAmountOfPulls() > 0) {
+        if (roundManager.getPullsCount() > 0) {
             pullRemainingCards(plays);
             addDefaultStatePlays(plays);
         } else {
