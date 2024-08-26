@@ -18,12 +18,13 @@ public class InputManager {
         this.dragAndDropManager = new DragAndDropManager(controller, this, uiManager.getStackCardsGroup());
     }
 
-    public void handleDragAndDrop(CardActor drawnCardActor, boolean hasHumanPullBefore) {
+    public void attachDragAndDrop(CardActor drawnCardActor, boolean isRescuePull) {
         drawnCardActor.setUpSideDown(false);
-        dragAndDropManager.prepareDragAndDrop(drawnCardActor);
-        if (!hasHumanPullBefore) {
+        if(isRescuePull){
             dragAndDropManager.focusRescueCard(drawnCardActor);
-        } else {
+        }
+        else{
+            dragAndDropManager.prepareDragAndDrop(drawnCardActor);
             dragAndDropManager.stopListening();
         }
     }

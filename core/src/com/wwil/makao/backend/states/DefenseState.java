@@ -28,7 +28,7 @@ public class DefenseState extends PlayerState {
 
     @Override
     public boolean isValid(Card chosenCard, CardValidator validator) {
-        return false;
+        return validator.isValidForDefence(chosenCard);
     }
     Card getAttackingCard() {
         return attackingCard;

@@ -62,7 +62,6 @@ public class DragAndDropManager {
         dragAndDrop.addSource(dropSource);
         dragAndDrop.addTarget(target);
     }
-
     public void focusRescueCard(final CardActor card) {
         stopListening();
         prepareDragAndDrop(card);

@@ -27,7 +27,6 @@ public class StateManager {
     public void handlePullAction(boolean hasPullBefore) {
         Human humanPlayer = playerManager.getHumanPlayer();
         if (isDefenseState(humanPlayer)) {
-            setActionsActivation(true, true, false);
             if (hasPullBefore) {
                 if (roundManager.getAmountOfPulls() > 0) {
                     applyPullingState(humanPlayer);
@@ -39,6 +38,10 @@ public class StateManager {
             checkPullingState(humanPlayer);
         } else {
             setActionsActivation(true, false, true);
+        }
+
+        if (isPullingState(humanPlayer)) {
+            checkPullingState(humanPlayer);
         }
     }
 

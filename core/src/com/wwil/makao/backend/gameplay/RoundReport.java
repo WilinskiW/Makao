@@ -1,6 +1,5 @@
 package com.wwil.makao.backend.gameplay;
 
-import com.wwil.makao.backend.model.player.Human;
 import com.wwil.makao.backend.model.player.Player;
 
 import java.util.ArrayList;
@@ -24,18 +23,12 @@ public class RoundReport {
         return computerPlayReports;
     }
 
-    public boolean hasPlayerPullBefore(Player player) {
-        int counter = 0;
+    public boolean whetherPlayerPulledRescue(Player player) {
         for (PlayReport playReport : playReports) {
             if (playReport.getPlayer() == player && playReport.getPlay().getAction() == Action.PULL){
-                counter++;
-            }
-
-            if(counter >= 2){
                 return true;
             }
         }
-
         return false;
     }
 

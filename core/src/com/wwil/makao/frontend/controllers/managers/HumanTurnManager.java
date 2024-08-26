@@ -19,6 +19,7 @@ public class HumanTurnManager {
     }
     public void showHumanPlay(Play play, RoundReport report) {
         PlayReport currentPlayReport = report.getHumanLastPlayReport();
+        inputManager.updateHumanAvailableActions(currentPlayReport.getPlayerState());
         switch (play.getAction()) {
             case END:
                 endTurn();
@@ -27,7 +28,7 @@ public class HumanTurnManager {
                 useCard(currentPlayReport);
                 break;
             case PULL:
-                pull(currentPlayReport, humanHand(), report.hasPlayerPullBefore(humanHand().getPlayer()));
+                pull(currentPlayReport, humanHand(), report.whetherPlayerPulledRescue(humanHand().getPlayer()));
                 break;
         }
 
@@ -35,12 +36,10 @@ public class HumanTurnManager {
             showCardChooser(inputManager.getChoosenCardActor());
         }
 
-        inputManager.updateHumanAvailableActions(report.getHumanLastPlayReport().getPlayerState());
     }
 
     private void endTurn() {
         uiManager.getCardChooser().setVisibility(false);
-        inputManager.getDragAndDropManager().startListening();
         inputManager.turnOffHumanInput();
     }
 
@@ -77,12 +76,12 @@ public class HumanTurnManager {
     }
 
 
-    private void pull(PlayReport playReport, PlayerHandGroup player, boolean hasHumanPullBefore) {
+    private void pull(PlayReport playReport, PlayerHandGroup player, boolean hasPullBefore) {
         CardActor drawnCardActor = uiManager.getCardActorFactory().createCardActor(playReport.getDrawn());
-        if (player == humanHand()) {
-            inputManager.handleDragAndDrop(drawnCardActor, hasHumanPullBefore);
-        }
         player.addActor(drawnCardActor);
+        if (player == humanHand()) {
+            inputManager.attachDragAndDrop(drawnCardActor,hasPullBefore);
+        }
         soundManager.play("pull.wav");
     }
 

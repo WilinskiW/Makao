@@ -88,10 +88,10 @@ public class GameStagePreparer {
         switch (index) {
             case 0:
                 backend.getPlayers().get(index).getCards().clear();
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.FOUR, Suit.CLUB));
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.FOUR, Suit.SPADE));
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.FOUR, Suit.HEART));
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.FOUR, Suit.DIAMOND));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.CLUB));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.SPADE));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.HEART));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.DIAMOND));
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
                 break;
             case 1:

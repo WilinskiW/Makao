@@ -6,7 +6,6 @@ import com.wwil.makao.backend.model.player.Human;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.model.player.PlayerManager;
 import com.wwil.makao.backend.states.BlockedState;
-import com.wwil.makao.backend.states.PullingState;
 import com.wwil.makao.backend.states.PunishState;
 import com.wwil.makao.backend.states.StateManager;
 
@@ -59,7 +58,8 @@ public class RoundManager {
             playExecutor.executePutPlay(putPlayReport);
             stateManager.setActionsActivation(true, false, true);
         } else {
-            //Sprawdzenie czy gracz położył już wcześniej kartę. Jeżeli pull jest aktywny to znaczy że już pociągnął
+            //Sprawdzenie czy gracz położył już wcześniej kartę.
+            // Jeżeli pull jest aktywny to znaczy że jeszcze nie położył poprawnej karty
             if (stateManager.getHumanState().isPullActive()) {
                 stateManager.setActionsActivation(true, true, false);
             }
@@ -70,7 +70,7 @@ public class RoundManager {
     private RoundReport pullCard(Play humanPlay) {
         Human humanPlayer = playerManager.getHumanPlayer();
         humanPlay.setDrawnCard(deckManager.takeCardFromGameDeck());
-        stateManager.handlePullAction(roundReport.hasPlayerPullBefore(humanPlayer));
+        stateManager.handlePullAction(roundReport.whetherPlayerPulledRescue(humanPlayer));
         roundReport.addPlayRaport(playExecutor.createPlayReport(humanPlayer, humanPlay));
         return roundReport;
     }
@@ -112,6 +112,7 @@ public class RoundManager {
 
     RoundReport sendRoundReport() {
         RoundReport report = roundReport;
+        stateManager.getHumanState().resetActionFlags();
         startNewRound();
         return report;
     }
@@ -158,6 +159,10 @@ public class RoundManager {
 
     StateManager getStateManager() {
         return stateManager;
+    }
+
+    RoundReport getRoundReport() {
+        return roundReport;
     }
 
     List<Card> getHumanPlayedCards() {
