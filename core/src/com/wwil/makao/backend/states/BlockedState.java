@@ -10,7 +10,7 @@ public class BlockedState extends PunishState {
         super(player, amountOfPunishes);
     }
 
-    boolean canUnblock(){
+    public boolean canUnblock(){
         return amountOfPunishes == 0;
     }
 

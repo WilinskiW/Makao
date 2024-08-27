@@ -1,5 +1,6 @@
 package com.wwil.makao.backend.states;
 
+import com.wwil.makao.backend.gameplay.ComputerPlayMaker;
 import com.wwil.makao.backend.gameplay.Play;
 import com.wwil.makao.backend.gameplay.RoundManager;
 import com.wwil.makao.backend.model.card.Card;
@@ -11,17 +12,17 @@ import java.util.List;
 
 public class StateManager {
     private final RoundManager roundManager;
-    private final ComputerPlayFactory computerPlayFactory;
+    private final ComputerPlayMaker computerPlayMaker;
     private final PlayerManager playerManager;
 
     public StateManager(RoundManager roundManager, PlayerManager playerManager) {
         this.roundManager = roundManager;
-        this.computerPlayFactory = new ComputerPlayFactory(roundManager, this);
+        this.computerPlayMaker = new ComputerPlayMaker(roundManager, this);
         this.playerManager = playerManager;
     }
 
     public List<Play> generatePlays(Player currentPlayer) {
-        return computerPlayFactory.generatePlays(currentPlayer, roundManager);
+        return computerPlayMaker.generatePlays(currentPlayer);
     }
 
     public void handleStateAfterPut(boolean isValid, int humanPlayedCards) {
@@ -99,12 +100,12 @@ public class StateManager {
         changePlayerState(player, new DefaultState(player));
     }
 
-    void applyPullingState(Player player) {
+    public void applyPullingState(Player player) {
         changePlayerState(player, new PullingState(player, roundManager.giveAmountOfPulls() - 1));
         //-1, bo odejmujemy pociągnięcie rescue card
     }
 
-    void applyBlockedState(Player player) {
+    public void applyBlockedState(Player player) {
         changePlayerState(player, new BlockedState(player, roundManager.giveAmountOfWaits()));
     }
 

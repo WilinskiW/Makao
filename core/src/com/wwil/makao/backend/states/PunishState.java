@@ -23,7 +23,7 @@ public abstract class PunishState extends PlayerState {
     }
 
     @Override
-    protected List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
+    public List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
         return null;
     }
 

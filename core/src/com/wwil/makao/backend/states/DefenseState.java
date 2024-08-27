@@ -16,7 +16,7 @@ public class DefenseState extends PlayerState {
     }
 
     @Override
-    protected List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
+    public List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
         return cardFinder.findCardsForDefenceState(player,attackingCard);
     }
 
@@ -30,7 +30,7 @@ public class DefenseState extends PlayerState {
     public boolean isValid(Card chosenCard, CardValidator validator) {
         return validator.isValidForDefence(chosenCard);
     }
-    Card getAttackingCard() {
+    public Card getAttackingCard() {
         return attackingCard;
     }
 }

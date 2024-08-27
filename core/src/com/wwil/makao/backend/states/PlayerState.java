@@ -26,7 +26,7 @@ public abstract class PlayerState {
 
     public abstract boolean isValid(Card chosenCard, CardValidator validator);
 
-    abstract List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard);
+    public abstract List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard);
 
     public boolean isPutActive() {
         return isPutActive;

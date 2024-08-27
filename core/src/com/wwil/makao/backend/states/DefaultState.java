@@ -14,7 +14,7 @@ public class DefaultState extends PlayerState {
     }
 
     @Override
-    protected List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
+    public List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
         return cardFinder.findCardsForDefaultState(player, stackCard);
     }
 
