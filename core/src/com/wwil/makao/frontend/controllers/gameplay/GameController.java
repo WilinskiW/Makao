@@ -30,9 +30,9 @@ public class GameController {
 
     public void executePlay(Play play) {
         RoundReport report = backend.processHumanPlay(play);
-        humanTurnManager.showHumanPlay(play, report);
+        humanTurnManager.show(report);
         if (play.getAction() == Action.END) {
-            computerTurnManager.showComputersPlays(report);
+            computerTurnManager.show(report);
         }
     }
 

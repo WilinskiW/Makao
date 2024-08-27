@@ -9,6 +9,7 @@ public class PlayReport {
     private final PlayerState playerState;
     private final Play play;
     private Card drawn;
+    private boolean isRescuePull;
     private boolean isCardCorrect;
     private boolean isChooserActive;
 
@@ -49,6 +50,14 @@ public class PlayReport {
 
     public PlayerState getPlayerState() {
         return playerState;
+    }
+
+    public boolean isRescuePull() {
+        return isRescuePull;
+    }
+
+    public void setRescuePull(boolean rescuePull) {
+        isRescuePull = rescuePull;
     }
 
     public void setChooserActive(boolean isChooserActive) {

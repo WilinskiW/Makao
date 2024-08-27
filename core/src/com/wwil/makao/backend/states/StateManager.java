@@ -24,7 +24,15 @@ public class StateManager {
         return computerPlayFactory.generatePlays(currentPlayer, roundManager);
     }
 
-    public void handlePullAction(boolean hasPullBefore) {
+    public void handleStateAfterPut(boolean isValid, int humanPlayedCards) {
+        if (isValid) {
+            setActionsActivation(true, false, true);
+        } else if (humanPlayedCards == 0) {
+            setActionsActivation(true, true, false);
+        }
+    }
+
+    public void handleStateAfterPull(boolean hasPullBefore) {
         Human humanPlayer = playerManager.getHumanPlayer();
         if (isDefenseState(humanPlayer)) {
             if (hasPullBefore) {
@@ -34,18 +42,18 @@ public class StateManager {
                     applyBlockedState(humanPlayer);
                 }
             }
-        } else if (isPullingState(humanPlayer)) {
-            checkPullingState(humanPlayer);
         } else {
             setActionsActivation(true, false, true);
         }
 
         if (isPullingState(humanPlayer)) {
-            checkPullingState(humanPlayer);
+            handlePullingState();
         }
     }
 
-    private void checkPullingState(Human humanPlayer) {
+
+    private void handlePullingState() {
+        Human humanPlayer = playerManager.getHumanPlayer();
         PunishState pullingState = (PullingState) getHumanState();
         pullingState.decreaseAmount();
         if (pullingState.getAmountOfPunishes() > 0) {
@@ -54,6 +62,14 @@ public class StateManager {
             applyDefaultState(humanPlayer);
             setActionsActivation(true, true, false);
         }
+    }
+
+    public void handleStateAfterEnd(Human humanPlayer) {
+        if (isPlayerBlocked(humanPlayer)) {
+            PunishState blockedState = (BlockedState) humanPlayer.getState();
+            blockedState.decreaseAmount();
+        }
+        setActionsActivation(false, false, false);
     }
 
     public void setActionsActivation(boolean isPutActive, boolean isPullActive, boolean isEndActive) {

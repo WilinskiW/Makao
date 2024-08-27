@@ -2,8 +2,6 @@ package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Human;
-import com.wwil.makao.backend.states.BlockedState;
-import com.wwil.makao.backend.states.PunishState;
 import com.wwil.makao.backend.states.StateManager;
 
 import java.util.ArrayList;
@@ -47,34 +45,24 @@ public class HumanPlayAnalyzer {
 
         if (isValid) {
             playExecutor.executePutPlay(putPlayReport);
-            stateManager.setActionsActivation(true, false, true);
-        } else {
-            //Sprawdzenie czy gracz położył już wcześniej kartę.
-            // Jeżeli pull jest aktywny to znaczy że jeszcze nie położył poprawnej karty
-            if (stateManager.getHumanState().isPullActive()) {
-                stateManager.setActionsActivation(true, true, false);
-            }
         }
+
+        stateManager.handleStateAfterPut(isValid, humanPlayedCards.size());
+
         return roundManager.getRoundReport();
     }
 
     private RoundReport pullCard(Play humanPlay) {
         humanPlay.setDrawnCard(roundManager.getDeckManager().takeCardFromGameDeck());
-        stateManager.handlePullAction(roundManager.getRoundReport().whetherPlayerPulledRescue(humanPlayer));
+        stateManager.handleStateAfterPull(roundManager.getRoundReport().whetherPlayerPulledRescue(humanPlayer));
         roundManager.getRoundReport().addPlayRaport(playExecutor.createPlayReport(humanPlayer, humanPlay));
         return roundManager.getRoundReport();
     }
 
     private RoundReport endTurn(Play humanPlay) {
         humanPlayedCards.clear();
-        stateManager.setActionsActivation(false, false, false);
         roundManager.getRoundReport().addPlayRaport(playExecutor.createPlayReport(humanPlayer, humanPlay));
-
-        if (stateManager.isPlayerBlocked(humanPlayer)) {
-            PunishState blockedState = (BlockedState) stateManager.getHumanState();
-            blockedState.decreaseAmount();
-        }
-
+        stateManager.handleStateAfterEnd(humanPlayer);
         return roundManager.playRound();
     }
 

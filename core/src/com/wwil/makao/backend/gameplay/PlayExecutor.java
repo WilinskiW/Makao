@@ -64,14 +64,15 @@ public class PlayExecutor {
         roundManager.getHumanPlayAnalyzer().getHumanPlayedCards().add(cardPlayed);
     }
 
-    private PlayReport executePullPlay(Player player, PlayReport playReport) {
-        return pullCard(player, playReport);
-    }
-
-    private PlayReport pullCard(Player player, PlayReport playReport) {
+    private PlayReport executePullPlay (Player player, PlayReport playReport) {
         Card drawnCard = playReport.getPlay().getDrawnCard();
         player.addCardToHand(drawnCard);
         playReport.setDrawn(drawnCard);
+
+        if(roundManager.getRoundReport().whetherPlayerPulledRescue(player)){
+            playReport.setRescuePull(true);
+        }
+
         return playReport;
     }
 }

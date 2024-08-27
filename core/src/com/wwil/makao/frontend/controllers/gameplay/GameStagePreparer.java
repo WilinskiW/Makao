@@ -95,9 +95,12 @@ public class GameStagePreparer {
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
                 break;
             case 1:
-//                handGroups.get(index).getPlayer().getCards().clear();
-//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.SEVEN, Suit.CLUB)));
-//                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.K, Suit.SPADE)));
+                backend.getPlayers().get(index).getCards().clear();
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.CLUB));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.K, Suit.SPADE));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.HEART));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.DIAMOND));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
                 break;
             case 2:
 //                handGroups.get(index).getPlayer().getCards().clear();
@@ -105,12 +108,12 @@ public class GameStagePreparer {
 //                handGroups.get(index).getPlayer().addCardsToHand(Collections.singletonList(new Card(Rank.THREE, Suit.SPADE)));
                 break;
             case 3:
-                backend.getPlayers().get(index).getCards().clear();
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.CLUB));
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.SPADE));
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.HEART));
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.DIAMOND));
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
+//                backend.getPlayers().get(index).getCards().clear();
+//                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.CLUB));
+//                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.SPADE));
+//                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.HEART));
+//                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.DIAMOND));
+//                backend.getPlayers().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
                 break;
         }
     }

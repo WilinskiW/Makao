@@ -1,6 +1,7 @@
 package com.wwil.makao.frontend.controllers.managers;
 
 import com.badlogic.gdx.Gdx;
+import com.wwil.makao.backend.gameplay.PlayReport;
 import com.wwil.makao.backend.states.PlayerState;
 import com.wwil.makao.frontend.utils.dragAndDrop.DragAndDropManager;
 import com.wwil.makao.frontend.controllers.gameplay.GameController;
@@ -18,15 +19,9 @@ public class InputManager {
         this.dragAndDropManager = new DragAndDropManager(controller, this, uiManager.getStackCardsGroup());
     }
 
-    public void attachDragAndDrop(CardActor drawnCardActor, boolean isRescuePull) {
+    public void attachDragAndDrop(CardActor drawnCardActor) {
         drawnCardActor.setUpSideDown(false);
-        if(isRescuePull){
-            dragAndDropManager.focusRescueCard(drawnCardActor);
-        }
-        else{
-            dragAndDropManager.prepareDragAndDrop(drawnCardActor);
-            dragAndDropManager.stopListening();
-        }
+        dragAndDropManager.prepareDragAndDrop(drawnCardActor);
     }
 
     public void turnOffHumanInput() {
@@ -70,7 +65,7 @@ public class InputManager {
         this.choosenCardActor = choosenCardActor;
     }
 
-    public CardActor getChoosenCardActor() {
+    public CardActor getChosenCardActor() {
         return choosenCardActor;
     }
 }

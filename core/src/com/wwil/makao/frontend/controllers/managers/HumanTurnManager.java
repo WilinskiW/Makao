@@ -8,19 +8,16 @@ import com.wwil.makao.frontend.utils.sound.SoundManager;
 import com.wwil.makao.frontend.entities.cards.CardActor;
 import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
 
-public class HumanTurnManager {
-    private final UIManager uiManager;
-    private final InputManager inputManager;
-    private final SoundManager soundManager;
+public class HumanTurnManager extends TurnManager {
+
     public HumanTurnManager(UIManager uiManager, InputManager inputManager, SoundManager soundManager) {
-        this.uiManager = uiManager;
-        this.inputManager = inputManager;
-        this.soundManager = soundManager;
+        super(uiManager, inputManager, soundManager);
     }
-    public void showHumanPlay(Play play, RoundReport report) {
+
+    @Override
+    public void show(RoundReport report) {
         PlayReport currentPlayReport = report.getHumanLastPlayReport();
-        inputManager.updateHumanAvailableActions(currentPlayReport.getPlayerState());
-        switch (play.getAction()) {
+        switch (currentPlayReport.getPlay().getAction()) {
             case END:
                 endTurn();
                 break;
@@ -28,17 +25,19 @@ public class HumanTurnManager {
                 useCard(currentPlayReport);
                 break;
             case PULL:
-                pull(currentPlayReport, humanHand(), report.whetherPlayerPulledRescue(humanHand().getPlayer()));
+                pull(currentPlayReport, humanHand());
                 break;
         }
 
         if (currentPlayReport.isChooserActive()) {
-            showCardChooser(inputManager.getChoosenCardActor());
+            showCardChooser(inputManager.getChosenCardActor());
         }
 
+        inputManager.updateHumanAvailableActions(currentPlayReport.getPlayerState());
     }
 
-    private void endTurn() {
+    @Override
+    void endTurn() {
         uiManager.getCardChooser().setVisibility(false);
         inputManager.turnOffHumanInput();
     }
@@ -48,41 +47,24 @@ public class HumanTurnManager {
             if (uiManager.getCardChooser().isVisible()) {
                 putCardFromChooser(playReport);
             } else {
-                putCard(inputManager.getChoosenCardActor(), humanHand(), true);
+                putCard(inputManager.getChosenCardActor(), humanHand(), true);
             }
         } else {
-            uiManager.positionCardInGroup(humanHand(), inputManager.getChoosenCardActor());
+            uiManager.positionCardInGroup(humanHand(), inputManager.getChosenCardActor());
         }
     }
 
     private void putCardFromChooser(PlayReport playReport) {
         uiManager.getCardChooser().setVisibility(false);
         playReport.setChooserActive(false);
-        putCard(inputManager.getChoosenCardActor(), humanHand(), false);
-    }
-
-    private void putCard(CardActor playedCard, PlayerHandGroup player, boolean alignCards) {
-        if (player == humanHand()) {
-            playedCard.clearListeners();
-        }
-
-        uiManager.addCardActorToStackGroup(playedCard);
-        soundManager.play("put.wav");
-        endIfPlayerWon(player);
-
-        if (alignCards) {
-            player.moveCloserToStartingPosition();
-        }
+        putCard(inputManager.getChosenCardActor(), humanHand(), false);
     }
 
 
-    private void pull(PlayReport playReport, PlayerHandGroup player, boolean hasPullBefore) {
-        CardActor drawnCardActor = uiManager.getCardActorFactory().createCardActor(playReport.getDrawn());
-        player.addActor(drawnCardActor);
-        if (player == humanHand()) {
-            inputManager.attachDragAndDrop(drawnCardActor,hasPullBefore);
-        }
-        soundManager.play("pull.wav");
+    @Override
+    protected void putCard(CardActor playedCard, PlayerHandGroup player, boolean alignCards) {
+        super.putCard(playedCard, player, alignCards);
+        playedCard.clearListeners();
     }
 
     private void showCardChooser(CardActor cardPlayed) {
@@ -92,15 +74,4 @@ public class HumanTurnManager {
         uiManager.getCardChooser().getManager().setDisplayCard(stackCard, cardPlayed);
     }
 
-    private void endIfPlayerWon(PlayerHandGroup handGroup) {
-        //Do czasu wprowadzenia menu
-        if (handGroup.getPlayer().checkIfPlayerHaveNoCards() && handGroup.getChildren().isEmpty()) {
-            System.out.println(handGroup.getCardsAlignment() + " won");
-            Gdx.app.exit();
-        }
-    }
-
-    private PlayerHandGroup humanHand(){
-        return uiManager.getHumanHandGroup();
-    }
 }

@@ -1,30 +1,23 @@
 package com.wwil.makao.frontend.controllers.managers;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Timer;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.gameplay.PlayReport;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.gameplay.RoundReport;
 import com.wwil.makao.frontend.utils.sound.SoundManager;
-import com.wwil.makao.frontend.entities.cards.CardActor;
 import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ComputerTurnManager {
-    private final UIManager uiManager;
-    private final InputManager inputManager;
-    private final SoundManager soundManager;
-
+public class ComputerTurnManager extends TurnManager {
     public ComputerTurnManager(UIManager uiManager, InputManager inputManager, SoundManager soundManager) {
-        this.uiManager = uiManager;
-        this.inputManager = inputManager;
-        this.soundManager = soundManager;
+        super(uiManager, inputManager, soundManager);
     }
 
-    public void showComputersPlays(final RoundReport roundReport) {
+    @Override
+    public void show(RoundReport roundReport) {
         float delta = 1.25f;
         final List<PlayReport> computerPlayReports = roundReport.getComputerPlayReports(humanHand().getPlayer());
         final int numberOfComputers = computerPlayReports.size();
@@ -54,7 +47,7 @@ public class ComputerTurnManager {
                 break;
             case PUT:
                 Card cardPlayed = playReport.getPlay().getCardPlayed();
-                putCard(playerHand.getCardActor(cardPlayed), playerHand);
+                putCard(playerHand.getCardActor(cardPlayed), playerHand, true);
                 break;
             case PULL:
                 pull(playReport, playerHand);
@@ -62,34 +55,9 @@ public class ComputerTurnManager {
         }
     }
 
-    private void endTurn() {
+    @Override
+    void endTurn() {
         inputManager.turnOffHumanInput();
-    }
-
-    private void putCard(CardActor playedCard, PlayerHandGroup player) {
-        uiManager.addCardActorToStackGroup(playedCard);
-        soundManager.play("put.wav");
-        endIfPlayerWon(player);
-        player.moveCloserToStartingPosition();
-
-    }
-
-
-    private void pull(PlayReport playReport, PlayerHandGroup player) {
-        CardActor drawnCardActor = uiManager.getCardActorFactory().createCardActor(playReport.getDrawn());
-        player.addActor(drawnCardActor);
-        soundManager.play("pull.wav");
-    }
-
-    private void endIfPlayerWon(PlayerHandGroup handGroup) {
-        if (handGroup.getPlayer().checkIfPlayerHaveNoCards() && handGroup.getChildren().isEmpty()) {
-            System.out.println(handGroup.getCardsAlignment() + " won");
-            Gdx.app.exit();
-        }
-    }
-
-    private PlayerHandGroup humanHand() {
-        return uiManager.getHumanHandGroup();
     }
 
     private PlayerHandGroup getHandGroup(Player player) {
