@@ -9,6 +9,8 @@ public class PullingState extends PunishState{
 
     @Override
     void setDefaultValueOfActivations() {
-        setPullActive(true);
+        this.isPutActive = false;
+        this.isPullActive = true;
+        this.isEndActive = false;
     }
 }

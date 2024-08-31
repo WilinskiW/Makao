@@ -1,6 +1,7 @@
 package com.wwil.makao.backend.states;
 
 import com.wwil.makao.backend.gameplay.CardValidator;
+import com.wwil.makao.backend.gameplay.Play;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.CardFinder;
 import com.wwil.makao.backend.model.player.Player;
@@ -8,11 +9,13 @@ import com.wwil.makao.backend.model.player.Player;
 import java.util.List;
 
 public abstract class PlayerState {
-    private boolean isPutActive;
-    private boolean isPullActive;
-    private boolean isEndActive;
+    protected boolean isPutActive;
+    protected boolean isPullActive;
+    protected boolean isEndActive;
+    protected Player player;
 
     public PlayerState(Player player) {
+        this.player = player;
         if (player.isHuman()) {
             setDefaultValueOfActivations();
         }

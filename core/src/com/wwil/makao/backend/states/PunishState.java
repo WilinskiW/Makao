@@ -5,6 +5,7 @@ import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.CardFinder;
 import com.wwil.makao.backend.model.player.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class PunishState extends PlayerState {
@@ -24,7 +25,7 @@ public abstract class PunishState extends PlayerState {
 
     @Override
     public List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override

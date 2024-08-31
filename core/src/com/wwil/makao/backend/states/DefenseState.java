@@ -16,14 +16,15 @@ public class DefenseState extends PlayerState {
     }
 
     @Override
-    public List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
-        return cardFinder.findCardsForDefenceState(player,attackingCard);
+    void setDefaultValueOfActivations() {
+        this.isPutActive = true;
+        this.isPullActive = true;
+        this.isEndActive = false;
     }
 
     @Override
-    void setDefaultValueOfActivations() {
-        this.setPutActive(true);
-        this.setPullActive(true);
+    public List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
+        return cardFinder.findCardsForDefenceState(player,attackingCard);
     }
 
     @Override

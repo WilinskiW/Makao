@@ -16,6 +16,8 @@ public class BlockedState extends PunishState {
 
     @Override
     void setDefaultValueOfActivations() {
-        setEndActive(true);
+        this.isPutActive = false;
+        this.isPullActive = false;
+        this.isEndActive = true;
     }
 }

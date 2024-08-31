@@ -27,9 +27,9 @@ public class StateManager {
 
     public void handleStateAfterPut(boolean isValid, int humanPlayedCards) {
         if (isValid) {
-            setActionsActivation(true, false, true);
+            activateActions(true, false, true);
         } else if (humanPlayedCards == 0) {
-            setActionsActivation(true, true, false);
+            activateActions(true, true, false);
         }
     }
 
@@ -44,7 +44,7 @@ public class StateManager {
                 }
             }
         } else {
-            setActionsActivation(true, false, true);
+            activateActions(true, false, true);
         }
 
         if (isPullingState(humanPlayer)) {
@@ -58,10 +58,10 @@ public class StateManager {
         PunishState pullingState = (PullingState) getHumanState();
         pullingState.decreaseAmount();
         if (pullingState.getAmountOfPunishes() > 0) {
-            setActionsActivation(false, true, false);
+            activateActions(false, true, false);
         } else {
             applyDefaultState(humanPlayer);
-            setActionsActivation(true, true, false);
+            activateActions(true, true, false);
         }
     }
 
@@ -70,10 +70,10 @@ public class StateManager {
             PunishState blockedState = (BlockedState) humanPlayer.getState();
             blockedState.decreaseAmount();
         }
-        setActionsActivation(false, false, false);
+        activateActions(false, false, false);
     }
 
-    public void setActionsActivation(boolean isPutActive, boolean isPullActive, boolean isEndActive) {
+    public void activateActions(boolean isPutActive, boolean isPullActive, boolean isEndActive) {
         getHumanState().setPutActive(isPutActive);
         getHumanState().setPullActive(isPullActive);
         getHumanState().setEndActive(isEndActive);

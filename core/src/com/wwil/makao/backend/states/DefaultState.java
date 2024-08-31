@@ -14,19 +14,19 @@ public class DefaultState extends PlayerState {
     }
 
     @Override
-    public List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
-        return cardFinder.findCardsForDefaultState(player, stackCard);
+    void setDefaultValueOfActivations() {
+        this.isPutActive = true;
+        this.isPullActive = true;
+        this.isEndActive = false;
     }
 
     @Override
-    void setDefaultValueOfActivations() {
-        this.setPutActive(true);
-        this.setPullActive(true);
+    public List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
+        return cardFinder.findCardsForDefaultState(player, stackCard);
     }
 
     @Override
     public boolean isValid(Card chosenCard, CardValidator validator) {
         return validator.isValidForNormalTurn(chosenCard);
     }
-
 }
