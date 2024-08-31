@@ -53,7 +53,7 @@ public class ComputerPlayMaker {
         BlockedState blockedState = (BlockedState) currentPlayer.getState();
         blockedState.decreaseAmount();
         if (blockedState.canUnblock()) {
-            stateManager.applyDefaultState(currentPlayer);
+            stateManager.getStateChanger().applyDefaultState(currentPlayer);
         }
         return plays;
     }
@@ -84,7 +84,7 @@ public class ComputerPlayMaker {
 
     private void handleDefenseCardPlayIfNeeded(List<Play> plays) {
         if (isPlayerInDefenseState()) {
-            stateManager.transferDefenceState(currentPlayer, plays.get(plays.size() - 1).getCardPlayed());
+            stateManager.getStateChanger().transferDefenceState(currentPlayer, plays.get(plays.size() - 1).getCardPlayed());
         }
     }
 
@@ -151,7 +151,7 @@ public class ComputerPlayMaker {
     }
 
     private void pullRemainingCards(List<Play> plays) {
-        stateManager.applyPullingState(currentPlayer);
+        stateManager.getStateChanger().applyPullingState(currentPlayer);
         PullingState pullState = (PullingState) currentPlayer.getState();
         int amountOfPulls = pullState.getAmountOfPunishes();
 
@@ -162,15 +162,15 @@ public class ComputerPlayMaker {
     }
 
     private void addDefaultStatePlays(List<Play> plays) {
-        stateManager.applyDefaultState(currentPlayer);
+        stateManager.getStateChanger().applyDefaultState(currentPlayer);
         plays.addAll(this.generatePlays(currentPlayer));
     }
 
     private void blockCurrentPlayer() {
-        stateManager.applyBlockedState(currentPlayer);
+        stateManager.getStateChanger().applyBlockedState(currentPlayer);
         decreaseBlockAmount();
         if (canPlayerBeUnblocked()) {
-            stateManager.applyDefaultState(currentPlayer);
+            stateManager.getStateChanger().applyDefaultState(currentPlayer);
         }
     }
 

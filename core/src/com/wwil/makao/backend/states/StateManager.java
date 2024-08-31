@@ -3,7 +3,6 @@ package com.wwil.makao.backend.states;
 import com.wwil.makao.backend.gameplay.ComputerPlayMaker;
 import com.wwil.makao.backend.gameplay.Play;
 import com.wwil.makao.backend.gameplay.RoundManager;
-import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Human;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.model.player.PlayerManager;
@@ -11,14 +10,14 @@ import com.wwil.makao.backend.model.player.PlayerManager;
 import java.util.List;
 
 public class StateManager {
-    private final RoundManager roundManager;
     private final ComputerPlayMaker computerPlayMaker;
     private final PlayerManager playerManager;
+    private final StateChanger stateChanger;
 
     public StateManager(RoundManager roundManager, PlayerManager playerManager) {
-        this.roundManager = roundManager;
         this.computerPlayMaker = new ComputerPlayMaker(roundManager, this);
         this.playerManager = playerManager;
+        this.stateChanger = new StateChanger(roundManager, playerManager);
     }
 
     public List<Play> generatePlays(Player currentPlayer) {
@@ -37,11 +36,7 @@ public class StateManager {
         Human humanPlayer = playerManager.getHumanPlayer();
         if (isDefenseState(humanPlayer)) {
             if (hasPullBefore) {
-                if (roundManager.getPullsCount() > 0) {
-                    applyPullingState(humanPlayer);
-                } else {
-                    applyBlockedState(humanPlayer);
-                }
+                stateChanger.applyPunishment(humanPlayer);
             }
         } else {
             activateActions(true, false, true);
@@ -52,7 +47,6 @@ public class StateManager {
         }
     }
 
-
     private void handlePullingState() {
         Human humanPlayer = playerManager.getHumanPlayer();
         PunishState pullingState = (PullingState) getHumanState();
@@ -60,7 +54,7 @@ public class StateManager {
         if (pullingState.getAmountOfPunishes() > 0) {
             activateActions(false, true, false);
         } else {
-            applyDefaultState(humanPlayer);
+            stateChanger.applyDefaultState(humanPlayer);
             activateActions(true, true, false);
         }
     }
@@ -79,40 +73,6 @@ public class StateManager {
         getHumanState().setEndActive(isEndActive);
     }
 
-    public PlayerState getHumanState() {
-        return playerManager.getHumanPlayer().getState();
-    }
-
-    public void applyDefenceState(Player player, Card attackingCard) {
-        changePlayerState(player, new DefenseState(player, attackingCard));
-    }
-
-    public void transferDefenceState(Player currentPlayer, Card cardPlayed) {
-        applyDefaultState(currentPlayer);
-        if (cardPlayed.isKingSpade()) {
-            applyDefenceState(playerManager.getPreviousPlayer(), cardPlayed);
-        } else {
-            applyDefenceState(playerManager.getNextPlayer(), cardPlayed);
-        }
-    }
-
-    public void applyDefaultState(Player player) {
-        changePlayerState(player, new DefaultState(player));
-    }
-
-    public void applyPullingState(Player player) {
-        changePlayerState(player, new PullingState(player, roundManager.giveAmountOfPulls() - 1));
-        //-1, bo odejmujemy pociągnięcie rescue card
-    }
-
-    public void applyBlockedState(Player player) {
-        changePlayerState(player, new BlockedState(player, roundManager.giveAmountOfWaits()));
-    }
-
-    private void changePlayerState(Player player, PlayerState newState) {
-        player.changeState(newState);
-    }
-
     public boolean isPlayerBlocked(Player player) {
         return player.getState() instanceof BlockedState;
     }
@@ -124,4 +84,13 @@ public class StateManager {
     public boolean isDefenseState(Player player) {
         return player.getState() instanceof DefenseState;
     }
+
+    public PlayerState getHumanState() {
+        return playerManager.getHumanPlayer().getState();
+    }
+
+    public StateChanger getStateChanger() {
+        return stateChanger;
+    }
 }
+

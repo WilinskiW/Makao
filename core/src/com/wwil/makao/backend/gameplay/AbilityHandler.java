@@ -53,12 +53,12 @@ public class AbilityHandler {
 
     private void attackNext(int amountOfCards, Card card) {
         roundManager.increaseAmountOfPulls(amountOfCards);
-        stateManager.applyDefenceState(playerManager.getNextPlayer(), card);
+        stateManager.getStateChanger().applyDefenceState(playerManager.getNextPlayer(), card);
     }
 
     private void blockNext(Card card){
         roundManager.increaseAmountOfWaits();
-        stateManager.applyDefenceState(playerManager.getNextPlayer(), card);
+        stateManager.getStateChanger().applyDefenceState(playerManager.getNextPlayer(), card);
     }
 
     private void demand(PlayReport playReport) {
@@ -82,7 +82,7 @@ public class AbilityHandler {
 
     private void attackPrevious(Card card) {
         roundManager.increaseAmountOfPulls(5);
-        stateManager.applyDefenceState(playerManager.getPreviousPlayer(), card);
+        stateManager.getStateChanger().applyDefenceState(playerManager.getPreviousPlayer(), card);
         playerManager.goToPreviousPlayer();
     }
 
