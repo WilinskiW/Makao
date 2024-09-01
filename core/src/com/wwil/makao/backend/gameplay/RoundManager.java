@@ -52,7 +52,7 @@ public class RoundManager {
 
     RoundReport sendRoundReport() {
         RoundReport report = roundReport;
-        stateManager.getHumanState().resetActionFlags();
+        stateManager.getHumanState().setDefaultValueOfActivations();
         startNewRound();
         return report;
     }

@@ -9,7 +9,7 @@ import com.wwil.makao.backend.model.player.PlayerManager;
 
 import java.util.List;
 
-public class StateManager {
+public class StateManager implements StateContext {
     private final ComputerPlayMaker computerPlayMaker;
     private final PlayerManager playerManager;
     private final StateChanger stateChanger;
@@ -17,7 +17,7 @@ public class StateManager {
     public StateManager(RoundManager roundManager, PlayerManager playerManager) {
         this.computerPlayMaker = new ComputerPlayMaker(roundManager, this);
         this.playerManager = playerManager;
-        this.stateChanger = new StateChanger(roundManager, playerManager);
+        this.stateChanger = new StateChanger(roundManager, this);
     }
 
     public List<Play> generatePlays(Player currentPlayer) {
@@ -73,6 +73,26 @@ public class StateManager {
         getHumanState().setEndActive(isEndActive);
     }
 
+    @Override
+    public void changeState(Player player, State newState) {
+        player.changeState(newState);
+    }
+
+    @Override
+    public Player getPreviousPlayer() {
+        return playerManager.getPreviousPlayer();
+    }
+
+    @Override
+    public State getHumanState() {
+        return playerManager.getHumanPlayer().getState();
+    }
+
+    @Override
+    public Player getNextPlayer() {
+        return playerManager.getNextPlayer();
+    }
+
     public boolean isPlayerBlocked(Player player) {
         return player.getState() instanceof BlockedState;
     }
@@ -83,10 +103,6 @@ public class StateManager {
 
     public boolean isDefenseState(Player player) {
         return player.getState() instanceof DefenseState;
-    }
-
-    public PlayerState getHumanState() {
-        return playerManager.getHumanPlayer().getState();
     }
 
     public StateChanger getStateChanger() {

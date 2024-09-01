@@ -2,7 +2,6 @@ package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
-import com.wwil.makao.backend.states.PlayerState;
 
 public class PlayExecutor {
     private final RoundManager roundManager;

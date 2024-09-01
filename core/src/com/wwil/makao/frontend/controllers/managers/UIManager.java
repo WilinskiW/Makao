@@ -2,7 +2,7 @@ package com.wwil.makao.frontend.controllers.managers;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
-import com.wwil.makao.backend.states.PlayerState;
+import com.wwil.makao.backend.states.State;
 import com.wwil.makao.frontend.controllers.gameplay.GameController;
 import com.wwil.makao.frontend.controllers.gameplay.GameStagePreparer;
 import com.wwil.makao.frontend.controllers.gameplay.GameplayScreen;
@@ -40,7 +40,7 @@ public class UIManager {
         new GameStagePreparer(this, controller.getBackend()).execute();
     }
 
-    public void updateButtonStates(PlayerState state) {
+    public void updateButtonStates(State state) {
         pullButton.setActive(state.isPullActive());
         endTurnButton.setActive(state.isEndActive());
     }

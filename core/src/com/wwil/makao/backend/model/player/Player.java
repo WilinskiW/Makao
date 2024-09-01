@@ -2,17 +2,17 @@ package com.wwil.makao.backend.model.player;
 
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.states.DefaultState;
-import com.wwil.makao.backend.states.PlayerState;
+import com.wwil.makao.backend.states.State;
 
 import java.util.*;
 
 public abstract class Player {
     private final List<Card> cards;
-    private PlayerState state;
+    private State state;
 
     public Player(List<Card> cards) {
         this.cards = cards;
-        this.state = new DefaultState(this);
+        this.state = new DefaultState();
     }
 
     public abstract boolean isHuman();
@@ -28,10 +28,10 @@ public abstract class Player {
     public boolean checkIfPlayerHaveNoCards() {
         return cards.isEmpty();
     }
-    public void changeState(PlayerState state){
+    public void changeState(State state){
         this.state = state;
     }
-    public PlayerState getState(){
+    public State getState(){
         return state;
     }
     public List<Card> getCards() {

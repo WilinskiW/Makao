@@ -7,14 +7,17 @@ import com.wwil.makao.backend.model.player.Player;
 
 import java.util.List;
 
-public class DefaultState extends PlayerState {
+public class DefaultState implements State {
+    private boolean isPutActive;
+    private boolean isPullActive;
+    private boolean isEndActive;
 
-    public DefaultState(Player player) {
-        super(player);
+    public DefaultState() {
+        setDefaultValueOfActivations();
     }
 
     @Override
-    void setDefaultValueOfActivations() {
+    public void setDefaultValueOfActivations() {
         this.isPutActive = true;
         this.isPullActive = true;
         this.isEndActive = false;
@@ -28,5 +31,35 @@ public class DefaultState extends PlayerState {
     @Override
     public boolean isValid(Card chosenCard, CardValidator validator) {
         return validator.isValidForNormalTurn(chosenCard);
+    }
+
+    @Override
+    public boolean isPutActive() {
+        return isPutActive;
+    }
+
+    @Override
+    public void setPutActive(boolean putActive) {
+        isPutActive = putActive;
+    }
+
+    @Override
+    public boolean isPullActive() {
+        return isPullActive;
+    }
+
+    @Override
+    public void setPullActive(boolean pullActive) {
+        isPullActive = pullActive;
+    }
+
+    @Override
+    public boolean isEndActive() {
+        return isEndActive;
+    }
+
+    @Override
+    public void setEndActive(boolean endActive) {
+        isEndActive = endActive;
     }
 }

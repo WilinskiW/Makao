@@ -1,8 +1,7 @@
 package com.wwil.makao.frontend.controllers.managers;
 
 import com.badlogic.gdx.Gdx;
-import com.wwil.makao.backend.gameplay.PlayReport;
-import com.wwil.makao.backend.states.PlayerState;
+import com.wwil.makao.backend.states.State;
 import com.wwil.makao.frontend.utils.dragAndDrop.DragAndDropManager;
 import com.wwil.makao.frontend.controllers.gameplay.GameController;
 import com.wwil.makao.frontend.entities.cards.CardActor;
@@ -35,13 +34,13 @@ public class InputManager {
         Gdx.input.setInputProcessor(uiManager.getGameplayScreen().getStage());
     }
 
-    public void updateHumanAvailableActions(PlayerState state){
+    public void updateHumanAvailableActions(State state){
         updateDragAndDropState(state);
         uiManager.updateButtonStates(state);
     }
 
 
-    private void updateDragAndDropState(PlayerState state) {
+    private void updateDragAndDropState(State state) {
         if (state.isPutActive()) {
             dragAndDropManager.startListening();
             uiManager.changeTransparencyOfPlayerGroup(uiManager.getHumanHandGroup(), 1f);

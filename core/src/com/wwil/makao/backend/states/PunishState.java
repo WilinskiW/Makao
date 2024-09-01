@@ -8,15 +8,14 @@ import com.wwil.makao.backend.model.player.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PunishState extends PlayerState {
-
-    int amountOfPunishes;
-
-    protected PunishState(Player player,int amountOfPunishes) {
-        super(player);
+public abstract class PunishState implements State {
+    protected int amountOfPunishes;
+    protected boolean isPutActive;
+    protected boolean isPullActive;
+    protected boolean isEndActive;
+    protected PunishState(int amountOfPunishes) {
         this.amountOfPunishes = amountOfPunishes;
     }
-
     public void decreaseAmount() {
         if (amountOfPunishes > 0) {
             amountOfPunishes--;
