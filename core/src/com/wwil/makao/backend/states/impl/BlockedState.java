@@ -7,6 +7,7 @@ public class BlockedState extends PunishState {
 
     public BlockedState(int amountOfPunishes) {
         super(amountOfPunishes);
+        setDefaultValueOfActivations();
     }
 
     public BlockedState(int amountOfPunishes, boolean isPutActive, boolean isPullActive, boolean isEndActive) {

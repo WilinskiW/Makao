@@ -5,6 +5,7 @@ import com.wwil.makao.backend.states.State;
 public class PullingState extends PunishState {
     public PullingState(int amountOfPunishes) {
         super(amountOfPunishes);
+        setDefaultValueOfActivations();
     }
 
     public PullingState(int amountOfPunishes, boolean isPutActive, boolean isPullActive, boolean isEndActive) {

@@ -2,6 +2,7 @@ package com.wwil.makao.backend.states.management;
 
 import com.wwil.makao.backend.gameplay.RoundManager;
 import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.backend.model.card.Rank;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
 import com.wwil.makao.backend.states.impl.*;
@@ -33,6 +34,11 @@ public class StateChanger {
 
     public void applyDefaultRescueState(Player player){
         changePlayerState(player, new DefaultRescueState());
+    }
+
+    public void applyDefenceRescueState(Player player){
+        boolean isAttackedByFour = roundManager.getDeckManager().peekStackCard().getRank() == Rank.FOUR;
+        changePlayerState(player, new DefenceRescueState(isAttackedByFour));
     }
 
     protected void applyPunishment(Player player) {

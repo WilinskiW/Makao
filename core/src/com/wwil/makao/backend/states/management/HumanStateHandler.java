@@ -11,7 +11,7 @@ public class HumanStateHandler {
     private final StateContext context;
     private final Human humanPlayer;
 
-    public HumanStateHandler(StateChanger changer, StateChecker checker,StateContext context, Human humanPlayer) {
+    public HumanStateHandler(StateChanger changer, StateChecker checker, StateContext context, Human humanPlayer) {
         this.changer = changer;
         this.checker = checker;
         this.context = context;
@@ -20,20 +20,22 @@ public class HumanStateHandler {
 
     public void handleStateAfterPut(boolean isValid, int humanPlayedCards) {
         if (isValid) {
-            if(checker.isRescueState(humanPlayer)){
+            if (checker.isDefaultRescueState(humanPlayer)) {
                 changer.applyDefaultState(humanPlayer);
             }
-            setActions(true,false,true);
-        }
-        else if (humanPlayedCards == 0 && checker.isDefaultState(humanPlayer)) {
-            setActions(true,true,false);
+            setActions(true, false, true);
+        } else if (humanPlayedCards == 0 && checker.isDefaultState(humanPlayer)) {
+            setActions(true, true, false);
         }
     }
 
     public void handleStateAfterPull(boolean hasPullBefore) {
-        if (checker.isDefenseState(humanPlayer)) {
+        if (checker.isDefenseState(humanPlayer) || checker.isDefenceRescueState(humanPlayer)) {
             if (hasPullBefore) {
                 changer.applyPunishment(humanPlayer);
+            }
+            else{
+                changer.applyDefenceRescueState(humanPlayer);
             }
         } else if (checker.isDefaultState(humanPlayer)) {
             changer.applyDefaultRescueState(humanPlayer);
@@ -46,10 +48,10 @@ public class HumanStateHandler {
         PunishState pullingState = (PullingState) context.getHumanState();
         pullingState.decreaseAmount();
         if (pullingState.getAmountOfPunishes() > 0) {
-            setActions(false,true,false);
+            setActions(false, true, false);
         } else {
             changer.applyDefaultState(humanPlayer);
-            setActions(true,true,false);
+            setActions(true, true, false);
         }
     }
 
@@ -57,11 +59,10 @@ public class HumanStateHandler {
         if (checker.isPlayerBlocked(humanPlayer)) {
             PunishState blockedState = (BlockedState) humanPlayer.getState();
             blockedState.decreaseAmount();
-        }
-        else if(checker.isRescueState(humanPlayer)){
+        } else if (checker.isDefaultRescueState(humanPlayer)) {
             changer.applyDefaultState(humanPlayer);
         }
-        setActions(false,false,false);
+        setActions(false, false, false);
     }
 
     private void setActions(boolean put, boolean pull, boolean end) {

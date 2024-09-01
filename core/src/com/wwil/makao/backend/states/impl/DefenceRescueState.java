@@ -8,19 +8,19 @@ import com.wwil.makao.backend.states.State;
 
 import java.util.List;
 
-public class DefenseState implements State {
-    private final Card attackingCard;
+public class DefenceRescueState implements State {
+    private final boolean isAttackByFour;
     private boolean isPutActive;
     private boolean isPullActive;
     private boolean isEndActive;
 
-    public DefenseState(Card attackingCard) {
-        this.attackingCard = attackingCard;
+    public DefenceRescueState(boolean isAttackByFour) {
+        this.isAttackByFour = isAttackByFour;
         setDefaultValueOfActivations();
     }
 
-    public DefenseState(Card attackingCard, boolean isPutActive, boolean isPullActive, boolean isEndActive) {
-        this.attackingCard = attackingCard;
+    public DefenceRescueState(boolean isAttackByFour, boolean isPutActive, boolean isPullActive, boolean isEndActive) {
+        this.isAttackByFour = isAttackByFour;
         this.isPutActive = isPutActive;
         this.isPullActive = isPullActive;
         this.isEndActive = isEndActive;
@@ -28,24 +28,34 @@ public class DefenseState implements State {
 
     @Override
     public State saveState() {
-        return new DefenseState(attackingCard, isPutActive, isPullActive, isEndActive);
+        return new DefenceRescueState(isAttackByFour, isPutActive, isPullActive, isEndActive);
     }
 
     @Override
     public void setDefaultValueOfActivations() {
         this.isPutActive = true;
-        this.isPullActive = true;
-        this.isEndActive = false;
-    }
-
-    @Override
-    public List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
-        return cardFinder.findCardsForDefenceState(player, attackingCard);
+        if (isAttackByFour) {
+            this.isPullActive = false;
+            this.isEndActive = true;
+        } else {
+            this.isPullActive = true;
+            this.isEndActive = false;
+        }
     }
 
     @Override
     public boolean isValid(Card chosenCard, CardValidator validator) {
         return validator.isValidForDefence(chosenCard);
+    }
+
+    @Override
+    public List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
+        return cardFinder.findCardsForDefenceState(player, stackCard);
+    }
+
+    @Override
+    public boolean isFocusDrawnCard() {
+        return true;
     }
 
     @Override
@@ -55,7 +65,7 @@ public class DefenseState implements State {
 
     @Override
     public void setPutActive(boolean putActive) {
-        isPutActive = putActive;
+        this.isPutActive = putActive;
     }
 
     @Override
@@ -65,7 +75,7 @@ public class DefenseState implements State {
 
     @Override
     public void setPullActive(boolean pullActive) {
-        isPullActive = pullActive;
+        this.isPullActive = pullActive;
     }
 
     @Override
@@ -75,10 +85,6 @@ public class DefenseState implements State {
 
     @Override
     public void setEndActive(boolean endActive) {
-        isEndActive = endActive;
-    }
-
-    public Card getAttackingCard() {
-        return attackingCard;
+        this.isEndActive = endActive;
     }
 }

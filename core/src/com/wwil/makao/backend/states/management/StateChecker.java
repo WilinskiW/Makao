@@ -20,7 +20,11 @@ public class StateChecker {
         return player.getState() instanceof DefaultState;
     }
 
-    protected boolean isRescueState(Player player){
+    protected boolean isDefaultRescueState(Player player){
         return player.getState() instanceof DefaultRescueState;
     }
+    protected boolean isDefenceRescueState(Player player){
+        return player.getState() instanceof DefenceRescueState;
+    }
+
 }
