@@ -47,14 +47,14 @@ public class HumanPlayAnalyzer {
             playExecutor.executePutPlay(putPlayReport);
         }
 
-        stateManager.handleStateAfterPut(isValid, humanPlayedCards.size());
+        stateManager.getHumanStateHandler().handleStateAfterPut(isValid, humanPlayedCards.size());
 
         return roundManager.getRoundReport();
     }
 
     private RoundReport pullCard(Play humanPlay) {
         humanPlay.setDrawnCard(roundManager.getDeckManager().takeCardFromGameDeck());
-        stateManager.handleStateAfterPull(roundManager.getRoundReport().whetherPlayerPulledRescue(humanPlayer));
+        stateManager.getHumanStateHandler().handleStateAfterPull(roundManager.getRoundReport().whetherPlayerPulledRescue(humanPlayer));
         roundManager.getRoundReport().addPlayRaport(playExecutor.createPlayReport(humanPlayer, humanPlay));
         return roundManager.getRoundReport();
     }
@@ -62,7 +62,7 @@ public class HumanPlayAnalyzer {
     private RoundReport endTurn(Play humanPlay) {
         humanPlayedCards.clear();
         roundManager.getRoundReport().addPlayRaport(playExecutor.createPlayReport(humanPlayer, humanPlay));
-        stateManager.handleStateAfterEnd(humanPlayer);
+        stateManager.getHumanStateHandler().handleStateAfterEnd(humanPlayer);
         return roundManager.playRound();
     }
 

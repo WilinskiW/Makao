@@ -29,6 +29,10 @@ public class StateChanger {
         applyDefenceState(targetPlayer, cardPlayed);
     }
 
+    public void applyDefaultRescueState(Player player){
+        changePlayerState(player, new DefaultRescueState());
+    }
+
     protected void applyPunishment(Player player) {
         if (roundManager.getPullsCount() > 0) {
             applyPullingState(player);

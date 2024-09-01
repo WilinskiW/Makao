@@ -1,7 +1,5 @@
 package com.wwil.makao.frontend.controllers.managers;
 
-import com.badlogic.gdx.Gdx;
-import com.wwil.makao.backend.gameplay.Play;
 import com.wwil.makao.backend.gameplay.PlayReport;
 import com.wwil.makao.backend.gameplay.RoundReport;
 import com.wwil.makao.frontend.utils.sound.SoundManager;
@@ -74,4 +72,12 @@ public class HumanTurnManager extends TurnManager {
         uiManager.getCardChooser().getManager().setDisplayCard(stackCard, cardPlayed);
     }
 
+    @Override
+    protected void pull(PlayReport playReport, PlayerHandGroup player) {
+        CardActor drawnCardActor = uiManager.getCardActorFactory().createCardActor(playReport.getDrawn());
+        player.addActor(drawnCardActor);
+        inputManager.attachDragAndDrop(drawnCardActor);
+        inputManager.setChosenCardActor(drawnCardActor);
+        soundManager.play("pull.wav");
+    }
 }

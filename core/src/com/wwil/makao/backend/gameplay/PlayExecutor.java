@@ -67,11 +67,6 @@ public class PlayExecutor {
         Card drawnCard = playReport.getPlay().getDrawnCard();
         player.addCardToHand(drawnCard);
         playReport.setDrawn(drawnCard);
-
-        if(roundManager.getRoundReport().whetherPlayerPulledRescue(player)){
-            playReport.setRescuePull(true);
-        }
-
         return playReport;
     }
 }

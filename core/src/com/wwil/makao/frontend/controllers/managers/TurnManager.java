@@ -35,7 +35,6 @@ public abstract class TurnManager {
     protected void pull(PlayReport playReport, PlayerHandGroup player) {
         CardActor drawnCardActor = uiManager.getCardActorFactory().createCardActor(playReport.getDrawn());
         player.addActor(drawnCardActor);
-        inputManager.attachDragAndDrop(drawnCardActor);
         soundManager.play("pull.wav");
     }
 

@@ -14,6 +14,10 @@ public interface State {
 
     List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard);
 
+    default boolean isFocusDrawnCard() {
+        return false;
+    }
+
     boolean isPutActive();
 
     void setPutActive(boolean putActive);

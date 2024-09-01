@@ -29,7 +29,7 @@ public class ComputerPlayMaker {
         this.currentPlayer = currentPlayer;
         List<Play> plays = new ArrayList<>();
 
-        if (stateManager.isPlayerBlocked(currentPlayer)) {
+        if (stateManager.getStateChecker().isPlayerBlocked(currentPlayer)) {
             return handleBlocked(plays);
         }
 
@@ -89,7 +89,7 @@ public class ComputerPlayMaker {
     }
 
     private boolean isPlayerInDefenseState() {
-        return stateManager.isDefenseState(currentPlayer);
+        return stateManager.getStateChecker().isDefenseState(currentPlayer);
     }
 
     private boolean isAllowRescue() {

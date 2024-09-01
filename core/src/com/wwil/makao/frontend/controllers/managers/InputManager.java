@@ -9,7 +9,7 @@ import com.wwil.makao.frontend.entities.cards.CardActor;
 public class InputManager {
     private final UIManager uiManager;
     private final DragAndDropManager dragAndDropManager;
-    private CardActor choosenCardActor;
+    private CardActor chosenCardActor;
     private boolean inputBlockActive;
 
 
@@ -41,7 +41,10 @@ public class InputManager {
 
 
     private void updateDragAndDropState(State state) {
-        if (state.isPutActive()) {
+        if(state.isFocusDrawnCard() && state.isPutActive()){
+            dragAndDropManager.focusRescueCard(chosenCardActor);
+        }
+        else if (state.isPutActive()) {
             dragAndDropManager.startListening();
             uiManager.changeTransparencyOfPlayerGroup(uiManager.getHumanHandGroup(), 1f);
         }
@@ -61,10 +64,10 @@ public class InputManager {
     }
 
     public void setChosenCardActor(CardActor choosenCardActor) {
-        this.choosenCardActor = choosenCardActor;
+        this.chosenCardActor = choosenCardActor;
     }
 
     public CardActor getChosenCardActor() {
-        return choosenCardActor;
+        return chosenCardActor;
     }
 }
