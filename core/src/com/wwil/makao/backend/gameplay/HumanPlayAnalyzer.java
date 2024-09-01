@@ -2,7 +2,7 @@ package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Human;
-import com.wwil.makao.backend.states.StateManager;
+import com.wwil.makao.backend.states.management.StateManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,8 +61,8 @@ public class HumanPlayAnalyzer {
 
     private RoundReport endTurn(Play humanPlay) {
         humanPlayedCards.clear();
+        stateManager.getHumanStateHandler().handleStateAfterEnd();
         roundManager.getRoundReport().addPlayRaport(playExecutor.createPlayReport(humanPlayer, humanPlay));
-        stateManager.getHumanStateHandler().handleStateAfterEnd(humanPlayer);
         return roundManager.playRound();
     }
 

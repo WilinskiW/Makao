@@ -8,8 +8,8 @@ import com.wwil.makao.backend.model.player.Player;
 import java.util.List;
 
 public interface State {
+    State saveState();
     void setDefaultValueOfActivations();
-
     boolean isValid(Card chosenCard, CardValidator validator);
 
     List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard);

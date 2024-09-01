@@ -2,7 +2,7 @@ package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.PlayerManager;
-import com.wwil.makao.backend.states.StateManager;
+import com.wwil.makao.backend.states.management.StateManager;
 
 public class AbilityHandler {
     private final RoundManager roundManager;

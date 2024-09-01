@@ -34,21 +34,19 @@ public class InputManager {
         Gdx.input.setInputProcessor(uiManager.getGameplayScreen().getStage());
     }
 
-    public void updateHumanAvailableActions(State state){
+    public void updateHumanAvailableActions(State state) {
         updateDragAndDropState(state);
-        uiManager.updateButtonStates(state);
+        uiManager.updateButtonStates(state.isPullActive(), state.isEndActive());
     }
 
 
     private void updateDragAndDropState(State state) {
-        if(state.isFocusDrawnCard() && state.isPutActive()){
+        if (state.isFocusDrawnCard() && state.isPutActive()) {
             dragAndDropManager.focusRescueCard(chosenCardActor);
-        }
-        else if (state.isPutActive()) {
+        } else if (state.isPutActive()) {
             dragAndDropManager.startListening();
             uiManager.changeTransparencyOfPlayerGroup(uiManager.getHumanHandGroup(), 1f);
-        }
-        else{
+        } else {
             dragAndDropManager.stopListening();
             uiManager.changeTransparencyOfPlayerGroup(uiManager.getHumanHandGroup(), 0.25f);
         }

@@ -3,7 +3,7 @@ package com.wwil.makao.backend.gameplay;
 import com.wwil.makao.backend.core.DeckManager;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.model.player.PlayerManager;
-import com.wwil.makao.backend.states.StateManager;
+import com.wwil.makao.backend.states.management.StateManager;
 
 import java.util.List;
 

@@ -14,7 +14,6 @@ public class PlayExecutor {
 
     PlayReport createPlayReport(Player player, Play play) {
         PlayReport playReport = new PlayReport(player, play);
-
         switch (play.getAction()) {
             case END:
                 return executeEndPlay(playReport);
@@ -63,7 +62,7 @@ public class PlayExecutor {
         roundManager.getHumanPlayAnalyzer().getHumanPlayedCards().add(cardPlayed);
     }
 
-    private PlayReport executePullPlay (Player player, PlayReport playReport) {
+    private PlayReport executePullPlay(Player player, PlayReport playReport) {
         Card drawnCard = playReport.getPlay().getDrawnCard();
         player.addCardToHand(drawnCard);
         playReport.setDrawn(drawnCard);

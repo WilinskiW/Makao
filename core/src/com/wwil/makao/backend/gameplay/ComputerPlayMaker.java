@@ -5,10 +5,10 @@ import com.wwil.makao.backend.model.card.Ability;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.CardFinder;
 import com.wwil.makao.backend.model.player.Player;
-import com.wwil.makao.backend.states.BlockedState;
-import com.wwil.makao.backend.states.DefenseState;
-import com.wwil.makao.backend.states.PullingState;
-import com.wwil.makao.backend.states.StateManager;
+import com.wwil.makao.backend.states.impl.BlockedState;
+import com.wwil.makao.backend.states.impl.DefenseState;
+import com.wwil.makao.backend.states.impl.PullingState;
+import com.wwil.makao.backend.states.management.StateManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +100,6 @@ public class ComputerPlayMaker {
         return true;
     }
 
-
     private void createRescuePlays(List<Play> plays) {
         Card rescueCard = drawRescueCard();
         plays.add(createPullPlay(rescueCard));
@@ -141,11 +140,11 @@ public class ComputerPlayMaker {
         }
     }
 
-    private boolean hasCardsToPull(){
+    private boolean hasCardsToPull() {
         return roundManager.getPullsCount() > 0;
     }
 
-    private void executePunishmentWithPulls(List<Play> plays){
+    private void executePunishmentWithPulls(List<Play> plays) {
         pullRemainingCards(plays);
         addDefaultStatePlays(plays);
     }

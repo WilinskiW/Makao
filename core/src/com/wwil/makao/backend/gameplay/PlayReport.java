@@ -12,10 +12,10 @@ public class PlayReport {
     private boolean isCardCorrect;
     private boolean isChooserActive;
 
-    public PlayReport(Player player, Play play) {
+    public PlayReport(Player player,Play play) {
         this.play = play;
         this.player = player;
-        this.state = player.getState();
+        this.state = player.getState().saveState();
     }
 
     public Player getPlayer() {

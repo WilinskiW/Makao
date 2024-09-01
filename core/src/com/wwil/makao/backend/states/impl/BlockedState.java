@@ -1,13 +1,24 @@
-package com.wwil.makao.backend.states;
+package com.wwil.makao.backend.states.impl;
 
+
+import com.wwil.makao.backend.states.State;
 
 public class BlockedState extends PunishState {
 
-    BlockedState(int amountOfPunishes) {
+    public BlockedState(int amountOfPunishes) {
         super(amountOfPunishes);
     }
 
-    public boolean canUnblock(){
+    public BlockedState(int amountOfPunishes, boolean isPutActive, boolean isPullActive, boolean isEndActive) {
+        super(amountOfPunishes, isPutActive, isPullActive, isEndActive);
+    }
+
+    @Override
+    public State saveState() {
+        return new BlockedState(amountOfPunishes, isPutActive, isPullActive, isEndActive);
+    }
+
+    public boolean canUnblock() {
         return amountOfPunishes == 0;
     }
 

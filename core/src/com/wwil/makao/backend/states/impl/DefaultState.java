@@ -1,9 +1,10 @@
-package com.wwil.makao.backend.states;
+package com.wwil.makao.backend.states.impl;
 
 import com.wwil.makao.backend.gameplay.CardValidator;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.CardFinder;
 import com.wwil.makao.backend.model.player.Player;
+import com.wwil.makao.backend.states.State;
 
 import java.util.List;
 
@@ -14,6 +15,17 @@ public class DefaultState implements State {
 
     public DefaultState() {
         setDefaultValueOfActivations();
+    }
+
+    public DefaultState(boolean isPutActive, boolean isPullActive, boolean isEndActive) {
+        this.isPutActive = isPutActive;
+        this.isPullActive = isPullActive;
+        this.isEndActive = isEndActive;
+    }
+
+    @Override
+    public State saveState() {
+        return new DefaultState(isPutActive,isPullActive,isEndActive);
     }
 
     @Override

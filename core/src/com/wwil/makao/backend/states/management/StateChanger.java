@@ -1,8 +1,10 @@
-package com.wwil.makao.backend.states;
+package com.wwil.makao.backend.states.management;
 
 import com.wwil.makao.backend.gameplay.RoundManager;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
+import com.wwil.makao.backend.states.State;
+import com.wwil.makao.backend.states.impl.*;
 
 public class StateChanger {
     private final RoundManager roundManager;

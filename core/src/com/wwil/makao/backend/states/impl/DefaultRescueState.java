@@ -1,37 +1,53 @@
-package com.wwil.makao.backend.states;
+package com.wwil.makao.backend.states.impl;
 
 import com.wwil.makao.backend.gameplay.CardValidator;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.CardFinder;
 import com.wwil.makao.backend.model.player.Player;
+import com.wwil.makao.backend.states.State;
 
 import java.util.List;
 
-public class DefenseState implements State {
-    private final Card attackingCard;
+public class DefaultRescueState implements State {
     private boolean isPutActive;
     private boolean isPullActive;
     private boolean isEndActive;
 
-    public DefenseState(Card attackingCard) {
-        this.attackingCard = attackingCard;
+    public DefaultRescueState() {
+        setDefaultValueOfActivations();
+    }
+
+    public DefaultRescueState(boolean isPutActive, boolean isPullActive, boolean isEndActive) {
+        this.isPutActive = isPutActive;
+        this.isPullActive = isPullActive;
+        this.isEndActive = isEndActive;
+    }
+
+    @Override
+    public State saveState() {
+        return new DefaultRescueState(isPutActive, isPullActive, isEndActive);
     }
 
     @Override
     public void setDefaultValueOfActivations() {
         this.isPutActive = true;
-        this.isPullActive = true;
-        this.isEndActive = false;
-    }
-
-    @Override
-    public List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
-        return cardFinder.findCardsForDefenceState(player, attackingCard);
+        this.isPullActive = false;
+        this.isEndActive = true;
     }
 
     @Override
     public boolean isValid(Card chosenCard, CardValidator validator) {
-        return validator.isValidForDefence(chosenCard);
+        return validator.isValidForNormalTurn(chosenCard);
+    }
+
+    @Override
+    public List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
+        return cardFinder.findCardsForDefaultState(player, stackCard);
+    }
+
+    @Override
+    public boolean isFocusDrawnCard() {
+        return true;
     }
 
     @Override
@@ -41,7 +57,7 @@ public class DefenseState implements State {
 
     @Override
     public void setPutActive(boolean putActive) {
-        isPutActive = putActive;
+        this.isPutActive = putActive;
     }
 
     @Override
@@ -51,7 +67,7 @@ public class DefenseState implements State {
 
     @Override
     public void setPullActive(boolean pullActive) {
-        isPullActive = pullActive;
+        this.isPullActive = pullActive;
     }
 
     @Override
@@ -61,10 +77,6 @@ public class DefenseState implements State {
 
     @Override
     public void setEndActive(boolean endActive) {
-        isEndActive = endActive;
-    }
-
-    public Card getAttackingCard() {
-        return attackingCard;
+        this.isEndActive = endActive;
     }
 }

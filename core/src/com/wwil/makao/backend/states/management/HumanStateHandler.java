@@ -1,6 +1,9 @@
-package com.wwil.makao.backend.states;
+package com.wwil.makao.backend.states.management;
 
 import com.wwil.makao.backend.model.player.Human;
+import com.wwil.makao.backend.states.impl.BlockedState;
+import com.wwil.makao.backend.states.impl.PullingState;
+import com.wwil.makao.backend.states.impl.PunishState;
 
 public class HumanStateHandler {
     private final StateChanger changer;
@@ -48,10 +51,13 @@ public class HumanStateHandler {
         }
     }
 
-    public void handleStateAfterEnd(Human humanPlayer) {
+    public void handleStateAfterEnd() {
         if (checker.isPlayerBlocked(humanPlayer)) {
             PunishState blockedState = (BlockedState) humanPlayer.getState();
             blockedState.decreaseAmount();
+        }
+        else if(checker.isRescueState(humanPlayer)){
+            changer.applyDefaultState(humanPlayer);
         }
         setActions(false,false,false);
     }

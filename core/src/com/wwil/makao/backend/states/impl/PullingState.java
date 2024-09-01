@@ -1,8 +1,19 @@
-package com.wwil.makao.backend.states;
+package com.wwil.makao.backend.states.impl;
 
-public class PullingState extends PunishState{
-    protected PullingState(int amountOfPunishes) {
+import com.wwil.makao.backend.states.State;
+
+public class PullingState extends PunishState {
+    public PullingState(int amountOfPunishes) {
         super(amountOfPunishes);
+    }
+
+    public PullingState(int amountOfPunishes, boolean isPutActive, boolean isPullActive, boolean isEndActive) {
+        super(amountOfPunishes, isPutActive, isPullActive, isEndActive);
+    }
+
+    @Override
+    public State saveState() {
+        return new PullingState(amountOfPunishes, isPutActive, isPullActive, isEndActive);
     }
 
     @Override
