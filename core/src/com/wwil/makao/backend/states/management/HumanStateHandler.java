@@ -20,10 +20,12 @@ public class HumanStateHandler {
 
     public void handleStateAfterPut(boolean isValid, int humanPlayedCards) {
         if (isValid) {
+            if(checker.isRescueState(humanPlayer)){
+                changer.applyDefaultState(humanPlayer);
+            }
             setActions(true,false,true);
-        } else if (checker.isRescueState(humanPlayer)) {
-            changer.applyDefaultState(humanPlayer);
-        } else if (humanPlayedCards == 0 && checker.isDefaultState(humanPlayer)) {
+        }
+        else if (humanPlayedCards == 0 && checker.isDefaultState(humanPlayer)) {
             setActions(true,true,false);
         }
     }

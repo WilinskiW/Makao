@@ -12,7 +12,6 @@ public class HumanPlayAnalyzer {
     private final Human humanPlayer;
     private final StateManager stateManager;
     private final PlayExecutor playExecutor;
-    private final List<Card> humanPlayedCards = new ArrayList<>();
 
     public HumanPlayAnalyzer(RoundManager roundManager) {
         this.roundManager = roundManager;
@@ -40,6 +39,7 @@ public class HumanPlayAnalyzer {
 
     private RoundReport putCard(Play humanPlay) {
         boolean isValid = isCardValid(humanPlay.getCardPlayed(), humanPlay.isChooserActive());
+        stateManager.getHumanStateHandler().handleStateAfterPut(isValid, roundManager.getCardsPlayedInTurn().size());
         PlayReport putPlayReport = new PlayReport(humanPlayer, humanPlay).setCardCorrect(isValid);
         roundManager.getRoundReport().addPlayRaport(putPlayReport);
 
@@ -47,7 +47,6 @@ public class HumanPlayAnalyzer {
             playExecutor.executePutPlay(putPlayReport);
         }
 
-        stateManager.getHumanStateHandler().handleStateAfterPut(isValid, humanPlayedCards.size());
 
         return roundManager.getRoundReport();
     }
@@ -60,13 +59,9 @@ public class HumanPlayAnalyzer {
     }
 
     private RoundReport endTurn(Play humanPlay) {
-        humanPlayedCards.clear();
+        roundManager.getCardsPlayedInTurn().clear();
         stateManager.getHumanStateHandler().handleStateAfterEnd();
         roundManager.getRoundReport().addPlayRaport(playExecutor.createPlayReport(humanPlayer, humanPlay));
         return roundManager.playRound();
-    }
-
-    public List<Card> getHumanPlayedCards() {
-        return humanPlayedCards;
     }
 }

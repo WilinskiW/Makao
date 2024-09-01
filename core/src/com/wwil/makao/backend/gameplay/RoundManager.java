@@ -1,10 +1,12 @@
 package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.core.DeckManager;
+import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.model.player.PlayerManager;
 import com.wwil.makao.backend.states.management.StateManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RoundManager {
@@ -13,8 +15,9 @@ public class RoundManager {
     private final StateManager stateManager;
     private final PlayExecutor playExecutor;
     private final CardValidator validator;
-    private RoundReport roundReport;
     private final HumanPlayAnalyzer humanPlayAnalyzer;
+    private RoundReport roundReport;
+    private List<Card> cardsPlayedInTurn;
     private int pullsCount = 0;
     private int waitsCount = 0;
 
@@ -25,6 +28,7 @@ public class RoundManager {
         this.stateManager = new StateManager(this, playerManager);
         this.playExecutor = new PlayExecutor(this);
         this.humanPlayAnalyzer = new HumanPlayAnalyzer(this);
+        this.cardsPlayedInTurn = new ArrayList<>();
         startNewRound();
     }
 
@@ -95,6 +99,10 @@ public class RoundManager {
 
     public int getPullsCount() {
         return pullsCount;
+    }
+
+    public List<Card> getCardsPlayedInTurn() {
+        return cardsPlayedInTurn;
     }
 
     StateManager getStateManager() {

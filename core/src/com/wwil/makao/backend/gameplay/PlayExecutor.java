@@ -30,6 +30,7 @@ public class PlayExecutor {
         if (roundManager.getPlayerManager().shouldProceedToNextPlayer(playReport.getPlayer())) {
             roundManager.getPlayerManager().goToNextPlayer();
         }
+        roundManager.getCardsPlayedInTurn().clear();
         return playReport;
     }
 
@@ -42,11 +43,7 @@ public class PlayExecutor {
         Card cardPlayed = playReport.getPlay().getCardPlayed();
         removeCardFromPlayerHand(cardPlayed);
         addToStack(cardPlayed);
-
-        if (playReport.getPlayer().isHuman()) {
-            addCardToHumanPlayed(cardPlayed);
-        }
-
+        addCardToPlayedCards(cardPlayed);
         abilityHandler.useCardAbility(playReport);
     }
 
@@ -58,8 +55,8 @@ public class PlayExecutor {
         roundManager.getPlayerManager().getCurrentPlayer().removeCardFromHand(cardPlayed);
     }
 
-    private void addCardToHumanPlayed(Card cardPlayed) {
-        roundManager.getHumanPlayAnalyzer().getHumanPlayedCards().add(cardPlayed);
+    private void addCardToPlayedCards(Card cardPlayed) {
+        roundManager.getCardsPlayedInTurn().add(cardPlayed);
     }
 
     private PlayReport executePullPlay(Player player, PlayReport playReport) {
