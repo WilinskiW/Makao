@@ -32,11 +32,11 @@ public class StateChanger {
         applyDefenceState(targetPlayer, cardPlayed);
     }
 
-    public void applyDefaultRescueState(Player player){
+    public void applyDefaultRescueState(Player player) {
         changePlayerState(player, new DefaultRescueState());
     }
 
-    public void applyDefenceRescueState(Player player){
+    public void applyDefenceRescueState(Player player) {
         boolean isAttackedByFour = roundManager.getDeckManager().peekStackCard().getRank() == Rank.FOUR;
         changePlayerState(player, new DefenceRescueState(isAttackedByFour));
     }

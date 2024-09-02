@@ -71,8 +71,12 @@ public class RoundManager {
 
     public int giveAmountOfPulls() {
         int amount = pullsCount;
-        pullsCount = 0;
+        clearAmountOfPulls();
         return amount;
+    }
+
+    public void clearAmountOfPulls(){
+        pullsCount = 0;
     }
 
     public CardValidator getValidator() {

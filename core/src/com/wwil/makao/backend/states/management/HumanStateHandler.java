@@ -37,9 +37,13 @@ public class HumanStateHandler {
             else{
                 changer.applyDefenceRescueState(humanPlayer);
             }
-        } else if (checker.isDefaultState(humanPlayer)) {
+        }
+
+        if (checker.isDefaultState(humanPlayer)) {
             changer.applyDefaultRescueState(humanPlayer);
-        } else if (checker.isPullingState(humanPlayer)) {
+        }
+
+        if (checker.isPullingState(humanPlayer)) {
             handlePullingState();
         }
     }
@@ -47,11 +51,8 @@ public class HumanStateHandler {
     private void handlePullingState() {
         PunishState pullingState = (PullingState) context.getHumanState();
         pullingState.decreaseAmount();
-        if (pullingState.getAmountOfPunishes() > 0) {
-            setActions(false, true, false);
-        } else {
+        if (pullingState.getAmountOfPunishes() == 0) {
             changer.applyDefaultState(humanPlayer);
-            setActions(true, true, false);
         }
     }
 

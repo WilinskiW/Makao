@@ -1,6 +1,7 @@
 package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.backend.model.card.Rank;
 import com.wwil.makao.backend.model.player.PlayerManager;
 import com.wwil.makao.backend.states.management.StateManager;
 
@@ -56,7 +57,7 @@ public class AbilityHandler {
         stateManager.getStateChanger().applyDefenceState(playerManager.getNextPlayer(), card);
     }
 
-    private void blockNext(Card card){
+    private void blockNext(Card card) {
         roundManager.increaseAmountOfWaits();
         stateManager.getStateChanger().applyDefenceState(playerManager.getNextPlayer(), card);
     }
@@ -77,6 +78,10 @@ public class AbilityHandler {
             case SPADE:
                 attackPrevious(card);
                 break;
+            case DIAMOND:
+            case CLUB:
+                neutralizePullsFromAttackingKing();
+                break;
         }
     }
 
@@ -84,6 +89,17 @@ public class AbilityHandler {
         roundManager.increaseAmountOfPulls(5);
         stateManager.getStateChanger().applyDefenceState(playerManager.getPreviousPlayer(), card);
         playerManager.goToPreviousPlayer();
+    }
+
+    private void neutralizePullsFromAttackingKing() {
+        if(roundManager.getPullsCount() > 0 && isStackCardKing()){
+            roundManager.clearAmountOfPulls();
+            stateManager.getStateChanger().applyDefaultState(playerManager.getCurrentPlayer());
+        }
+    }
+
+    private boolean isStackCardKing(){
+        return roundManager.getDeckManager().isRankEqualsStackCardRank(Rank.K);
     }
 
     private void createCard(PlayReport playReport) {
