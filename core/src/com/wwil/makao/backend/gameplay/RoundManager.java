@@ -17,7 +17,7 @@ public class RoundManager {
     private final CardValidator validator;
     private final HumanPlayAnalyzer humanPlayAnalyzer;
     private RoundReport roundReport;
-    private List<Card> cardsPlayedInTurn;
+    private final List<Card> cardsPlayedInTurn;
     private int pullsCount = 0;
     private int waitsCount = 0;
 

@@ -3,6 +3,7 @@ package com.wwil.makao.backend.states.impl;
 import com.wwil.makao.backend.gameplay.CardValidator;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.CardFinder;
+import com.wwil.makao.backend.model.card.Rank;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
 
@@ -34,8 +35,14 @@ public class DefenseState implements State {
     @Override
     public void setDefaultValueOfActivations() {
         this.isPutActive = true;
-        this.isPullActive = true;
-        this.isEndActive = false;
+        if(attackingCard.getRank() == Rank.FOUR) {
+            this.isPullActive = false;
+            this.isEndActive = true;
+        }
+        else{
+            this.isPullActive = true;
+            this.isEndActive = false;
+        }
     }
 
     @Override
