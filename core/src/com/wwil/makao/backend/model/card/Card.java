@@ -15,6 +15,14 @@ public class Card {
                 || isKingSpade();
     }
 
+    public boolean matchesRank(Card other){
+        return this.rank == other.getRank();
+    }
+
+    public boolean matchesSuit(Card other){
+        return this.suit == other.suit;
+    }
+
     public boolean isKingSpade(){
         return rank == Rank.K && suit == Suit.SPADE;
     }

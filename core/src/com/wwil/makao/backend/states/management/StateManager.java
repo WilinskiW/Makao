@@ -1,7 +1,5 @@
 package com.wwil.makao.backend.states.management;
 
-import com.wwil.makao.backend.gameplay.ComputerPlayMaker;
-import com.wwil.makao.backend.gameplay.Play;
 import com.wwil.makao.backend.gameplay.RoundManager;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.model.player.PlayerManager;
@@ -10,28 +8,22 @@ import com.wwil.makao.backend.states.State;
 import java.util.List;
 
 public class StateManager implements StateContext {
-    private final ComputerPlayMaker computerPlayMaker;
     private final PlayerManager playerManager;
     private final StateChanger stateChanger;
     private final StateChecker stateChecker;
-    private final HumanStateHandler humanStateHandler;
+    private final StateHandler stateHandler;
 
     public StateManager(RoundManager roundManager, PlayerManager playerManager) {
-        this.computerPlayMaker = new ComputerPlayMaker(roundManager, this);
         this.playerManager = playerManager;
         this.stateChanger = new StateChanger(roundManager, this);
         this.stateChecker = new StateChecker();
-        this.humanStateHandler = new HumanStateHandler(stateChanger, stateChecker, this, playerManager.getHumanPlayer());
-    }
-
-    public List<Play> generatePlays(Player currentPlayer) {
-        return computerPlayMaker.generatePlays(currentPlayer);
+        this.stateHandler = new StateHandler(stateChanger, stateChecker, this);
     }
 
     public void activateActions(boolean isPutActive, boolean isPullActive, boolean isEndActive) {
-        getHumanState().setPutActive(isPutActive);
-        getHumanState().setPullActive(isPullActive);
-        getHumanState().setEndActive(isEndActive);
+        getPlayerState().setPutActive(isPutActive);
+        getPlayerState().setPullActive(isPullActive);
+        getPlayerState().setEndActive(isEndActive);
     }
 
     @Override
@@ -45,8 +37,8 @@ public class StateManager implements StateContext {
     }
 
     @Override
-    public State getHumanState() {
-        return playerManager.getHumanPlayer().getState();
+    public State getPlayerState() {
+        return playerManager.getCurrentPlayer().getState();
     }
 
     @Override
@@ -58,8 +50,8 @@ public class StateManager implements StateContext {
         return stateChanger;
     }
 
-    public HumanStateHandler getHumanStateHandler() {
-        return humanStateHandler;
+    public StateHandler getStateHandler() {
+        return stateHandler;
     }
 
     public StateChecker getStateChecker() {

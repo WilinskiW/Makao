@@ -22,7 +22,7 @@ public class MakaoBackend {
     }
 
     public boolean isCardValid(Card chosenCard) {
-        return roundManager.getHumanPlayAnalyzer().isCardValid(chosenCard,false);
+        return roundManager.getHumanPlayAnalyzer().isCardValid(chosenCard);
     }
 
     public DeckManager getDeckManager() {

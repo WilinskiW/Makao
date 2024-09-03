@@ -4,9 +4,6 @@ import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Human;
 import com.wwil.makao.backend.states.management.StateManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class HumanPlayAnalyzer {
     private final RoundManager roundManager;
     private final Human humanPlayer;
@@ -20,8 +17,8 @@ public class HumanPlayAnalyzer {
         this.playExecutor = roundManager.getPlayExecutor();
     }
 
-    public boolean isCardValid(Card cardPlayed, boolean isChooserActive) {
-        return stateManager.getHumanState().isValid(cardPlayed, roundManager.getValidator());
+    public boolean isCardValid(Card cardPlayed) {
+        return stateManager.getPlayerState().isValid(cardPlayed, roundManager.getValidator());
     }
 
     public RoundReport processHumanPlay(Play humanPlay) {
@@ -38,30 +35,29 @@ public class HumanPlayAnalyzer {
     }
 
     private RoundReport putCard(Play humanPlay) {
-        boolean isValid = isCardValid(humanPlay.getCardPlayed(), humanPlay.isChooserActive());
-        stateManager.getHumanStateHandler().handleStateAfterPut(isValid, roundManager.getCardsPlayedInTurn().size());
-        PlayReport putPlayReport = new PlayReport(humanPlayer, humanPlay).setCardCorrect(isValid);
-        roundManager.getRoundReport().addPlayRaport(putPlayReport);
+        //Sprawdzenia czy karta jest położona (TYLKO DLA CZŁOWIEKA, Komputer wybiera zawsze poprawne)
+        boolean isValid = isCardValid(humanPlay.getCardPlayed()); //C
+        stateManager.getStateHandler().updateStateAfterPut(humanPlayer,isValid, roundManager.getCardsPlayedInTurn().size()); //C K
+        PlayReport putPlayReport = new PlayReport(humanPlayer, humanPlay).setCardCorrect(isValid); // C K
+        roundManager.getRoundReport().addPlayRaport(putPlayReport); //C K
 
-        if (isValid) {
-            playExecutor.executePutPlay(putPlayReport);
+        if (isValid) { // C
+            playExecutor.executePutPlay(putPlayReport); //
         }
-
 
         return roundManager.getRoundReport();
     }
 
     private RoundReport pullCard(Play humanPlay) {
-        humanPlay.setDrawnCard(roundManager.getDeckManager().takeCardFromGameDeck());
-        stateManager.getHumanStateHandler().handleStateAfterPull(roundManager.getRoundReport().whetherPlayerPulledRescue(humanPlayer));
-        roundManager.getRoundReport().addPlayRaport(playExecutor.createPlayReport(humanPlayer, humanPlay));
+        humanPlay.setDrawnCard(roundManager.getDeckManager().takeCardFromGameDeck()); //C K
+        stateManager.getStateHandler().updateStateAfterPull(humanPlayer,roundManager.getRoundReport().whetherPlayerPulledRescue(humanPlayer)); // C K
+        roundManager.getRoundReport().addPlayRaport(playExecutor.createPlayReport(humanPlayer, humanPlay));// C K
         return roundManager.getRoundReport();
     }
 
     private RoundReport endTurn(Play humanPlay) {
-        roundManager.getCardsPlayedInTurn().clear();
-        stateManager.getHumanStateHandler().handleStateAfterEnd();
-        roundManager.getRoundReport().addPlayRaport(playExecutor.createPlayReport(humanPlayer, humanPlay));
-        return roundManager.playRound();
+        stateManager.getStateHandler().updateStateAfterEnd(humanPlayer); // C K
+        roundManager.getRoundReport().addPlayRaport(playExecutor.createPlayReport(humanPlayer, humanPlay)); // C K
+        return roundManager.playRound(); // C
     }
 }

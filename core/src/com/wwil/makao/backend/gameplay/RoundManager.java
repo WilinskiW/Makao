@@ -16,6 +16,7 @@ public class RoundManager {
     private final PlayExecutor playExecutor;
     private final CardValidator validator;
     private final HumanPlayAnalyzer humanPlayAnalyzer;
+    private final PlayMaker playMaker;
     private RoundReport roundReport;
     private final List<Card> cardsPlayedInTurn;
     private int pullsCount = 0;
@@ -28,6 +29,7 @@ public class RoundManager {
         this.stateManager = new StateManager(this, playerManager);
         this.playExecutor = new PlayExecutor(this);
         this.humanPlayAnalyzer = new HumanPlayAnalyzer(this);
+        this.playMaker = new PlayMaker(this);
         this.cardsPlayedInTurn = new ArrayList<>();
         startNewRound();
     }
@@ -48,15 +50,13 @@ public class RoundManager {
     }
 
     private void executePlays(Player player) {
-        List<Play> plays = stateManager.generatePlays(player);
-        for (Play play : plays) {
-            roundReport.addPlayRaport(playExecutor.createPlayReport(player, play));
-        }
+        Play play = playMaker.generatePlay(player);
+        roundReport.addPlayRaport(playExecutor.createPlayReport(player, play));
     }
 
     RoundReport sendRoundReport() {
         RoundReport report = roundReport;
-        stateManager.getHumanState().setDefaultValueOfActivations();
+        stateManager.getPlayerState().setDefaultValueOfActivations();
         startNewRound();
         return report;
     }
@@ -75,7 +75,7 @@ public class RoundManager {
         return amount;
     }
 
-    public void clearAmountOfPulls(){
+    public void clearAmountOfPulls() {
         pullsCount = 0;
     }
 

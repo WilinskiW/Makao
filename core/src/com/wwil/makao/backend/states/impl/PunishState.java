@@ -2,12 +2,11 @@ package com.wwil.makao.backend.states.impl;
 
 import com.wwil.makao.backend.gameplay.CardValidator;
 import com.wwil.makao.backend.model.card.Card;
-import com.wwil.makao.backend.model.card.CardFinder;
+import com.wwil.makao.backend.gameplay.CardFinder;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public abstract class PunishState implements State {
     protected int amountOfPunishes;
@@ -35,8 +34,8 @@ public abstract class PunishState implements State {
     }
 
     @Override
-    public List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
-        return new ArrayList<>();
+    public Card findValidCard(CardFinder cardFinder, Player player, Card stackCard) {
+        return null;
     }
 
     @Override

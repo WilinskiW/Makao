@@ -2,11 +2,9 @@ package com.wwil.makao.backend.states.impl;
 
 import com.wwil.makao.backend.gameplay.CardValidator;
 import com.wwil.makao.backend.model.card.Card;
-import com.wwil.makao.backend.model.card.CardFinder;
+import com.wwil.makao.backend.gameplay.CardFinder;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
-
-import java.util.List;
 
 public class DefaultState implements State {
     private boolean isPutActive;
@@ -36,8 +34,8 @@ public class DefaultState implements State {
     }
 
     @Override
-    public List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard) {
-        return cardFinder.findCardsForDefaultState(player, stackCard);
+    public Card findValidCard(CardFinder cardFinder, Player player, Card stackCard) {
+        return cardFinder.findBestCardForDefaultState(player, stackCard);
     }
 
     @Override

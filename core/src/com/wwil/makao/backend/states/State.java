@@ -2,17 +2,15 @@ package com.wwil.makao.backend.states;
 
 import com.wwil.makao.backend.gameplay.CardValidator;
 import com.wwil.makao.backend.model.card.Card;
-import com.wwil.makao.backend.model.card.CardFinder;
+import com.wwil.makao.backend.gameplay.CardFinder;
 import com.wwil.makao.backend.model.player.Player;
-
-import java.util.List;
 
 public interface State {
     State saveState();
     void setDefaultValueOfActivations();
     boolean isValid(Card chosenCard, CardValidator validator);
 
-    List<Card> findValidCards(CardFinder cardFinder, Player player, Card stackCard);
+    Card findValidCard(CardFinder cardFinder, Player player, Card stackCard);
 
     default boolean isFocusDrawnCard() {
         return false;

@@ -13,7 +13,7 @@ public class Stack {
     }
 
     protected Card peekCardBeforeLast(){
-        return cards.get(getCards().size()-2);
+        return cards.get(getCards().size()-1);
     }
     protected Card peekCard(){
         return cards.get(getCards().size()-1);

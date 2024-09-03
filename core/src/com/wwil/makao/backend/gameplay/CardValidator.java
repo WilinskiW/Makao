@@ -14,42 +14,40 @@ public class CardValidator {
     }
 
     public boolean isValidForNormalTurn(Card chosenCard) {
-        if (!roundManager.getCardsPlayedInTurn().isEmpty()) {
-            return isValidForMultiplePut(chosenCard);
-        }
+        return !roundManager.getCardsPlayedInTurn().isEmpty() ?
+                isValidForMultiplePut(chosenCard) :
+                isValidForStandardPlay(chosenCard, getStackCard(chosenCard));
+    }
 
-        Card stackCard = getStackCard(chosenCard, false);
-        if (stackCard.getRank().equals(Rank.Q) || chosenCard.getRank().equals(Rank.Q)
-                || chosenCard.getRank().equals(Rank.JOKER) || stackCard.getRank().equals(Rank.JOKER)) {
-            return true;
-        }
+    public boolean isValidForDefence(Card chosenCard) {
+        return !roundManager.getCardsPlayedInTurn().isEmpty() ?
+                isValidForMultiplePut(chosenCard) :
+                isValidForDefencePlay(chosenCard, getStackCard(chosenCard));
+    }
 
-        return stackCard.getSuit() == chosenCard.getSuit() || stackCard.getRank() == chosenCard.getRank();
+    private boolean isValidForStandardPlay(Card chosenCard, Card stackCard) {
+        return canBePutOnEverything(chosenCard) ||
+                canBePutOnEverything(stackCard) ||
+                chosenCard.matchesRank(stackCard) ||
+                chosenCard.matchesSuit(stackCard);
+    }
+
+    private boolean isValidForDefencePlay(Card chosenCard, Card stackCard) {
+        return chosenCard.matchesRank(stackCard) ||
+                (chosenCard.matchesSuit(stackCard) && stackCard.getRank().equals(Rank.K));
     }
 
     private boolean isValidForMultiplePut(Card chosenCard) {
-        return chosenCard.getRank() == roundManager.getCardsPlayedInTurn().get(0).getRank();
+        return chosenCard.matchesRank(roundManager.getCardsPlayedInTurn().get(0));
     }
 
-    private Card getStackCard(Card chosenCard, boolean isChooserActive) {
-        if (chosenCard.getRank() == Rank.J && isChooserActive) {
-            return deckManager.peekStackCardBeforeLast();
-        } else {
-            return deckManager.peekStackCard();
-        }
+    private boolean canBePutOnEverything(Card card) {
+        return card.getRank().equals(Rank.Q) || card.getRank().equals(Rank.JOKER);
     }
 
-
-    public boolean isValidForDefence(Card chosenCard) {
-        if (!roundManager.getCardsPlayedInTurn().isEmpty()) {
-            return isValidForMultiplePut(chosenCard);
-        }
-
-        Card stackCard = getStackCard(chosenCard, false);
-        if (chosenCard.getRank() == stackCard.getRank()) {
-            return true;
-        }
-        return chosenCard.getSuit() == stackCard.getSuit()
-                && chosenCard.isBattleCard() && stackCard.getRank().equals(Rank.K);
+    private Card getStackCard(Card chosenCard) {
+        return chosenCard.getRank() == Rank.J ?
+                deckManager.peekStackCardBeforeLast() :
+                deckManager.peekStackCard();
     }
 }
