@@ -1,6 +1,5 @@
 package com.wwil.makao.backend.states.management;
 
-import com.wwil.makao.backend.gameplay.Play;
 import com.wwil.makao.backend.gameplay.RoundManager;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
@@ -12,7 +11,7 @@ public class StateChanger {
     private final RoundManager roundManager;
     private final StateContext stateContext;
 
-    public StateChanger(RoundManager roundManager, StateContext stateContext) {
+    protected StateChanger(RoundManager roundManager, StateContext stateContext) {
         this.roundManager = roundManager;
         this.stateContext = stateContext;
     }

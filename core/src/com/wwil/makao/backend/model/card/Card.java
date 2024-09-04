@@ -29,8 +29,9 @@ public class Card {
         return isShadow;
     }
 
-    public void setShadow(boolean shadow) {
+    public Card setShadow(boolean shadow) {
         isShadow = shadow;
+        return this;
     }
 
     @Override

@@ -15,10 +15,10 @@ public class PlayExecutor {
     PlayReport createPlayReport(Player player, Play play) {
         PlayReport playReport = new PlayReport(player, play);
         switch (play.getAction()) {
-            case END:
-                return executeEndPlay(playReport);
             case PUT:
                 return executePutPlay(playReport);
+            case END:
+                return executeEndPlay(playReport);
             case PULL:
                 return executePullPlay(player, playReport);
             default:
@@ -26,15 +26,7 @@ public class PlayExecutor {
         }
     }
 
-    private PlayReport executeEndPlay(PlayReport playReport) {
-        if (roundManager.getPlayerManager().shouldProceedToNextPlayer(playReport.getPlayer())) {
-            roundManager.getPlayerManager().goToNextPlayer();
-        }
-        roundManager.getCardsPlayedInTurn().clear();
-        return playReport;
-    }
-
-    PlayReport executePutPlay(PlayReport playReport) {
+    private PlayReport executePutPlay(PlayReport playReport) {
         putCard(playReport);
         return playReport.setCardCorrect(true);
     }
@@ -57,6 +49,14 @@ public class PlayExecutor {
 
     private void addCardToPlayedCards(Card cardPlayed) {
         roundManager.getCardsPlayedInTurn().add(cardPlayed);
+    }
+
+    private PlayReport executeEndPlay(PlayReport playReport) {
+        if (roundManager.getPlayerManager().shouldProceedToNextPlayer(playReport.getPlayer())) {
+            roundManager.getPlayerManager().goToNextPlayer();
+        }
+        roundManager.getCardsPlayedInTurn().clear();
+        return playReport;
     }
 
     private PlayReport executePullPlay(Player player, PlayReport playReport) {

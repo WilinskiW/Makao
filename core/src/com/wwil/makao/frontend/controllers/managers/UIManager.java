@@ -92,6 +92,9 @@ public class UIManager {
         } catch (NullPointerException e) {
             throw new CardNotFoundException();
         }
+        if(cardActor.getCard().isShadow()){
+            cardActor.setColor(Color.GRAY);
+        }
         cardActor.setUpSideDown(false);
         stackCardsGroup.addActor(cardActor);
     }

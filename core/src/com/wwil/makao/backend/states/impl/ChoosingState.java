@@ -22,14 +22,7 @@ public class ChoosingState implements State {
 
     @Override
     public Card findValidCard(CardFinder cardFinder, Player player, Card stackCard) {
-        Card card = cardFinder.findCardForChangeSuit(player, stackCard);
-        card.setShadow(true);
-        return card;
-    }
-
-    @Override
-    public boolean isFocusDrawnCard() {
-        return true;
+        return cardFinder.findCardForChangeSuit(player, stackCard);
     }
 
     @Override

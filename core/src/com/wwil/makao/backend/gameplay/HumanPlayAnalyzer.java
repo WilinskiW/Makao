@@ -39,7 +39,7 @@ public class HumanPlayAnalyzer {
         PlayReport putPlayReport;
 
         if (isValid) {
-            stateManager.getStateHandler().updateStateAfterPut(humanPlayer);
+            stateManager.getStateHandler().updateStateAfterPut(humanPlayer, humanPlay.getCardPlayed());
             putPlayReport = playExecutor.createPlayReport(humanPlayer, humanPlay);
         } else {
             putPlayReport = new PlayReport(humanPlayer, humanPlay).setCardCorrect(false);

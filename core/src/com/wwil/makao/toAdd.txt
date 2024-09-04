@@ -1,6 +1,0 @@
-Obrona
-Komunikaty akcji graczy
-Główne menu
-Animacje rzucania kart przez boty
-Dźwięk i muzyka
-Możliwość zmiany skinów do kart

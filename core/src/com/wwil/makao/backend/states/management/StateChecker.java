@@ -4,6 +4,8 @@ import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.impl.*;
 
 public class StateChecker {
+    protected StateChecker() {}
+
     public boolean isPlayerBlocked(Player player) {
         return player.getState() instanceof BlockedState;
     }
@@ -26,5 +28,6 @@ public class StateChecker {
     protected boolean isDefenceRescueState(Player player){
         return player.getState() instanceof DefenceRescueState;
     }
+    protected boolean isChoosingState(Player player){return player.getState() instanceof ChoosingState;}
 
 }

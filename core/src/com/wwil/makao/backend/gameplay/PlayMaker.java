@@ -37,7 +37,7 @@ public class PlayMaker {
     private boolean tryPut(Play play, Player player) {
         Card card = findValidCardsForCurrentState(player);
         if (card != null) {
-            stateHandler.updateStateAfterPut(player);
+            stateHandler.updateStateAfterPut(player, card);
             play.setCardPlayed(card).setAction(Action.PUT);
             return true;
         }

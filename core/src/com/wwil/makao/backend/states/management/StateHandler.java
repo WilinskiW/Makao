@@ -11,17 +11,17 @@ public class StateHandler {
     private final StateChecker checker;
     private final StateContext context;
 
-    public StateHandler(StateChanger changer, StateChecker checker, StateContext context) {
+    protected StateHandler(StateChanger changer, StateChecker checker, StateContext context) {
         this.changer = changer;
         this.checker = checker;
         this.context = context;
     }
 
-    public void updateStateAfterPut(Player player) {
-        if (checker.isDefaultRescueState(player) || checker.isDefenseState(player)) {
-            changer.applyDefaultState(player);
+    public void updateStateAfterPut(Player player, Card card) {
+        if(checker.isChoosingState(player)){
+            card.setShadow(true);
         }
-
+        changer.applyDefaultState(player);
         setActions(true, false, true);
     }
 

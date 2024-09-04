@@ -48,8 +48,7 @@ public class PutButtonActor extends Actor {
             controller.executePlay(
                     new Play()
                             .setCardPlayed(chosenCardActor.getCard())
-                            .setAction(Action.PUT)
-                            .setChooserActive());
+                            .setAction(Action.PUT));
             super.clicked(event, x, y);
         }
     }

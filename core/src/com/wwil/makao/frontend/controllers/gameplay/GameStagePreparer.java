@@ -76,7 +76,7 @@ public class GameStagePreparer {
         handGroup.setCardsAlignment(CardsAlignmentParams.getParamFromOrdinal(index));
 
         //todo  Metoda tylko wyłącznie do testów! Usuń po testach
-       // test(index);
+        test(index);
 
         for (Card card : handGroup.getPlayer().getCards()) {
             CardActor cardActor = cardActorFactory.createCardActor(card);
@@ -88,16 +88,16 @@ public class GameStagePreparer {
         switch (index) {
             case 0:
                 backend.getPlayers().get(index).getCards().clear();
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.FIVE, Suit.CLUB));
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.FIVE, Suit.SPADE));
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.FIVE, Suit.HEART));
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.K, Suit.DIAMOND));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.AS, Suit.CLUB));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.AS, Suit.SPADE));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.AS, Suit.HEART));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.AS, Suit.DIAMOND));
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
                 break;
             case 1:
                 backend.getPlayers().get(index).getCards().clear();
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.EIGHT, Suit.HEART));
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.K, Suit.SPADE));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.AS, Suit.SPADE));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
                 break;
             case 2:
                 backend.getPlayers().get(index).getCards().clear();

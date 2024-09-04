@@ -103,7 +103,7 @@ public class CardChooserManager {
 
     public CardActor giveCardActor(){
         return new CardActor(cardChooser.getDisplayCard().getFrontSide(),
-                new Card(Rank.getRank(currentRankName),Suit.getSuit(currentSuitName)));
+                new Card(Rank.getRank(currentRankName),Suit.getSuit(currentSuitName)).setShadow(true));
     }
 
     public void setDisplayCard(CardActor stackCard, CardActor cardPlayed) {

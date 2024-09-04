@@ -7,7 +7,9 @@ import com.wwil.makao.backend.model.player.Player;
 
 public interface State {
     State saveState();
+
     void setDefaultValueOfActivations();
+
     boolean isValid(Card chosenCard, CardValidator validator);
 
     Card findValidCard(CardFinder cardFinder, Player player, Card stackCard);

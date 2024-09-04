@@ -21,7 +21,7 @@ public class AbilityHandler {
 
         switch (card.getRank().getAbility()) {
             case CHANGE_SUIT:
-                changeSuit();
+                changeSuit(playReport);
                 break;
             case PLUS_2:
                 attackNext(2, card);
@@ -44,8 +44,11 @@ public class AbilityHandler {
         }
     }
 
-    private void changeSuit() {
-        stateManager.getStateChanger().applyChoosingState(playerManager.getCurrentPlayer());
+    private void changeSuit(PlayReport playReport) {
+        if (!playReport.getPlay().getCardPlayed().isShadow()) {
+            stateManager.getStateChanger().applyChoosingState(playerManager.getCurrentPlayer());
+            playReport.setChooserActive(true);
+        }
     }
 
     private void attackNext(int amountOfCards, Card card) {
@@ -88,13 +91,13 @@ public class AbilityHandler {
     }
 
     private void neutralizePullsFromAttackingKing() {
-        if(roundManager.getPullsCount() > 0 && isStackCardKing()){
+        if (roundManager.getPullsCount() > 0 && isStackCardKing()) {
             roundManager.clearAmountOfPulls();
             stateManager.getStateChanger().applyDefaultState(playerManager.getCurrentPlayer());
         }
     }
 
-    private boolean isStackCardKing(){
+    private boolean isStackCardKing() {
         return roundManager.getDeckManager().isRankEqualsStackCardRank(Rank.K);
     }
 
