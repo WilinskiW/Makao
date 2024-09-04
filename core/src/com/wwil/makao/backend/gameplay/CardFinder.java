@@ -2,6 +2,7 @@ package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
+import com.wwil.makao.backend.model.card.Suit;
 import com.wwil.makao.backend.model.player.Player;
 
 import java.util.*;
@@ -112,6 +113,29 @@ public class CardFinder {
         return card.matchesSuit(stackCard) || card.matchesSuit(stackCard);
     }
 
+    public Card findCardForChangeSuit(Player player, Card stackCard) {
+        return new Card(stackCard.getRank(), giveMostDominantSuit(player));
+    }
+
+    private Suit giveMostDominantSuit(Player player) {
+        int[] counts = new int[4]; // Tablica przechowująca liczbę wystąpień dla każdego koloru
+
+        for (Card card : player.getCards()) {
+            Suit cardSuit = card.getSuit();
+            if (cardSuit != Suit.BLACK && cardSuit != Suit.RED) { // Pomijanie BLACK i RED
+                counts[cardSuit.ordinal()]++; // Inkrementacja odpowiedniego licznika
+            }
+        }
+
+        int maxIndex = 0;
+        for (int i = 1; i < counts.length; i++) {
+            if (counts[i] > counts[maxIndex]) {
+                maxIndex = i;
+            }
+        }
+
+        return Suit.values()[maxIndex]; // Zwracanie koloru z największą liczbą wystąpień
+    }
 //    public Card findCardToDemand(Player player) {
 //        List<Card> cards = player.getCards();
 //        Collections.shuffle(cards);
@@ -121,8 +145,8 @@ public class CardFinder {
 //            }
 //        }
 //        return null;
-//    }
 
+//    }
 //    public Card findDemandedCard(Card demanded, boolean lookForJ) {
 //        List<Card> cards = playerCards;
 //        Collections.shuffle(cards);
@@ -139,23 +163,4 @@ public class CardFinder {
 //        return cardToPlay;
 //    }
 //
-//    public Suit giveMostDominantSuit() {
-//        int[] counts = new int[4]; // Tablica przechowująca liczbę wystąpień dla każdego koloru
-//
-//        for (Card card : playerCards) {
-//            Suit cardSuit = card.getSuit();
-//            if (cardSuit != Suit.BLACK && cardSuit != Suit.RED) { // Pomijanie BLACK i RED
-//                counts[cardSuit.ordinal()]++; // Inkrementacja odpowiedniego licznika
-//            }
-//        }
-//
-//        int maxIndex = 0;
-//        for (int i = 1; i < counts.length; i++) {
-//            if (counts[i] > counts[maxIndex]) {
-//                maxIndex = i;
-//            }
-//        }
-//
-//        return Suit.values()[maxIndex]; // Zwracanie koloru z największą liczbą wystąpień
-//    }
 }

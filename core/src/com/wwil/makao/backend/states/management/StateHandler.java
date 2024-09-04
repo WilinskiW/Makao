@@ -1,5 +1,6 @@
 package com.wwil.makao.backend.states.management;
 
+import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.impl.BlockedState;
 import com.wwil.makao.backend.states.impl.PullingState;
@@ -16,15 +17,12 @@ public class StateHandler {
         this.context = context;
     }
 
-    public void updateStateAfterPut(Player player, boolean isValid, int playedCards) {
-        if (isValid) {
-            if (checker.isDefaultRescueState(player)) {
-                changer.applyDefaultState(player);
-            }
-            setActions(true, false, true);
-        } else if (playedCards == 0 && checker.isDefaultState(player)) {
-            setActions(true, true, false);
+    public void updateStateAfterPut(Player player) {
+        if (checker.isDefaultRescueState(player) || checker.isDefenseState(player)) {
+            changer.applyDefaultState(player);
         }
+
+        setActions(true, false, true);
     }
 
     public void updateStateAfterPull(Player player, boolean hasPullBefore) {

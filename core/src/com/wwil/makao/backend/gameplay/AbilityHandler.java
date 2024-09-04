@@ -21,7 +21,7 @@ public class AbilityHandler {
 
         switch (card.getRank().getAbility()) {
             case CHANGE_SUIT:
-                changeSuit(playReport);
+                changeSuit();
                 break;
             case PLUS_2:
                 attackNext(2, card);
@@ -44,12 +44,8 @@ public class AbilityHandler {
         }
     }
 
-    private void changeSuit(PlayReport playReport) {
-        if (playReport.getPlayer() == playerManager.getHumanPlayer()) {
-            if (!playReport.getPlay().isChooserActive()) {
-                playReport.setChooserActive(true);
-            }
-        }
+    private void changeSuit() {
+        stateManager.getStateChanger().applyChoosingState(playerManager.getCurrentPlayer());
     }
 
     private void attackNext(int amountOfCards, Card card) {

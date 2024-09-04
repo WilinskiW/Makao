@@ -35,29 +35,39 @@ public class HumanPlayAnalyzer {
     }
 
     private RoundReport putCard(Play humanPlay) {
-        //Sprawdzenia czy karta jest położona (TYLKO DLA CZŁOWIEKA, Komputer wybiera zawsze poprawne)
-        boolean isValid = isCardValid(humanPlay.getCardPlayed()); //C
-        stateManager.getStateHandler().updateStateAfterPut(humanPlayer,isValid, roundManager.getCardsPlayedInTurn().size()); //C K
-        PlayReport putPlayReport = new PlayReport(humanPlayer, humanPlay).setCardCorrect(isValid); // C K
-        roundManager.getRoundReport().addPlayRaport(putPlayReport); //C K
+        boolean isValid = isCardValid(humanPlay.getCardPlayed());
+        PlayReport putPlayReport;
 
-        if (isValid) { // C
-            playExecutor.executePutPlay(putPlayReport); //
+        if (isValid) {
+            stateManager.getStateHandler().updateStateAfterPut(humanPlayer);
+            putPlayReport = playExecutor.createPlayReport(humanPlayer, humanPlay);
+        } else {
+            putPlayReport = new PlayReport(humanPlayer, humanPlay).setCardCorrect(false);
         }
+
+        roundManager.getRoundReport().addPlayRaport(putPlayReport);
 
         return roundManager.getRoundReport();
     }
 
     private RoundReport pullCard(Play humanPlay) {
-        humanPlay.setDrawnCard(roundManager.getDeckManager().takeCardFromGameDeck()); //C K
-        stateManager.getStateHandler().updateStateAfterPull(humanPlayer,roundManager.getRoundReport().whetherPlayerPulledRescue(humanPlayer)); // C K
-        roundManager.getRoundReport().addPlayRaport(playExecutor.createPlayReport(humanPlayer, humanPlay));// C K
+        humanPlay.setDrawnCard(roundManager.getDeckManager().takeCardFromGameDeck());
+
+        boolean rescued = roundManager.getRoundReport().whetherPlayerPulledRescue(humanPlayer);
+        stateManager.getStateHandler().updateStateAfterPull(humanPlayer, rescued);
+
+        PlayReport pullPlayReport = playExecutor.createPlayReport(humanPlayer, humanPlay);
+        roundManager.getRoundReport().addPlayRaport(pullPlayReport);
+
         return roundManager.getRoundReport();
     }
 
     private RoundReport endTurn(Play humanPlay) {
-        stateManager.getStateHandler().updateStateAfterEnd(humanPlayer); // C K
-        roundManager.getRoundReport().addPlayRaport(playExecutor.createPlayReport(humanPlayer, humanPlay)); // C K
-        return roundManager.playRound(); // C
+        stateManager.getStateHandler().updateStateAfterEnd(humanPlayer);
+
+        PlayReport endPlayReport = playExecutor.createPlayReport(humanPlayer, humanPlay);
+        roundManager.getRoundReport().addPlayRaport(endPlayReport);
+
+        return roundManager.playRound();
     }
 }

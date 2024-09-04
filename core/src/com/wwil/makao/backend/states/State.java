@@ -15,7 +15,6 @@ public interface State {
     default boolean isFocusDrawnCard() {
         return false;
     }
-
     boolean isPutActive();
 
     void setPutActive(boolean putActive);

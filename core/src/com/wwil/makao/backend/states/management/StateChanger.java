@@ -1,5 +1,6 @@
 package com.wwil.makao.backend.states.management;
 
+import com.wwil.makao.backend.gameplay.Play;
 import com.wwil.makao.backend.gameplay.RoundManager;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
@@ -23,15 +24,6 @@ public class StateChanger {
     public void applyDefenceState(Player player, Card attackingCard) {
         changePlayerState(player, new DefenseState(attackingCard));
     }
-
-    public void transferDefenceState(Player currentPlayer, Card cardPlayed) {
-        applyDefaultState(currentPlayer);
-        Player targetPlayer = cardPlayed.isKingSpade()
-                ? stateContext.getPreviousPlayer()
-                : stateContext.getNextPlayer();
-        applyDefenceState(targetPlayer, cardPlayed);
-    }
-
     public void applyDefaultRescueState(Player player) {
         changePlayerState(player, new DefaultRescueState());
     }
@@ -56,6 +48,10 @@ public class StateChanger {
 
     public void applyBlockedState(Player player) {
         changePlayerState(player, new BlockedState(roundManager.giveAmountOfWaits()));
+    }
+
+    public void applyChoosingState(Player player){
+        changePlayerState(player, new ChoosingState());
     }
 
     private void changePlayerState(Player player, State newState) {
