@@ -10,6 +10,11 @@ public class ChoosingState implements State {
     private boolean isPutActive;
     private boolean isPullActive;
     private boolean isEndActive;
+
+    public ChoosingState() {
+        setDefaultValueOfActivations();
+    }
+
     @Override
     public State saveState() {
         return new ChoosingState();
@@ -18,7 +23,7 @@ public class ChoosingState implements State {
     @Override
     public void setDefaultValueOfActivations() {
         this.isPutActive = true;
-        this.isPullActive = true;
+        this.isPullActive = false;
         this.isEndActive = false;
     }
 

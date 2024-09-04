@@ -1,11 +1,11 @@
 package com.wwil.makao.backend.model.card;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class CardFactory {
-    public List<Card> createCards(){
-        List<Card> cards = new ArrayList<>();
+    public LinkedList<Card> createCards(){
+        LinkedList<Card> cards = new LinkedList<>();
         List<Suit> normalSuits = Suit.getNormalSuits();
 
         for (Rank rank : Rank.values()) {

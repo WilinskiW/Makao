@@ -19,9 +19,10 @@ public class StateManager implements StateContext {
     }
 
     public void activateActions(boolean isPutActive, boolean isPullActive, boolean isEndActive) {
-        getPlayerState().setPutActive(isPutActive);
-        getPlayerState().setPullActive(isPullActive);
-        getPlayerState().setEndActive(isEndActive);
+        State state = getPlayerState();
+        state.setPutActive(isPutActive);
+        state.setPullActive(isPullActive);
+        state.setEndActive(isEndActive);
     }
 
     @Override

@@ -39,10 +39,10 @@ public class HumanPlayAnalyzer {
         PlayReport putPlayReport;
 
         if (isValid) {
-            stateManager.getStateHandler().updateStateAfterPut(humanPlayer, humanPlay.getCardPlayed());
             putPlayReport = playExecutor.createPlayReport(humanPlayer, humanPlay);
         } else {
             putPlayReport = new PlayReport(humanPlayer, humanPlay).setCardCorrect(false);
+            putPlayReport.setState(humanPlayer.getState());
         }
 
         roundManager.getRoundReport().addPlayRaport(putPlayReport);
@@ -53,9 +53,6 @@ public class HumanPlayAnalyzer {
     private RoundReport pullCard(Play humanPlay) {
         humanPlay.setDrawnCard(roundManager.getDeckManager().takeCardFromGameDeck());
 
-        boolean rescued = roundManager.getRoundReport().whetherPlayerPulledRescue(humanPlayer);
-        stateManager.getStateHandler().updateStateAfterPull(humanPlayer, rescued);
-
         PlayReport pullPlayReport = playExecutor.createPlayReport(humanPlayer, humanPlay);
         roundManager.getRoundReport().addPlayRaport(pullPlayReport);
 
@@ -63,8 +60,6 @@ public class HumanPlayAnalyzer {
     }
 
     private RoundReport endTurn(Play humanPlay) {
-        stateManager.getStateHandler().updateStateAfterEnd(humanPlayer);
-
         PlayReport endPlayReport = playExecutor.createPlayReport(humanPlayer, humanPlay);
         roundManager.getRoundReport().addPlayRaport(endPlayReport);
 

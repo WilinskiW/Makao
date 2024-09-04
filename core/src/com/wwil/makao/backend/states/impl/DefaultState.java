@@ -23,7 +23,7 @@ public class DefaultState implements State {
 
     @Override
     public State saveState() {
-        return new DefaultState(isPutActive,isPullActive,isEndActive);
+        return new DefaultState(isPutActive, isPullActive, isEndActive);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class DefaultState implements State {
 
     @Override
     public void setPutActive(boolean putActive) {
-        isPutActive = putActive;
+        this.isPutActive = putActive;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class DefaultState implements State {
 
     @Override
     public void setPullActive(boolean pullActive) {
-        isPullActive = pullActive;
+        this.isPullActive = pullActive;
     }
 
     @Override
@@ -70,6 +70,6 @@ public class DefaultState implements State {
 
     @Override
     public void setEndActive(boolean endActive) {
-        isEndActive = endActive;
+        this.isEndActive = endActive;
     }
 }

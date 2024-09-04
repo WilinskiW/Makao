@@ -18,11 +18,12 @@ public class StateHandler {
     }
 
     public void updateStateAfterPut(Player player, Card card) {
-        if(checker.isChoosingState(player)){
+        if (checker.isChoosingState(player)) {
             card.setShadow(true);
+        } else {
+            changer.applyDefaultState(player);
+            setActions(true, false, true);
         }
-        changer.applyDefaultState(player);
-        setActions(true, false, true);
     }
 
     public void updateStateAfterPull(Player player, boolean hasPullBefore) {

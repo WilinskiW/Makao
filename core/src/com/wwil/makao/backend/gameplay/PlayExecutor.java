@@ -2,14 +2,17 @@ package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
+import com.wwil.makao.backend.states.management.StateHandler;
 
 public class PlayExecutor {
     private final RoundManager roundManager;
     private final AbilityHandler abilityHandler;
+    private final StateHandler stateHandler;
 
     PlayExecutor(RoundManager roundManager) {
         this.roundManager = roundManager;
         this.abilityHandler = new AbilityHandler(this.roundManager, roundManager.getStateManager());
+        this.stateHandler = roundManager.getStateManager().getStateHandler();
     }
 
     PlayReport createPlayReport(Player player, Play play) {
@@ -37,6 +40,8 @@ public class PlayExecutor {
         addToStack(cardPlayed);
         addCardToPlayedCards(cardPlayed);
         abilityHandler.useCardAbility(playReport);
+        stateHandler.updateStateAfterPut(playReport.getPlayer(), playReport.getPlay().getCardPlayed());
+        playReport.setState(playReport.getPlayer().getState());
     }
 
     private void addToStack(Card cardPlayed) {
@@ -52,10 +57,13 @@ public class PlayExecutor {
     }
 
     private PlayReport executeEndPlay(PlayReport playReport) {
+        roundManager.getCardsPlayedInTurn().clear();
+        stateHandler.updateStateAfterEnd(playReport.getPlayer());
+        playReport.setState(playReport.getPlayer().getState());
+
         if (roundManager.getPlayerManager().shouldProceedToNextPlayer(playReport.getPlayer())) {
             roundManager.getPlayerManager().goToNextPlayer();
         }
-        roundManager.getCardsPlayedInTurn().clear();
         return playReport;
     }
 
@@ -63,6 +71,11 @@ public class PlayExecutor {
         Card drawnCard = playReport.getPlay().getDrawnCard();
         player.addCardToHand(drawnCard);
         playReport.setDrawn(drawnCard);
+
+        boolean rescued = roundManager.getRoundReport().whetherPlayerPulledRescue(player);
+        stateHandler.updateStateAfterPull(player, rescued);
+        playReport.setState(player.getState());
+
         return playReport;
     }
 }

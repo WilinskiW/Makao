@@ -4,10 +4,11 @@ import com.wwil.makao.backend.model.card.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public class DeckManager {
-    private final List<Card> gameDeck;
+    private final LinkedList<Card> gameDeck;
     private final Stack stack = new Stack();
 
     DeckManager() {
@@ -17,8 +18,8 @@ public class DeckManager {
         stack.addCardToStack(new Card(Rank.FIVE, Suit.SPADE));
     }
 
-    private List<Card> createCardsToGameDeck() {
-        List<Card> cards = new CardFactory().createCards();
+    private LinkedList<Card> createCardsToGameDeck() {
+        LinkedList<Card> cards = new CardFactory().createCards();
         Collections.shuffle(cards);
         return cards;
     }
@@ -47,14 +48,16 @@ public class DeckManager {
     public Card peekStackCardBeforeLast() {
         return stack.peekDemandCard();
     }
-    public boolean isRankEqualsStackCardRank(Rank rank){
+
+    public boolean isRankEqualsStackCardRank(Rank rank) {
         return rank == peekStackCard().getRank();
     }
 
     public Card takeCardFromGameDeck() {
-        return gameDeck.remove(0);
+        return gameDeck.pollLast();
     }
-    public boolean isRefreshNeeded(){
+
+    public boolean isRefreshNeeded() {
         return stack.getCards().size() > 3;
     }
 
