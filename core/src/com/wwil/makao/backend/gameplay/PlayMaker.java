@@ -2,16 +2,13 @@ package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
-import com.wwil.makao.backend.states.management.StateHandler;
 
 public class PlayMaker {
     private final RoundManager roundManager;
-    private final StateHandler stateHandler;
     private final CardFinder cardFinder;
 
     public PlayMaker(RoundManager roundManager) {
         this.roundManager = roundManager;
-        this.stateHandler = roundManager.getStateManager().getStateHandler();
         this.cardFinder = new CardFinder(roundManager.getValidator());
     }
 
@@ -24,9 +21,9 @@ public class PlayMaker {
         }
 
         if (isEndAvailable(player)) {
-            return makeEndPlay(play, player);
+            return makeEndPlay(play);
         } else {
-            return createPullPlay(play, player);
+            return createPullPlay(play);
         }
     }
 
@@ -37,7 +34,6 @@ public class PlayMaker {
     private boolean tryPut(Play play, Player player) {
         Card card = findValidCardsForCurrentState(player);
         if (card != null) {
-            stateHandler.updateStateAfterPut(player, card);
             play.setCardPlayed(card).setAction(Action.PUT);
             return true;
         }
@@ -52,18 +48,12 @@ public class PlayMaker {
         return player.getState().isEndActive();
     }
 
-    private Play makeEndPlay(Play play, Player player){
-        stateHandler.updateStateAfterEnd(player);
+    private Play makeEndPlay(Play play){
         return play.setAction(Action.END);
     }
 
-    private Play createPullPlay(Play play, Player player){
-        stateHandler.updateStateAfterPull(player, hasPlayerPulledBefore(player));
+    private Play createPullPlay(Play play){
         return play.setDrawnCard(pullCard()).setAction(Action.PULL);
-    }
-
-    private boolean hasPlayerPulledBefore(Player player){
-        return roundManager.getRoundReport().whetherPlayerPulledRescue(player);
     }
 
     private Card pullCard(){

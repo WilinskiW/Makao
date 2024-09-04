@@ -16,8 +16,8 @@ public class CardFinder {
         this.validator = validator;
     }
 
-    public Card findBestCardForDefenceState(Player player, Card attackingCard) {
-        List<Card> defensiveCards = findDefensiveCards(player.getCards(), attackingCard);
+    public Card findBestCardForDefenceState(Player player) {
+        List<Card> defensiveCards = findDefensiveCards(player.getCards());
 
         if (defensiveCards.isEmpty()) {
             return null;
@@ -27,9 +27,9 @@ public class CardFinder {
         return cardsWithSameRank.isEmpty() ? getRandomElement(defensiveCards) : cardsWithSameRank.get(0);
     }
 
-    private List<Card> findDefensiveCards(List<Card> playerCards, Card attackingCard) {
+    private List<Card> findDefensiveCards(List<Card> playerCards) {
         return playerCards.stream()
-                .filter(card -> validator.isValidForDefenceState(attackingCard))
+                .filter(validator::isValidForDefenceState)
                 .collect(Collectors.toList());
     }
 
