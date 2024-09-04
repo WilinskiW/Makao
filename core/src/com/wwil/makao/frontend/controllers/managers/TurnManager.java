@@ -29,7 +29,10 @@ public abstract class TurnManager {
         if (alignCards) {
             player.moveCloserToStartingPosition();
         }
-        soundManager.play("put.wav");
+
+        if (!playedCard.getCard().isShadow()) {
+            soundManager.play("put.wav");
+        }
     }
 
 
@@ -49,4 +52,5 @@ public abstract class TurnManager {
 
     protected PlayerHandGroup humanHand() {
         return uiManager.getHumanHandGroup();
-    }}
+    }
+}

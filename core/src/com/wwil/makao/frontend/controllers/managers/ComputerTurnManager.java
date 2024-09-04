@@ -47,8 +47,8 @@ public class ComputerTurnManager extends TurnManager {
                 endTurn();
                 break;
             case PUT:
-                Card cardPlayed = playReport.getPlay().getCardPlayed();
-                putCard(playerHand.getCardActor(cardPlayed), playerHand, true);
+                CardActor cardActor = getCardActor(playReport, playerHand);
+                putCard(cardActor, playerHand, !cardActor.getCard().isShadow());
                 break;
             case PULL:
                 pull(playReport, playerHand);
@@ -59,6 +59,14 @@ public class ComputerTurnManager extends TurnManager {
     @Override
     void endTurn() {
         inputManager.turnOffHumanInput();
+    }
+
+    private CardActor getCardActor(PlayReport playReport, PlayerHandGroup playerHand){
+        Card cardPlayed = playReport.getPlay().getCardPlayed();
+        if(cardPlayed.isShadow()){
+            return uiManager.getCardActorFactory().createCardActor(playReport.getPlay().getCardPlayed());
+        }
+        return playerHand.getCardActor(cardPlayed);
     }
 
 
