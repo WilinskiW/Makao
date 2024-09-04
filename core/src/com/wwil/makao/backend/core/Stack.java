@@ -2,21 +2,29 @@ package com.wwil.makao.backend.core;
 
 import com.wwil.makao.backend.model.card.Card;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Stack {
-    private final List<Card> cards = new ArrayList<>();
+    private final LinkedList<Card> cards;
+
+    public Stack() {
+        this.cards = new LinkedList<>();
+    }
 
     public void addCardToStack(Card card){
         cards.add(card);
     }
 
-    protected Card peekCardBeforeLast(){
-        return cards.get(getCards().size()-1);
+    protected Card peekDemandCard(){
+        if(cards.size() > 1){
+            int indexOfLast = cards.indexOf(cards.getLast());
+            return cards.get(indexOfLast-1);
+        }
+        return peekCard();
     }
     protected Card peekCard(){
-        return cards.get(getCards().size()-1);
+        return cards.getLast();
     }
 
     protected List<Card> getCards() {

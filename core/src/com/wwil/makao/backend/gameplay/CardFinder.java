@@ -29,7 +29,7 @@ public class CardFinder {
 
     private List<Card> findDefensiveCards(List<Card> playerCards, Card attackingCard) {
         return playerCards.stream()
-                .filter(card -> card.matchesRank(attackingCard))
+                .filter(card -> validator.isValidForDefenceState(attackingCard))
                 .collect(Collectors.toList());
     }
 

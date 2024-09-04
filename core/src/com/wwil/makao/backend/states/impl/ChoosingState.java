@@ -7,17 +7,24 @@ import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
 
 public class ChoosingState implements State {
+    private boolean isPutActive;
+    private boolean isPullActive;
+    private boolean isEndActive;
     @Override
     public State saveState() {
         return new ChoosingState();
     }
 
     @Override
-    public void setDefaultValueOfActivations() {}
+    public void setDefaultValueOfActivations() {
+        this.isPutActive = true;
+        this.isPullActive = true;
+        this.isEndActive = false;
+    }
 
     @Override
     public boolean isValid(Card chosenCard, CardValidator validator) {
-        return validator.isValidForNormalTurn(chosenCard);
+        return validator.isValidForDefaultState(chosenCard);
     }
 
     @Override
@@ -27,28 +34,31 @@ public class ChoosingState implements State {
 
     @Override
     public boolean isPutActive() {
-        return true;
+        return isPutActive;
     }
 
     @Override
     public void setPutActive(boolean putActive) {
+        isPutActive = putActive;
     }
 
     @Override
     public boolean isPullActive() {
-        return false;
+        return isPullActive;
     }
 
     @Override
     public void setPullActive(boolean pullActive) {
+        isPullActive = pullActive;
     }
 
     @Override
     public boolean isEndActive() {
-        return false;
+        return isEndActive;
     }
 
     @Override
     public void setEndActive(boolean endActive) {
+        isEndActive = endActive;
     }
 }

@@ -13,16 +13,16 @@ public class CardValidator {
         this.deckManager = deckManager;
     }
 
-    public boolean isValidForNormalTurn(Card chosenCard) {
+    public boolean isValidForDefaultState(Card chosenCard) {
         return !roundManager.getCardsPlayedInTurn().isEmpty() ?
                 isValidForMultiplePut(chosenCard) :
                 isValidForStandardPlay(chosenCard, getStackCard(chosenCard));
     }
 
-    public boolean isValidForDefence(Card chosenCard) {
+    public boolean isValidForDefenceState(Card chosenCard) {
         return !roundManager.getCardsPlayedInTurn().isEmpty() ?
                 isValidForMultiplePut(chosenCard) :
-                isValidForDefencePlay(chosenCard, getStackCard(chosenCard));
+                canBeUseForDefence(chosenCard, getStackCard(chosenCard));
     }
 
     private boolean isValidForStandardPlay(Card chosenCard, Card stackCard) {
@@ -32,7 +32,7 @@ public class CardValidator {
                 chosenCard.matchesSuit(stackCard);
     }
 
-    private boolean isValidForDefencePlay(Card chosenCard, Card stackCard) {
+    private boolean canBeUseForDefence(Card chosenCard, Card stackCard) {
         return chosenCard.matchesRank(stackCard) ||
                 (chosenCard.matchesSuit(stackCard) && stackCard.getRank().equals(Rank.K));
     }

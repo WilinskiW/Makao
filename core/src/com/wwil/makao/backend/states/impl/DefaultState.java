@@ -40,7 +40,7 @@ public class DefaultState implements State {
 
     @Override
     public boolean isValid(Card chosenCard, CardValidator validator) {
-        return validator.isValidForNormalTurn(chosenCard);
+        return validator.isValidForDefaultState(chosenCard);
     }
 
     @Override

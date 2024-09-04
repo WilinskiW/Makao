@@ -43,7 +43,7 @@ public class DefenceRescueState implements State {
 
     @Override
     public boolean isValid(Card chosenCard, CardValidator validator) {
-        return validator.isValidForDefence(chosenCard);
+        return validator.isValidForDefenceState(chosenCard);
     }
 
     @Override

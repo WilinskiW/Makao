@@ -45,7 +45,7 @@ public class DeckManager {
     }
 
     public Card peekStackCardBeforeLast() {
-        return stack.peekCardBeforeLast();
+        return stack.peekDemandCard();
     }
     public boolean isRankEqualsStackCardRank(Rank rank){
         return rank == peekStackCard().getRank();

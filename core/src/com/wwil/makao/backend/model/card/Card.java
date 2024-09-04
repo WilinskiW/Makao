@@ -13,8 +13,15 @@ public class Card {
         return this.rank == other.getRank();
     }
 
+    public boolean matchesRank(Rank rank){
+        return this.rank == rank;
+    }
+
     public boolean matchesSuit(Card other){
         return this.suit == other.suit;
+    }
+    public boolean canActiveChooser(Card card){
+        return card.matchesRank(Rank.J) || card.matchesRank(Rank.AS);
     }
 
     public Rank getRank() {
