@@ -1,5 +1,7 @@
 package com.wwil.makao.backend.states.impl;
 
+import com.wwil.makao.backend.gameplay.CardValidator;
+import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.states.State;
 
 public abstract class ChoosingState implements State {
@@ -16,6 +18,11 @@ public abstract class ChoosingState implements State {
         this.isPutActive = true;
         this.isPullActive = false;
         this.isEndActive = false;
+    }
+
+    @Override
+    public boolean isValid(Card chosenCard, CardValidator validator) {
+        return validator.isValidForDefaultState(chosenCard);
     }
 
     @Override

@@ -1,10 +1,9 @@
 package com.wwil.makao.backend.states.management;
 
+import com.wwil.makao.backend.model.card.Ability;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
-import com.wwil.makao.backend.states.impl.BlockedState;
-import com.wwil.makao.backend.states.impl.PullingState;
-import com.wwil.makao.backend.states.impl.PunishState;
+import com.wwil.makao.backend.states.impl.*;
 
 public class StateHandler {
     private final StateChanger changer;
@@ -19,6 +18,7 @@ public class StateHandler {
 
     public void updateStateAfterPut(Player player, Card card) {
         if (checker.isChoosingDemandState(player) && card.isShadow()) {
+            changer.applyAllDefenceState(card);
             setActions(false, false, true);
         } else if (checker.isChoosingSuitState(player) && card.isShadow()) {
             changer.applyDefaultState(player);
@@ -29,19 +29,30 @@ public class StateHandler {
         }
     }
 
-    public void updateStateAfterPull(Player player, boolean hasPullBefore) {
-        if (checker.isDefenseState(player) || checker.isDefenceRescueState(player)) {
-            if (hasPullBefore) {
-                changer.applyPunishment(player);
-            } else {
-                changer.applyDefenceRescueState(player);
-            }
-        }
-
-        if (checker.isDefaultState(player)) {
+    public void updateStateAfterPull(Player player) {
+        if (checker.isDefenseState(player)) {
+            applyRescueState(player);
+        } else if (checker.isDefenceRescueState(player)) {
+            changer.applyPunishment(player);
+        } else if (checker.isDefaultState(player)) {
             changer.applyDefaultRescueState(player);
+        }  else if (checker.isPullingState(player)) {
+            handlePullingState(player);
+        } else {
+            changer.applyDefaultState(player);
+            setActions(false, false, true);
         }
     }
+
+    public void applyRescueState(Player player) {
+        DefenseState defenseState = (DefenseState) player.getState();
+        if (defenseState.getAttackingCard().getRank().getAbility() == Ability.NONE) {
+            changer.applyDemandRescueState(player);
+        } else {
+            changer.applyDefenceRescueState(player);
+        }
+    }
+
 
     private void handlePullingState(Player player) {
         PunishState pullingState = (PullingState) context.getPlayerState();

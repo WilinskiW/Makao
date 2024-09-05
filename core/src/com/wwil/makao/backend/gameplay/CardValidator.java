@@ -22,7 +22,7 @@ public class CardValidator {
     public boolean isValidForDefenceState(Card chosenCard) {
         return !roundManager.getCardsPlayedInTurn().isEmpty() && !chosenCard.isShadow() ?
                 isValidForMultiplePut(chosenCard) :
-                canBeUseForDefence(chosenCard, getStackCard(chosenCard));
+                chosenCard.matchesRank(getStackCard(chosenCard));
     }
 
     private boolean isValidForStandardPlay(Card chosenCard, Card stackCard) {
@@ -33,8 +33,7 @@ public class CardValidator {
     }
 
     private boolean canBeUseForDefence(Card chosenCard, Card stackCard) {
-        return chosenCard.matchesRank(stackCard) ||
-                (chosenCard.matchesSuit(stackCard) && stackCard.getRank().equals(Rank.K));
+        return chosenCard.matchesRank(stackCard);
     }
 
     private boolean isValidForMultiplePut(Card chosenCard) {

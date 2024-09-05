@@ -43,6 +43,10 @@ public class DefenseState implements State {
         }
     }
 
+    public Card getAttackingCard() {
+        return attackingCard;
+    }
+
     @Override
     public Card findValidCard(CardFinder cardFinder, Player player, Card stackCard) {
         return cardFinder.findBestCardForDefenceState(player);

@@ -14,11 +14,6 @@ public class ChoosingSuitState extends ChoosingState{
     }
 
     @Override
-    public boolean isValid(Card chosenCard, CardValidator validator) {
-        return validator.isValidForDefaultState(chosenCard);
-    }
-
-    @Override
     public Card findValidCard(CardFinder cardFinder, Player player, Card stackCard) {
         return cardFinder.findCardForChangeSuit(player, stackCard);
     }

@@ -52,6 +52,7 @@ public class AbilityHandler {
 
     private void changeSuit(PlayReport playReport) {
         if (!playReport.getPlay().getCardPlayed().isShadow()) {
+            stateManager.getStateChanger().applyChoosingSuitState(playerManager.getCurrentPlayer());
             isChooserStateActive = true;
             playReport.setChooserActive(true);
         }
@@ -69,6 +70,7 @@ public class AbilityHandler {
 
     private void demand(PlayReport playReport) {
         if (!playReport.getPlay().getCardPlayed().isShadow()) {
+            stateManager.getStateChanger().applyChoosingDemandState(playerManager.getCurrentPlayer());
             playReport.setChooserActive(true);
             isChooserStateActive = true;
         }

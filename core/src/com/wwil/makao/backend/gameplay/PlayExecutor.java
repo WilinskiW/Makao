@@ -72,8 +72,7 @@ public class PlayExecutor {
         player.addCardToHand(drawnCard);
         playReport.setDrawn(drawnCard);
 
-        boolean rescued = roundManager.getRoundReport().whetherPlayerPulledRescue(player);
-        stateHandler.updateStateAfterPull(player, rescued);
+        stateHandler.updateStateAfterPull(player);
         playReport.setState(player.getState());
 
         return playReport;

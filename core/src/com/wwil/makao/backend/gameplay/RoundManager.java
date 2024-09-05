@@ -100,7 +100,7 @@ public class RoundManager {
         return deckManager;
     }
 
-    PlayerManager getPlayerManager() {
+    public PlayerManager getPlayerManager() {
         return playerManager;
     }
 

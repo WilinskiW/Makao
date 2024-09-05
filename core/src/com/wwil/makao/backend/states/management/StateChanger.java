@@ -28,6 +28,10 @@ public class StateChanger {
         changePlayerState(player, new DefaultRescueState());
     }
 
+    public void applyDemandRescueState(Player player){
+        changePlayerState(player, new DemandRescueState());
+    }
+
     public void applyDefenceRescueState(Player player) {
         boolean isAttackedByFour = roundManager.getDeckManager().peekStackCard().getRank() == Rank.FOUR;
         changePlayerState(player, new DefenceRescueState(isAttackedByFour));
@@ -44,6 +48,18 @@ public class StateChanger {
     private void applyPullingState(Player player) {
         changePlayerState(player, new PullingState(roundManager.giveAmountOfPulls() - 1));
         //-1, bo odejmujemy pociągnięcie rescue card
+    }
+
+    public void applyChoosingDemandState(Player player) {
+        changePlayerState(player, new ChoosingDemandState());
+    }
+
+    public void applyChoosingSuitState(Player player) {
+        changePlayerState(player, new ChoosingSuitState());
+    }
+
+    public void applyAllDefenceState(Card attackedCard) {
+        roundManager.getPlayerManager().getPlayers().forEach(player -> applyDefenceState(player, attackedCard));
     }
 
     private void applyBlockedState(Player player) {
