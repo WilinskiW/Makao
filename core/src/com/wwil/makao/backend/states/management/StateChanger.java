@@ -51,6 +51,7 @@ public class StateChanger {
         pullingState.decreaseAmount();
         if (pullingState.getAmountOfPunishes() == 0) {
             applyDefaultState(player);
+            roundManager.getCardsPlayedInTurn().clear();
         }
     }
 

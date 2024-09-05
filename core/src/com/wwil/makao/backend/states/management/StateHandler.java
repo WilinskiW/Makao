@@ -32,13 +32,17 @@ public class StateHandler {
     public void updateStateAfterPull(Player player) {
         if (checker.isDefenseState(player)) {
             applyRescueState(player);
-        } else if (checker.isDefenceRescueState(player)) {
+        }
+        else if (checker.isDefenceRescueState(player)) {
             changer.applyPunishment(player);
-        } else if (checker.isDefaultState(player)) {
+        }
+        else if (checker.isDefaultState(player)) {
             changer.applyDefaultRescueState(player);
-        }  else if (checker.isPullingState(player)) {
+        }
+        else if (checker.isPullingState(player)) {
             changer.handlePullingState(player);
-        } else {
+        }
+        else {
             changer.applyDefaultState(player);
             setActions(player,false, false, true);
         }

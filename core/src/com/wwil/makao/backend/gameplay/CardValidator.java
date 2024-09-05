@@ -31,11 +31,6 @@ public class CardValidator {
                 chosenCard.matchesRank(stackCard) ||
                 chosenCard.matchesSuit(stackCard);
     }
-
-    private boolean canBeUseForDefence(Card chosenCard, Card stackCard) {
-        return chosenCard.matchesRank(stackCard);
-    }
-
     private boolean isValidForMultiplePut(Card chosenCard) {
         return chosenCard.matchesRank(roundManager.getCardsPlayedInTurn().get(0));
     }
