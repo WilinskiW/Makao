@@ -1,5 +1,6 @@
 package com.wwil.makao.backend.gameplay;
 
+import com.wwil.makao.backend.model.card.Ability;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
 import com.wwil.makao.backend.model.card.Suit;
@@ -136,17 +137,16 @@ public class CardFinder {
 
         return Suit.values()[maxIndex]; // Zwracanie koloru z największą liczbą wystąpień
     }
-//    public Card findCardToDemand(Player player) {
-//        List<Card> cards = player.getCards();
-//        Collections.shuffle(cards);
-//        for (Card card : cards) {
-//            if (card.getRank().getAbility() == Ability.NONE) {
-//                return card;
-//            }
-//        }
-//        return null;
-
-//    }
+    public Card findCardForDemand(Player player) {
+        List<Card> cards = player.getCards();
+        Collections.shuffle(cards);
+        for (Card card : cards) {
+            if (card.getRank().getAbility() == Ability.NONE) {
+                return card;
+            }
+        }
+        return null;
+    }
 //    public Card findDemandedCard(Card demanded, boolean lookForJ) {
 //        List<Card> cards = playerCards;
 //        Collections.shuffle(cards);

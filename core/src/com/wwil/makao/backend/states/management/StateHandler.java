@@ -18,9 +18,12 @@ public class StateHandler {
     }
 
     public void updateStateAfterPut(Player player, Card card) {
-        if (checker.isChoosingState(player)) {
-            card.setShadow(true);
-        } else {
+        if (checker.isChoosingDemandState(player) && card.isShadow()) {
+            setActions(false, false, true);
+        } else if (checker.isChoosingSuitState(player) && card.isShadow()) {
+            changer.applyDefaultState(player);
+            setActions(true, false, true);
+        } else if (!checker.isChoosingState(player)) {
             changer.applyDefaultState(player);
             setActions(true, false, true);
         }
@@ -37,10 +40,6 @@ public class StateHandler {
 
         if (checker.isDefaultState(player)) {
             changer.applyDefaultRescueState(player);
-        }
-
-        if (checker.isPullingState(player)) {
-            handlePullingState(player);
         }
     }
 

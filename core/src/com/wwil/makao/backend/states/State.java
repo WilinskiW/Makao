@@ -11,6 +11,7 @@ public interface State {
     void setDefaultValueOfActivations();
 
     boolean isValid(Card chosenCard, CardValidator validator);
+    default boolean isChooserActive(){return false;}
 
     Card findValidCard(CardFinder cardFinder, Player player, Card stackCard);
 

@@ -23,6 +23,7 @@ public class StateChanger {
     public void applyDefenceState(Player player, Card attackingCard) {
         changePlayerState(player, new DefenseState(attackingCard));
     }
+
     public void applyDefaultRescueState(Player player) {
         changePlayerState(player, new DefaultRescueState());
     }
@@ -40,17 +41,13 @@ public class StateChanger {
         }
     }
 
-    public void applyPullingState(Player player) {
+    private void applyPullingState(Player player) {
         changePlayerState(player, new PullingState(roundManager.giveAmountOfPulls() - 1));
         //-1, bo odejmujemy pociągnięcie rescue card
     }
 
-    public void applyBlockedState(Player player) {
+    private void applyBlockedState(Player player) {
         changePlayerState(player, new BlockedState(roundManager.giveAmountOfWaits()));
-    }
-
-    public void applyChoosingState(Player player){
-        changePlayerState(player, new ChoosingState());
     }
 
     private void changePlayerState(Player player, State newState) {

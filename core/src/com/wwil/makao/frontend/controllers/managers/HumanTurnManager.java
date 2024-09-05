@@ -47,7 +47,7 @@ public class HumanTurnManager extends TurnManager {
             } else {
                 putCard(inputManager.getChosenCardActor(), humanHand(), true);
             }
-        } else {
+        } else if(!playReport.getPlayerState().isChooserActive()) {
             uiManager.positionCardInGroup(humanHand(), inputManager.getChosenCardActor());
         }
     }

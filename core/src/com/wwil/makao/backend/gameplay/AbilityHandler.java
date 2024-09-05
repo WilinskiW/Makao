@@ -9,6 +9,7 @@ public class AbilityHandler {
     private final RoundManager roundManager;
     private final PlayerManager playerManager;
     private final StateManager stateManager;
+    private boolean isChooserStateActive;
 
     AbilityHandler(RoundManager roundManager, StateManager stateManager) {
         this.roundManager = roundManager;
@@ -18,6 +19,11 @@ public class AbilityHandler {
 
     void useCardAbility(PlayReport playReport) {
         Card card = playReport.getPlay().getCardPlayed();
+
+        if(isChooserStateActive){
+            card.setShadow(true);
+            isChooserStateActive = false;
+        }
 
         switch (card.getRank().getAbility()) {
             case CHANGE_SUIT:
@@ -46,7 +52,7 @@ public class AbilityHandler {
 
     private void changeSuit(PlayReport playReport) {
         if (!playReport.getPlay().getCardPlayed().isShadow()) {
-            stateManager.getStateChanger().applyChoosingState(playerManager.getCurrentPlayer());
+            isChooserStateActive = true;
             playReport.setChooserActive(true);
         }
     }
@@ -62,10 +68,9 @@ public class AbilityHandler {
     }
 
     private void demand(PlayReport playReport) {
-        if (playReport.getPlayer() == playerManager.getHumanPlayer()) {
-            if (!playReport.isChooserActive()) {
-                playReport.setChooserActive(true);
-            }
+        if (!playReport.getPlay().getCardPlayed().isShadow()) {
+            playReport.setChooserActive(true);
+            isChooserStateActive = true;
         }
     }
 

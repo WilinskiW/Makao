@@ -29,5 +29,7 @@ public class StateChecker {
         return player.getState() instanceof DefenceRescueState;
     }
     protected boolean isChoosingState(Player player){return player.getState() instanceof ChoosingState;}
+    protected boolean isChoosingDemandState(Player player){return player.getState() instanceof ChoosingDemandState;}
+    protected boolean isChoosingSuitState(Player player){return player.getState() instanceof ChoosingSuitState;}
 
 }

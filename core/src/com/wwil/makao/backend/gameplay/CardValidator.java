@@ -14,13 +14,13 @@ public class CardValidator {
     }
 
     public boolean isValidForDefaultState(Card chosenCard) {
-        return !roundManager.getCardsPlayedInTurn().isEmpty() ?
+        return !roundManager.getCardsPlayedInTurn().isEmpty() && !chosenCard.isShadow() ?
                 isValidForMultiplePut(chosenCard) :
                 isValidForStandardPlay(chosenCard, getStackCard(chosenCard));
     }
 
     public boolean isValidForDefenceState(Card chosenCard) {
-        return !roundManager.getCardsPlayedInTurn().isEmpty() ?
+        return !roundManager.getCardsPlayedInTurn().isEmpty() && !chosenCard.isShadow() ?
                 isValidForMultiplePut(chosenCard) :
                 canBeUseForDefence(chosenCard, getStackCard(chosenCard));
     }

@@ -1,23 +1,14 @@
 package com.wwil.makao.backend.states.impl;
 
-import com.wwil.makao.backend.gameplay.CardFinder;
-import com.wwil.makao.backend.gameplay.CardValidator;
-import com.wwil.makao.backend.model.card.Card;
-import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
 
-public class ChoosingState implements State {
+public abstract class ChoosingState implements State {
     private boolean isPutActive;
     private boolean isPullActive;
     private boolean isEndActive;
 
     public ChoosingState() {
         setDefaultValueOfActivations();
-    }
-
-    @Override
-    public State saveState() {
-        return new ChoosingState();
     }
 
     @Override
@@ -28,13 +19,8 @@ public class ChoosingState implements State {
     }
 
     @Override
-    public boolean isValid(Card chosenCard, CardValidator validator) {
-        return validator.isValidForDefaultState(chosenCard);
-    }
-
-    @Override
-    public Card findValidCard(CardFinder cardFinder, Player player, Card stackCard) {
-        return cardFinder.findCardForChangeSuit(player, stackCard);
+    public boolean isChooserActive() {
+        return true;
     }
 
     @Override

@@ -82,6 +82,9 @@ public class RoundManager {
     public CardValidator getValidator() {
         return validator;
     }
+    public int getWaitsCount(){
+        return waitsCount;
+    }
 
     void increaseAmountOfWaits() {
         waitsCount++;

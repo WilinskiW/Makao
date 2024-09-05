@@ -88,24 +88,31 @@ public class GameStagePreparer {
         switch (index) {
             case 0:
                 backend.getPlayers().get(index).getCards().clear();
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.CLUB));
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.SPADE));
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.HEART));
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.DIAMOND));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.J, Suit.CLUB));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.J, Suit.SPADE));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.J, Suit.HEART));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.J, Suit.DIAMOND));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.AS, Suit.CLUB));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.AS, Suit.SPADE));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.AS, Suit.HEART));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.AS, Suit.DIAMOND));
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
                 break;
             case 1:
                 backend.getPlayers().get(index).getCards().clear();
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.FIVE, Suit.SPADE));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.J, Suit.CLUB));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.J, Suit.SPADE));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.J, Suit.HEART));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.J, Suit.DIAMOND));
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
                 break;
             case 2:
-                backend.getPlayers().get(index).getCards().clear();
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.SEVEN, Suit.DIAMOND));
+//                backend.getPlayers().get(index).getCards().clear();
+//                backend.getPlayers().get(index).getCards().add(new Card(Rank.SEVEN, Suit.DIAMOND));
                 break;
             case 3:
-                backend.getPlayers().get(index).getCards().clear();
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.FIVE, Suit.CLUB));
+//                backend.getPlayers().get(index).getCards().clear();
+//                backend.getPlayers().get(index).getCards().add(new Card(Rank.FIVE, Suit.CLUB));
                 break;
         }
     }
