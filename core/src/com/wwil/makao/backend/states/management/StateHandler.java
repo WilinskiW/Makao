@@ -19,13 +19,13 @@ public class StateHandler {
     public void updateStateAfterPut(Player player, Card card) {
         if (checker.isChoosingDemandState(player) && card.isShadow()) {
             changer.applyAllDefenceState(card);
-            setActions(false, false, true);
+            setActions(player,false, false, true);
         } else if (checker.isChoosingSuitState(player) && card.isShadow()) {
             changer.applyDefaultState(player);
-            setActions(true, false, true);
+            setActions(player,true, false, true);
         } else if (!checker.isChoosingState(player)) {
             changer.applyDefaultState(player);
-            setActions(true, false, true);
+            setActions(player,true, false, true);
         }
     }
 
@@ -37,10 +37,10 @@ public class StateHandler {
         } else if (checker.isDefaultState(player)) {
             changer.applyDefaultRescueState(player);
         }  else if (checker.isPullingState(player)) {
-            handlePullingState(player);
+            changer.handlePullingState(player);
         } else {
             changer.applyDefaultState(player);
-            setActions(false, false, true);
+            setActions(player,false, false, true);
         }
     }
 
@@ -54,14 +54,6 @@ public class StateHandler {
     }
 
 
-    private void handlePullingState(Player player) {
-        PunishState pullingState = (PullingState) context.getPlayerState();
-        pullingState.decreaseAmount();
-        if (pullingState.getAmountOfPunishes() == 0) {
-            changer.applyDefaultState(player);
-        }
-    }
-
     public void updateStateAfterEnd(Player player) {
         if (checker.isPlayerBlocked(player)) {
             PunishState blockedState = (BlockedState) player.getState();
@@ -69,10 +61,10 @@ public class StateHandler {
         } else if (checker.isDefaultRescueState(player)) {
             changer.applyDefaultState(player);
         }
-        setActions(false, false, false);
+        setActions(player,false, false, false);
     }
 
-    private void setActions(boolean put, boolean pull, boolean end) {
-        context.activateActions(put, pull, end);
+    private void setActions(Player player, boolean put, boolean pull, boolean end) {
+        context.activateActions(player, put, pull, end);
     }
 }

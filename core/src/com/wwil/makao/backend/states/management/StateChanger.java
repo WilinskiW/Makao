@@ -40,8 +40,17 @@ public class StateChanger {
     protected void applyPunishment(Player player) {
         if (roundManager.getPullsCount() > 0) {
             applyPullingState(player);
+            handlePullingState(player);
         } else {
             applyBlockedState(player);
+        }
+    }
+
+    public void handlePullingState(Player player) {
+        PunishState pullingState = (PullingState) player.getState();
+        pullingState.decreaseAmount();
+        if (pullingState.getAmountOfPunishes() == 0) {
+            applyDefaultState(player);
         }
     }
 
