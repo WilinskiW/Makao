@@ -7,11 +7,8 @@ import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
 import com.wwil.makao.backend.states.management.StateChanger;
 
-public class DefenceRescueState implements State {
+public class DefenceRescueState extends RescueState {
     private final boolean isAttackByFour;
-    private boolean isPutActive;
-    private boolean isPullActive;
-    private boolean isEndActive;
 
     public DefenceRescueState(boolean isAttackByFour) {
         this.isAttackByFour = isAttackByFour;
@@ -63,38 +60,4 @@ public class DefenceRescueState implements State {
         changer.setActions(player, false, false, false);
     }
 
-    @Override
-    public boolean isFocusDrawnCard() {
-        return true;
-    }
-
-    @Override
-    public boolean isPutActive() {
-        return isPutActive;
-    }
-
-    @Override
-    public void setPutActive(boolean putActive) {
-        this.isPutActive = putActive;
-    }
-
-    @Override
-    public boolean isPullActive() {
-        return isPullActive;
-    }
-
-    @Override
-    public void setPullActive(boolean pullActive) {
-        this.isPullActive = pullActive;
-    }
-
-    @Override
-    public boolean isEndActive() {
-        return isEndActive;
-    }
-
-    @Override
-    public void setEndActive(boolean endActive) {
-        this.isEndActive = endActive;
-    }
 }
