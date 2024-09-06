@@ -62,13 +62,13 @@ public class StateHandler {
         if (checker.isPlayerBlocked(player)) {
             PunishState blockedState = (BlockedState) player.getState();
             blockedState.decreaseAmount();
-        } else if (checker.isDefaultRescueState(player)) {
+        } else if (checker.isDefaultRescueState(player) || checker.isDefenceRescueState(player)) {
             changer.applyDefaultState(player);
         }
         setActions(player,false, false, false);
     }
 
-    private void setActions(Player player, boolean put, boolean pull, boolean end) {
+    public void setActions(Player player, boolean put, boolean pull, boolean end) {
         context.activateActions(player, put, pull, end);
     }
 }

@@ -36,12 +36,14 @@ public class PlayExecutor {
 
     private void putCard(PlayReport playReport) {
         Card cardPlayed = playReport.getPlay().getCardPlayed();
-        removeCardFromPlayerHand(cardPlayed);
+        abilityHandler.useCardAbility(playReport);
+        if (!cardPlayed.isShadow()) {
+            removeCardFromPlayerHand(cardPlayed);
+        }
         addToStack(cardPlayed);
         addCardToPlayedCards(cardPlayed);
-        abilityHandler.useCardAbility(playReport);
         stateHandler.updateStateAfterPut(playReport.getPlayer(), playReport.getPlay().getCardPlayed());
-        playReport.setState(playReport.getPlayer().getState());
+        playReport.setAfterState(playReport.getPlayer().getState());
     }
 
     private void addToStack(Card cardPlayed) {
@@ -59,7 +61,7 @@ public class PlayExecutor {
     private PlayReport executeEndPlay(PlayReport playReport) {
         roundManager.getCardsPlayedInTurn().clear();
         stateHandler.updateStateAfterEnd(playReport.getPlayer());
-        playReport.setState(playReport.getPlayer().getState());
+        playReport.setAfterState(playReport.getPlayer().getState());
 
         if (roundManager.getPlayerManager().shouldProceedToNextPlayer(playReport.getPlayer())) {
             roundManager.getPlayerManager().goToNextPlayer();
@@ -73,7 +75,7 @@ public class PlayExecutor {
         playReport.setDrawn(drawnCard);
 
         stateHandler.updateStateAfterPull(player);
-        playReport.setState(player.getState());
+        playReport.setAfterState(player.getState());
 
         return playReport;
     }

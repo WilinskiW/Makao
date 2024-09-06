@@ -142,25 +142,9 @@ public class CardFinder {
         Collections.shuffle(cards);
         for (Card card : cards) {
             if (card.getRank().getAbility() == Ability.NONE) {
-                return card;
+                return new Card(card.getRank(), card.getSuit()).setShadow(true);
             }
         }
         return null;
     }
-//    public Card findDemandedCard(Card demanded, boolean lookForJ) {
-//        List<Card> cards = playerCards;
-//        Collections.shuffle(cards);
-//        Card cardToPlay = null;
-//        for (Card card : cards) {
-//            if (lookForJ && card.getRank().equals(Rank.J)) {
-//                return card;
-//            }
-//
-//            if (card.getRank() == demanded.getRank()) {
-//                cardToPlay = card;
-//            }
-//        }
-//        return cardToPlay;
-//    }
-//
 }

@@ -45,15 +45,11 @@ public class DeckManager {
         return stack.peekCard();
     }
 
-    public Card peekStackCardBeforeLast() {
-        return stack.peekDemandCard();
-    }
-
     public boolean isRankEqualsStackCardRank(Rank rank) {
         return rank == peekStackCard().getRank();
     }
 
-    public Card takeCardFromGameDeck() {
+     public Card takeCardFromGameDeck() {
         return gameDeck.pollLast();
     }
 

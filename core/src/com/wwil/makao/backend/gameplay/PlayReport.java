@@ -6,7 +6,8 @@ import com.wwil.makao.backend.states.State;
 
 public class PlayReport {
     private final Player player;
-    private State state;
+    private State beforeState;
+    private State afterState;
     private final Play play;
     private Card drawn;
     private boolean isCardCorrect;
@@ -14,6 +15,7 @@ public class PlayReport {
 
     public PlayReport(Player player,Play play) {
         this.play = play;
+        this.beforeState = player.getState().saveState();
         this.player = player;
     }
 
@@ -47,11 +49,11 @@ public class PlayReport {
     }
 
     public State getPlayerState() {
-        return state;
+        return afterState;
     }
 
-    public void setState(State state) {
-        this.state = state.saveState();
+    public void setAfterState(State afterState) {
+        this.afterState = afterState.saveState();
     }
     public void setChooserActive(boolean isChooserActive) {
         this.isChooserActive = isChooserActive;

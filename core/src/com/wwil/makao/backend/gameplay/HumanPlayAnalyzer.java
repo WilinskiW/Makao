@@ -42,7 +42,7 @@ public class HumanPlayAnalyzer {
             putPlayReport = playExecutor.createPlayReport(humanPlayer, humanPlay);
         } else {
             putPlayReport = new PlayReport(humanPlayer, humanPlay).setCardCorrect(false);
-            putPlayReport.setState(humanPlayer.getState());
+            putPlayReport.setAfterState(humanPlayer.getState());
         }
 
         roundManager.getRoundReport().addPlayRaport(putPlayReport);

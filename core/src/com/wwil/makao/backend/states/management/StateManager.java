@@ -25,6 +25,10 @@ public class StateManager implements StateContext {
         state.setEndActive(isEndActive);
     }
 
+    public void resetAllActionsActivation(){
+        playerManager.getPlayers().forEach(player -> player.getState().setDefaultValueOfActivations());
+    }
+
     @Override
     public void changeState(Player player, State newState) {
         player.changeState(newState);

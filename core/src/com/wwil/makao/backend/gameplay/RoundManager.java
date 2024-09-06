@@ -56,7 +56,7 @@ public class RoundManager {
 
     RoundReport sendRoundReport() {
         RoundReport report = roundReport;
-        stateManager.getPlayerState().setDefaultValueOfActivations();
+        stateManager.resetAllActionsActivation();
         startNewRound();
         return report;
     }

@@ -89,7 +89,7 @@ public class GameStagePreparer {
             case 0:
                 backend.getPlayers().get(index).getCards().clear();
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.J, Suit.CLUB));
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.SPADE));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.J, Suit.SPADE));
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.J, Suit.HEART));
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.J, Suit.DIAMOND));
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.AS, Suit.CLUB));
@@ -100,18 +100,20 @@ public class GameStagePreparer {
                 break;
             case 1:
                 backend.getPlayers().get(index).getCards().clear();
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.K, Suit.SPADE));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.J, Suit.SPADE));
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.SEVEN, Suit.CLUB));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
                 break;
             case 2:
                 backend.getPlayers().get(index).getCards().clear();
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.SEVEN, Suit.DIAMOND));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.SIX, Suit.DIAMOND));
                 break;
             case 3:
                 backend.getPlayers().get(index).getCards().clear();
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.TWO, Suit.SPADE));
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.SEVEN, Suit.CLUB));
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.SIX, Suit.CLUB));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
                 break;
         }
     }
