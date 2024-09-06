@@ -1,9 +1,9 @@
 package com.wwil.makao.frontend.controllers.facedes;
 
-import com.wwil.makao.backend.core.DeckManager;
 import com.wwil.makao.backend.core.MakaoBackend;
 import com.wwil.makao.backend.gameplay.Play;
 import com.wwil.makao.backend.gameplay.RoundReport;
+import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.frontend.entities.cards.CardActor;
 
@@ -24,11 +24,11 @@ public class BackendFacade {
         return backend.isCardValid(cardActor.getCard());
     }
 
-    public List<Player> getPlayers(){
+    public List<Player> getPlayerList(){
         return backend.getPlayerManager().getPlayers();
     }
 
-    public DeckManager getDeckManager(){
-        return backend.getDeckManager();
+    public Card getStackCard(){
+        return backend.getDeckManager().peekStackCard();
     }
 }
