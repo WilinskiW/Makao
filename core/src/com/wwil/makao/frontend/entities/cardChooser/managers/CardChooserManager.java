@@ -117,9 +117,9 @@ public class CardChooserManager {
             currentRankName = "5";
             hideArrows("SUIT");
         }
-        else if(stackCard.getCard().getRank().equals(Rank.JOKER)){
-            currentRankName = cardPlayed.getCard().getRank().getName();
-            currentSuitName = cardPlayed.getCard().getSuit().getName();
+        else if(cardPlayedRank.equals(Rank.JOKER)){
+            currentRankName = "AS";
+            currentSuitName = "pik";
         }
         else {
             currentRankName = "AS";

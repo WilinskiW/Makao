@@ -6,6 +6,7 @@ import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
+import com.wwil.makao.backend.states.impl.choosing.ChoosingCardState;
 import com.wwil.makao.backend.states.impl.choosing.ChoosingDemandState;
 import com.wwil.makao.backend.states.impl.choosing.ChoosingSuitState;
 import com.wwil.makao.backend.states.impl.DefenseState;
@@ -82,6 +83,14 @@ public class StateChanger {
 
     public void applyChoosingSuitState(Player player) {
         changePlayerState(player, new ChoosingSuitState());
+    }
+
+    public void applyChoosingCardState(Player player){
+        changePlayerState(player, new ChoosingCardState());
+    }
+
+    public boolean deactivateChoosing(Card card){
+        return (card.isShadow() && !roundManager.getDeckManager().isStackCardBeforeLastIsJoker());
     }
 
     public void applyAllDefenceState(Card attackedCard) {

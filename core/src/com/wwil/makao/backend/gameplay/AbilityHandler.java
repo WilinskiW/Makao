@@ -37,13 +37,13 @@ public class AbilityHandler {
                 chooseAbilityForKing(card);
                 break;
             case WILD_CARD:
-                //todo
+                chooseCard();
                 break;
         }
     }
 
     private void changeSuit(Card card) {
-        if (!card.isShadow()) {
+        if (!card.isShadow() || isStackCardJoker()) {
             stateManager.getStateChanger().applyChoosingSuitState(playerManager.getCurrentPlayer());
         }
     }
@@ -59,7 +59,7 @@ public class AbilityHandler {
     }
 
     private void demand(Card card) {
-        if (!card.isShadow()) {
+        if (!card.isShadow() || isStackCardJoker()) {
             stateManager.getStateChanger().applyChoosingDemandState(playerManager.getCurrentPlayer());
         }
     }
@@ -91,7 +91,15 @@ public class AbilityHandler {
         }
     }
 
+    private boolean isStackCardJoker(){
+        return roundManager.getDeckManager().peekStackCard().matchesRank(Rank.JOKER);
+    }
+
     private boolean isStackCardKing() {
         return roundManager.getDeckManager().peekStackCard().matchesRank(Rank.K);
+    }
+
+    private void chooseCard(){
+        stateManager.getStateChanger().applyChoosingCardState(playerManager.getCurrentPlayer());
     }
 }

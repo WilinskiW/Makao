@@ -2,10 +2,7 @@ package com.wwil.makao.backend.core;
 
 import com.wwil.makao.backend.model.card.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DeckManager {
@@ -50,6 +47,24 @@ public class DeckManager {
     public Card peekStackCard() {
         return stack.peekCard();
     }
+
+
+    public boolean isStackCardBeforeLastIsJoker() {
+        List<Card> cards = stack.getCards();
+        int size = cards.size();
+
+        // Upewnij się, że są co najmniej dwie karty w stosie
+        if (size < 2) {
+            return false; // Nie ma przedostatniej karty
+        }
+
+        // Uzyskaj przedostatnią kartę
+        Card beforeLastCard = cards.get(size - 2);
+
+        // Sprawdź, czy przedostatnia karta to Joker
+        return beforeLastCard.matchesRank(Rank.JOKER);
+    }
+
 
     public Card takeCardFromGameDeck() {
         if (gameDeck.isEmpty()) {

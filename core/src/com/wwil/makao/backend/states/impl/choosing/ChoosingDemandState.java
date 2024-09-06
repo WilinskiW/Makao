@@ -19,7 +19,7 @@ public class ChoosingDemandState extends ChoosingState{
 
     @Override
     public void handlePut(Player player, Card card, StateChanger changer) {
-        if(card.isShadow()) {
+        if(changer.deactivateChoosing(card)) {
             changer.applyAllDefenceState(card);
             changer.setActions(player, false, false, true);
         }
