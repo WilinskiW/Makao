@@ -50,7 +50,7 @@ public class CardFinder {
         return elements.get(new Random().nextInt(elements.size()));
     }
 
-    public Card findBestCardForDefaultState(Player player, Card stackCard) {
+    public Card findBestForNormalState(Player player, Card stackCard) {
         List<Card> playableCards = findPlayableCards(player);
 
         if (playableCards.isEmpty()) {

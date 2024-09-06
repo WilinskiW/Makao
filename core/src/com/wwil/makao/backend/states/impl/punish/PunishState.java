@@ -1,4 +1,4 @@
-package com.wwil.makao.backend.states.impl;
+package com.wwil.makao.backend.states.impl.punish;
 
 import com.wwil.makao.backend.gameplay.CardValidator;
 import com.wwil.makao.backend.model.card.Card;
@@ -28,9 +28,7 @@ public abstract class PunishState implements State {
     }
 
     public void decreaseAmount() {
-        if (amountOfPunishes > 0) {
-            amountOfPunishes--;
-        }
+        amountOfPunishes--;
     }
 
     @Override

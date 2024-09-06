@@ -13,7 +13,7 @@ public class CardValidator {
         this.deckManager = deckManager;
     }
 
-    public boolean isValidForDefaultState(Card chosenCard) {
+    public boolean isValidForNormalState(Card chosenCard) {
         return !roundManager.getCardsPlayedInTurn().isEmpty() && !chosenCard.isShadow() ?
                 isValidForMultiplePut(chosenCard) :
                 isValidForStandardPlay(chosenCard, getStackCard());
@@ -22,11 +22,14 @@ public class CardValidator {
     public boolean isValidForDefenceState(Card chosenCard) {
         return !roundManager.getCardsPlayedInTurn().isEmpty() && !chosenCard.isShadow() ?
                 isValidForMultiplePut(chosenCard) :
-                chosenCard.matchesRank(getStackCard());
+                chosenCard.matchesRank(getStackCard()) || isRightForDemand(chosenCard);
     }
 
     private boolean isValidForMultiplePut(Card chosenCard) {
         return chosenCard.matchesRank(roundManager.getCardsPlayedInTurn().get(0));
+    }
+    private boolean isRightForDemand(Card chosenCard){
+        return chosenCard.matchesRank(Rank.J) && getStackCard().isShadow();
     }
     private boolean isValidForStandardPlay(Card chosenCard, Card stackCard) {
         return canBePutOnEverything(chosenCard) ||

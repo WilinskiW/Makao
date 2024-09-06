@@ -1,11 +1,21 @@
 package com.wwil.makao.backend.states.management;
 
 import com.wwil.makao.backend.gameplay.RoundManager;
+import com.wwil.makao.backend.model.card.Ability;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
-import com.wwil.makao.backend.states.impl.*;
+import com.wwil.makao.backend.states.impl.choosing.ChoosingDemandState;
+import com.wwil.makao.backend.states.impl.choosing.ChoosingSuitState;
+import com.wwil.makao.backend.states.impl.DefenseState;
+import com.wwil.makao.backend.states.impl.NormalState;
+import com.wwil.makao.backend.states.impl.punish.BlockedState;
+import com.wwil.makao.backend.states.impl.punish.PullingState;
+import com.wwil.makao.backend.states.impl.punish.PunishState;
+import com.wwil.makao.backend.states.impl.rescue.DefenceRescueState;
+import com.wwil.makao.backend.states.impl.rescue.DemandRescueState;
+import com.wwil.makao.backend.states.impl.rescue.NormalRescueState;
 
 public class StateChanger {
     private final RoundManager roundManager;
@@ -16,41 +26,47 @@ public class StateChanger {
         this.stateContext = stateContext;
     }
 
-    public void applyDefaultState(Player player) {
-        changePlayerState(player, new DefaultState());
+    public void applyNormalState(Player player) {
+        changePlayerState(player, new NormalState());
     }
 
     public void applyDefenceState(Player player, Card attackingCard) {
         changePlayerState(player, new DefenseState(attackingCard));
     }
-
-    public void applyDefaultRescueState(Player player) {
-        changePlayerState(player, new DefaultRescueState());
+    public void applyRescueState(Player player) {
+        DefenseState defenseState = (DefenseState) player.getState();
+        if (defenseState.getAttackingCard().getRank().getAbility() == Ability.NONE) {
+            applyDemandRescueState(player);
+        } else {
+            applyDefenceRescueState(player);
+        }
     }
 
-    public void applyDemandRescueState(Player player){
+    public void applyNormalRescueState(Player player) {
+        changePlayerState(player, new NormalRescueState());
+    }
+
+    private void applyDemandRescueState(Player player){
         changePlayerState(player, new DemandRescueState());
     }
 
-    public void applyDefenceRescueState(Player player) {
+    private void applyDefenceRescueState(Player player) {
         boolean isAttackedByFour = roundManager.getDeckManager().peekStackCard().getRank() == Rank.FOUR;
         changePlayerState(player, new DefenceRescueState(isAttackedByFour));
     }
 
-    protected void applyPunishment(Player player) {
+    public void applyPunishment(Player player) {
         if (roundManager.getPullsCount() > 0) {
             applyPullingState(player);
-            handlePullingState(player);
         } else {
             applyBlockedState(player);
         }
     }
 
-    public void handlePullingState(Player player) {
-        PunishState pullingState = (PullingState) player.getState();
-        pullingState.decreaseAmount();
-        if (pullingState.getAmountOfPunishes() == 0) {
-            applyDefaultState(player);
+    public void handlePunishState(Player player, PunishState punish) {
+        punish.decreaseAmount();
+        if (punish.getAmountOfPunishes() <= 0) {
+            applyNormalState(player);
             roundManager.getCardsPlayedInTurn().clear();
         }
     }
@@ -74,6 +90,10 @@ public class StateChanger {
 
     private void applyBlockedState(Player player) {
         changePlayerState(player, new BlockedState(roundManager.giveAmountOfWaits()));
+    }
+
+    public void setActions(Player player, boolean put, boolean pull, boolean end) {
+        stateContext.activateActions(player, put, pull, end);
     }
 
     private void changePlayerState(Player player, State newState) {

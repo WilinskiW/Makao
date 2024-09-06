@@ -6,6 +6,7 @@ import com.wwil.makao.backend.gameplay.CardFinder;
 import com.wwil.makao.backend.model.card.Rank;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
+import com.wwil.makao.backend.states.management.StateChanger;
 
 public class DefenseState implements State {
     private final Card attackingCard;
@@ -50,6 +51,11 @@ public class DefenseState implements State {
     @Override
     public Card findValidCard(CardFinder cardFinder, Player player, Card stackCard) {
         return cardFinder.findBestCardForDefenceState(player);
+    }
+
+    @Override
+    public void handlePull(Player player, StateChanger changer) {
+        changer.applyRescueState(player);
     }
 
     @Override

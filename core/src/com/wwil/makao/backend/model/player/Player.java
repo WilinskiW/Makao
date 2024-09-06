@@ -1,7 +1,7 @@
 package com.wwil.makao.backend.model.player;
 
 import com.wwil.makao.backend.model.card.Card;
-import com.wwil.makao.backend.states.impl.DefaultState;
+import com.wwil.makao.backend.states.impl.NormalState;
 import com.wwil.makao.backend.states.State;
 
 import java.util.*;
@@ -12,7 +12,7 @@ public abstract class Player {
 
     public Player(List<Card> cards) {
         this.cards = cards;
-        this.state = new DefaultState();
+        this.state = new NormalState();
     }
     public abstract boolean isHuman();
 

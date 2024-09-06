@@ -5,17 +5,18 @@ import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.gameplay.CardFinder;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
+import com.wwil.makao.backend.states.management.StateChanger;
 
-public class DefaultRescueState implements State {
+public class NormalState implements State {
     private boolean isPutActive;
     private boolean isPullActive;
     private boolean isEndActive;
 
-    public DefaultRescueState() {
+    public NormalState() {
         setDefaultValueOfActivations();
     }
 
-    public DefaultRescueState(boolean isPutActive, boolean isPullActive, boolean isEndActive) {
+    public NormalState(boolean isPutActive, boolean isPullActive, boolean isEndActive) {
         this.isPutActive = isPutActive;
         this.isPullActive = isPullActive;
         this.isEndActive = isEndActive;
@@ -23,28 +24,30 @@ public class DefaultRescueState implements State {
 
     @Override
     public State saveState() {
-        return new DefaultRescueState(isPutActive, isPullActive, isEndActive);
+        return new NormalState(isPutActive, isPullActive, isEndActive);
     }
 
     @Override
     public void setDefaultValueOfActivations() {
         this.isPutActive = true;
-        this.isPullActive = false;
-        this.isEndActive = true;
-    }
-
-    @Override
-    public boolean isValid(Card chosenCard, CardValidator validator) {
-        return validator.isValidForDefaultState(chosenCard);
+        this.isPullActive = true;
+        this.isEndActive = false;
     }
 
     @Override
     public Card findValidCard(CardFinder cardFinder, Player player, Card stackCard) {
-        return cardFinder.findBestCardForDefaultState(player, stackCard);
+        return cardFinder.findBestForNormalState(player, stackCard);
     }
+
     @Override
-    public boolean isFocusDrawnCard() {
-        return true;
+    public boolean isValid(Card chosenCard, CardValidator validator) {
+        return validator.isValidForNormalState(chosenCard);
+    }
+
+    @Override
+    public void handlePull(Player player, StateChanger changer) {
+        changer.applyNormalRescueState(player);
+        changer.setActions(player,false,false,true);
     }
 
     @Override

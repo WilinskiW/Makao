@@ -1,33 +1,33 @@
-package com.wwil.makao.backend.states.impl;
+package com.wwil.makao.backend.states.impl.choosing;
 
-
+import com.wwil.makao.backend.gameplay.CardValidator;
+import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.states.State;
 
-public class BlockedState extends PunishState {
+public abstract class ChoosingState implements State {
+    private boolean isPutActive;
+    private boolean isPullActive;
+    private boolean isEndActive;
 
-    public BlockedState(int amountOfPunishes) {
-        super(amountOfPunishes);
+    public ChoosingState() {
         setDefaultValueOfActivations();
-    }
-
-    public BlockedState(int amountOfPunishes, boolean isPutActive, boolean isPullActive, boolean isEndActive) {
-        super(amountOfPunishes, isPutActive, isPullActive, isEndActive);
-    }
-
-    @Override
-    public State saveState() {
-        return new BlockedState(amountOfPunishes, isPutActive, isPullActive, isEndActive);
-    }
-
-    public boolean canUnblock() {
-        return amountOfPunishes == 0;
     }
 
     @Override
     public void setDefaultValueOfActivations() {
-        this.isPutActive = false;
+        this.isPutActive = true;
         this.isPullActive = false;
-        this.isEndActive = true;
+        this.isEndActive = false;
+    }
+
+    @Override
+    public boolean isValid(Card chosenCard, CardValidator validator) {
+        return validator.isValidForNormalState(chosenCard);
+    }
+
+    @Override
+    public boolean isChooserActive() {
+        return true;
     }
 
     @Override

@@ -1,6 +1,8 @@
-package com.wwil.makao.backend.states.impl;
+package com.wwil.makao.backend.states.impl.punish;
 
+import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
+import com.wwil.makao.backend.states.management.StateChanger;
 
 public class PullingState extends PunishState {
     public PullingState(int amountOfPunishes) {
@@ -22,6 +24,11 @@ public class PullingState extends PunishState {
         this.isPutActive = false;
         this.isPullActive = true;
         this.isEndActive = false;
+    }
+
+    @Override
+    public void handlePull(Player player, StateChanger changer) {
+        changer.handlePunishState(player, this);
     }
 
     @Override

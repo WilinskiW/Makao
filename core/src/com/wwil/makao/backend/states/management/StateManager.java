@@ -15,7 +15,7 @@ public class StateManager implements StateContext {
     public StateManager(RoundManager roundManager, PlayerManager playerManager) {
         this.playerManager = playerManager;
         this.stateChanger = new StateChanger(roundManager, this);
-        this.stateHandler = new StateHandler(stateChanger, new StateChecker(), this);
+        this.stateHandler = new StateHandler(stateChanger);
     }
 
     public void activateActions(Player player, boolean isPutActive, boolean isPullActive, boolean isEndActive) {
