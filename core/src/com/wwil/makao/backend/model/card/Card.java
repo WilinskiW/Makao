@@ -4,12 +4,13 @@ public class Card {
     private final Rank rank;
     private final Suit suit;
     private boolean isShadow;
+
     public Card(Rank rank, Suit suit) {
         this.rank = rank;
         this.suit = suit;
     }
 
-    public boolean matchesRank(Card other){
+    public boolean matchesRank(Card other) {
         return this.rank == other.getRank();
     }
 
@@ -19,9 +20,6 @@ public class Card {
 
     public boolean matchesSuit(Card other){
         return this.suit == other.suit;
-    }
-    public boolean canActiveChooser(Card card){
-        return card.matchesRank(Rank.J) || card.matchesRank(Rank.AS);
     }
 
     public Rank getRank() {

@@ -3,6 +3,7 @@ package com.wwil.makao.backend.model.card;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public enum Suit {
     HEART("kier"), DIAMOND("karo"), CLUB("trefl"), SPADE("pik"),
@@ -30,6 +31,11 @@ public enum Suit {
             }
         }
         return null;
+    }
+
+    public static Suit getRandom(){
+        int randomIndex = new Random().nextInt(getNormalSuits().size()-1);
+        return getNormalSuits().get(randomIndex);
     }
 
     Suit(String name) {

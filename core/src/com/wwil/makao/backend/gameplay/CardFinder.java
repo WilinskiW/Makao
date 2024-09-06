@@ -135,6 +135,10 @@ public class CardFinder {
             }
         }
 
+        if(maxIndex == 0){
+            return Suit.getRandom();
+        }
+
         return Suit.values()[maxIndex]; // Zwracanie koloru z największą liczbą wystąpień
     }
     public Card findCardForDemand(Player player) {

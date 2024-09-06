@@ -47,7 +47,7 @@ public class PlayExecutor {
     }
 
     private void addToStack(Card cardPlayed) {
-        roundManager.getDeckManager().getStack().addCardToStack(cardPlayed);
+        roundManager.getDeckManager().addToStack(cardPlayed);
     }
 
     private void removeCardFromPlayerHand(Card cardPlayed) {

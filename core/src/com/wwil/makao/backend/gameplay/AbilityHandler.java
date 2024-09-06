@@ -9,7 +9,6 @@ public class AbilityHandler {
     private final RoundManager roundManager;
     private final PlayerManager playerManager;
     private final StateManager stateManager;
-    private boolean isChooserStateActive;
 
     AbilityHandler(RoundManager roundManager, StateManager stateManager) {
         this.roundManager = roundManager;
@@ -19,11 +18,6 @@ public class AbilityHandler {
 
     void useCardAbility(PlayReport playReport) {
         Card card = playReport.getPlay().getCardPlayed();
-
-        if(isChooserStateActive){
-            card.setShadow(true);
-            isChooserStateActive = false;
-        }
 
         switch (card.getRank().getAbility()) {
             case CHANGE_SUIT:
@@ -53,8 +47,6 @@ public class AbilityHandler {
     private void changeSuit(PlayReport playReport) {
         if (!playReport.getPlay().getCardPlayed().isShadow()) {
             stateManager.getStateChanger().applyChoosingSuitState(playerManager.getCurrentPlayer());
-            isChooserStateActive = true;
-            playReport.setChooserActive(true);
         }
     }
 
@@ -71,8 +63,6 @@ public class AbilityHandler {
     private void demand(PlayReport playReport) {
         if (!playReport.getPlay().getCardPlayed().isShadow()) {
             stateManager.getStateChanger().applyChoosingDemandState(playerManager.getCurrentPlayer());
-            playReport.setChooserActive(true);
-            isChooserStateActive = true;
         }
     }
 
@@ -100,12 +90,11 @@ public class AbilityHandler {
     private void neutralizePullsFromAttackingKing() {
         if (roundManager.getPullsCount() > 0 && isStackCardKing()) {
             roundManager.clearAmountOfPulls();
-            stateManager.getStateChanger().applyDefaultState(playerManager.getCurrentPlayer());
         }
     }
 
     private boolean isStackCardKing() {
-        return roundManager.getDeckManager().isRankEqualsStackCardRank(Rank.K);
+        return roundManager.getDeckManager().peekStackCard().matchesRank(Rank.K);
     }
 
     private void createCard(PlayReport playReport) {

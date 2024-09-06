@@ -31,7 +31,7 @@ public class UIManager {
     public UIManager(GameController controller, GameplayScreen gameplayScreen) {
         this.controller = controller;
         this.gameplayScreen = gameplayScreen;
-        this.stackCardsGroup = new StackCardsGroup(controller.getBackend().getDeckManager());
+        this.stackCardsGroup = new StackCardsGroup();
         this.cardActorFactory = new CardActorFactory();
         this.handGroups = new ArrayList<>();
     }

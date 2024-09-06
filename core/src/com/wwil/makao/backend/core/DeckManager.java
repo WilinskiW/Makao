@@ -6,13 +6,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DeckManager {
     private final LinkedList<Card> gameDeck;
-    private final Stack stack = new Stack();
+    private final Stack stack;
 
     DeckManager() {
         this.gameDeck = createCardsToGameDeck();
+        this.stack = new Stack();
         //todo: Zmienic po testach
         //stack.addCardToStack(getStartStackCard());
         stack.addCardToStack(new Card(Rank.FIVE, Suit.SPADE));
@@ -41,28 +43,34 @@ public class DeckManager {
         return cards;
     }
 
+    public void addToStack(Card card) {
+        stack.addCardToStack(card);
+    }
+
     public Card peekStackCard() {
         return stack.peekCard();
     }
 
-    public boolean isRankEqualsStackCardRank(Rank rank) {
-        return rank == peekStackCard().getRank();
-    }
-
-     public Card takeCardFromGameDeck() {
+    public Card takeCardFromGameDeck() {
+        if (gameDeck.isEmpty()) {
+            refreshGameDeck();
+        }
         return gameDeck.pollLast();
     }
 
-    public boolean isRefreshNeeded() {
-        return stack.getCards().size() > 3;
+    private void refreshGameDeck() {
+        Card stackCard = stack.pollLast();
+        gameDeck.addAll(getStackCards(stackCard));
+        stack.getCards().clear();
+        stack.addCardToStack(stackCard);
     }
 
-    public List<Card> getGameDeck() {
-        return gameDeck;
+    private List<Card> getStackCards(Card lastStackCard) {
+        List<Card> cards = stack.getCards()
+                .stream()
+                .filter(card -> !card.isShadow())
+                .collect(Collectors.toList());
+        cards.remove(lastStackCard);
+        return cards;
     }
-
-    public Stack getStack() {
-        return stack;
-    }
-
 }

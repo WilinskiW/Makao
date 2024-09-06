@@ -76,7 +76,7 @@ public class GameStagePreparer {
         handGroup.setCardsAlignment(CardsAlignmentParams.getParamFromOrdinal(index));
 
         //todo  Metoda tylko wyłącznie do testów! Usuń po testach
-        test(index);
+        //test(index);
 
         for (Card card : handGroup.getPlayer().getCards()) {
             CardActor cardActor = cardActorFactory.createCardActor(card);
@@ -100,7 +100,7 @@ public class GameStagePreparer {
                 break;
             case 1:
                 backend.getPlayers().get(index).getCards().clear();
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.J, Suit.SPADE));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.AS, Suit.SPADE));
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.SEVEN, Suit.CLUB));
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
                 break;
