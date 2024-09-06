@@ -16,12 +16,10 @@ public class AbilityHandler {
         this.stateManager = stateManager;
     }
 
-    void useCardAbility(PlayReport playReport) {
-        Card card = playReport.getPlay().getCardPlayed();
-
+    void useCardAbility(Card card) {
         switch (card.getRank().getAbility()) {
             case CHANGE_SUIT:
-                changeSuit(playReport);
+                changeSuit(card);
                 break;
             case PLUS_2:
                 attackNext(2, card);
@@ -33,7 +31,7 @@ public class AbilityHandler {
                 blockNext(card);
                 break;
             case DEMAND:
-                demand(playReport);
+                demand(card);
                 break;
             case KING:
                 chooseAbilityForKing(card);
@@ -44,8 +42,8 @@ public class AbilityHandler {
         }
     }
 
-    private void changeSuit(PlayReport playReport) {
-        if (!playReport.getPlay().getCardPlayed().isShadow()) {
+    private void changeSuit(Card card) {
+        if (!card.isShadow()) {
             stateManager.getStateChanger().applyChoosingSuitState(playerManager.getCurrentPlayer());
         }
     }
@@ -60,8 +58,8 @@ public class AbilityHandler {
         stateManager.getStateChanger().applyDefenceState(playerManager.getNextPlayer(), card);
     }
 
-    private void demand(PlayReport playReport) {
-        if (!playReport.getPlay().getCardPlayed().isShadow()) {
+    private void demand(Card card) {
+        if (!card.isShadow()) {
             stateManager.getStateChanger().applyChoosingDemandState(playerManager.getCurrentPlayer());
         }
     }

@@ -7,7 +7,7 @@ public class PlayMaker {
     private final RoundManager roundManager;
     private final CardFinder cardFinder;
 
-    public PlayMaker(RoundManager roundManager) {
+    PlayMaker(RoundManager roundManager) {
         this.roundManager = roundManager;
         this.cardFinder = new CardFinder(roundManager.getValidator());
     }
@@ -48,15 +48,15 @@ public class PlayMaker {
         return player.getState().isEndActive();
     }
 
-    private Play makeEndPlay(Play play){
+    private Play makeEndPlay(Play play) {
         return play.setAction(Action.END);
     }
 
-    private Play createPullPlay(Play play){
+    private Play createPullPlay(Play play) {
         return play.setDrawnCard(pullCard()).setAction(Action.PULL);
     }
 
-    private Card pullCard(){
+    private Card pullCard() {
         return roundManager.getDeckManager().takeCardFromGameDeck();
     }
 }

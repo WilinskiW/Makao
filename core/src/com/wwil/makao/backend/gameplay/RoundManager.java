@@ -79,21 +79,17 @@ public class RoundManager {
         pullsCount = 0;
     }
 
-    public CardValidator getValidator() {
-        return validator;
-    }
-    public int getWaitsCount(){
-        return waitsCount;
-    }
-
     void increaseAmountOfWaits() {
         waitsCount++;
     }
-
     public int giveAmountOfWaits() {
         int amount = waitsCount;
         waitsCount = 0;
         return amount;
+    }
+
+    CardValidator getValidator() {
+        return validator;
     }
 
     public DeckManager getDeckManager() {
@@ -112,16 +108,16 @@ public class RoundManager {
         return cardsPlayedInTurn;
     }
 
+    public HumanPlayAnalyzer getHumanPlayAnalyzer() {
+        return humanPlayAnalyzer;
+    }
+
     StateManager getStateManager() {
         return stateManager;
     }
 
     RoundReport getRoundReport() {
         return roundReport;
-    }
-
-    public HumanPlayAnalyzer getHumanPlayAnalyzer() {
-        return humanPlayAnalyzer;
     }
 
     PlayExecutor getPlayExecutor() {

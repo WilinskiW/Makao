@@ -18,20 +18,6 @@ public enum Rank {
         this.name = name;
     }
 
-    public static Rank getRandomWithAbility() {
-        List<Rank> ranksForJoker = new ArrayList<>();
-        for (Rank rank : Rank.values()) {
-            if (!rank.ability.equals(Ability.NONE) &&
-                    !rank.ability.equals(Ability.WILD_CARD) &&
-                    !rank.ability.equals(Ability.ON_EVERYTHING)) {
-                ranksForJoker.add(rank);
-            }
-        }
-        Random random = new Random();
-        int randomIndex = random.nextInt(ranksForJoker.size());
-        return ranksForJoker.get(randomIndex);
-    }
-
     public static Rank getRandom(){
         return getRank(Integer.toString(new Random().nextInt(10)+5));
     }

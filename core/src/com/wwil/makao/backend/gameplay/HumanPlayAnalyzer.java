@@ -2,14 +2,13 @@ package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Human;
-import com.wwil.makao.backend.states.management.StateManager;
 
 public class HumanPlayAnalyzer {
     private final RoundManager roundManager;
     private final Human humanPlayer;
     private final PlayExecutor playExecutor;
 
-    public HumanPlayAnalyzer(RoundManager roundManager) {
+    HumanPlayAnalyzer(RoundManager roundManager) {
         this.roundManager = roundManager;
         this.humanPlayer = roundManager.getPlayerManager().getHumanPlayer();
         this.playExecutor = roundManager.getPlayExecutor();
@@ -40,7 +39,7 @@ public class HumanPlayAnalyzer {
             putPlayReport = playExecutor.createPlayReport(humanPlayer, humanPlay);
         } else {
             putPlayReport = new PlayReport(humanPlayer, humanPlay).setCardCorrect(false);
-            putPlayReport.setAfterState(humanPlayer.getState());
+            putPlayReport.setState(humanPlayer.getState());
         }
 
         roundManager.getRoundReport().addPlayRaport(putPlayReport);

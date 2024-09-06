@@ -23,15 +23,6 @@ public class RoundReport {
         return computerPlayReports;
     }
 
-    public boolean whetherPlayerPulledRescue(Player player) {
-        for (PlayReport playReport : playReports) {
-            if (playReport.getPlayer() == player && playReport.getPlay().getAction() == Action.PULL){
-                return true;
-            }
-        }
-        return false;
-    }
-
     public PlayReport getHumanLastPlayReport() {
         for(int i = playReports.size()-1; i >= 0; i--){
             if(playReports.get(i).getPlayer().isHuman()){

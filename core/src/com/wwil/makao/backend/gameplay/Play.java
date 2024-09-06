@@ -6,9 +6,6 @@ public class Play {
     private Card cardPlayed;
     private Card drawnCard;
     private Action action;
-    public Play(Card cardPlayed) {
-        this.cardPlayed = cardPlayed;
-    }
 
     public Play() {
     }
@@ -16,7 +13,6 @@ public class Play {
     public Card getCardPlayed() {
         return cardPlayed;
     }
-
 
     public Action getAction() {
         return action;
@@ -36,7 +32,7 @@ public class Play {
         return drawnCard;
     }
 
-    public Play setDrawnCard(Card drawnCard) {
+    Play setDrawnCard(Card drawnCard) {
         this.drawnCard = drawnCard;
         return this;
     }

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class CardFinder {
     private final CardValidator validator;
 
-    public CardFinder(CardValidator validator) {
+    CardFinder(CardValidator validator) {
         this.validator = validator;
     }
 
@@ -135,13 +135,14 @@ public class CardFinder {
             }
         }
 
-        if(maxIndex == 0){
+        if (maxIndex == 0) {
             return Suit.getRandom();
         }
 
         return Suit.values()[maxIndex]; // Zwracanie koloru z największą liczbą wystąpień
     }
-    public Card findCardForDemand(Player player, Card  stackCard) {
+
+    public Card findCardForDemand(Player player, Card stackCard) {
         List<Card> cards = player.getCards();
         Collections.shuffle(cards);
         for (Card card : cards) {
