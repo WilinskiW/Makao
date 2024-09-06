@@ -11,9 +11,8 @@ public class PlayReport {
     private final Play play;
     private Card drawn;
     private boolean isCardCorrect;
-    private boolean isChooserActive;
 
-    public PlayReport(Player player,Play play) {
+    public PlayReport(Player player, Play play) {
         this.play = play;
         this.beforeState = player.getState().saveState();
         this.player = player;
@@ -44,18 +43,11 @@ public class PlayReport {
         this.drawn = drawn;
     }
 
-    public boolean isChooserActive() {
-        return isChooserActive;
-    }
-
     public State getPlayerState() {
         return afterState;
     }
 
     public void setAfterState(State afterState) {
         this.afterState = afterState.saveState();
-    }
-    public void setChooserActive(boolean isChooserActive) {
-        this.isChooserActive = isChooserActive;
     }
 }

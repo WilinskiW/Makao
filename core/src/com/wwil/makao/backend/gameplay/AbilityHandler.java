@@ -39,7 +39,7 @@ public class AbilityHandler {
                 chooseAbilityForKing(card);
                 break;
             case WILD_CARD:
-                createCard(playReport);
+                //todo
                 break;
         }
     }
@@ -95,13 +95,5 @@ public class AbilityHandler {
 
     private boolean isStackCardKing() {
         return roundManager.getDeckManager().peekStackCard().matchesRank(Rank.K);
-    }
-
-    private void createCard(PlayReport playReport) {
-        if (playReport.getPlayer() == playerManager.getHumanPlayer()) {
-            if (!playReport.isChooserActive()) {
-                playReport.setChooserActive(true);
-            }
-        }
     }
 }

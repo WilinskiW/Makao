@@ -115,7 +115,7 @@ public class CardFinder {
     }
 
     public Card findCardForChangeSuit(Player player, Card stackCard) {
-        return new Card(stackCard.getRank(), giveMostDominantSuit(player));
+        return new Card(stackCard.getRank(), giveMostDominantSuit(player)).setShadow(true);
     }
 
     private Suit giveMostDominantSuit(Player player) {

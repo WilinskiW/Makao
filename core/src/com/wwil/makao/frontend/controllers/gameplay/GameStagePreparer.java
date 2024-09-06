@@ -76,7 +76,7 @@ public class GameStagePreparer {
         handGroup.setCardsAlignment(CardsAlignmentParams.getParamFromOrdinal(index));
 
         //todo  Metoda tylko wyłącznie do testów! Usuń po testach
-        //test(index);
+        test(index);
 
         for (Card card : handGroup.getPlayer().getCards()) {
             CardActor cardActor = cardActorFactory.createCardActor(card);
