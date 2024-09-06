@@ -141,7 +141,7 @@ public class CardFinder {
 
         return Suit.values()[maxIndex]; // Zwracanie koloru z największą liczbą wystąpień
     }
-    public Card findCardForDemand(Player player) {
+    public Card findCardForDemand(Player player, Card  stackCard) {
         List<Card> cards = player.getCards();
         Collections.shuffle(cards);
         for (Card card : cards) {
@@ -149,6 +149,6 @@ public class CardFinder {
                 return new Card(card.getRank(), card.getSuit()).setShadow(true);
             }
         }
-        return null;
+        return new Card(Rank.getRandom(), stackCard.getSuit());
     }
 }

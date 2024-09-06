@@ -93,7 +93,7 @@ public class GameStagePreparer {
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.J, Suit.HEART));
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.J, Suit.DIAMOND));
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.AS, Suit.CLUB));
-                backend.getPlayers().get(index).getCards().add(new Card(Rank.AS, Suit.SPADE));
+                backend.getPlayers().get(index).getCards().add(new Card(Rank.K, Suit.SPADE));
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.AS, Suit.HEART));
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.AS, Suit.DIAMOND));
                 backend.getPlayers().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));

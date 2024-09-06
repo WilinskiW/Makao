@@ -36,22 +36,20 @@ public class PlayExecutor {
 
     private void putCard(PlayReport playReport) {
         Card cardPlayed = playReport.getPlay().getCardPlayed();
+        Player player = playReport.getPlayer();
+
         abilityHandler.useCardAbility(playReport);
         if (!cardPlayed.isShadow()) {
-            removeCardFromPlayerHand(cardPlayed);
+            player.removeCardFromHand(cardPlayed);
         }
         addToStack(cardPlayed);
         addCardToPlayedCards(cardPlayed);
-        stateHandler.updateStateAfterPut(playReport.getPlayer(), playReport.getPlay().getCardPlayed());
+        stateHandler.updateStateAfterPut(player, cardPlayed);
         playReport.setAfterState(playReport.getPlayer().getState());
     }
 
     private void addToStack(Card cardPlayed) {
         roundManager.getDeckManager().addToStack(cardPlayed);
-    }
-
-    private void removeCardFromPlayerHand(Card cardPlayed) {
-        roundManager.getPlayerManager().getCurrentPlayer().removeCardFromHand(cardPlayed);
     }
 
     private void addCardToPlayedCards(Card cardPlayed) {

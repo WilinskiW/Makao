@@ -7,18 +7,16 @@ import com.wwil.makao.backend.states.management.StateManager;
 public class HumanPlayAnalyzer {
     private final RoundManager roundManager;
     private final Human humanPlayer;
-    private final StateManager stateManager;
     private final PlayExecutor playExecutor;
 
     public HumanPlayAnalyzer(RoundManager roundManager) {
         this.roundManager = roundManager;
         this.humanPlayer = roundManager.getPlayerManager().getHumanPlayer();
-        this.stateManager = roundManager.getStateManager();
         this.playExecutor = roundManager.getPlayExecutor();
     }
 
     public boolean isCardValid(Card cardPlayed) {
-        return stateManager.getPlayerState().isValid(cardPlayed, roundManager.getValidator());
+        return humanPlayer.getState().isValid(cardPlayed, roundManager.getValidator());
     }
 
     public RoundReport processHumanPlay(Play humanPlay) {

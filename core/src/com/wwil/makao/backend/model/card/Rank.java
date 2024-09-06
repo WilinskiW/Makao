@@ -32,6 +32,10 @@ public enum Rank {
         return ranksForJoker.get(randomIndex);
     }
 
+    public static Rank getRandom(){
+        return getRank(Integer.toString(new Random().nextInt(10)+5));
+    }
+
     public static Rank getRank(String nameOfRank) {
         for (Rank rank : values()) {
             if (rank.name.equals(nameOfRank)) {

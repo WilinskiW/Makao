@@ -19,7 +19,7 @@ public class StateManager implements StateContext {
     }
 
     public void activateActions(Player player, boolean isPutActive, boolean isPullActive, boolean isEndActive) {
-        State state = getPlayerState();
+        State state = player.getState();
         state.setPutActive(isPutActive);
         state.setPullActive(isPullActive);
         state.setEndActive(isEndActive);
@@ -33,11 +33,6 @@ public class StateManager implements StateContext {
     public void changeState(Player player, State newState) {
         player.changeState(newState);
     }
-    @Override
-    public State getPlayerState() {
-        return playerManager.getCurrentPlayer().getState();
-    }
-
     public StateChanger getStateChanger() {
         return stateChanger;
     }
