@@ -35,23 +35,31 @@ public class RoundManager {
     }
 
     RoundReport playRound() {
-        while (isComputerTurn() || hasSomeoneWon()) {
-            executePlays(playerManager.getCurrentPlayer());
+        while (isComputerTurn()) {
+            manageComputerRound();
         }
         return sendRoundReport();
     }
 
     private boolean isComputerTurn() {
-        return playerManager.getCurrentPlayer() != playerManager.getHumanPlayer();
+        return !playerManager.getCurrentPlayer().isHuman();
+    }
+
+    private void manageComputerRound(){
+        Player currentPlayer = playerManager.getCurrentPlayer();
+        while (true) {
+            Play play = playMaker.generatePlay(currentPlayer);
+            PlayReport playReport = playExecutor.createPlayReport(currentPlayer, play);
+            roundReport.addPlayRaport(playReport);
+
+            if (play.getAction() == Action.END || hasSomeoneWon()) {
+                break;
+            }
+        }
     }
 
     private boolean hasSomeoneWon() {
         return playerManager.getCurrentPlayer().checkIfPlayerHaveNoCards();
-    }
-
-    private void executePlays(Player player) {
-        Play play = playMaker.generatePlay(player);
-        roundReport.addPlayRaport(playExecutor.createPlayReport(player, play));
     }
 
     RoundReport sendRoundReport() {
