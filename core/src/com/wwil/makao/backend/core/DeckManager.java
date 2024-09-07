@@ -12,8 +12,7 @@ public class DeckManager {
     DeckManager() {
         this.gameDeck = createCardsToGameDeck();
         this.stack = new Stack();
-        //todo: Zmienic po testach
-        //stack.addCardToStack(getStartStackCard());
+        stack.addCardToStack(getStartStackCard());
         stack.addCardToStack(new Card(Rank.FIVE, Suit.SPADE));
     }
 
@@ -58,22 +57,15 @@ public class DeckManager {
         return peekStackCard();
     }
 
-
-
-
     public boolean isStackCardBeforeLastIsJoker() {
         List<Card> cards = stack.getCards();
         int size = cards.size();
 
-        // Upewnij się, że są co najmniej dwie karty w stosie
         if (size < 2) {
-            return false; // Nie ma przedostatniej karty
+            return false;
         }
 
-        // Uzyskaj przedostatnią kartę
         Card beforeLastCard = cards.get(size - 2);
-
-        // Sprawdź, czy przedostatnia karta to Joker
         return beforeLastCard.matchesRank(Rank.JOKER);
     }
 

@@ -51,6 +51,9 @@ public class CardValidator {
     }
 
     private Card getStackCard() {
+        if(deckManager.peekStackCard().isShadow()){
+            return deckManager.peekStackCard();
+        }
         return deckManager.getLastNonShadowCard();
     }
 }

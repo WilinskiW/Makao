@@ -76,7 +76,7 @@ public class GameStagePreparer {
         handGroup.setCardsAlignment(CardsAlignmentParams.getParamFromOrdinal(index));
 
         //todo  Metoda tylko wyłącznie do testów! Usuń po testach
-        test(index);
+        //test(index);
 
         for (Card card : handGroup.getPlayer().getCards()) {
             CardActor cardActor = cardActorFactory.createCardActor(card);
@@ -93,6 +93,7 @@ public class GameStagePreparer {
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.J, Suit.HEART));
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.J, Suit.SPADE));
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.AS, Suit.SPADE));
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.SIX, Suit.DIAMOND));
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.K, Suit.SPADE));
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.AS, Suit.HEART));
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.AS, Suit.DIAMOND));
@@ -100,13 +101,14 @@ public class GameStagePreparer {
                 break;
             case 1:
                 backend.getPlayerList().get(index).getCards().clear();
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.JOKER, Suit.RED));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.JOKER, Suit.BLACK));
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.J, Suit.SPADE));
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.SIX, Suit.HEART));
                 break;
             case 2:
                 backend.getPlayerList().get(index).getCards().clear();
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.SIX, Suit.DIAMOND));
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.SEVEN, Suit.DIAMOND));
                 break;
             case 3:
                 backend.getPlayerList().get(index).getCards().clear();

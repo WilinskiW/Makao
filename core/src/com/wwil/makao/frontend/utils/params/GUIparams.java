@@ -20,7 +20,7 @@ public class GUIparams {
    public static final float PUT_WIDTH = 299;
    public static final float PUT_HEIGHT = 40;
    public static final float DISTANCE_BETWEEN_CARDS = CARD_WIDTH/2.5f;
-   public static final boolean HIDE_COMPUTER_CARD = false;
+   public static final boolean HIDE_COMPUTER_CARD = true;
 
 
 }
