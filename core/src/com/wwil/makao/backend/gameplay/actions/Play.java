@@ -1,4 +1,4 @@
-package com.wwil.makao.backend.gameplay;
+package com.wwil.makao.backend.gameplay.actions;
 
 import com.wwil.makao.backend.model.card.Card;
 
@@ -28,11 +28,11 @@ public class Play {
         return this;
     }
 
-    Card getDrawnCard() {
+    public Card getDrawnCard() {
         return drawnCard;
     }
 
-    Play setDrawnCard(Card drawnCard) {
+    public Play setDrawnCard(Card drawnCard) {
         this.drawnCard = drawnCard;
         return this;
     }

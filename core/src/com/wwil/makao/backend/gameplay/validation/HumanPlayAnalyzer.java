@@ -1,5 +1,10 @@
-package com.wwil.makao.backend.gameplay;
+package com.wwil.makao.backend.gameplay.validation;
 
+import com.wwil.makao.backend.gameplay.actions.Play;
+import com.wwil.makao.backend.gameplay.actions.PlayReport;
+import com.wwil.makao.backend.gameplay.actions.RoundReport;
+import com.wwil.makao.backend.gameplay.management.PlayExecutor;
+import com.wwil.makao.backend.gameplay.management.RoundManager;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Human;
 
@@ -8,7 +13,7 @@ public class HumanPlayAnalyzer {
     private final Human humanPlayer;
     private final PlayExecutor playExecutor;
 
-    HumanPlayAnalyzer(RoundManager roundManager) {
+    public HumanPlayAnalyzer(RoundManager roundManager) {
         this.roundManager = roundManager;
         this.humanPlayer = roundManager.getPlayerManager().getHumanPlayer();
         this.playExecutor = roundManager.getPlayExecutor();

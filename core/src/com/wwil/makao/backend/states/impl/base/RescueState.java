@@ -1,4 +1,4 @@
-package com.wwil.makao.backend.states.impl.rescue;
+package com.wwil.makao.backend.states.impl.base;
 
 import com.wwil.makao.backend.states.State;
 

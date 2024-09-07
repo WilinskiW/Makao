@@ -1,7 +1,7 @@
 package com.wwil.makao.frontend.controllers.managers;
 
-import com.wwil.makao.backend.gameplay.PlayReport;
-import com.wwil.makao.backend.gameplay.RoundReport;
+import com.wwil.makao.backend.gameplay.actions.PlayReport;
+import com.wwil.makao.backend.gameplay.actions.RoundReport;
 import com.wwil.makao.frontend.utils.sound.SoundManager;
 import com.wwil.makao.frontend.entities.cards.CardActor;
 import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;

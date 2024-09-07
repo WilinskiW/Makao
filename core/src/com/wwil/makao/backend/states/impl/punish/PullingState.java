@@ -2,6 +2,7 @@ package com.wwil.makao.backend.states.impl.punish;
 
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
+import com.wwil.makao.backend.states.impl.base.PunishState;
 import com.wwil.makao.backend.states.management.StateChanger;
 
 public class PullingState extends PunishState {

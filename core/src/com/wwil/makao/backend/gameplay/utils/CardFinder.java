@@ -1,5 +1,7 @@
-package com.wwil.makao.backend.gameplay;
+package com.wwil.makao.backend.gameplay.utils;
 
+import com.wwil.makao.backend.core.DeckManager;
+import com.wwil.makao.backend.gameplay.validation.CardValidator;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
 import com.wwil.makao.backend.model.player.Player;
@@ -12,9 +14,9 @@ public class CardFinder {
     private final CardValidator validator;
     private final CardChooser cardChooser;
 
-    CardFinder(RoundManager roundManager) {
-        this.validator = roundManager.getValidator();
-        this.cardChooser = new CardChooser(roundManager.getDeckManager());
+    public CardFinder(CardValidator validator, DeckManager deckManager) {
+        this.validator = validator;
+        this.cardChooser = new CardChooser(deckManager);
     }
 
     public Card findCardForDefenceState(Player player) {

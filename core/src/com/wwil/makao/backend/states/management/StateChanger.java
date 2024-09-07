@@ -1,6 +1,6 @@
 package com.wwil.makao.backend.states.management;
 
-import com.wwil.makao.backend.gameplay.RoundManager;
+import com.wwil.makao.backend.gameplay.management.RoundManager;
 import com.wwil.makao.backend.model.card.Ability;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
@@ -14,7 +14,7 @@ import com.wwil.makao.backend.states.impl.NormalState;
 import com.wwil.makao.backend.states.impl.punish.BlockedState;
 import com.wwil.makao.backend.states.impl.punish.MakaoPunishState;
 import com.wwil.makao.backend.states.impl.punish.PullingState;
-import com.wwil.makao.backend.states.impl.punish.PunishState;
+import com.wwil.makao.backend.states.impl.base.PunishState;
 import com.wwil.makao.backend.states.impl.rescue.DefenceRescueState;
 import com.wwil.makao.backend.states.impl.rescue.DemandRescueState;
 import com.wwil.makao.backend.states.impl.rescue.NormalRescueState;
@@ -58,10 +58,10 @@ public class StateChanger {
     }
 
     public void applyPunishment(Player player) {
-        if (roundManager.getPullsCount() > 0) {
-            applyPullingState(player, roundManager.giveAmountOfPulls() - 1);
+        if (roundManager.getGameStateManager().getPullsCount() > 0) {
+            applyPullingState(player, roundManager.getGameStateManager().giveAmountOfPulls() - 1);
             //-1, bo odejmujemy pociągnięcie rescue card
-        } else if(roundManager.getWaitsCount() > 0) {
+        } else if(roundManager.getGameStateManager().getWaitsCount() > 0) {
             applyBlockedState(player);
         }
         else{
@@ -73,7 +73,7 @@ public class StateChanger {
         punish.decreaseAmount();
         if (punish.getAmountOfPunishes() <= 0) {
             applyNormalState(player);
-            roundManager.getCardsPlayedInTurn().clear();
+            roundManager.getGameStateManager().getCardsPlayedInTurn().clear();
         }
     }
 
@@ -106,7 +106,7 @@ public class StateChanger {
     }
 
     private void applyBlockedState(Player player) {
-        changePlayerState(player, new BlockedState(roundManager.giveAmountOfWaits()));
+        changePlayerState(player, new BlockedState(roundManager.getGameStateManager().giveAmountOfWaits()));
     }
 
     public void setActions(Player player, boolean put, boolean pull, boolean end) {

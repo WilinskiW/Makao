@@ -1,17 +1,23 @@
-package com.wwil.makao.backend.model.player;
+package com.wwil.makao.backend.gameplay.management;
 
 import com.wwil.makao.backend.core.DeckManager;
+import com.wwil.makao.backend.gameplay.utils.PlayerComebackHandler;
+import com.wwil.makao.backend.model.player.Computer;
+import com.wwil.makao.backend.model.player.Human;
+import com.wwil.makao.backend.model.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerManager {
+    private final PlayerComebackHandler playerComebackHandler;
     private final List<Player> players = new ArrayList<>();
     private Human humanPlayer;
     private int currentPlayerIndex = 0;
 
 
     public PlayerManager(int amountOfPlayers, int startingCards, DeckManager deckManager) {
+        this.playerComebackHandler = new PlayerComebackHandler(this);
         createHumanPlayer(startingCards,deckManager);
         createComputerPlayers(amountOfPlayers, startingCards, deckManager);
     }
@@ -28,21 +34,21 @@ public class PlayerManager {
         }
     }
 
-    public boolean shouldProceedToNextPlayer(Player player) {
+    boolean shouldProceedToNextPlayer(Player player) {
         return player == getCurrentPlayer();
     }
 
     public Player getCurrentPlayer() {
         return players.get(currentPlayerIndex);
     }
-    public void goToNextPlayer() {
+    void goToNextPlayer() {
         currentPlayerIndex++;
         if (currentPlayerIndex > players.size() - 1) {
             currentPlayerIndex = 0;
         }
     }
 
-    public void goToPreviousPlayer() {
+    void goToPreviousPlayer() {
         currentPlayerIndex--;
         if (currentPlayerIndex < 0) {
             currentPlayerIndex = players.size() - 1;
@@ -53,7 +59,7 @@ public class PlayerManager {
         currentPlayerIndex = 0;
     }
 
-    public Player getPreviousPlayer() {
+    Player getPreviousPlayer() {
         int playerBeforeIndex = currentPlayerIndex - 1;
         if (playerBeforeIndex < 0) {
             playerBeforeIndex = players.size() - 1;
@@ -61,7 +67,7 @@ public class PlayerManager {
         return players.get(playerBeforeIndex);
     }
 
-    public Player getNextPlayer() {
+    Player getNextPlayer() {
         int nextPlayerIndex = currentPlayerIndex + 1;
         if (nextPlayerIndex >= players.size()) {
             nextPlayerIndex = 0;
@@ -83,5 +89,9 @@ public class PlayerManager {
 
     public void setCurrentPlayerIndex(int currentPlayerIndex) {
         this.currentPlayerIndex = currentPlayerIndex;
+    }
+
+    public PlayerComebackHandler getPlayerComebackHandler() {
+        return playerComebackHandler;
     }
 }

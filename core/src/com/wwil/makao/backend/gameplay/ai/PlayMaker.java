@@ -1,6 +1,10 @@
-package com.wwil.makao.backend.gameplay;
+package com.wwil.makao.backend.gameplay.ai;
 
 import com.wwil.makao.backend.core.RuleParams;
+import com.wwil.makao.backend.gameplay.actions.Action;
+import com.wwil.makao.backend.gameplay.actions.Play;
+import com.wwil.makao.backend.gameplay.management.RoundManager;
+import com.wwil.makao.backend.gameplay.utils.CardFinder;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Human;
 import com.wwil.makao.backend.model.player.Player;
@@ -13,7 +17,7 @@ public class PlayMaker {
 
     PlayMaker(RoundManager roundManager) {
         this.roundManager = roundManager;
-        this.cardFinder = new CardFinder(roundManager);
+        this.cardFinder = new CardFinder(roundManager.getValidator(),roundManager.getDeckManager());
     }
 
     public Play generatePlay(Player player) {

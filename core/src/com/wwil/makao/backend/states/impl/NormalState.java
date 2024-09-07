@@ -1,8 +1,8 @@
 package com.wwil.makao.backend.states.impl;
 
-import com.wwil.makao.backend.gameplay.CardValidator;
+import com.wwil.makao.backend.gameplay.validation.CardValidator;
 import com.wwil.makao.backend.model.card.Card;
-import com.wwil.makao.backend.gameplay.CardFinder;
+import com.wwil.makao.backend.gameplay.utils.CardFinder;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
 import com.wwil.makao.backend.states.management.StateChanger;

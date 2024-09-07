@@ -1,6 +1,6 @@
-package com.wwil.makao.backend.states.impl.choosing;
+package com.wwil.makao.backend.states.impl.base;
 
-import com.wwil.makao.backend.gameplay.CardValidator;
+import com.wwil.makao.backend.gameplay.validation.CardValidator;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.states.State;
 

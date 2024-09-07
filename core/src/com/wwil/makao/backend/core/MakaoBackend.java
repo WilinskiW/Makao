@@ -1,11 +1,11 @@
 package com.wwil.makao.backend.core;
 
 
-import com.wwil.makao.backend.gameplay.Play;
-import com.wwil.makao.backend.gameplay.RoundManager;
-import com.wwil.makao.backend.gameplay.RoundReport;
+import com.wwil.makao.backend.gameplay.actions.Play;
+import com.wwil.makao.backend.gameplay.management.RoundManager;
+import com.wwil.makao.backend.gameplay.actions.RoundReport;
 import com.wwil.makao.backend.model.card.Card;
-import com.wwil.makao.backend.model.player.PlayerManager;
+import com.wwil.makao.backend.gameplay.management.PlayerManager;
 
 public class MakaoBackend {
     private final DeckManager deckManager;

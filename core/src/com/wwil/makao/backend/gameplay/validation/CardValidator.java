@@ -1,32 +1,33 @@
-package com.wwil.makao.backend.gameplay;
+package com.wwil.makao.backend.gameplay.validation;
 
 import com.wwil.makao.backend.core.DeckManager;
+import com.wwil.makao.backend.gameplay.management.GameStateManager;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
 
 public class CardValidator {
-    private final RoundManager roundManager;
+    private final GameStateManager gameStateManager;
     private final DeckManager deckManager;
 
-    CardValidator(RoundManager roundManager, DeckManager deckManager) {
-        this.roundManager = roundManager;
+    public CardValidator(GameStateManager gameStateManager, DeckManager deckManager) {
+        this.gameStateManager = gameStateManager;
         this.deckManager = deckManager;
     }
 
     public boolean isValidForNormalState(Card chosenCard) {
-        return !roundManager.getCardsPlayedInTurn().isEmpty() && !chosenCard.isShadow() ?
+        return !gameStateManager.getCardsPlayedInTurn().isEmpty() && !chosenCard.isShadow() ?
                 isValidForMultiplePut(chosenCard) :
                 isValidForStandardPlay(chosenCard, getStackCard());
     }
 
     public boolean isValidForDefenceState(Card chosenCard) {
-        return !roundManager.getCardsPlayedInTurn().isEmpty() && !chosenCard.isShadow() ?
+        return !gameStateManager.getCardsPlayedInTurn().isEmpty() && !chosenCard.isShadow() ?
                 isValidForMultiplePut(chosenCard) :
                 chosenCard.matchesRank(getStackCard()) || isRightForDemand(chosenCard) || isJoker(chosenCard);
     }
 
     private boolean isValidForMultiplePut(Card chosenCard) {
-        return chosenCard.matchesRank(roundManager.getCardsPlayedInTurn().get(0));
+        return chosenCard.matchesRank(gameStateManager.getCardsPlayedInTurn().get(0));
     }
     private boolean isRightForDemand(Card chosenCard){
         return chosenCard.matchesRank(Rank.J) && getStackCard().isShadow();

@@ -1,18 +1,16 @@
 package com.wwil.makao.backend.states.management;
 
-import com.wwil.makao.backend.gameplay.RoundManager;
+import com.wwil.makao.backend.gameplay.management.RoundManager;
 import com.wwil.makao.backend.model.player.Player;
-import com.wwil.makao.backend.model.player.PlayerManager;
+import com.wwil.makao.backend.gameplay.management.PlayerManager;
 import com.wwil.makao.backend.states.State;
 
-import java.util.List;
-
-public class StateManager implements StateContext {
+public class PlayerStateManager implements StateContext {
     private final PlayerManager playerManager;
     private final StateChanger stateChanger;
     private final StateHandler stateHandler;
 
-    public StateManager(RoundManager roundManager, PlayerManager playerManager) {
+    public PlayerStateManager(RoundManager roundManager, PlayerManager playerManager) {
         this.playerManager = playerManager;
         this.stateChanger = new StateChanger(roundManager, this);
         this.stateHandler = new StateHandler(stateChanger);

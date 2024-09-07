@@ -1,4 +1,4 @@
-package com.wwil.makao.backend.gameplay;
+package com.wwil.makao.backend.gameplay.utils;
 
 import com.wwil.makao.backend.core.DeckManager;
 import com.wwil.makao.backend.model.card.Ability;
