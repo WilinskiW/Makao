@@ -40,9 +40,10 @@ public class UIManager {
         new GameStagePreparer(this, controller.getBackend()).execute();
     }
 
-    public void updateButtonStates(boolean isPullActive, boolean isEndActive) {
+    public void updateButtonStates(boolean isPullActive, boolean isEndActive, boolean isMakaoActive) {
         pullButton.setActive(isPullActive);
         endTurnButton.setActive(isEndActive);
+        makaoButton.setActive(isMakaoActive);
     }
 
     public void changeCardColor(boolean isValid, CardActor cardActor) {

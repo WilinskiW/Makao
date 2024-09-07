@@ -21,6 +21,7 @@ public class RoundManager {
     private final List<Card> cardsPlayedInTurn;
     private int pullsCount = 0;
     private int waitsCount = 0;
+    private Integer previousMakaoPlayerIndex = null;
 
     public RoundManager(PlayerManager playerManager, DeckManager deckManager) {
         this.playerManager = playerManager;
@@ -52,9 +53,30 @@ public class RoundManager {
             PlayReport playReport = playExecutor.createPlayReport(currentPlayer, play);
             roundReport.addPlayRaport(playReport);
 
+            if(play.getAction() == Action.MAKAO){
+                saveCurrentIndexBeforeMakao();
+                playerManager.goToHumanPlayer();
+                break;
+            }
+
             if (play.getAction() == Action.END || hasSomeoneWon()) {
                 break;
             }
+        }
+    }
+
+    private void saveCurrentIndexBeforeMakao() {
+        previousMakaoPlayerIndex = playerManager.getCurrentPlayerIndex();
+    }
+
+    public boolean isPreviousMakaoPlayerIndexExist(){
+        return previousMakaoPlayerIndex != null;
+    }
+
+    public void returnToMakaoPlayer() {
+        if (previousMakaoPlayerIndex != null) {
+            playerManager.setCurrentPlayerIndex(previousMakaoPlayerIndex);
+            previousMakaoPlayerIndex = null;
         }
     }
 
@@ -85,6 +107,10 @@ public class RoundManager {
 
     public void clearAmountOfPulls() {
         pullsCount = 0;
+    }
+
+    public int getWaitsCount(){
+        return waitsCount;
     }
 
     void increaseAmountOfWaits() {

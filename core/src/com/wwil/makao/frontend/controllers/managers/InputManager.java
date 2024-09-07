@@ -36,7 +36,7 @@ public class InputManager {
 
     public void updateHumanAvailableActions(State state) {
         updateDragAndDropState(state);
-        uiManager.updateButtonStates(state.isPullActive(), state.isEndActive());
+        uiManager.updateButtonStates(state.isPullActive(), state.isEndActive(), state.isMakaoActive());
     }
 
     private void updateDragAndDropState(State state) {

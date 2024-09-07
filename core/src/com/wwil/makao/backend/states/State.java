@@ -48,4 +48,9 @@ public interface State {
     boolean isEndActive();
 
     void setEndActive(boolean endActive);
+    default boolean isMakaoActive(){
+        return false;
+    }
+
+    default void setMakaoActive(boolean makaoActive){}
 }

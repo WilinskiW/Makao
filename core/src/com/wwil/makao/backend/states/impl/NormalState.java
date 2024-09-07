@@ -11,6 +11,7 @@ public class NormalState implements State {
     private boolean isPutActive;
     private boolean isPullActive;
     private boolean isEndActive;
+    private boolean isMakaoActive;
 
     public NormalState() {
         setDefaultValueOfActivations();
@@ -50,6 +51,12 @@ public class NormalState implements State {
     }
 
     @Override
+    public void handleEnd(Player player, StateChanger changer) {
+        State.super.handleEnd(player, changer);
+        setMakaoActive(false);
+    }
+
+    @Override
     public boolean isPutActive() {
         return isPutActive;
     }
@@ -77,5 +84,15 @@ public class NormalState implements State {
     @Override
     public void setEndActive(boolean endActive) {
         this.isEndActive = endActive;
+    }
+
+    @Override
+    public boolean isMakaoActive() {
+        return isMakaoActive;
+    }
+
+    @Override
+    public void setMakaoActive(boolean makaoActive) {
+        this.isMakaoActive = makaoActive;
     }
 }

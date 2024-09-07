@@ -2,6 +2,7 @@ package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
+import com.wwil.makao.backend.model.player.Human;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.management.StateHandler;
 
@@ -78,7 +79,10 @@ public class PlayExecutor {
     }
 
     private void proceedToNextPlayerIfNeeded(Player currentPlayer) {
-        if (roundManager.getPlayerManager().shouldProceedToNextPlayer(currentPlayer)) {
+        if(roundManager.isPreviousMakaoPlayerIndexExist()){
+            roundManager.returnToMakaoPlayer();
+        }
+        else if (roundManager.getPlayerManager().shouldProceedToNextPlayer(currentPlayer)) {
             roundManager.getPlayerManager().goToNextPlayer();
         }
     }
@@ -101,7 +105,7 @@ public class PlayExecutor {
     }
 
     private PlayReport handleMakaoAction(Player player, PlayReport playReport) {
-        player.handleReportOfMakao(roundManager.getPlayerManager().getHumanPlayer(), stateHandler);
+        player.handleMakaoAction(roundManager.getPlayerManager().getHumanPlayer(), stateHandler);
         playReport.setState(player.getState());
         return playReport;
     }

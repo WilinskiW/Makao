@@ -1,8 +1,11 @@
 package com.wwil.makao.backend.gameplay;
 
+import com.wwil.makao.backend.core.RuleParams;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Human;
 import com.wwil.makao.backend.model.player.Player;
+
+import java.util.Random;
 
 public class PlayMaker {
     private final RoundManager roundManager;
@@ -15,8 +18,10 @@ public class PlayMaker {
 
     public Play generatePlay(Player player) {
         Play play = new Play();
-        if(isMakaoReportAvailable()){
-            return createMakaoPlay();
+        if (isMakaoReportAvailable()) {
+            if (wantToReport()) {
+                return createMakaoPlay();
+            }
         }
 
         if (isPutAvailable(player)) {
@@ -32,16 +37,21 @@ public class PlayMaker {
         }
     }
 
-    private boolean isMakaoReportAvailable(){
+    private boolean isMakaoReportAvailable() {
         return getHumanPlayer().isMakaoInform() && !getHumanPlayer().hasOneCard() ||
                 !getHumanPlayer().isMakaoInform() && getHumanPlayer().hasOneCard();
     }
 
-    private Human getHumanPlayer(){
+    private boolean wantToReport() {
+        Random random = new Random();
+        return random.nextInt(100) < RuleParams.CHANCE_FO_REPORT_FAIL_MAKAO;
+    }
+
+    private Human getHumanPlayer() {
         return roundManager.getPlayerManager().getHumanPlayer();
     }
 
-    private Play createMakaoPlay(){
+    private Play createMakaoPlay() {
         return new Play().setAction(Action.MAKAO);
     }
 

@@ -17,9 +17,7 @@ public abstract class Player {
     }
 
     public abstract boolean isHuman();
-
-    public abstract void handleReportOfMakao(Human human, StateHandler stateHandler);
-
+    public abstract void handleMakaoAction(Human humanPlayer, StateHandler  stateHandler);
     public boolean hasOneCard() {
         return cards.size() == 1;
     }

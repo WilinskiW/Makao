@@ -10,6 +10,7 @@ public class PlayerManager {
     private Human humanPlayer;
     private int currentPlayerIndex = 0;
 
+
     public PlayerManager(int amountOfPlayers, int startingCards, DeckManager deckManager) {
         createHumanPlayer(startingCards,deckManager);
         createComputerPlayers(amountOfPlayers, startingCards, deckManager);
@@ -34,7 +35,6 @@ public class PlayerManager {
     public Player getCurrentPlayer() {
         return players.get(currentPlayerIndex);
     }
-
     public void goToNextPlayer() {
         currentPlayerIndex++;
         if (currentPlayerIndex > players.size() - 1) {
@@ -47,6 +47,10 @@ public class PlayerManager {
         if (currentPlayerIndex < 0) {
             currentPlayerIndex = players.size() - 1;
         }
+    }
+
+    public void goToHumanPlayer(){
+        currentPlayerIndex = 0;
     }
 
     public Player getPreviousPlayer() {
@@ -69,7 +73,15 @@ public class PlayerManager {
         return players;
     }
 
+    public int getCurrentPlayerIndex() {
+        return currentPlayerIndex;
+    }
+
     public Human getHumanPlayer(){
         return humanPlayer;
+    }
+
+    public void setCurrentPlayerIndex(int currentPlayerIndex) {
+        this.currentPlayerIndex = currentPlayerIndex;
     }
 }

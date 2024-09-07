@@ -12,6 +12,7 @@ import com.wwil.makao.backend.states.impl.choosing.ChoosingSuitState;
 import com.wwil.makao.backend.states.impl.DefenseState;
 import com.wwil.makao.backend.states.impl.NormalState;
 import com.wwil.makao.backend.states.impl.punish.BlockedState;
+import com.wwil.makao.backend.states.impl.punish.MakaoPunishState;
 import com.wwil.makao.backend.states.impl.punish.PullingState;
 import com.wwil.makao.backend.states.impl.punish.PunishState;
 import com.wwil.makao.backend.states.impl.rescue.DefenceRescueState;
@@ -26,7 +27,6 @@ public class StateChanger {
         this.roundManager = roundManager;
         this.stateContext = stateContext;
     }
-
     public void applyNormalState(Player player) {
         changePlayerState(player, new NormalState());
     }
@@ -34,6 +34,7 @@ public class StateChanger {
     public void applyDefenceState(Player player, Card attackingCard) {
         changePlayerState(player, new DefenseState(attackingCard));
     }
+
     public void applyRescueState(Player player) {
         DefenseState defenseState = (DefenseState) player.getState();
         if (defenseState.getAttackingCard().getRank().getAbility() == Ability.NONE) {
@@ -47,7 +48,7 @@ public class StateChanger {
         changePlayerState(player, new NormalRescueState());
     }
 
-    private void applyDemandRescueState(Player player){
+    private void applyDemandRescueState(Player player) {
         changePlayerState(player, new DemandRescueState());
     }
 
@@ -60,8 +61,11 @@ public class StateChanger {
         if (roundManager.getPullsCount() > 0) {
             applyPullingState(player, roundManager.giveAmountOfPulls() - 1);
             //-1, bo odejmujemy pociągnięcie rescue card
-        } else {
+        } else if(roundManager.getWaitsCount() > 0) {
             applyBlockedState(player);
+        }
+        else{
+            applyMakaoPunishState(player);
         }
     }
 
@@ -73,7 +77,11 @@ public class StateChanger {
         }
     }
 
-    public void applyPullingState(Player player, int amount) {
+    private void applyMakaoPunishState(Player player){
+        changePlayerState(player, new MakaoPunishState());
+    }
+
+    private void applyPullingState(Player player, int amount) {
         changePlayerState(player, new PullingState(amount));
     }
 
@@ -85,11 +93,11 @@ public class StateChanger {
         changePlayerState(player, new ChoosingSuitState());
     }
 
-    public void applyChoosingCardState(Player player){
+    public void applyChoosingCardState(Player player) {
         changePlayerState(player, new ChoosingCardState(player.getState()));
     }
 
-    public boolean deactivateChoosing(Card card){
+    public boolean deactivateChoosing(Card card) {
         return (card.isShadow() && !roundManager.getDeckManager().isStackCardBeforeLastIsJoker());
     }
 

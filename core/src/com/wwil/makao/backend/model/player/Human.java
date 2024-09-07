@@ -17,9 +17,10 @@ public class Human extends Player{
     }
 
     @Override
-    public void handleReportOfMakao(Human human, StateHandler stateHandler) {
-        human.setMakaoInform(true);
+    public void handleMakaoAction(Human humanPlayer, StateHandler stateHandler) {
+        humanPlayer.setMakaoInform(true);
     }
+
 
     public boolean isMakaoInform() {
         return isMakaoInform;
