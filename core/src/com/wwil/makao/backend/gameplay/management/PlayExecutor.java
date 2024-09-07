@@ -1,8 +1,9 @@
-package com.wwil.makao.backend.gameplay;
+package com.wwil.makao.backend.gameplay.management;
 
+import com.wwil.makao.backend.gameplay.actions.Play;
+import com.wwil.makao.backend.gameplay.actions.PlayReport;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
-import com.wwil.makao.backend.model.player.Human;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.management.StateHandler;
 
@@ -42,7 +43,7 @@ public class PlayExecutor {
         Card cardPlayed = playReport.getPlay().getCardPlayed();
         Player player = playReport.getPlayer();
 
-        abilityHandler.useCardAbility(cardPlayed);
+        abilityHandler.useCardAbility(cardPlayed, roundManager.getDeckManager().peekStackCard());
         removeCardFromPlayerHand(player, cardPlayed);
         updateGameAfterPut(cardPlayed);
         updatePlayerStateAfterPut(player, cardPlayed, playReport);
@@ -57,7 +58,7 @@ public class PlayExecutor {
     private void updateGameAfterPut(Card cardPlayed) {
         roundManager.getDeckManager().addToStack(cardPlayed);
         if (!cardPlayed.matchesRank(Rank.JOKER)) {
-            roundManager.getCardsPlayedInTurn().add(cardPlayed);
+            roundManager.getGameStateManager().getCardsPlayedInTurn().add(cardPlayed);
         }
     }
 
@@ -67,7 +68,7 @@ public class PlayExecutor {
     }
 
     private PlayReport handleEndAction(PlayReport playReport) {
-        roundManager.getCardsPlayedInTurn().clear();
+        roundManager.getGameStateManager().getCardsPlayedInTurn().clear();
         updatePlayerStateAfterEnd(playReport);
         proceedToNextPlayerIfNeeded(playReport.getPlayer());
         return playReport;
@@ -79,8 +80,8 @@ public class PlayExecutor {
     }
 
     private void proceedToNextPlayerIfNeeded(Player currentPlayer) {
-        if(roundManager.isPreviousMakaoPlayerIndexExist()){
-            roundManager.returnToMakaoPlayer();
+        if(roundManager.getPlayerManager().getPlayerComebackHandler().isPreviousMakaoPlayerIndexExist()){
+            roundManager.getPlayerManager().getPlayerComebackHandler().returnToMakaoPlayer();
         }
         else if (roundManager.getPlayerManager().shouldProceedToNextPlayer(currentPlayer)) {
             roundManager.getPlayerManager().goToNextPlayer();
