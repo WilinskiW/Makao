@@ -8,7 +8,7 @@ import com.wwil.makao.backend.states.management.StateChanger;
 
 public class ChoosingDemandState extends ChoosingState{
     @Override
-    public State saveState() {
+    public State copyState() {
         return new ChoosingDemandState();
     }
 

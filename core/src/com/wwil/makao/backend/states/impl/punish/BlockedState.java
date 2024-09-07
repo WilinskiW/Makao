@@ -17,7 +17,7 @@ public class BlockedState extends PunishState {
     }
 
     @Override
-    public State saveState() {
+    public State copyState() {
         return new BlockedState(amountOfPunishes, isPutActive, isPullActive, isEndActive);
     }
 

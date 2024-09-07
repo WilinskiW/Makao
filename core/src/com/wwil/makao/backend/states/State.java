@@ -7,7 +7,7 @@ import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.management.StateChanger;
 
 public interface State {
-    State saveState();
+    State copyState();
 
     void setDefaultValueOfActivations();
 

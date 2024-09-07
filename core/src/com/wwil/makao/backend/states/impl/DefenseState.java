@@ -27,7 +27,7 @@ public class DefenseState implements State {
     }
 
     @Override
-    public State saveState() {
+    public State copyState() {
         return new DefenseState(attackingCard, isPutActive, isPullActive, isEndActive);
     }
 

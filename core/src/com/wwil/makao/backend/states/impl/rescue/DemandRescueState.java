@@ -19,7 +19,7 @@ public class DemandRescueState extends RescueState {
     }
 
     @Override
-    public State saveState() {
+    public State copyState() {
         return new DemandRescueState(isPutActive, isPullActive, isEndActive);
     }
 

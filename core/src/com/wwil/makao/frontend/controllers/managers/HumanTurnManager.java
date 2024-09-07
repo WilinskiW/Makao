@@ -27,7 +27,7 @@ public class HumanTurnManager extends TurnManager {
                 break;
         }
 
-        if (currentPlayReport.getState().isChooserActive()) {
+        if (currentPlayReport.getState().isChooserActive() && currentPlayReport.isCardCorrect()) {
             showCardChooser(inputManager.getChosenCardActor());
         }
 

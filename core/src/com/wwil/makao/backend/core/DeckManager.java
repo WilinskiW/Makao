@@ -48,6 +48,18 @@ public class DeckManager {
         return stack.peekCard();
     }
 
+    public Card getLastNonShadowCard(){
+        for(int i = stack.getCards().size()-1; i >= 0; i--){
+            Card card = stack.getCards().get(i);
+            if(!card.isShadow() && !card.matchesRank(Rank.JOKER)){
+                return stack.getCards().get(i);
+            }
+        }
+        return peekStackCard();
+    }
+
+
+
 
     public boolean isStackCardBeforeLastIsJoker() {
         List<Card> cards = stack.getCards();

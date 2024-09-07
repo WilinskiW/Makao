@@ -23,7 +23,7 @@ public class NormalState implements State {
     }
 
     @Override
-    public State saveState() {
+    public State copyState() {
         return new NormalState(isPutActive, isPullActive, isEndActive);
     }
 

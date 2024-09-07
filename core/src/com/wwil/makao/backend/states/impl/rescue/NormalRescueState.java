@@ -19,7 +19,7 @@ public class NormalRescueState extends RescueState {
     }
 
     @Override
-    public State saveState() {
+    public State copyState() {
         return new NormalRescueState(isPutActive, isPullActive, isEndActive);
     }
 

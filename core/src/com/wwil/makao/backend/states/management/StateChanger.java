@@ -86,7 +86,7 @@ public class StateChanger {
     }
 
     public void applyChoosingCardState(Player player){
-        changePlayerState(player, new ChoosingCardState());
+        changePlayerState(player, new ChoosingCardState(player.getState()));
     }
 
     public boolean deactivateChoosing(Card card){

@@ -15,7 +15,7 @@ public class PullingState extends PunishState {
     }
 
     @Override
-    public State saveState() {
+    public State copyState() {
         return new PullingState(amountOfPunishes, isPutActive, isPullActive, isEndActive);
     }
 

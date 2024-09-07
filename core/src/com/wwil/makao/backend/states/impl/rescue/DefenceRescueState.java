@@ -23,7 +23,7 @@ public class DefenceRescueState extends RescueState {
     }
 
     @Override
-    public State saveState() {
+    public State copyState() {
         return new DefenceRescueState(isAttackByFour, isPutActive, isPullActive, isEndActive);
     }
 
