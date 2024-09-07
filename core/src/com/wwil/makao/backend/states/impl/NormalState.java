@@ -47,7 +47,6 @@ public class NormalState implements State {
     @Override
     public void handlePull(Player player, StateChanger changer) {
         changer.applyNormalRescueState(player);
-        changer.setActions(player,false,false,true);
     }
 
     @Override

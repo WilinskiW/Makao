@@ -100,7 +100,7 @@ public class GameStagePreparer {
                 break;
             case 1:
                 backend.getPlayerList().get(index).getCards().clear();
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.AS, Suit.SPADE));
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.K, Suit.SPADE));
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.SEVEN, Suit.CLUB));
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
                 break;

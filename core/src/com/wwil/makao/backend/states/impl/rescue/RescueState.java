@@ -7,11 +7,6 @@ public abstract class RescueState implements State {
     protected boolean isPullActive;
     protected boolean isEndActive;
     @Override
-    public State saveState() {
-        return new NormalRescueState(isPutActive, isPullActive, isEndActive);
-    }
-
-    @Override
     public void setDefaultValueOfActivations() {
         this.isPutActive = true;
         this.isPullActive = false;

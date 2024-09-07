@@ -8,10 +8,6 @@ import com.wwil.makao.backend.states.State;
 import com.wwil.makao.backend.states.management.StateChanger;
 
 public class NormalRescueState extends RescueState {
-    private boolean isPutActive;
-    private boolean isPullActive;
-    private boolean isEndActive;
-
     public NormalRescueState() {
         setDefaultValueOfActivations();
     }
@@ -27,12 +23,6 @@ public class NormalRescueState extends RescueState {
         return new NormalRescueState(isPutActive, isPullActive, isEndActive);
     }
 
-    @Override
-    public void setDefaultValueOfActivations() {
-        this.isPutActive = true;
-        this.isPullActive = false;
-        this.isEndActive = true;
-    }
 
     @Override
     public boolean isValid(Card chosenCard, CardValidator validator) {
