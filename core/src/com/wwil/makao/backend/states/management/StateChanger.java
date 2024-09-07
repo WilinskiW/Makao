@@ -58,7 +58,8 @@ public class StateChanger {
 
     public void applyPunishment(Player player) {
         if (roundManager.getPullsCount() > 0) {
-            applyPullingState(player);
+            applyPullingState(player, roundManager.giveAmountOfPulls() - 1);
+            //-1, bo odejmujemy pociągnięcie rescue card
         } else {
             applyBlockedState(player);
         }
@@ -72,9 +73,8 @@ public class StateChanger {
         }
     }
 
-    private void applyPullingState(Player player) {
-        changePlayerState(player, new PullingState(roundManager.giveAmountOfPulls() - 1));
-        //-1, bo odejmujemy pociągnięcie rescue card
+    public void applyPullingState(Player player, int amount) {
+        changePlayerState(player, new PullingState(amount));
     }
 
     public void applyChoosingDemandState(Player player) {

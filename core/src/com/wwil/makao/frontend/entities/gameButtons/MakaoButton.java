@@ -14,7 +14,7 @@ public class MakaoButton extends GameButton {
                 new Texture(Gdx.files.internal("buttons/MakaoButton_unclick.png")),
                 new Texture(Gdx.files.internal("buttons/MakaoButton_click.png")));
         this.controller = controller;
-        setActive(false);
+        setActive(true);
     }
 
     @Override

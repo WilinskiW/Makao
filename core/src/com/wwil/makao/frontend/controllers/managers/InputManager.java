@@ -12,7 +12,6 @@ public class InputManager {
     private CardActor chosenCardActor;
     private boolean inputBlockActive;
 
-
     public InputManager(GameController controller) {
         this.uiManager = controller.getUiManager();
         this.dragAndDropManager = new DragAndDropManager(controller, this, uiManager.getStackCardsGroup());
@@ -30,6 +29,7 @@ public class InputManager {
 
     public void turnOnHumanInput() {
         inputBlockActive = false;
+        uiManager.getMakaoButton().setActive(true);
         updateHumanAvailableActions(uiManager.getHumanHandGroup().getPlayer().getState());
         Gdx.input.setInputProcessor(uiManager.getGameplayScreen().getStage());
     }
@@ -38,7 +38,6 @@ public class InputManager {
         updateDragAndDropState(state);
         uiManager.updateButtonStates(state.isPullActive(), state.isEndActive());
     }
-
 
     private void updateDragAndDropState(State state) {
         if (state.isFocusDrawnCard() && state.isPutActive()) {
@@ -51,7 +50,6 @@ public class InputManager {
             uiManager.changeTransparencyOfPlayerGroup(uiManager.getHumanHandGroup(), 0.25f);
         }
     }
-
 
     public DragAndDropManager getDragAndDropManager() {
         return dragAndDropManager;

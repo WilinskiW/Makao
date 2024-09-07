@@ -3,6 +3,7 @@ package com.wwil.makao.backend.model.player;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.states.impl.NormalState;
 import com.wwil.makao.backend.states.State;
+import com.wwil.makao.backend.states.management.StateHandler;
 
 import java.util.*;
 
@@ -14,8 +15,12 @@ public abstract class Player {
         this.cards = cards;
         this.state = new NormalState();
     }
+
     public abstract boolean isHuman();
-    public boolean hasOneCard(){
+
+    public abstract void handleReportOfMakao(Human human, StateHandler stateHandler);
+
+    public boolean hasOneCard() {
         return cards.size() == 1;
     }
 
@@ -30,12 +35,15 @@ public abstract class Player {
     public boolean checkIfPlayerHaveNoCards() {
         return cards.isEmpty();
     }
-    public void changeState(State state){
+
+    public void changeState(State state) {
         this.state = state;
     }
-    public State getState(){
+
+    public State getState() {
         return state;
     }
+
     public List<Card> getCards() {
         return cards;
     }

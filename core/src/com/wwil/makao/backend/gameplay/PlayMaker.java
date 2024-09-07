@@ -1,6 +1,7 @@
 package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.backend.model.player.Human;
 import com.wwil.makao.backend.model.player.Player;
 
 public class PlayMaker {
@@ -14,6 +15,10 @@ public class PlayMaker {
 
     public Play generatePlay(Player player) {
         Play play = new Play();
+        if(isMakaoReportAvailable()){
+            return createMakaoPlay();
+        }
+
         if (isPutAvailable(player)) {
             if (tryPut(play, player)) {
                 return play;
@@ -21,10 +26,23 @@ public class PlayMaker {
         }
 
         if (isEndAvailable(player)) {
-            return makeEndPlay(play);
+            return createEndPlay(play);
         } else {
             return createPullPlay(play);
         }
+    }
+
+    private boolean isMakaoReportAvailable(){
+        return getHumanPlayer().isMakaoInform() && !getHumanPlayer().hasOneCard() ||
+                !getHumanPlayer().isMakaoInform() && getHumanPlayer().hasOneCard();
+    }
+
+    private Human getHumanPlayer(){
+        return roundManager.getPlayerManager().getHumanPlayer();
+    }
+
+    private Play createMakaoPlay(){
+        return new Play().setAction(Action.MAKAO);
     }
 
     private boolean isPutAvailable(Player player) {
@@ -48,7 +66,7 @@ public class PlayMaker {
         return player.getState().isEndActive();
     }
 
-    private Play makeEndPlay(Play play) {
+    private Play createEndPlay(Play play) {
         return play.setAction(Action.END);
     }
 

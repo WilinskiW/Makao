@@ -101,6 +101,7 @@ public class PlayExecutor {
     }
 
     private PlayReport handleMakaoAction(Player player, PlayReport playReport) {
+        player.handleReportOfMakao(roundManager.getPlayerManager().getHumanPlayer(), stateHandler);
         playReport.setState(player.getState());
         return playReport;
     }
