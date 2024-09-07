@@ -1,9 +1,7 @@
 package com.wwil.makao.backend.gameplay;
 
-import com.wwil.makao.backend.model.card.Ability;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
-import com.wwil.makao.backend.model.card.Suit;
 import com.wwil.makao.backend.model.player.Player;
 
 import java.util.*;
@@ -12,12 +10,14 @@ import java.util.stream.Collectors;
 //Szuka kart dla komputera
 public class CardFinder {
     private final CardValidator validator;
+    private final CardChooser cardChooser;
 
-    CardFinder(CardValidator validator) {
-        this.validator = validator;
+    CardFinder(RoundManager roundManager) {
+        this.validator = roundManager.getValidator();
+        this.cardChooser = new CardChooser(roundManager.getDeckManager());
     }
 
-    public Card findBestCardForDefenceState(Player player) {
+    public Card findCardForDefenceState(Player player) {
         List<Card> defensiveCards = findDefensiveCards(player.getCards());
 
         if (defensiveCards.isEmpty()) {
@@ -50,7 +50,7 @@ public class CardFinder {
         return elements.get(new Random().nextInt(elements.size()));
     }
 
-    public Card findBestForNormalState(Player player, Card stackCard) {
+    public Card findForNormalState(Player player, Card stackCard) {
         List<Card> playableCards = findPlayableCards(player);
 
         if (playableCards.isEmpty()) {
@@ -114,42 +114,8 @@ public class CardFinder {
         return card.matchesSuit(stackCard) || card.matchesSuit(stackCard);
     }
 
-    public Card findCardForChangeSuit(Player player, Card stackCard) {
-        return new Card(stackCard.getRank(), giveMostDominantSuit(player)).setShadow(true);
-    }
-
-    private Suit giveMostDominantSuit(Player player) {
-        int[] counts = new int[4]; // Tablica przechowująca liczbę wystąpień dla każdego koloru
-
-        for (Card card : player.getCards()) {
-            Suit cardSuit = card.getSuit();
-            if (cardSuit != Suit.BLACK && cardSuit != Suit.RED) { // Pomijanie BLACK i RED
-                counts[cardSuit.ordinal()]++; // Inkrementacja odpowiedniego licznika
-            }
-        }
-
-        int maxIndex = 0;
-        for (int i = 1; i < counts.length; i++) {
-            if (counts[i] > counts[maxIndex]) {
-                maxIndex = i;
-            }
-        }
-
-        if (maxIndex == 0) {
-            return Suit.getRandom();
-        }
-
-        return Suit.values()[maxIndex]; // Zwracanie koloru z największą liczbą wystąpień
-    }
-
-    public Card findCardForDemand(Player player, Card stackCard) {
-        List<Card> cards = player.getCards();
-        Collections.shuffle(cards);
-        for (Card card : cards) {
-            if (card.getRank().getAbility() == Ability.NONE) {
-                return new Card(card.getRank(), card.getSuit()).setShadow(true);
-            }
-        }
-        return new Card(Rank.getRandom(), stackCard.getSuit());
+    public CardChooser getCardChooser() {
+        return cardChooser;
     }
 }
+

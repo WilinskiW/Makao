@@ -21,7 +21,7 @@ public class ChoosingCardState extends ChoosingState {
 
     @Override
     public Card findValidCard(CardFinder cardFinder, Player player, Card stackCard) {
-        return previousState.findValidCard(cardFinder, player, stackCard);
+        return cardFinder.getCardChooser().chooseCardForWildCard(previousState);
     }
 
     @Override

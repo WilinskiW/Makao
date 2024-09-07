@@ -9,7 +9,7 @@ public class PlayMaker {
 
     PlayMaker(RoundManager roundManager) {
         this.roundManager = roundManager;
-        this.cardFinder = new CardFinder(roundManager.getValidator());
+        this.cardFinder = new CardFinder(roundManager);
     }
 
     public Play generatePlay(Player player) {

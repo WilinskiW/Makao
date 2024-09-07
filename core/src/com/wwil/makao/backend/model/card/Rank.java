@@ -1,8 +1,8 @@
 package com.wwil.makao.backend.model.card;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public enum Rank {
     AS(Ability.CHANGE_SUIT, "AS"), TWO(Ability.PLUS_2, "2"), THREE(Ability.PLUS_3, "3"),
@@ -18,8 +18,30 @@ public enum Rank {
         this.name = name;
     }
 
-    public static Rank getRandom(){
-        return getRank(Integer.toString(new Random().nextInt(10)+5));
+    public static Rank getRandomNonFunctional() {
+        List<Rank> nonFunctional = getNonFunctionalRanks();
+        Collections.shuffle(nonFunctional);
+        return nonFunctional.get(0);
+    }
+
+    public static Rank getRandomAttackingRank() {
+        List<Rank> attackingRanks = new ArrayList<>(Arrays.asList(Rank.values()));
+        takeAwayNonAttackingRanks(attackingRanks);
+        Collections.shuffle(attackingRanks);
+        return attackingRanks.get(0);
+    }
+
+    private static void takeAwayNonAttackingRanks(List<Rank> attackingRanks){
+        List<Rank> nonFunctionalRanks = getNonFunctionalRanks();
+        attackingRanks.removeAll(nonFunctionalRanks);
+        attackingRanks.remove(Rank.JOKER);
+        attackingRanks.remove(Rank.Q);
+    }
+
+    private static List<Rank> getNonFunctionalRanks() {
+        return Stream.of(Rank.values())
+                .filter(rank -> rank.getAbility() == Ability.NONE)
+                .collect(Collectors.toList());
     }
 
     public static Rank getRank(String nameOfRank) {
@@ -30,6 +52,7 @@ public enum Rank {
         }
         return null;
     }
+
     public Ability getAbility() {
         return ability;
     }

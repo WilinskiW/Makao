@@ -50,7 +50,7 @@ public class DefenseState implements State {
 
     @Override
     public Card findValidCard(CardFinder cardFinder, Player player, Card stackCard) {
-        return cardFinder.findBestCardForDefenceState(player);
+        return cardFinder.findCardForDefenceState(player);
     }
 
     @Override

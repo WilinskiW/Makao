@@ -36,7 +36,7 @@ public class NormalState implements State {
 
     @Override
     public Card findValidCard(CardFinder cardFinder, Player player, Card stackCard) {
-        return cardFinder.findBestForNormalState(player, stackCard);
+        return cardFinder.findForNormalState(player, stackCard);
     }
 
     @Override

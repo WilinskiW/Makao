@@ -1,6 +1,7 @@
 package com.wwil.makao.backend.gameplay;
 
 import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.backend.model.card.Rank;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.management.StateHandler;
 
@@ -52,7 +53,9 @@ public class PlayExecutor {
 
     private void updateGameAfterPut(Card cardPlayed) {
         roundManager.getDeckManager().addToStack(cardPlayed);
-        roundManager.getCardsPlayedInTurn().add(cardPlayed);
+        if (!cardPlayed.matchesRank(Rank.JOKER)) {
+            roundManager.getCardsPlayedInTurn().add(cardPlayed);
+        }
     }
 
     private void updatePlayerStateAfterPut(Player player, Card cardPlayed, PlayReport playReport) {

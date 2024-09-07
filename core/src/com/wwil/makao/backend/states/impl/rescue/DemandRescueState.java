@@ -5,7 +5,6 @@ import com.wwil.makao.backend.gameplay.CardValidator;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
-import com.wwil.makao.backend.states.impl.rescue.NormalRescueState;
 
 public class DemandRescueState extends RescueState {
     public DemandRescueState() {
@@ -30,6 +29,6 @@ public class DemandRescueState extends RescueState {
 
     @Override
     public Card findValidCard(CardFinder cardFinder, Player player, Card stackCard) {
-        return cardFinder.findBestCardForDefenceState(player);
+        return cardFinder.findCardForDefenceState(player);
     }
 }

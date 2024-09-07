@@ -22,7 +22,7 @@ public class CardValidator {
     public boolean isValidForDefenceState(Card chosenCard) {
         return !roundManager.getCardsPlayedInTurn().isEmpty() && !chosenCard.isShadow() ?
                 isValidForMultiplePut(chosenCard) :
-                chosenCard.matchesRank(getStackCard()) || isRightForDemand(chosenCard) || isCardJoker(chosenCard);
+                chosenCard.matchesRank(getStackCard()) || isRightForDemand(chosenCard) || isJoker(chosenCard);
     }
 
     private boolean isValidForMultiplePut(Card chosenCard) {
@@ -33,16 +33,20 @@ public class CardValidator {
     }
     private boolean isValidForStandardPlay(Card chosenCard, Card stackCard) {
         return canBePutOnEverything(chosenCard) ||
-                canBePutOnEverything(stackCard) ||
+                isQueen(stackCard) ||
                 chosenCard.matchesRank(stackCard) ||
                 chosenCard.matchesSuit(stackCard);
     }
 
     private boolean canBePutOnEverything(Card card) {
-        return card.matchesRank(Rank.Q) || isCardJoker(card);
+        return isQueen(card) || isJoker(card);
     }
 
-    private boolean isCardJoker(Card card){
+    private boolean isQueen(Card card){
+        return card.matchesRank(Rank.Q);
+    }
+
+    private boolean isJoker(Card card){
         return card.matchesRank(Rank.JOKER);
     }
 

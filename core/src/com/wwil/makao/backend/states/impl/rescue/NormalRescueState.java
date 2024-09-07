@@ -31,7 +31,7 @@ public class NormalRescueState extends RescueState {
 
     @Override
     public Card findValidCard(CardFinder cardFinder, Player player, Card stackCard) {
-        return cardFinder.findBestForNormalState(player, stackCard);
+        return cardFinder.findForNormalState(player, stackCard);
     }
 
     @Override

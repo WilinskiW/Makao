@@ -14,7 +14,7 @@ public class ChoosingDemandState extends ChoosingState{
 
     @Override
     public Card findValidCard(CardFinder cardFinder, Player player, Card stackCard) {
-        return cardFinder.findCardForDemand(player, stackCard);
+        return cardFinder.getCardChooser().chooseCardForDemand(player);
     }
 
     @Override

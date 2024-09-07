@@ -5,6 +5,7 @@ import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.gameplay.CardFinder;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
+import com.wwil.makao.backend.states.impl.punish.PunishState;
 import com.wwil.makao.backend.states.management.StateChanger;
 
 public class DefenceRescueState extends RescueState {
@@ -46,12 +47,13 @@ public class DefenceRescueState extends RescueState {
 
     @Override
     public Card findValidCard(CardFinder cardFinder, Player player, Card stackCard) {
-        return cardFinder.findBestCardForDefenceState(player);
+        return cardFinder.findCardForDefenceState(player);
     }
 
     @Override
     public void handlePull(Player player, StateChanger changer) {
         changer.applyPunishment(player);
+        changer.handlePunishState(player, (PunishState) player.getState());
     }
 
     @Override

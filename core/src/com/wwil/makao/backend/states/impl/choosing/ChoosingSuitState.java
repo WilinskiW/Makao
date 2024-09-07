@@ -15,7 +15,7 @@ public class ChoosingSuitState extends ChoosingState {
 
     @Override
     public Card findValidCard(CardFinder cardFinder, Player player, Card stackCard) {
-        return cardFinder.findCardForChangeSuit(player, stackCard);
+        return cardFinder.getCardChooser().chooseCardForChangeSuit(player);
     }
 
     @Override
