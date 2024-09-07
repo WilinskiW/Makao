@@ -2,7 +2,6 @@ package com.wwil.makao.frontend.controllers.managers;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
-import com.wwil.makao.backend.states.State;
 import com.wwil.makao.frontend.controllers.gameplay.GameController;
 import com.wwil.makao.frontend.controllers.gameplay.GameStagePreparer;
 import com.wwil.makao.frontend.controllers.gameplay.GameplayScreen;
@@ -26,6 +25,7 @@ public class UIManager {
     private CardChooserGroup cardChooser;
     private GameButton pullButton;
     private GameButton endTurnButton;
+    private GameButton makaoButton;
 
 
     public UIManager(GameController controller, GameplayScreen gameplayScreen) {
@@ -142,5 +142,13 @@ public class UIManager {
 
     public void setEndTurnButton(GameButton endTurnButton) {
         this.endTurnButton = endTurnButton;
+    }
+
+    public GameButton getMakaoButton() {
+        return makaoButton;
+    }
+
+    public void setMakaoButton(GameButton makaoButton) {
+        this.makaoButton = makaoButton;
     }
 }

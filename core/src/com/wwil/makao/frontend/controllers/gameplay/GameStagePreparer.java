@@ -5,6 +5,7 @@ import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
 import com.wwil.makao.backend.model.card.Suit;
 import com.wwil.makao.frontend.entities.cards.CardActorFactory;
+import com.wwil.makao.frontend.entities.gameButtons.MakaoButton;
 import com.wwil.makao.frontend.utils.params.CardsAlignmentParams;
 import com.wwil.makao.frontend.utils.params.GUIparams;
 import com.wwil.makao.frontend.controllers.facedes.BackendFacade;
@@ -32,8 +33,7 @@ public class GameStagePreparer {
 
     public void execute() {
         prepareStackCardsGroup();
-        preparePullButton();
-        prepareEndTurnButton();
+        prepareGameButtons();
         prepareHandGroups();
         createCardChooser();
     }
@@ -42,6 +42,12 @@ public class GameStagePreparer {
         uiManager.addCardActorToStackGroup(cardActorFactory.createCardActor(backend.getStackCard()));
         stage.addActor(uiManager.getStackCardsGroup());
         uiManager.getStackCardsGroup().setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
+    }
+
+    private void prepareGameButtons(){
+        preparePullButton();
+        prepareEndTurnButton();
+        prepareMakaoButton();
     }
 
     private void preparePullButton() {
@@ -56,6 +62,13 @@ public class GameStagePreparer {
         stage.addActor(endTurnButton);
         endTurnButton.setPosition(GUIparams.WIDTH / 2f - 300, GUIparams.HEIGHT / 2f - 25);
         uiManager.setEndTurnButton(endTurnButton);
+    }
+
+    private void prepareMakaoButton(){
+        GameButton makaoButton = new MakaoButton(uiManager.getController());
+        stage.addActor(makaoButton);
+        makaoButton.setPosition(GUIparams.WIDTH / 2f - 300, GUIparams.HEIGHT / 2f + 50);
+        uiManager.setMakaoButton(makaoButton);
     }
 
     private void prepareHandGroups() {

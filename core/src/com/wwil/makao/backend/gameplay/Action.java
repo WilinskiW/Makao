@@ -1,5 +1,5 @@
 package com.wwil.makao.backend.gameplay;
 
 public enum Action {
-    PUT, PULL, END
+    PUT, PULL, END, MAKAO
 }

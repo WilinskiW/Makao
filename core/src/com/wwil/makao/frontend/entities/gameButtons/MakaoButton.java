@@ -6,21 +6,22 @@ import com.wwil.makao.backend.gameplay.Action;
 import com.wwil.makao.backend.gameplay.Play;
 import com.wwil.makao.frontend.controllers.gameplay.GameController;
 
-public class EndTurnButton extends GameButton {
+public class MakaoButton extends GameButton {
     private final GameController controller;
-    public EndTurnButton(GameController controller) {
+
+    public MakaoButton(GameController controller) {
         super(controller,
-                new Texture(Gdx.files.internal("buttons/EndTurnButton_unclick.png")),
-                new Texture(Gdx.files.internal("buttons/EndTurnButton_click.png")));
+                new Texture(Gdx.files.internal("buttons/MakaoButton_unclick.png")),
+                new Texture(Gdx.files.internal("buttons/MakaoButton_click.png")));
         this.controller = controller;
         setActive(false);
     }
 
     @Override
     public void sendInput() {
-        controller.getSoundManager().play("buttonClick.mp3",0.05f);
+        controller.getSoundManager().play("buttonClick.mp3", 0.05f);
         controller.executePlay(
-                new Play()
-                        .setAction(Action.END));
+                new Play().setAction(Action.MAKAO));
     }
 }
+

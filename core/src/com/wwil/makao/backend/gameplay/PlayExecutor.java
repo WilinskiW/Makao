@@ -25,6 +25,8 @@ public class PlayExecutor {
                 return handleEndAction(playReport);
             case PULL:
                 return handlePullAction(player, playReport);
+            case MAKAO:
+                return handleMakaoAction(player, playReport);
             default:
                 throw new IllegalArgumentException("Unsupported action: " + play.getAction());
         }
@@ -96,5 +98,10 @@ public class PlayExecutor {
     private void updatePlayerStateAfterPull(Player player, PlayReport playReport) {
         stateHandler.updateStateAfterPull(player);
         playReport.setState(player.getState());
+    }
+
+    private PlayReport handleMakaoAction(Player player, PlayReport playReport) {
+        playReport.setState(player.getState());
+        return playReport;
     }
 }

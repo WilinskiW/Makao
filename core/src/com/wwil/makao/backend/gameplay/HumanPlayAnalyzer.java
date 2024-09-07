@@ -26,6 +26,8 @@ public class HumanPlayAnalyzer {
                 return pullCard(humanPlay);
             case END:
                 return endTurn(humanPlay);
+            case MAKAO:
+                return informMakao(humanPlay);
             default:
                 throw new IllegalArgumentException("Unsupported action");
         }
@@ -61,5 +63,12 @@ public class HumanPlayAnalyzer {
         roundManager.getRoundReport().addPlayRaport(endPlayReport);
 
         return roundManager.playRound();
+    }
+
+    private RoundReport informMakao(Play humanPlay) {
+        PlayReport makaoReport = playExecutor.createPlayReport(humanPlayer, humanPlay);
+        roundManager.getRoundReport().addPlayRaport(makaoReport);
+
+        return roundManager.getRoundReport();
     }
 }

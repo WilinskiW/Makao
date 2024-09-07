@@ -9,7 +9,8 @@ import com.wwil.makao.frontend.controllers.gameplay.GameController;
 public class PullButton extends GameButton {
     private final GameController controller;
     public PullButton(GameController controller) {
-        super(controller, new Texture(Gdx.files.internal("assets/Buttons/PullCardButton_unclick.png")),
+        super(controller,
+                new Texture(Gdx.files.internal("assets/Buttons/PullCardButton_unclick.png")),
                 new Texture(Gdx.files.internal("assets/Buttons/PullCardButton_click.png")));
         this.controller = controller;
     }

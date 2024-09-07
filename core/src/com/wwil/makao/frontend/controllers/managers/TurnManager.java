@@ -3,7 +3,6 @@ package com.wwil.makao.frontend.controllers.managers;
 import com.badlogic.gdx.Gdx;
 import com.wwil.makao.backend.gameplay.PlayReport;
 import com.wwil.makao.backend.gameplay.RoundReport;
-import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.frontend.entities.cards.CardActor;
 import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
 import com.wwil.makao.frontend.utils.sound.SoundManager;
@@ -30,6 +29,10 @@ public abstract class TurnManager {
             player.moveCloserToStartingPosition();
         }
 
+        if(player.getPlayer().hasOneCard()){
+            uiManager.getMakaoButton().setActive(true);
+        }
+
         if (!playedCard.getCard().isShadow()) {
             soundManager.play("put.wav");
         }
@@ -48,6 +51,10 @@ public abstract class TurnManager {
             System.out.println(handGroup.getCardsAlignment() + " won");
             Gdx.app.exit();
         }
+    }
+
+    protected void informMakao(){
+        uiManager.getMakaoButton().setActive(false);
     }
 
     protected PlayerHandGroup humanHand() {

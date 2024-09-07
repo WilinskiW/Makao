@@ -25,6 +25,9 @@ public class HumanTurnManager extends TurnManager {
             case PULL:
                 pull(currentPlayReport, humanHand());
                 break;
+            case MAKAO:
+                informMakao();
+                break;
         }
 
         if (currentPlayReport.getState().isChooserActive() && currentPlayReport.isCardCorrect()) {

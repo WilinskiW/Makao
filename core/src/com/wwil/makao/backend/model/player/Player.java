@@ -15,6 +15,9 @@ public abstract class Player {
         this.state = new NormalState();
     }
     public abstract boolean isHuman();
+    public boolean hasOneCard(){
+        return cards.size() == 1;
+    }
 
     public void addCardToHand(Card card) {
         cards.add(card);
