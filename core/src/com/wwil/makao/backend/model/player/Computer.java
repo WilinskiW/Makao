@@ -7,8 +7,10 @@ import com.wwil.makao.backend.states.management.StateHandler;
 import java.util.List;
 
 public class Computer extends Player {
-    public Computer(List<Card> cards) {
-        super(cards);
+
+
+    public Computer(int id, List<Card> cards) {
+        super(id, cards);
     }
 
     @Override

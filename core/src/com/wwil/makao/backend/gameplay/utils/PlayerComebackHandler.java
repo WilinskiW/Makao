@@ -11,7 +11,7 @@ public class PlayerComebackHandler {
     }
 
     public void saveCurrentIndexBeforeMakao() {
-        previousMakaoPlayerIndex = playerManager.getCurrentPlayerIndex();
+        previousMakaoPlayerIndex = playerManager.getCurrentPlayerId();
     }
 
     public boolean isPreviousMakaoPlayerIndexExist() {
@@ -20,7 +20,7 @@ public class PlayerComebackHandler {
 
     public void returnToMakaoPlayer() {
         if (previousMakaoPlayerIndex != null) {
-            playerManager.setCurrentPlayerIndex(previousMakaoPlayerIndex);
+            playerManager.setCurrentPlayerId(previousMakaoPlayerIndex);
             previousMakaoPlayerIndex = null;
         }
     }

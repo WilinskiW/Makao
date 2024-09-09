@@ -2,6 +2,7 @@ package com.wwil.makao.frontend.controllers.managers;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
+import com.wwil.makao.backend.gameplay.actions.PlayReport;
 import com.wwil.makao.frontend.controllers.gameplay.GameController;
 import com.wwil.makao.frontend.controllers.gameplay.GameStagePreparer;
 import com.wwil.makao.frontend.controllers.gameplay.GameplayScreen;
@@ -12,6 +13,8 @@ import com.wwil.makao.frontend.entities.cards.StackCardsGroup;
 import com.wwil.makao.frontend.entities.gameButtons.GameButton;
 import com.wwil.makao.frontend.entities.cards.CardActorFactory;
 import com.wwil.makao.frontend.utils.exceptions.CardNotFoundException;
+import com.wwil.makao.frontend.utils.text.ReportToTextConverter;
+import com.wwil.makao.frontend.utils.text.TextContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,7 @@ public class UIManager {
     private final GameplayScreen gameplayScreen;
     private final StackCardsGroup stackCardsGroup;
     private final CardActorFactory cardActorFactory;
+    private TextContainer textContainer;
     private final List<PlayerHandGroup> handGroups;
     private CardChooserGroup cardChooser;
     private GameButton pullButton;
@@ -52,6 +56,11 @@ public class UIManager {
         } else {
             cardActor.setColor(Color.SCARLET);
         }
+    }
+
+    public void changeText(PlayReport playReport){
+        String newText = ReportToTextConverter.convert(playReport);
+        textContainer.setText(newText);
     }
 
     public void positionCardInGroup(PlayerHandGroup human, CardActor chosenCard) {
@@ -151,5 +160,9 @@ public class UIManager {
 
     public void setMakaoButton(GameButton makaoButton) {
         this.makaoButton = makaoButton;
+    }
+
+    public void setTextContainer(TextContainer textContainer) {
+        this.textContainer = textContainer;
     }
 }

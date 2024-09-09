@@ -16,6 +16,7 @@ import com.wwil.makao.frontend.entities.cardChooser.actors.CardChooserGroup;
 import com.wwil.makao.frontend.entities.cards.CardActor;
 import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
 import com.wwil.makao.frontend.entities.gameButtons.PullButton;
+import com.wwil.makao.frontend.utils.text.TextContainer;
 
 //Przygotowanie elementów graficznych ekranu
 public class GameStagePreparer {
@@ -35,7 +36,8 @@ public class GameStagePreparer {
         prepareStackCardsGroup();
         prepareGameButtons();
         prepareHandGroups();
-        createCardChooser();
+        prepareCardChooser();
+        prepareTextLabel();
     }
 
     private void prepareStackCardsGroup() {
@@ -171,10 +173,16 @@ public class GameStagePreparer {
                 GUIparams.HEIGHT / 2f + GUIparams.CARD_HEIGHT / 2f + 25);
     }
 
-    private void createCardChooser() {
+    private void prepareCardChooser() {
         CardChooserGroup cardChooser = new CardChooserGroup(uiManager.getController());
         stage.addActor(cardChooser);
         cardChooser.setPosition(0, 0);
         uiManager.setCardChooser(cardChooser);
+    }
+
+    private void prepareTextLabel() {
+        TextContainer textContainer = new TextContainer();
+        uiManager.setTextContainer(textContainer);
+        stage.addActor(textContainer.getLabel());
     }
 }

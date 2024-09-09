@@ -13,24 +13,30 @@ public class PlayerManager {
     private final PlayerComebackHandler playerComebackHandler;
     private final List<Player> players = new ArrayList<>();
     private Human humanPlayer;
-    private int currentPlayerIndex = 0;
+    private int currentPlayerId = 0;
 
 
     public PlayerManager(int amountOfPlayers, int startingCards, DeckManager deckManager) {
         this.playerComebackHandler = new PlayerComebackHandler(this);
-        createHumanPlayer(startingCards,deckManager);
+        createPlayers(amountOfPlayers, startingCards, deckManager);
+    }
+
+    private void createPlayers(int amountOfPlayers, int startingCards, DeckManager deckManager) {
+        createHumanPlayer(startingCards, deckManager);
         createComputerPlayers(amountOfPlayers, startingCards, deckManager);
     }
 
-    private void createHumanPlayer(int startingCards, DeckManager deckManager){
-        humanPlayer = new Human(deckManager.giveCards(startingCards));
+    private void createHumanPlayer(int startingCards, DeckManager deckManager) {
+        humanPlayer = new Human(0, deckManager.giveCards(startingCards));
         players.add(humanPlayer);
     }
 
     private void createComputerPlayers(int amountOfPlayers, int startingCards, DeckManager deckManager) {
+        int id = 1;
         for (int i = 0; i < amountOfPlayers - 1; i++) {
-            Player player = new Computer(deckManager.giveCards(startingCards));
+            Player player = new Computer(id, deckManager.giveCards(startingCards));
             players.add(player);
+            id++;
         }
     }
 
@@ -39,28 +45,29 @@ public class PlayerManager {
     }
 
     public Player getCurrentPlayer() {
-        return players.get(currentPlayerIndex);
+        return players.get(currentPlayerId);
     }
+
     void goToNextPlayer() {
-        currentPlayerIndex++;
-        if (currentPlayerIndex > players.size() - 1) {
-            currentPlayerIndex = 0;
+        currentPlayerId++;
+        if (currentPlayerId > players.size() - 1) {
+            currentPlayerId = 0;
         }
     }
 
     void goToPreviousPlayer() {
-        currentPlayerIndex--;
-        if (currentPlayerIndex < 0) {
-            currentPlayerIndex = players.size() - 1;
+        currentPlayerId--;
+        if (currentPlayerId < 0) {
+            currentPlayerId = players.size() - 1;
         }
     }
 
-    public void goToHumanPlayer(){
-        currentPlayerIndex = 0;
+    public void goToHumanPlayer() {
+        currentPlayerId = 0;
     }
 
     Player getPreviousPlayer() {
-        int playerBeforeIndex = currentPlayerIndex - 1;
+        int playerBeforeIndex = currentPlayerId - 1;
         if (playerBeforeIndex < 0) {
             playerBeforeIndex = players.size() - 1;
         }
@@ -68,7 +75,7 @@ public class PlayerManager {
     }
 
     Player getNextPlayer() {
-        int nextPlayerIndex = currentPlayerIndex + 1;
+        int nextPlayerIndex = currentPlayerId + 1;
         if (nextPlayerIndex >= players.size()) {
             nextPlayerIndex = 0;
         }
@@ -79,16 +86,16 @@ public class PlayerManager {
         return players;
     }
 
-    public int getCurrentPlayerIndex() {
-        return currentPlayerIndex;
+    public int getCurrentPlayerId() {
+        return currentPlayerId;
     }
 
-    public Human getHumanPlayer(){
+    public Human getHumanPlayer() {
         return humanPlayer;
     }
 
-    public void setCurrentPlayerIndex(int currentPlayerIndex) {
-        this.currentPlayerIndex = currentPlayerIndex;
+    public void setCurrentPlayerId(int currentPlayerId) {
+        this.currentPlayerId = currentPlayerId;
     }
 
     public PlayerComebackHandler getPlayerComebackHandler() {

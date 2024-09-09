@@ -6,10 +6,12 @@ import com.wwil.makao.backend.states.management.StateHandler;
 import java.util.List;
 
 public class Human extends Player{
-    public Human(List<Card> cards) {
-        super(cards);
-    }
+
     private boolean isMakaoInform;
+
+    public Human(int id, List<Card> cards) {
+        super(id, cards);
+    }
 
     @Override
     public boolean isHuman() {

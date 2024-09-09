@@ -8,10 +8,12 @@ import com.wwil.makao.backend.states.management.StateHandler;
 import java.util.*;
 
 public abstract class Player {
+    private final int id;
     private final List<Card> cards;
     private State state;
 
-    public Player(List<Card> cards) {
+    public Player(int id, List<Card> cards) {
+        this.id = id;
         this.cards = cards;
         this.state = new NormalState();
     }
@@ -44,5 +46,10 @@ public abstract class Player {
 
     public List<Card> getCards() {
         return cards;
+    }
+
+    @Override
+    public String toString() {
+        return "Player " + (id+1);
     }
 }

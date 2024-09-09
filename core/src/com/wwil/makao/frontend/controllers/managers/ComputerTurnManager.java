@@ -54,6 +54,7 @@ public class ComputerTurnManager extends TurnManager {
                 pull(playReport, playerHand);
                 break;
         }
+        uiManager.changeText(playReport);
     }
 
     @Override

@@ -35,6 +35,7 @@ public class HumanTurnManager extends TurnManager {
         }
 
         inputManager.updateHumanAvailableActions(currentPlayReport.getState());
+        uiManager.changeText(currentPlayReport);
     }
 
     @Override
