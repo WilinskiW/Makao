@@ -64,4 +64,9 @@ public class BlockedState extends PunishState {
     public void setEndActive(boolean endActive) {
         isEndActive = endActive;
     }
+
+    @Override
+    public String toString() {
+        return "is blocked for " + amountOfPunishes + " turns";
+    }
 }

@@ -64,7 +64,7 @@ public class PlayExecutor {
 
     private void updatePlayerStateAfterPut(Player player, Card cardPlayed, PlayReport playReport) {
         stateHandler.updateStateAfterPut(player, cardPlayed);
-        playReport.setState(player.getState());
+        playReport.setAfterState(player.getState());
     }
 
     private PlayReport handleEndAction(PlayReport playReport) {
@@ -76,7 +76,7 @@ public class PlayExecutor {
 
     private void updatePlayerStateAfterEnd(PlayReport playReport) {
         stateHandler.updateStateAfterEnd(playReport.getPlayer());
-        playReport.setState(playReport.getPlayer().getState());
+        playReport.setAfterState(playReport.getPlayer().getState());
     }
 
     private void proceedToNextPlayerIfNeeded(Player currentPlayer) {
@@ -102,12 +102,12 @@ public class PlayExecutor {
 
     private void updatePlayerStateAfterPull(Player player, PlayReport playReport) {
         stateHandler.updateStateAfterPull(player);
-        playReport.setState(player.getState());
+        playReport.setAfterState(player.getState());
     }
 
     private PlayReport handleMakaoAction(Player player, PlayReport playReport) {
         player.handleMakaoAction(roundManager.getPlayerManager().getHumanPlayer(), stateHandler);
-        playReport.setState(player.getState());
+        playReport.setAfterState(player.getState());
         return playReport;
     }
 }

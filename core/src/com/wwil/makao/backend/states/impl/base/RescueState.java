@@ -47,4 +47,9 @@ public abstract class RescueState implements State {
     public void setEndActive(boolean endActive) {
         this.isEndActive = endActive;
     }
+
+    @Override
+    public String toString() {
+        return " has pull rescue card";
+    }
 }

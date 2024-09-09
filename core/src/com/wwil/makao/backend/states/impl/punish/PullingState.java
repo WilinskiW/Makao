@@ -61,4 +61,9 @@ public class PullingState extends PunishState {
     public void setEndActive(boolean endActive) {
         isEndActive = endActive;
     }
+
+    @Override
+    public String toString() {
+        return " pulls left " + (amountOfPunishes+1);
+    }
 }

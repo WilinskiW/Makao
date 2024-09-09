@@ -59,6 +59,12 @@ public class DefenseState implements State {
     }
 
     @Override
+    public void handleEnd(Player player, StateChanger changer) {
+        changer.applyPunishment(player);
+        State.super.handleEnd(player, changer);
+    }
+
+    @Override
     public boolean isValid(Card chosenCard, CardValidator validator) {
         return validator.isValidForDefenceState(chosenCard);
     }
@@ -91,5 +97,10 @@ public class DefenseState implements State {
     @Override
     public void setEndActive(boolean endActive) {
         isEndActive = endActive;
+    }
+
+    @Override
+    public String toString() {
+        return " is attack by " + attackingCard;
     }
 }

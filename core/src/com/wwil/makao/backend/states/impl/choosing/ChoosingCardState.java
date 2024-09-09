@@ -36,4 +36,9 @@ public class ChoosingCardState extends ChoosingState {
             super.handlePut(player, card, changer);
         }
     }
+
+    @Override
+    public String toString() {
+        return " has chose card: ";
+    }
 }

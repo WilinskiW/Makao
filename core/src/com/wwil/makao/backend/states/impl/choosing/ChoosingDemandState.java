@@ -26,4 +26,8 @@ public class ChoosingDemandState extends ChoosingState {
         }
     }
 
+    @Override
+    public String toString() {
+        return " is demanding ";
+    }
 }

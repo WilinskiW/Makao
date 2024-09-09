@@ -30,11 +30,11 @@ public class HumanTurnManager extends TurnManager {
                 break;
         }
 
-        if (currentPlayReport.getState().isChooserActive() && currentPlayReport.isCardCorrect()) {
+        if (currentPlayReport.getAfterState().isChooserActive() && currentPlayReport.isCardCorrect()) {
             showCardChooser(inputManager.getChosenCardActor());
         }
 
-        inputManager.updateHumanAvailableActions(currentPlayReport.getState());
+        inputManager.updateHumanAvailableActions(currentPlayReport.getAfterState());
         uiManager.changeText(currentPlayReport);
     }
 
@@ -51,7 +51,7 @@ public class HumanTurnManager extends TurnManager {
             } else {
                 putCard(inputManager.getChosenCardActor(), humanHand(), true);
             }
-        } else if(!playReport.getState().isChooserActive()) {
+        } else if(!playReport.getAfterState().isChooserActive()) {
             uiManager.positionCardInGroup(humanHand(), inputManager.getChosenCardActor());
         }
     }

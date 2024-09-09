@@ -2,6 +2,7 @@ package com.wwil.makao.backend.gameplay.validation;
 
 import com.wwil.makao.backend.core.DeckManager;
 import com.wwil.makao.backend.gameplay.management.GameStateManager;
+import com.wwil.makao.backend.model.card.Ability;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
 
@@ -30,7 +31,9 @@ public class CardValidator {
         return chosenCard.matchesRank(gameStateManager.getCardsPlayedInTurn().get(0));
     }
     private boolean isRightForDemand(Card chosenCard){
-        return chosenCard.matchesRank(Rank.J) && getStackCard().isShadow();
+        return chosenCard.matchesRank(Rank.J)
+                && getStackCard().isShadow()
+                && getStackCard().getRank().getAbility() == Ability.NONE;
     }
     private boolean isValidForStandardPlay(Card chosenCard, Card stackCard) {
         return canBePutOnEverything(chosenCard) ||
