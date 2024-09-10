@@ -107,16 +107,16 @@ public class GameStagePreparer {
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.JOKER, Suit.BLACK));
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.J, Suit.HEART));
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.J, Suit.SPADE));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.AS, Suit.SPADE));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.SIX, Suit.DIAMOND));
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.FOUR, Suit.SPADE));
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.FOUR, Suit.DIAMOND));
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.K, Suit.SPADE));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.AS, Suit.HEART));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.AS, Suit.DIAMOND));
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.TWO, Suit.HEART));
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.THREE, Suit.SPADE));
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
                 break;
             case 1:
                 backend.getPlayerList().get(index).getCards().clear();
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.J, Suit.SPADE));
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.K, Suit.SPADE));
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.SIX, Suit.HEART));
                 break;

@@ -16,11 +16,12 @@ public class PlayerStateManager implements StateContext {
         this.stateHandler = new StateHandler(stateChanger);
     }
 
-    public void activateActions(Player player, boolean isPutActive, boolean isPullActive, boolean isEndActive) {
+    public void activateActions(Player player, boolean isPutActive, boolean isPullActive, boolean isEndActive, boolean isMakaoActive) {
         State state = player.getState();
         state.setPutActive(isPutActive);
         state.setPullActive(isPullActive);
         state.setEndActive(isEndActive);
+        state.setMakaoActive(isMakaoActive);
     }
 
     public void resetAllActionsActivation(){

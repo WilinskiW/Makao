@@ -27,6 +27,7 @@ public class StateChanger {
         this.roundManager = roundManager;
         this.stateContext = stateContext;
     }
+
     public void applyNormalState(Player player) {
         changePlayerState(player, new NormalState());
     }
@@ -67,6 +68,7 @@ public class StateChanger {
         else{
             applyMakaoPunishState(player);
         }
+        handlePunishState(player,(PunishState) player.getState());
     }
 
     public void handlePunishState(Player player, PunishState punish) {
@@ -77,7 +79,7 @@ public class StateChanger {
         }
     }
 
-    private void applyMakaoPunishState(Player player){
+    private void applyMakaoPunishState(Player player) {
         changePlayerState(player, new MakaoPunishState());
     }
 
@@ -109,8 +111,8 @@ public class StateChanger {
         changePlayerState(player, new BlockedState(roundManager.getGameStateManager().giveAmountOfWaits()));
     }
 
-    public void setActions(Player player, boolean put, boolean pull, boolean end) {
-        stateContext.activateActions(player, put, pull, end);
+    public void setActions(Player player, boolean put, boolean pull, boolean end, boolean makao) {
+        stateContext.activateActions(player, put, pull, end, makao);
     }
 
     private void changePlayerState(Player player, State newState) {

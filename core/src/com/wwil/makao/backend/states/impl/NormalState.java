@@ -17,15 +17,16 @@ public class NormalState implements State {
         setDefaultValueOfActivations();
     }
 
-    public NormalState(boolean isPutActive, boolean isPullActive, boolean isEndActive) {
+    public NormalState(boolean isPutActive, boolean isPullActive, boolean isEndActive, boolean isMakaoActive) {
         this.isPutActive = isPutActive;
         this.isPullActive = isPullActive;
         this.isEndActive = isEndActive;
+        this.isMakaoActive = isMakaoActive;
     }
 
     @Override
     public State copyState() {
-        return new NormalState(isPutActive, isPullActive, isEndActive);
+        return new NormalState(isPutActive, isPullActive, isEndActive, isMakaoActive);
     }
 
     @Override
@@ -33,6 +34,7 @@ public class NormalState implements State {
         this.isPutActive = true;
         this.isPullActive = true;
         this.isEndActive = false;
+        this.isMakaoActive = true;
     }
 
     @Override
@@ -46,14 +48,20 @@ public class NormalState implements State {
     }
 
     @Override
+    public void handlePut(Player player, Card card, StateChanger changer) {
+        changer.applyNormalState(player);
+        changer.setActions(player, true, false, true, true);
+    }
+
+    @Override
     public void handlePull(Player player, StateChanger changer) {
         changer.applyNormalRescueState(player);
     }
 
     @Override
     public void handleEnd(Player player, StateChanger changer) {
+        changer.applyNormalState(player);
         State.super.handleEnd(player, changer);
-        setMakaoActive(false);
     }
 
     @Override
@@ -93,6 +101,6 @@ public class NormalState implements State {
 
     @Override
     public void setMakaoActive(boolean makaoActive) {
-        this.isMakaoActive = makaoActive;
+        isMakaoActive = makaoActive;
     }
 }

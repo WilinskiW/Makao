@@ -17,16 +17,16 @@ public interface State {
 
     default void handlePut(Player player, Card card, StateChanger changer) {
         changer.applyNormalState(player);
-        changer.setActions(player, true, false, true);
+        changer.setActions(player, true, false, true, false);
     }
 
     default void handlePull(Player player, StateChanger changer) {
         changer.applyNormalState(player);
-        changer.setActions(player, false, false, true);
+        changer.setActions(player, false, false, true, false);
     }
 
     default void handleEnd(Player player, StateChanger changer) {
-        changer.setActions(player, false, false, false);
+        changer.setActions(player, false, false, false, false);
     }
 
     default boolean isFocusDrawnCard() {

@@ -24,6 +24,7 @@ public class InputManager {
 
     public void turnOffHumanInput() {
         inputBlockActive = true;
+        uiManager.getMakaoButton().setActive(false);
         Gdx.input.setInputProcessor(null);
     }
 

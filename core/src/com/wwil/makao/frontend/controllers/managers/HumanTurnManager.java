@@ -65,6 +65,11 @@ public class HumanTurnManager extends TurnManager {
     @Override
     protected void putCard(CardActor playedCard, PlayerHandGroup player, boolean alignCards) {
         super.putCard(playedCard, player, alignCards);
+
+        if(player.getPlayer().hasOneCard()){
+            uiManager.getMakaoButton().setActive(true);
+        }
+
         playedCard.clearListeners();
     }
 

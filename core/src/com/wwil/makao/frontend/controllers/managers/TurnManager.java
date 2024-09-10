@@ -29,10 +29,6 @@ public abstract class TurnManager {
             player.moveCloserToStartingPosition();
         }
 
-        if(player.getPlayer().hasOneCard()){
-            uiManager.getMakaoButton().setActive(true);
-        }
-
         if (!playedCard.getCard().isShadow()) {
             soundManager.play("put.wav");
         }

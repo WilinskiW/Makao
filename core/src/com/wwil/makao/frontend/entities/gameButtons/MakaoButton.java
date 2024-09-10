@@ -23,5 +23,10 @@ public class MakaoButton extends GameButton {
         controller.executePlay(
                 new Play().setAction(Action.MAKAO));
     }
+
+    @Override
+    public void setActive(boolean shouldActive) {
+        super.setActive(shouldActive);
+    }
 }
 

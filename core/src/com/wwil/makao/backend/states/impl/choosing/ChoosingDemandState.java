@@ -22,7 +22,7 @@ public class ChoosingDemandState extends ChoosingState {
     public void handlePut(Player player, Card card, StateChanger changer) {
         if(changer.deactivateChoosing(card)) {
             changer.applyAllDefenceState(card);
-            changer.setActions(player, false, false, true);
+            changer.setActions(player, false, false, true, false);
         }
     }
 

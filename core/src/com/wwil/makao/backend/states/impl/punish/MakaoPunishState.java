@@ -13,6 +13,6 @@ public class MakaoPunishState extends PullingState{
     @Override
     public void handlePull(Player player, StateChanger changer) {
         super.handlePull(player, changer);
-        changer.setActions(player,false,false,true);
+        changer.setActions(player,false,false,true, false);
     }
 }

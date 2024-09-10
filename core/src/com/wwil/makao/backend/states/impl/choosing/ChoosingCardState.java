@@ -39,6 +39,6 @@ public class ChoosingCardState extends ChoosingState {
 
     @Override
     public String toString() {
-        return " has chose card: ";
+        return " chose card: ";
     }
 }

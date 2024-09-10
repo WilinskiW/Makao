@@ -38,6 +38,6 @@ public class NormalRescueState extends RescueState {
     @Override
     public void handleEnd(Player player, StateChanger changer) {
         changer.applyNormalState(player);
-        changer.setActions(player, false, false, false);
+        changer.setActions(player, false, false, false, false);
     }
 }

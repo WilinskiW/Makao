@@ -58,7 +58,7 @@ public class DefenceRescueState extends RescueState {
     @Override
     public void handleEnd(Player player, StateChanger changer) {
         changer.applyNormalState(player);
-        changer.setActions(player, false, false, false);
+        super.handleEnd(player,changer);
     }
 
 }

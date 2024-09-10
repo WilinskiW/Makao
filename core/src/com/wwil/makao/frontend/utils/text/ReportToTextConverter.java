@@ -27,6 +27,9 @@ public class ReportToTextConverter {
         }
 
         String cardDetails = getCardDetails(playReport);
+        if(cardDetails.contains("is") || cardDetails.contains("chose")){
+            return player + cardDetails;
+        }
         return player + " put " + cardDetails;
     }
 
@@ -53,7 +56,7 @@ public class ReportToTextConverter {
             return player + afterState;
         }
 
-        return afterState.contains("pulls") ? player + afterState : player + " has pulled last card";
+        return afterState.contains("pulls") ? player + afterState : player + " has pull last card";
     }
 
     private static String printMakaoAction(PlayReport playReport) {
