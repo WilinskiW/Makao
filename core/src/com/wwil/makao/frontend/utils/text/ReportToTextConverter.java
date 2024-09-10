@@ -53,7 +53,7 @@ public class ReportToTextConverter {
             return player + afterState;
         }
 
-        return afterState.contains("pulls") ? player + afterState : player + "has pulled last card";
+        return afterState.contains("pulls") ? player + afterState : player + " has pulled last card";
     }
 
     private static String printMakaoAction(PlayReport playReport) {

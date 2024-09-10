@@ -64,6 +64,6 @@ public class PullingState extends PunishState {
 
     @Override
     public String toString() {
-        return " pulls left " + (amountOfPunishes+1);
+        return " pulls left " + amountOfPunishes;
     }
 }

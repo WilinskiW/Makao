@@ -5,7 +5,6 @@ import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.gameplay.utils.CardFinder;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
-import com.wwil.makao.backend.states.impl.base.PunishState;
 import com.wwil.makao.backend.states.impl.base.RescueState;
 import com.wwil.makao.backend.states.management.StateChanger;
 
@@ -54,7 +53,6 @@ public class DefenceRescueState extends RescueState {
     @Override
     public void handlePull(Player player, StateChanger changer) {
         changer.applyPunishment(player);
-        changer.handlePunishState(player, (PunishState) player.getState());
     }
 
     @Override

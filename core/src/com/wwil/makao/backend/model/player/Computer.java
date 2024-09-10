@@ -20,8 +20,8 @@ public class Computer extends Player {
 
     @Override
     public void handleMakaoAction(Human humanPlayer, StateHandler stateHandler) {
-        stateHandler.updateStateAfterFailMakao(humanPlayer);
         humanPlayer.setMakaoInform(false);
+        stateHandler.updateStateAfterFailMakao(humanPlayer);
     }
 
 }

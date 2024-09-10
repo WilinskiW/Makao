@@ -32,7 +32,6 @@ public class BlockedState extends PunishState {
     @Override
     public void handleEnd(Player player, StateChanger changer) {
         changer.handlePunishState(player, this);
-        changer.setActions(player, false, false, false);
     }
 
     @Override
