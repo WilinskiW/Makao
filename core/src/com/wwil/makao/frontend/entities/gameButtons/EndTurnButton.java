@@ -18,7 +18,7 @@ public class EndTurnButton extends GameButton {
 
     @Override
     public void sendInput() {
-        controller.getSoundManager().play("buttonClick.mp3",0.05f);
+        controller.getSoundManager().playButtonClick();
         controller.executePlay(
                 new Play()
                         .setAction(Action.END));

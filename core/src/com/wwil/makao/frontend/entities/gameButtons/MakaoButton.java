@@ -19,7 +19,7 @@ public class MakaoButton extends GameButton {
 
     @Override
     public void sendInput() {
-        controller.getSoundManager().play("buttonClick.mp3", 0.05f);
+        controller.getSoundManager().playButtonClick();
         controller.executePlay(
                 new Play().setAction(Action.MAKAO));
     }

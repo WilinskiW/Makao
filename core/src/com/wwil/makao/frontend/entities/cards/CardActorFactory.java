@@ -19,6 +19,5 @@ public class CardActorFactory {
         catch (NullPointerException e){
             throw new CardNotFoundException();
         }
-
     }
 }

@@ -30,7 +30,7 @@ public abstract class TurnManager {
         }
 
         if (!playedCard.getCard().isShadow()) {
-            soundManager.play("put.wav");
+            soundManager.playPut();
         }
     }
 
@@ -38,7 +38,7 @@ public abstract class TurnManager {
     protected void pull(PlayReport playReport, PlayerHandGroup player) {
         CardActor drawnCardActor = uiManager.getCardActorFactory().createCardActor(playReport.getDrawn());
         player.addActor(drawnCardActor);
-        soundManager.play("pull.wav");
+        soundManager.playPull();
     }
 
     private void endIfPlayerWon(PlayerHandGroup handGroup) {

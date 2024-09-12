@@ -2,8 +2,6 @@ package com.wwil.makao.frontend.controllers.gameplay;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.wwil.makao.backend.model.card.Card;
-import com.wwil.makao.backend.model.card.Rank;
-import com.wwil.makao.backend.model.card.Suit;
 import com.wwil.makao.frontend.entities.cards.CardActorFactory;
 import com.wwil.makao.frontend.entities.gameButtons.MakaoButton;
 import com.wwil.makao.frontend.utils.params.CardsAlignmentParams;
@@ -79,7 +77,7 @@ public class GameStagePreparer {
         positionHandGroupsOnStage();
     }
 
-    public void createHandGroups() {
+    private void createHandGroups() {
         for (int i = 0; i < backend.getPlayerList().size(); i++) {
             uiManager.getHandGroups().add(new PlayerHandGroup(backend.getPlayerList().get(i)));
             preparePlayer(i);
@@ -90,51 +88,11 @@ public class GameStagePreparer {
         PlayerHandGroup handGroup = uiManager.getHandGroups().get(index);
         handGroup.setCardsAlignment(CardsAlignmentParams.getParamFromOrdinal(index));
 
-        //todo  Metoda tylko wyłącznie do testów! Usuń po testach
-        //test(index);
-
         for (Card card : handGroup.getPlayer().getCards()) {
             CardActor cardActor = cardActorFactory.createCardActor(card);
             handGroup.addActor(cardActor);
         }
     }
-
-    private void test(int index) {
-        switch (index) {
-            case 0:
-                backend.getPlayerList().get(index).getCards().clear();
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.JOKER, Suit.RED));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.JOKER, Suit.BLACK));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.J, Suit.HEART));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.J, Suit.SPADE));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.FOUR, Suit.SPADE));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.FOUR, Suit.DIAMOND));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.K, Suit.SPADE));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.TWO, Suit.HEART));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.THREE, Suit.SPADE));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.TEN, Suit.DIAMOND));
-                break;
-            case 1:
-                backend.getPlayerList().get(index).getCards().clear();
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.J, Suit.SPADE));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.NINE, Suit.HEART));
-                break;
-            case 2:
-                backend.getPlayerList().get(index).getCards().clear();
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.SIX, Suit.DIAMOND));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.SEVEN, Suit.DIAMOND));
-                break;
-            case 3:
-                backend.getPlayerList().get(index).getCards().clear();
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.TWO, Suit.SPADE));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.SEVEN, Suit.CLUB));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.SIX, Suit.CLUB));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.FIVE, Suit.DIAMOND));
-                break;
-        }
-    }
-
 
     private void adjustHumanCards() {
         for (CardActor card : uiManager.getHumanHandGroup().getCardActors()) {
