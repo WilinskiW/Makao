@@ -62,9 +62,9 @@ public class ComputerTurnManager extends TurnManager {
         inputManager.turnOffHumanInput();
     }
 
-    private CardActor getCardActor(PlayReport playReport, PlayerHandGroup playerHand){
+    private CardActor getCardActor(PlayReport playReport, PlayerHandGroup playerHand) {
         Card cardPlayed = playReport.getPlay().getCardPlayed();
-        if(cardPlayed.isShadow()){
+        if (cardPlayed.isShadow()) {
             return uiManager.getCardActorFactory().createCardActor(playReport.getPlay().getCardPlayed());
         }
         return playerHand.getCardActor(cardPlayed);

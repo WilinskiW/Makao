@@ -1,6 +1,5 @@
 package com.wwil.makao.backend.states.management;
 
-import com.wwil.makao.backend.core.RuleParams;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Human;
 import com.wwil.makao.backend.model.player.Player;
@@ -24,6 +23,6 @@ public class StateHandler {
         player.getState().handleEnd(player, changer);
     }
     public void updateStateAfterFailMakao(Human player){
-        changer.applyPunishment(player);
+        changer.applyMakaoPunishState(player);
     }
 }

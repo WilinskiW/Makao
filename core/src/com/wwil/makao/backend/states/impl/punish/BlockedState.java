@@ -67,6 +67,6 @@ public class BlockedState extends PunishState {
 
     @Override
     public String toString() {
-        return "is blocked for " + amountOfPunishes + " turns";
+        return "is blocked for " + (amountOfPunishes+1) + " turns";
     }
 }

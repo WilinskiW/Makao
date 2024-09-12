@@ -61,14 +61,12 @@ public class StateChanger {
     public void applyPunishment(Player player) {
         if (roundManager.getGameStateManager().getPullsCount() > 0) {
             applyPullingState(player, roundManager.getGameStateManager().giveAmountOfPulls() - 1);
+            handlePunishState(player,(PunishState) player.getState());
             //-1, bo odejmujemy pociągnięcie rescue card
         } else if(roundManager.getGameStateManager().getWaitsCount() > 0) {
             applyBlockedState(player);
+            handlePunishState(player,(PunishState) player.getState());
         }
-        else{
-            applyMakaoPunishState(player);
-        }
-        handlePunishState(player,(PunishState) player.getState());
     }
 
     public void handlePunishState(Player player, PunishState punish) {
@@ -79,7 +77,7 @@ public class StateChanger {
         }
     }
 
-    private void applyMakaoPunishState(Player player) {
+    public void applyMakaoPunishState(Player player) {
         changePlayerState(player, new MakaoPunishState());
     }
 

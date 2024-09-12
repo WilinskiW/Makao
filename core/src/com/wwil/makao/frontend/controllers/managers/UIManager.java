@@ -6,12 +6,12 @@ import com.wwil.makao.backend.gameplay.actions.PlayReport;
 import com.wwil.makao.frontend.controllers.gameplay.GameController;
 import com.wwil.makao.frontend.controllers.gameplay.GameStagePreparer;
 import com.wwil.makao.frontend.controllers.gameplay.GameplayScreen;
-import com.wwil.makao.frontend.entities.cards.CardActor;
 import com.wwil.makao.frontend.entities.cardChooser.actors.CardChooserGroup;
+import com.wwil.makao.frontend.entities.cards.CardActor;
+import com.wwil.makao.frontend.entities.cards.CardActorFactory;
 import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
 import com.wwil.makao.frontend.entities.cards.StackCardsGroup;
 import com.wwil.makao.frontend.entities.gameButtons.GameButton;
-import com.wwil.makao.frontend.entities.cards.CardActorFactory;
 import com.wwil.makao.frontend.utils.exceptions.CardNotFoundException;
 import com.wwil.makao.frontend.utils.text.ReportToTextConverter;
 import com.wwil.makao.frontend.utils.text.TextContainer;
@@ -24,8 +24,8 @@ public class UIManager {
     private final GameplayScreen gameplayScreen;
     private final StackCardsGroup stackCardsGroup;
     private final CardActorFactory cardActorFactory;
-    private TextContainer textContainer;
     private final List<PlayerHandGroup> handGroups;
+    private TextContainer textContainer;
     private CardChooserGroup cardChooser;
     private GameButton pullButton;
     private GameButton endTurnButton;
@@ -58,7 +58,7 @@ public class UIManager {
         }
     }
 
-    public void changeText(PlayReport playReport){
+    public void changeText(PlayReport playReport) {
         String newText = ReportToTextConverter.convert(playReport);
         textContainer.setText(newText);
     }
@@ -78,7 +78,7 @@ public class UIManager {
         card.setZIndex((int) card.getLastPositionBeforeRemove().z);
     }
 
-    public void deployCardToStage(CardActor card){
+    public void deployCardToStage(CardActor card) {
         card.saveGroup();
         card.setLastPositionBeforeRemove(new Vector3(card.getX(), card.getY(), card.getZIndex()));
         gameplayScreen.getStage().addActor(card);
@@ -102,7 +102,7 @@ public class UIManager {
         } catch (NullPointerException e) {
             throw new CardNotFoundException();
         }
-        if(cardActor.getCard().isShadow()){
+        if (cardActor.getCard().isShadow()) {
             cardActor.setColor(Color.GRAY);
         }
         cardActor.setUpSideDown(false);
@@ -135,7 +135,7 @@ public class UIManager {
         return handGroups;
     }
 
-    public PlayerHandGroup getHumanHandGroup(){
+    public PlayerHandGroup getHumanHandGroup() {
         return handGroups.get(0);
     }
 
@@ -146,6 +146,7 @@ public class UIManager {
     public void setCardChooser(CardChooserGroup cardChooser) {
         this.cardChooser = cardChooser;
     }
+
     public void setPullButton(GameButton pullButton) {
         this.pullButton = pullButton;
     }

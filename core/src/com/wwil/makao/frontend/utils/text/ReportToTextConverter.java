@@ -60,7 +60,10 @@ public class ReportToTextConverter {
     }
 
     private static String printMakaoAction(PlayReport playReport) {
-        return playReport.getPlayer().toString() + " is reporting MAKAO";
+        if(playReport.getPlayer().isHuman()){
+            return playReport.getPlayer().toString() + " is reporting MAKAO";
+        }
+        return playReport.getPlayer().toString() + " is reporting wrong use of MAKAO. Player 1 has to pull.";
     }
 
     private static String printEndAction(PlayReport playReport) {

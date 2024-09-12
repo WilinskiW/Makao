@@ -6,6 +6,7 @@ import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.states.State;
 import com.wwil.makao.backend.states.impl.base.RescueState;
+import com.wwil.makao.backend.states.management.StateChanger;
 
 public class DemandRescueState extends RescueState {
     public DemandRescueState() {
@@ -31,5 +32,11 @@ public class DemandRescueState extends RescueState {
     @Override
     public Card findValidCard(CardFinder cardFinder, Player player, Card stackCard) {
         return cardFinder.findCardForDefenceState(player);
+    }
+
+    @Override
+    public void handleEnd(Player player, StateChanger changer) {
+        changer.applyNormalState(player);
+        super.handleEnd(player,changer);
     }
 }
