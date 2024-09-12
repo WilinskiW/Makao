@@ -42,10 +42,8 @@ public abstract class TurnManager {
     }
 
     private void endIfPlayerWon(PlayerHandGroup handGroup) {
-        //Do czasu wprowadzenia menu
         if (handGroup.getPlayer().checkIfPlayerHaveNoCards() && handGroup.getChildren().isEmpty()) {
-            System.out.println(handGroup.getCardsAlignment() + " won");
-            Gdx.app.exit();
+            uiManager.changeToEndingScreen(handGroup.getPlayer().toString());
         }
     }
 

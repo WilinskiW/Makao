@@ -13,7 +13,6 @@ public class DeckManager {
         this.gameDeck = createCardsToGameDeck();
         this.stack = new Stack();
         stack.addCardToStack(getStartStackCard());
-        stack.addCardToStack(new Card(Rank.FIVE, Suit.SPADE));
     }
 
     private LinkedList<Card> createCardsToGameDeck() {

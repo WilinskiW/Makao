@@ -3,6 +3,7 @@ package com.wwil.makao.frontend.controllers.managers;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.wwil.makao.backend.gameplay.actions.PlayReport;
+import com.wwil.makao.frontend.controllers.gameplay.EndingScreen;
 import com.wwil.makao.frontend.controllers.gameplay.GameController;
 import com.wwil.makao.frontend.controllers.gameplay.GameStagePreparer;
 import com.wwil.makao.frontend.controllers.gameplay.GameplayScreen;
@@ -21,7 +22,8 @@ import java.util.List;
 
 public class UIManager {
     private final GameController controller;
-    private final GameplayScreen gameplayScreen;
+    private GameplayScreen gameplayScreen;
+    private EndingScreen endingScreen;
     private final StackCardsGroup stackCardsGroup;
     private final CardActorFactory cardActorFactory;
     private final List<PlayerHandGroup> handGroups;
@@ -42,6 +44,10 @@ public class UIManager {
 
     public void prepareStage() {
         new GameStagePreparer(this, controller.getBackend()).execute();
+    }
+
+    public void changeToEndingScreen(String whoWon){
+        controller.changeScreen(whoWon);
     }
 
     public void updateButtonStates(boolean isPullActive, boolean isEndActive, boolean isMakaoActive) {

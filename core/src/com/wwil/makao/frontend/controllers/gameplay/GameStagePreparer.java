@@ -139,7 +139,7 @@ public class GameStagePreparer {
     }
 
     private void prepareTextLabel() {
-        TextContainer textContainer = new TextContainer();
+        TextContainer textContainer = new TextContainer(true);
         uiManager.setTextContainer(textContainer);
         stage.addActor(textContainer.getLabel());
     }

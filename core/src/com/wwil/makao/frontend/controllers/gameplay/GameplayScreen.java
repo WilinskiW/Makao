@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.wwil.makao.frontend.utils.params.GUIparams;
@@ -19,7 +19,7 @@ public class GameplayScreen implements Screen {
     public GameplayScreen(Makao makao) {
         this.makao = makao;
         createStage();
-        GameController gameController = new GameController(this);
+        GameController gameController = new GameController(makao, this);
         gameController.getUiManager().prepareStage();
     }
 
