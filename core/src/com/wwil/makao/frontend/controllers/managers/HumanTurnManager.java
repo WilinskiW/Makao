@@ -86,6 +86,6 @@ public class HumanTurnManager extends TurnManager {
         player.addActor(drawnCardActor);
         inputManager.attachDragAndDrop(drawnCardActor);
         inputManager.setChosenCardActor(drawnCardActor);
-        soundManager.play("pull.wav");
+        soundManager.playPull();
     }
 }

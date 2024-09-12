@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.wwil.makao.backend.model.card.Card;
@@ -15,6 +16,7 @@ public class CardActor extends Actor {
     private TextureRegion backSide;
     private boolean isUpSideDown;
     private Group lastParent;
+    private Vector3 lastPositionBeforeRemove = null;
 
     public CardActor(TextureRegion frontSide, Card card) {
         this.frontSide = frontSide;
@@ -29,6 +31,7 @@ public class CardActor extends Actor {
         this.frontSide = frontSide;
         setBounds(0, 0, GUIparams.CARD_WIDTH, GUIparams.CARD_HEIGHT);
     }
+
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
@@ -73,6 +76,14 @@ public class CardActor extends Actor {
 
     public void saveGroup() {
         lastParent = getParent();
+    }
+
+    public void setLastPositionBeforeRemove(Vector3 lastPositionBeforeRemove) {
+        this.lastPositionBeforeRemove = lastPositionBeforeRemove;
+    }
+
+    public Vector3 getLastPositionBeforeRemove() {
+        return lastPositionBeforeRemove;
     }
 
     public void beLastInGroup() {
