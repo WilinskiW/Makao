@@ -1,7 +1,10 @@
 package com.wwil.makao.backend.gameplay.utils;
 
 import com.wwil.makao.backend.gameplay.management.PlayerManager;
-
+/*
+  Używana przy zgłoszeniu makao. Jeżeli komputer zgłosi makao to wtedy kolejka wraca do gracza człowieka.
+  Po ruchu człowieka kolejka wraca do komputera, który zgłosił makao.
+  */
 public class PlayerComebackHandler {
     private Integer previousMakaoPlayerIndex = null;
     private final PlayerManager playerManager;

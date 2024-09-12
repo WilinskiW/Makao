@@ -1,14 +1,14 @@
 package com.wwil.makao.backend.model.player;
 
 
+import com.wwil.makao.backend.gameplay.actions.Action;
+import com.wwil.makao.backend.gameplay.actions.Play;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.states.management.StateHandler;
 
 import java.util.List;
 
 public class Computer extends Player {
-
-
     public Computer(int id, List<Card> cards) {
         super(id, cards);
     }
@@ -21,7 +21,6 @@ public class Computer extends Player {
     @Override
     public void handleMakaoAction(Human humanPlayer, StateHandler stateHandler) {
         humanPlayer.setMakaoInform(false);
-        stateHandler.updateStateAfterFailMakao(humanPlayer);
+        stateHandler.updatePlayerState(humanPlayer, new Play().setAction(Action.MAKAO));
     }
-
 }

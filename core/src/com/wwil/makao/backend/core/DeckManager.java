@@ -77,7 +77,7 @@ public class DeckManager {
         return gameDeck.pollLast();
     }
 
-    private void refreshGameDeck() {
+    public void refreshGameDeck() {
         Card stackCard = stack.pollLast();
         gameDeck.addAll(getStackCards(stackCard));
         stack.getCards().clear();

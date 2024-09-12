@@ -35,18 +35,14 @@ public class PlayExecutor {
     }
 
     private PlayReport handlePutAction(PlayReport playReport) {
-        putCard(playReport);
-        return playReport.setCardCorrect(true);
-    }
-
-    private void putCard(PlayReport playReport) {
         Card cardPlayed = playReport.getPlay().getCardPlayed();
         Player player = playReport.getPlayer();
 
         abilityHandler.useCardAbility(cardPlayed, roundManager.getDeckManager().peekStackCard());
         removeCardFromPlayerHand(player, cardPlayed);
         updateGameAfterPut(cardPlayed);
-        updatePlayerStateAfterPut(player, cardPlayed, playReport);
+        updatePlayerState(player, playReport);
+        return playReport.setCardCorrect(true);
     }
 
     private void removeCardFromPlayerHand(Player player, Card cardPlayed) {
@@ -62,47 +58,28 @@ public class PlayExecutor {
         }
     }
 
-    private void updatePlayerStateAfterPut(Player player, Card cardPlayed, PlayReport playReport) {
-        stateHandler.updateStateAfterPut(player, cardPlayed);
+    private void updatePlayerState(Player player, PlayReport playReport) {
+        stateHandler.updatePlayerState(player, playReport.getPlay());
         playReport.setAfterState(player.getState());
     }
 
     private PlayReport handleEndAction(PlayReport playReport) {
         roundManager.getGameStateManager().getCardsPlayedInTurn().clear();
-        updatePlayerStateAfterEnd(playReport);
-        proceedToNextPlayerIfNeeded(playReport.getPlayer());
+        updatePlayerState(playReport.getPlayer(), playReport);
+        roundManager.getPlayerManager().proceedToNextPlayerIfNeeded(playReport.getPlayer());
         return playReport;
-    }
-
-    private void updatePlayerStateAfterEnd(PlayReport playReport) {
-        stateHandler.updateStateAfterEnd(playReport.getPlayer());
-        playReport.setAfterState(playReport.getPlayer().getState());
-    }
-
-    private void proceedToNextPlayerIfNeeded(Player currentPlayer) {
-        if(roundManager.getPlayerManager().getPlayerComebackHandler().isPreviousMakaoPlayerIndexExist()){
-            roundManager.getPlayerManager().getPlayerComebackHandler().returnToMakaoPlayer();
-        }
-        else if (roundManager.getPlayerManager().shouldProceedToNextPlayer(currentPlayer)) {
-            roundManager.getPlayerManager().goToNextPlayer();
-        }
     }
 
     private PlayReport handlePullAction(Player player, PlayReport playReport) {
         Card drawnCard = playReport.getPlay().getDrawnCard();
         addCardToPlayerHand(playReport, drawnCard);
-        updatePlayerStateAfterPull(player, playReport);
+        updatePlayerState(player, playReport);
         return playReport;
     }
 
     private void addCardToPlayerHand(PlayReport playReport, Card drawnCard) {
         playReport.getPlayer().addCardToHand(drawnCard);
         playReport.setDrawn(drawnCard);
-    }
-
-    private void updatePlayerStateAfterPull(Player player, PlayReport playReport) {
-        stateHandler.updateStateAfterPull(player);
-        playReport.setAfterState(player.getState());
     }
 
     private PlayReport handleMakaoAction(Player player, PlayReport playReport) {

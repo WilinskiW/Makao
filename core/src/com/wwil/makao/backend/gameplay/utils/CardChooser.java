@@ -11,7 +11,7 @@ import com.wwil.makao.backend.states.impl.DefenseState;
 
 import java.util.Collections;
 import java.util.List;
-
+//Wybiera karty dla komputera
 public class CardChooser {
     private final DeckManager deckManager;
 

@@ -40,6 +40,14 @@ public class PlayerManager {
         }
     }
 
+    public void proceedToNextPlayerIfNeeded(Player currentPlayer) {
+        if (playerComebackHandler.isPreviousMakaoPlayerIndexExist()) {
+            playerComebackHandler.returnToMakaoPlayer();
+        } else if (shouldProceedToNextPlayer(currentPlayer)) {
+            goToNextPlayer();
+        }
+    }
+
     boolean shouldProceedToNextPlayer(Player player) {
         return player == getCurrentPlayer();
     }

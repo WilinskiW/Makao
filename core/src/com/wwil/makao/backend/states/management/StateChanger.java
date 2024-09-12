@@ -59,13 +59,18 @@ public class StateChanger {
     }
 
     public void applyPunishment(Player player) {
+        PunishState punishState = null;
         if (roundManager.getGameStateManager().getPullsCount() > 0) {
-            applyPullingState(player, roundManager.getGameStateManager().giveAmountOfPulls() - 1);
-            handlePunishState(player,(PunishState) player.getState());
-            //-1, bo odejmujemy pociągnięcie rescue card
-        } else if(roundManager.getGameStateManager().getWaitsCount() > 0) {
-            applyBlockedState(player);
-            handlePunishState(player,(PunishState) player.getState());
+            int pulls = roundManager.getGameStateManager().giveAmountOfPulls() - 1; // -1, bo odejmujemy pociągnięcie rescue card
+            punishState = new PullingState(pulls);
+        } else if (roundManager.getGameStateManager().getWaitsCount() > 0) {
+            int waits = roundManager.getGameStateManager().giveAmountOfWaits();
+            punishState = new BlockedState(waits);
+        }
+
+        if (punishState != null) {
+            changePlayerState(player, punishState);
+            handlePunishState(player, punishState);
         }
     }
 
@@ -79,10 +84,6 @@ public class StateChanger {
 
     public void applyMakaoPunishState(Player player) {
         changePlayerState(player, new MakaoPunishState());
-    }
-
-    private void applyPullingState(Player player, int amount) {
-        changePlayerState(player, new PullingState(amount));
     }
 
     public void applyChoosingDemandState(Player player) {
@@ -103,10 +104,6 @@ public class StateChanger {
 
     public void applyAllDefenceState(Card attackedCard) {
         roundManager.getPlayerManager().getPlayers().forEach(player -> applyDefenceState(player, attackedCard));
-    }
-
-    private void applyBlockedState(Player player) {
-        changePlayerState(player, new BlockedState(roundManager.getGameStateManager().giveAmountOfWaits()));
     }
 
     public void setActions(Player player, boolean put, boolean pull, boolean end, boolean makao) {

@@ -42,9 +42,13 @@ public class AbilityHandler {
     }
 
     private void changeSuit(Card card, Card stackCard) {
-        if (!card.isShadow() || isStackCardJoker(stackCard)) {
+        if (canActiveChooseAbility(card, stackCard)) {
             playerStateManager.getStateChanger().applyChoosingSuitState(playerManager.getCurrentPlayer());
         }
+    }
+
+    private boolean canActiveChooseAbility(Card card, Card stackCard) {
+        return !card.isShadow() || isStackCardJoker(stackCard);
     }
 
     private void attackNext(int amountOfCards, Card card) {
@@ -58,7 +62,7 @@ public class AbilityHandler {
     }
 
     private void demand(Card card, Card stackCard) {
-        if (!card.isShadow() || isStackCardJoker(stackCard)) {
+        if (canActiveChooseAbility(card, stackCard)) {
             playerStateManager.getStateChanger().applyChoosingDemandState(playerManager.getCurrentPlayer());
         }
     }
@@ -90,7 +94,7 @@ public class AbilityHandler {
         }
     }
 
-    private boolean isStackCardJoker(Card stackCard){
+    private boolean isStackCardJoker(Card stackCard) {
         return stackCard.matchesRank(Rank.JOKER);
     }
 
@@ -98,7 +102,7 @@ public class AbilityHandler {
         return stackCard.matchesRank(Rank.K);
     }
 
-    private void chooseCard(){
+    private void chooseCard() {
         playerStateManager.getStateChanger().applyChoosingCardState(playerManager.getCurrentPlayer());
     }
 }

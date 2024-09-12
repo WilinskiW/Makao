@@ -1,5 +1,8 @@
 package com.wwil.makao.backend.states.management;
 
+import com.wwil.makao.backend.gameplay.actions.Action;
+import com.wwil.makao.backend.gameplay.actions.Play;
+import com.wwil.makao.backend.gameplay.actions.PlayReport;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Human;
 import com.wwil.makao.backend.model.player.Player;
@@ -11,18 +14,40 @@ public class StateHandler {
         this.changer = changer;
     }
 
-    public void updateStateAfterPut(Player player, Card card) {
+    public void updatePlayerState(Player player, Play play) {
+        switch (play.getAction()) {
+            case PUT:
+                updateStateAfterPut(player, play.getCardPlayed());
+                break;
+            case PULL:
+                updateStateAfterPull(player);
+                break;
+            case END:
+                updateStateAfterEnd(player);
+                break;
+            case MAKAO:
+                updateStateAfterFailMakao(player);
+                break;
+        }
+    }
+
+    private void updateStateAfterPut(Player player, Card card) {
         player.getState().handlePut(player, card, changer);
     }
 
-    public void updateStateAfterPull(Player player) {
+    private void updateStateAfterPull(Player player) {
         player.getState().handlePull(player, changer);
     }
 
-    public void updateStateAfterEnd(Player player) {
+    private void updateStateAfterEnd(Player player) {
         player.getState().handleEnd(player, changer);
     }
-    public void updateStateAfterFailMakao(Human player){
-        changer.applyMakaoPunishState(player);
+
+    private void updateStateAfterFailMakao(Player player) {
+        if (player instanceof Human) {
+            changer.applyMakaoPunishState(player);
+        } else {
+            throw new IllegalArgumentException("Player is not a human instance!");
+        }
     }
 }
