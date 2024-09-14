@@ -1,7 +1,6 @@
 package com.wwil.makao.frontend.controllers.managers;
 
 import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.wwil.makao.backend.gameplay.actions.PlayReport;
 import com.wwil.makao.backend.gameplay.actions.RoundReport;
 import com.wwil.makao.frontend.entities.cards.CardActor;
@@ -31,10 +30,8 @@ public abstract class TurnManager {
     protected List<Action> putCard(CardActor playedCard, PlayerHandGroup player, boolean alignCards) {
         List<Action> listOfActions = new ArrayList<>();
         //1. Animacja kładzenia karta
-        Action addToStack = uiManager.addCardActorToStackGroup(playedCard);
+        Action addToStack = uiManager.putCardWithAnimation(playedCard);
         listOfActions.add(addToStack);
-
-//        listOfActions.add(getFinishAction(playedCard, player));
 
         //2. Animacja sprawdzenia końca gry
 //        Action endIfPlayerWon = endIfPlayerWon(player);
@@ -72,20 +69,6 @@ public abstract class TurnManager {
                 if (!playedCard.getCard().isShadow()) {
                     soundManager.playPut();
                 }
-                return false;
-            }
-        };
-    }
-
-    private Action getFinishAction(CardActor cardActor, Group group) {
-        return new Action() {
-
-            @Override
-            public boolean act(float delta) {
-                cardActor.setX(0);
-                cardActor.setY(0);
-                group.addActor(cardActor);
-                this.setTarget(cardActor);
                 return false;
             }
         };

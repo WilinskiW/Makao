@@ -27,7 +27,11 @@ public class StackCardsGroup extends Group {
     }
 
     public CardActor peekBeforeLastCardActor() {
-        return (CardActor) getChildren().get(getChildren().size - 2);
+        try{
+            return (CardActor) getChildren().get(getChildren().size - 2);
+        }catch (IndexOutOfBoundsException e){
+            return (CardActor) getChildren().get(getChildren().size - 1);
+        }
     }
 
     private void dismantleCardActors() {

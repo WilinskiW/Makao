@@ -1,6 +1,6 @@
 package com.wwil.makao.backend.gameplay.ai;
 
-import com.wwil.makao.backend.gameplay.actions.Action;
+import com.wwil.makao.backend.gameplay.actions.ActionType;
 import com.wwil.makao.backend.gameplay.actions.Play;
 import com.wwil.makao.backend.gameplay.actions.PlayReport;
 import com.wwil.makao.backend.gameplay.management.PlayExecutor;
@@ -28,13 +28,13 @@ public class ComputerTurnManager {
             PlayReport playReport = playExecutor.createPlayReport(currentPlayer, play);
             roundManager.getRoundReport().addPlayRaport(playReport);
 
-            if (play.getAction() == Action.MAKAO) {
+            if (play.getAction() == ActionType.MAKAO) {
                 playerManager.getPlayerComebackHandler().saveCurrentIndexBeforeMakao();
                 playerManager.goToHumanPlayer();
                 break;
             }
 
-            if (play.getAction() == Action.END || currentPlayer.checkIfPlayerHaveNoCards()) {
+            if (play.getAction() == ActionType.END || currentPlayer.checkIfPlayerHaveNoCards()) {
                 break;
             }
         }

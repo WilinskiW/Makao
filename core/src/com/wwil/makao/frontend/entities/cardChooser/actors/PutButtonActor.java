@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.wwil.makao.backend.gameplay.actions.Action;
+import com.wwil.makao.backend.gameplay.actions.ActionType;
 import com.wwil.makao.backend.gameplay.actions.Play;
 import com.wwil.makao.frontend.utils.params.GUIparams;
 import com.wwil.makao.frontend.controllers.gameplay.GameController;
@@ -48,7 +48,7 @@ public class PutButtonActor extends Actor {
             controller.executePlay(
                     new Play()
                             .setCardPlayed(chosenCardActor.getCard())
-                            .setAction(Action.PUT));
+                            .setAction(ActionType.PUT));
             super.clicked(event, x, y);
         }
     }

@@ -1,7 +1,7 @@
 package com.wwil.makao.backend.gameplay.ai;
 
 import com.wwil.makao.backend.core.RuleParams;
-import com.wwil.makao.backend.gameplay.actions.Action;
+import com.wwil.makao.backend.gameplay.actions.ActionType;
 import com.wwil.makao.backend.gameplay.actions.Play;
 import com.wwil.makao.backend.gameplay.management.RoundManager;
 import com.wwil.makao.backend.gameplay.utils.CardFinder;
@@ -56,7 +56,7 @@ public class PlayMaker {
     }
 
     private Play createMakaoPlay() {
-        return new Play().setAction(Action.MAKAO);
+        return new Play().setAction(ActionType.MAKAO);
     }
 
     private boolean isPutAvailable(Player player) {
@@ -66,7 +66,7 @@ public class PlayMaker {
     private boolean tryPut(Play play, Player player) {
         Card card = findValidCardsForCurrentState(player);
         if (card != null) {
-            play.setCardPlayed(card).setAction(Action.PUT);
+            play.setCardPlayed(card).setAction(ActionType.PUT);
             return true;
         }
         return false;
@@ -81,11 +81,11 @@ public class PlayMaker {
     }
 
     private Play createEndPlay(Play play) {
-        return play.setAction(Action.END);
+        return play.setAction(ActionType.END);
     }
 
     private Play createPullPlay(Play play) {
-        return play.setDrawnCard(pullCard()).setAction(Action.PULL);
+        return play.setDrawnCard(pullCard()).setAction(ActionType.PULL);
     }
 
     private Card pullCard() {

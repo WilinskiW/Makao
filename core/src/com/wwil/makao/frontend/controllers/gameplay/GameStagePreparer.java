@@ -2,6 +2,8 @@ package com.wwil.makao.frontend.controllers.gameplay;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.backend.model.card.Rank;
+import com.wwil.makao.backend.model.card.Suit;
 import com.wwil.makao.frontend.entities.cards.CardActorFactory;
 import com.wwil.makao.frontend.entities.gameButtons.MakaoButton;
 import com.wwil.makao.frontend.utils.params.CardsAlignmentParams;
@@ -39,7 +41,7 @@ public class GameStagePreparer {
     }
 
     private void prepareStackCardsGroup() {
-        uiManager.addStaringCardToStackGroup(cardActorFactory.createCardActor(backend.getStackCard()));
+        uiManager.addCardToStack(cardActorFactory.createCardActor(backend.getStackCard()));
         stage.addActor(uiManager.getStackCardsGroup());
         uiManager.getStackCardsGroup().setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
     }
@@ -88,9 +90,39 @@ public class GameStagePreparer {
         PlayerHandGroup handGroup = uiManager.getHandGroups().get(index);
         handGroup.setCardsAlignment(CardsAlignmentParams.getParamFromOrdinal(index));
 
+        //todo  Metoda tylko wyłącznie do testów! Usuń po testach
+        test(index);
+
         for (Card card : handGroup.getPlayer().getCards()) {
             CardActor cardActor = cardActorFactory.createCardActor(card);
             handGroup.addActor(cardActor);
+        }
+    }
+
+    private void test(int index) {
+        switch (index) {
+            case 0:
+                backend.getPlayerList().get(index).getCards().clear();
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.JOKER, Suit.RED));
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.JOKER, Suit.BLACK));
+                break;
+            case 1:
+                backend.getPlayerList().get(index).getCards().clear();
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.NINE, Suit.SPADE));
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.EIGHT, Suit.DIAMOND));
+                break;
+            case 2:
+                backend.getPlayerList().get(index).getCards().clear();
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.SIX, Suit.DIAMOND));
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.SEVEN, Suit.SPADE));
+                break;
+            case 3:
+                backend.getPlayerList().get(index).getCards().clear();
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.TWO, Suit.SPADE));
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.SEVEN, Suit.CLUB));
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.SIX, Suit.CLUB));
+                backend.getPlayerList().get(index).getCards().add(new Card(Rank.FIVE, Suit.DIAMOND));
+                break;
         }
     }
 

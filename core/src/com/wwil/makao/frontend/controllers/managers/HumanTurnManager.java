@@ -70,8 +70,9 @@ public class HumanTurnManager extends TurnManager {
         if(player.getPlayer().hasOneCard()){
             uiManager.getMakaoButton().setActive(true);
         }
-
+        uiManager.addCardToStack(playedCard);
         playedCard.clearListeners();
+        soundManager.playPut();
         return null;
     }
 

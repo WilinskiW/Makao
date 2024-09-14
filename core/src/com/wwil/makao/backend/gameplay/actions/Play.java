@@ -5,7 +5,7 @@ import com.wwil.makao.backend.model.card.Card;
 public class Play {
     private Card cardPlayed;
     private Card drawnCard;
-    private Action action;
+    private ActionType actionType;
 
     public Play() {
     }
@@ -14,12 +14,12 @@ public class Play {
         return cardPlayed;
     }
 
-    public Action getAction() {
-        return action;
+    public ActionType getAction() {
+        return actionType;
     }
 
-    public Play setAction(Action action) {
-        this.action = action;
+    public Play setAction(ActionType actionType) {
+        this.actionType = actionType;
         return this;
     }
 

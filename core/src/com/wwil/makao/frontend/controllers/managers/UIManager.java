@@ -1,15 +1,12 @@
 package com.wwil.makao.frontend.controllers.managers;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.wwil.makao.backend.gameplay.actions.PlayReport;
-import com.wwil.makao.frontend.controllers.gameplay.EndingScreen;
 import com.wwil.makao.frontend.controllers.gameplay.GameController;
 import com.wwil.makao.frontend.controllers.gameplay.GameStagePreparer;
 import com.wwil.makao.frontend.controllers.gameplay.GameplayScreen;
@@ -106,40 +103,34 @@ public class UIManager {
         }
     }
 
-    public void addStaringCardToStackGroup(CardActor cardActor) {
-        gameplayScreen.getStage().addActor(cardActor);
+    public void addCardToStack(CardActor cardActor) {
         cardActor.setUpSideDown(false);
         stackCardsGroup.addActor(cardActor);
     }
 
-    public Action addCardActorToStackGroup(CardActor cardActor) {
-        Action init = new Action() {
+    public Action putCardWithAnimation(CardActor cardActor) {
+        MoveToAction moveCard = new MoveToAction() {
             @Override
-            public boolean act(float delta) {
-                deployCardToStage(cardActor);
-                cardActor.setPosition(cardActor.getLastPositionBeforeRemove().x,cardActor.getLastPositionBeforeRemove().y);
-
-                if (cardActor.getCard().isShadow()) {
-                    cardActor.setColor(Color.GRAY);
-                }
-
+            protected void begin() {
+                cardActor.leaveGroup(); //startowa pozycja karty przed animacją
+                super.begin(); //zaczytanie pozycji karty do animacji
                 cardActor.setUpSideDown(false);
-                return true;
+                setPosition(stackCardsGroup.getX(), stackCardsGroup.getY());
             }
         };
 
+        moveCard.setDuration(1);
+        moveCard.setInterpolation(Interpolation.exp10);
 
-        MoveToAction moveTo = Actions.moveTo(stackCardsGroup.getX(), stackCardsGroup.getY(), 1f, Interpolation.exp10);
-
-        Action addToGroup = new Action() {
+        Action finishAnimation = new Action() {
             @Override
             public boolean act(float delta) {
-                stackCardsGroup.addActor(cardActor);
+                addCardToStack(cardActor);
                 return true;
             }
         };
 
-        Action sequence = Actions.sequence(init, moveTo, addToGroup);
+        Action sequence = Actions.sequence(moveCard, finishAnimation);
         sequence.setTarget(cardActor);
         return sequence;
     }

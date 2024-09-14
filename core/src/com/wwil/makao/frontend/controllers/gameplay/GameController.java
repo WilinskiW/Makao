@@ -1,6 +1,6 @@
 package com.wwil.makao.frontend.controllers.gameplay;
 
-import com.wwil.makao.backend.gameplay.actions.Action;
+import com.wwil.makao.backend.gameplay.actions.ActionType;
 import com.wwil.makao.backend.gameplay.actions.Play;
 import com.wwil.makao.backend.gameplay.actions.RoundReport;
 import com.wwil.makao.frontend.controllers.facedes.BackendFacade;
@@ -34,7 +34,7 @@ public class GameController {
     public void executePlay(Play play) {
         RoundReport report = backend.processHumanPlay(play);
         humanTurnManager.show(report);
-        if (play.getAction() == Action.END) {
+        if (play.getAction() == ActionType.END) {
             computerTurnManager.show(report);
         }
     }

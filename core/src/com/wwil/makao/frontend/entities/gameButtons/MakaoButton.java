@@ -2,7 +2,7 @@ package com.wwil.makao.frontend.entities.gameButtons;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.wwil.makao.backend.gameplay.actions.Action;
+import com.wwil.makao.backend.gameplay.actions.ActionType;
 import com.wwil.makao.backend.gameplay.actions.Play;
 import com.wwil.makao.frontend.controllers.gameplay.GameController;
 
@@ -21,7 +21,7 @@ public class MakaoButton extends GameButton {
     public void sendInput() {
         controller.getSoundManager().playButtonClick();
         controller.executePlay(
-                new Play().setAction(Action.MAKAO));
+                new Play().setAction(ActionType.MAKAO));
     }
 
     @Override

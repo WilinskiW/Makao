@@ -1,12 +1,12 @@
 package com.wwil.makao.frontend.utils.text;
 
-import com.wwil.makao.backend.gameplay.actions.Action;
+import com.wwil.makao.backend.gameplay.actions.ActionType;
 import com.wwil.makao.backend.gameplay.actions.PlayReport;
 
 public class ReportToTextConverter {
     public static String convert(PlayReport playReport) {
-        Action action = playReport.getPlay().getAction();
-        switch (action) {
+        ActionType actionType = playReport.getPlay().getAction();
+        switch (actionType) {
             case PUT:
                 return printPutAction(playReport);
             case PULL:

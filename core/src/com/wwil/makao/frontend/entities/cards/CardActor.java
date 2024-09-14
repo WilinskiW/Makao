@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -48,6 +49,17 @@ public class CardActor extends Actor {
         batch.draw(currentCardSide, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(),
                 getScaleX(), getScaleY(), getRotation(), true);
         batch.setColor(Color.WHITE);
+    }
+
+    public void leaveGroup() {
+        Vector2 stageVector = getStageVector();
+        setX(stageVector.x);
+        setY(stageVector.y);
+        getStage().addActor(this);
+    }
+
+    public Vector2 getStageVector() {
+        return localToStageCoordinates(new Vector2(getX(),getY()));
     }
 
     public void changeTransparency(float alpha){

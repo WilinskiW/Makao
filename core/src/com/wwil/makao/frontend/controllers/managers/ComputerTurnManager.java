@@ -1,6 +1,8 @@
 package com.wwil.makao.frontend.controllers.managers;
 
+
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.wwil.makao.backend.gameplay.actions.ActionType;
 import com.wwil.makao.backend.gameplay.actions.PlayReport;
 import com.wwil.makao.backend.gameplay.actions.RoundReport;
 import com.wwil.makao.backend.model.card.Card;
@@ -20,7 +22,12 @@ public class ComputerTurnManager extends TurnManager {
     public void show(RoundReport roundReport) {
         final List<PlayReport> computerPlayReports = roundReport.getComputerPlayReports(humanHand().getPlayer());
         for(PlayReport playReport : computerPlayReports ){
-            actionManager.playActions(getPlayerTurn(playReport));
+            if(playReport.getPlay().getAction() == ActionType.PUT) {
+                actionManager.playActions(getPlayerTurn(playReport));
+            }
+            else{
+                processComputerTurn(playReport,getHandGroup(playReport.getPlayer()));
+            }
         }
         inputManager.turnOnHumanInput();
     }
