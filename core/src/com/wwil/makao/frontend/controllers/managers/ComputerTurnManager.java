@@ -1,16 +1,15 @@
 package com.wwil.makao.frontend.controllers.managers;
 
-import com.badlogic.gdx.utils.Timer;
-import com.wwil.makao.backend.model.card.Card;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.wwil.makao.backend.gameplay.actions.PlayReport;
-import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.backend.gameplay.actions.RoundReport;
+import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.frontend.entities.cards.CardActor;
-import com.wwil.makao.frontend.utils.sound.SoundManager;
 import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
+import com.wwil.makao.frontend.utils.sound.SoundManager;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ComputerTurnManager extends TurnManager {
     public ComputerTurnManager(UIManager uiManager, InputManager inputManager, SoundManager soundManager) {
@@ -19,42 +18,40 @@ public class ComputerTurnManager extends TurnManager {
 
     @Override
     public void show(RoundReport roundReport) {
-        float delta = 1.25f;
         final List<PlayReport> computerPlayReports = roundReport.getComputerPlayReports(humanHand().getPlayer());
-        final int numberOfComputers = computerPlayReports.size();
-        final AtomicInteger completedComputers = new AtomicInteger(0);
-
-        for (int i = 0; i < computerPlayReports.size(); i++) {
-            final PlayReport playReport = computerPlayReports.get(i);
-            final PlayerHandGroup handGroup = getHandGroup(playReport.getPlayer());
-
-            Timer.schedule(new Timer.Task() {
-                @Override
-                public void run() {
-                    processComputerTurn(playReport, handGroup);
-                    // Sprawdź, czy to był ostatni ruch komputera
-                    if (completedComputers.incrementAndGet() == numberOfComputers) {
-                        inputManager.turnOnHumanInput();
-                    }
-                }
-            }, (i + 1) * delta); // Opóźnienie względem indeksu
+        for(PlayReport playReport : computerPlayReports ){
+            actionManager.playActions(getPlayerTurn(playReport));
         }
+        inputManager.turnOnHumanInput();
     }
 
-    private void processComputerTurn(PlayReport playReport, PlayerHandGroup playerHand) {
+    //todo:
+    //1. PULL (Dla wszystkich graczy)
+    //  Lista akcji dla Pull (przepis)
+    //2. PUT (
+    //  Lista akcji dla Put (przepis)
+    //3. Sprawdzania czy akcja jest ostatnia
+
+
+    private List<Action> getPlayerTurn(PlayReport playReport){
+        PlayerHandGroup handGroup = getHandGroup(playReport.getPlayer());
+        return processComputerTurn(playReport, handGroup);
+    }
+
+    private List<Action> processComputerTurn(PlayReport playReport, PlayerHandGroup playerHand) {
         switch (playReport.getPlay().getAction()) {
             case END:
                 endTurn();
                 break;
             case PUT:
                 CardActor cardActor = getCardActor(playReport, playerHand);
-                putCard(cardActor, playerHand, !cardActor.getCard().isShadow());
-                break;
+                return putCard(cardActor, playerHand, !cardActor.getCard().isShadow());
             case PULL:
                 pull(playReport, playerHand);
                 break;
         }
         uiManager.changeText(playReport);
+        return null;
     }
 
     @Override

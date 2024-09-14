@@ -1,10 +1,13 @@
 package com.wwil.makao.frontend.controllers.managers;
 
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.wwil.makao.backend.gameplay.actions.PlayReport;
 import com.wwil.makao.backend.gameplay.actions.RoundReport;
 import com.wwil.makao.frontend.utils.sound.SoundManager;
 import com.wwil.makao.frontend.entities.cards.CardActor;
 import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
+
+import java.util.List;
 
 public class HumanTurnManager extends TurnManager {
 
@@ -63,14 +66,13 @@ public class HumanTurnManager extends TurnManager {
 
 
     @Override
-    protected void putCard(CardActor playedCard, PlayerHandGroup player, boolean alignCards) {
-        super.putCard(playedCard, player, alignCards);
-
+    protected List<Action> putCard(CardActor playedCard, PlayerHandGroup player, boolean alignCards) {
         if(player.getPlayer().hasOneCard()){
             uiManager.getMakaoButton().setActive(true);
         }
 
         playedCard.clearListeners();
+        return null;
     }
 
     private void showCardChooser(CardActor cardPlayed) {

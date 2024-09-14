@@ -1,7 +1,13 @@
 package com.wwil.makao.frontend.controllers.managers;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.wwil.makao.backend.gameplay.actions.PlayReport;
 import com.wwil.makao.frontend.controllers.gameplay.EndingScreen;
 import com.wwil.makao.frontend.controllers.gameplay.GameController;
@@ -13,7 +19,6 @@ import com.wwil.makao.frontend.entities.cards.CardActorFactory;
 import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
 import com.wwil.makao.frontend.entities.cards.StackCardsGroup;
 import com.wwil.makao.frontend.entities.gameButtons.GameButton;
-import com.wwil.makao.frontend.utils.exceptions.CardNotFoundException;
 import com.wwil.makao.frontend.utils.text.ReportToTextConverter;
 import com.wwil.makao.frontend.utils.text.TextContainer;
 
@@ -23,7 +28,6 @@ import java.util.List;
 public class UIManager {
     private final GameController controller;
     private GameplayScreen gameplayScreen;
-    private EndingScreen endingScreen;
     private final StackCardsGroup stackCardsGroup;
     private final CardActorFactory cardActorFactory;
     private final List<PlayerHandGroup> handGroups;
@@ -46,7 +50,7 @@ public class UIManager {
         new GameStagePreparer(this, controller.getBackend()).execute();
     }
 
-    public void changeToEndingScreen(String whoWon){
+    public void changeToEndingScreen(String whoWon) {
         controller.changeScreen(whoWon);
     }
 
@@ -102,17 +106,42 @@ public class UIManager {
         }
     }
 
-    public void addCardActorToStackGroup(CardActor cardActor) {
-        try {
-            gameplayScreen.getStage().addActor(cardActor);
-        } catch (NullPointerException e) {
-            throw new CardNotFoundException();
-        }
-        if (cardActor.getCard().isShadow()) {
-            cardActor.setColor(Color.GRAY);
-        }
+    public void addStaringCardToStackGroup(CardActor cardActor) {
+        gameplayScreen.getStage().addActor(cardActor);
         cardActor.setUpSideDown(false);
         stackCardsGroup.addActor(cardActor);
+    }
+
+    public Action addCardActorToStackGroup(CardActor cardActor) {
+        Action init = new Action() {
+            @Override
+            public boolean act(float delta) {
+                deployCardToStage(cardActor);
+                cardActor.setPosition(cardActor.getLastPositionBeforeRemove().x,cardActor.getLastPositionBeforeRemove().y);
+
+                if (cardActor.getCard().isShadow()) {
+                    cardActor.setColor(Color.GRAY);
+                }
+
+                cardActor.setUpSideDown(false);
+                return true;
+            }
+        };
+
+
+        MoveToAction moveTo = Actions.moveTo(stackCardsGroup.getX(), stackCardsGroup.getY(), 1f, Interpolation.exp10);
+
+        Action addToGroup = new Action() {
+            @Override
+            public boolean act(float delta) {
+                stackCardsGroup.addActor(cardActor);
+                return true;
+            }
+        };
+
+        Action sequence = Actions.sequence(init, moveTo, addToGroup);
+        sequence.setTarget(cardActor);
+        return sequence;
     }
 
     public void changeTransparencyOfPlayerGroup(PlayerHandGroup playerHandGroup, float alpha) {

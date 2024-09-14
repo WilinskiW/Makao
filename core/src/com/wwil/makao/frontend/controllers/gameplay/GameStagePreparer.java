@@ -39,7 +39,7 @@ public class GameStagePreparer {
     }
 
     private void prepareStackCardsGroup() {
-        uiManager.addCardActorToStackGroup(cardActorFactory.createCardActor(backend.getStackCard()));
+        uiManager.addStaringCardToStackGroup(cardActorFactory.createCardActor(backend.getStackCard()));
         stage.addActor(uiManager.getStackCardsGroup());
         uiManager.getStackCardsGroup().setPosition(GUIparams.WIDTH / 2f, GUIparams.HEIGHT / 2f);
     }
