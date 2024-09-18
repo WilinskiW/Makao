@@ -7,22 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import java.util.*;
 
 public class ActionManager {
-    private static ActionManager instance = new ActionManager();
-    private Queue<ActionSet> sets = new LinkedList<>();
-
-
-    //aby zablokować tworzenie obiektu tej klasy wystarczy ustawić konstruktor na prywatny
-    ActionManager() {
-
-    }
-
-    static ActionManager getInstance() {
-        return instance;
-    }
-
-    public void playAction(Action action) {
-        playActions(Collections.singletonList(action));
-    }
+    private final Queue<ActionSet> sets = new LinkedList<>();
 
     public void playActions(List<Action> actions){
         ActionSet actionSet = new ActionSet(actions);
@@ -37,7 +22,7 @@ public class ActionManager {
     }
 
     class ActionSet{
-        private List<Action> actions;
+        private final List<Action> actions;
         private int finishedActions = 0;
 
         public ActionSet(List<Action> actions) {

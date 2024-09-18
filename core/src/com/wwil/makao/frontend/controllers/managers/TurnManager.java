@@ -7,7 +7,6 @@ import com.wwil.makao.frontend.entities.cards.CardActor;
 import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
 import com.wwil.makao.frontend.utils.sound.SoundManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class TurnManager {
@@ -27,69 +26,28 @@ public abstract class TurnManager {
 
     abstract void endTurn();
 
-    protected List<Action> putCard(CardActor playedCard, PlayerHandGroup player, boolean alignCards) {
-        List<Action> listOfActions = new ArrayList<>();
-        //1. Animacja kładzenia karta
-        Action addToStack = uiManager.putCardWithAnimation(playedCard);
-        listOfActions.add(addToStack);
+    abstract protected List<Action> putCard(CardActor playedCard, PlayerHandGroup player, boolean alignCards);
 
-        //2. Animacja sprawdzenia końca gry
-//        Action endIfPlayerWon = endIfPlayerWon(player);
-//        listOfActions.add(endIfPlayerWon);
-//
-////        //3. Animacja
-//        Action alignCard = alignCardIfNeeded(player, alignCards);
-//        listOfActions.add(alignCard);
-//
-////        //4. Sound
-//        Action playSound = playPutSound(playedCard);
-//        listOfActions.add(playSound);
-//        listOfActions.forEach(action -> action.setTarget(playedCard));
-        //Jedna animacja składa
-        //return sekwencje akcji
-        return listOfActions;
-    }
-
-    private Action alignCardIfNeeded(PlayerHandGroup player, boolean alignCards) {
-        return new Action() {
+    Action alignCardsIfNeeded(PlayerHandGroup handGroup, boolean alignCards) {
+        Action action = new Action() {
             @Override
             public boolean act(float delta) {
                 if (alignCards) {
-                    player.moveCloserToStartingPosition();
+                    handGroup.moveCloserToStartingPosition();
                 }
                 return true;
             }
         };
+        action.setTarget(handGroup);
+        return action;
     }
 
-    private Action playPutSound(CardActor playedCard) {
-        return new Action() {
-            @Override
-            public boolean act(float delta) {
-                if (!playedCard.getCard().isShadow()) {
-                    soundManager.playPut();
-                }
-                return false;
-            }
-        };
-    }
+    abstract protected void pull(PlayReport playReport, PlayerHandGroup handGroup);
 
-    protected void pull(PlayReport playReport, PlayerHandGroup player) {
-        CardActor drawnCardActor = uiManager.getCardActorFactory().createCardActor(playReport.getDrawn());
-        player.addActor(drawnCardActor);
-        soundManager.playPull();
-    }
-
-    private Action endIfPlayerWon(PlayerHandGroup handGroup) {
-        return new Action() {
-            @Override
-            public boolean act(float delta) {
-                if (handGroup.getPlayer().checkIfPlayerHaveNoCards() && handGroup.getChildren().isEmpty()) {
-                    uiManager.changeToEndingScreen(handGroup.getPlayer().toString());
-                }
-                return true;
-            }
-        };
+    void endIfPlayerWon(PlayerHandGroup handGroup) {
+        if (handGroup.getPlayer().checkIfPlayerHaveNoCards() && handGroup.getChildren().isEmpty()) {
+            uiManager.changeToEndingScreen(handGroup.getPlayer().toString());
+        }
     }
 
     protected void informMakao() {

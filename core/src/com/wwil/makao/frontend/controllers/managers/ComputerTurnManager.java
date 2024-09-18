@@ -11,6 +11,7 @@ import com.wwil.makao.frontend.entities.cards.CardActor;
 import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
 import com.wwil.makao.frontend.utils.sound.SoundManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ComputerTurnManager extends TurnManager {
@@ -21,12 +22,11 @@ public class ComputerTurnManager extends TurnManager {
     @Override
     public void show(RoundReport roundReport) {
         final List<PlayReport> computerPlayReports = roundReport.getComputerPlayReports(humanHand().getPlayer());
-        for(PlayReport playReport : computerPlayReports ){
-            if(playReport.getPlay().getAction() == ActionType.PUT) {
+        for (PlayReport playReport : computerPlayReports) {
+            if (playReport.getPlay().getAction() == ActionType.PUT) {
                 actionManager.playActions(getPlayerTurn(playReport));
-            }
-            else{
-                processComputerTurn(playReport,getHandGroup(playReport.getPlayer()));
+            } else {
+                processComputerTurn(playReport, getHandGroup(playReport.getPlayer()));
             }
         }
         inputManager.turnOnHumanInput();
@@ -40,7 +40,7 @@ public class ComputerTurnManager extends TurnManager {
     //3. Sprawdzania czy akcja jest ostatnia
 
 
-    private List<Action> getPlayerTurn(PlayReport playReport){
+    private List<Action> getPlayerTurn(PlayReport playReport) {
         PlayerHandGroup handGroup = getHandGroup(playReport.getPlayer());
         return processComputerTurn(playReport, handGroup);
     }
@@ -57,6 +57,7 @@ public class ComputerTurnManager extends TurnManager {
                 pull(playReport, playerHand);
                 break;
         }
+        endIfPlayerWon(playerHand);
         uiManager.changeText(playReport);
         return null;
     }
@@ -82,5 +83,25 @@ public class ComputerTurnManager extends TurnManager {
             }
         }
         return null;
+    }
+
+    @Override
+    protected List<Action> putCard(CardActor playedCard, PlayerHandGroup handGroup, boolean alignCards) {
+        List<Action> listOfActions = new ArrayList<>();
+        //1. Animacja kładzenia karta
+        Action addToStack = uiManager.putCardWithAnimation(playedCard);
+        listOfActions.add(addToStack);
+
+        Action aligningAction = alignCardsIfNeeded(handGroup, alignCards);
+        listOfActions.add(aligningAction);
+
+        return listOfActions;
+    }
+
+    @Override
+    protected void pull(PlayReport playReport, PlayerHandGroup player) {
+        CardActor drawnCardActor = uiManager.getCardActorFactory().createCardActor(playReport.getDrawn());
+        player.addActor(drawnCardActor);
+        soundManager.playPull();
     }
 }

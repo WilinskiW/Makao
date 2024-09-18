@@ -16,6 +16,7 @@ import com.wwil.makao.frontend.entities.cards.CardActorFactory;
 import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
 import com.wwil.makao.frontend.entities.cards.StackCardsGroup;
 import com.wwil.makao.frontend.entities.gameButtons.GameButton;
+import com.wwil.makao.frontend.utils.sound.SoundManager;
 import com.wwil.makao.frontend.utils.text.ReportToTextConverter;
 import com.wwil.makao.frontend.utils.text.TextContainer;
 
@@ -104,11 +105,31 @@ public class UIManager {
     }
 
     public void addCardToStack(CardActor cardActor) {
+        if(cardActor.getCard().isShadow()){
+            cardActor.setColor(Color.GRAY);
+        }
         cardActor.setUpSideDown(false);
         stackCardsGroup.addActor(cardActor);
     }
 
     public Action putCardWithAnimation(CardActor cardActor) {
+        MoveToAction moveCard = getMoveToAction(cardActor);
+
+        Action finishAnimation = new Action() {
+            @Override
+            public boolean act(float delta) {
+                controller.getSoundManager().playPut();
+                addCardToStack(cardActor);
+                return true;
+            }
+        };
+
+        Action sequence = Actions.sequence(moveCard, finishAnimation);
+        sequence.setTarget(cardActor);
+        return sequence;
+    }
+
+    private MoveToAction getMoveToAction(CardActor cardActor) {
         MoveToAction moveCard = new MoveToAction() {
             @Override
             protected void begin() {
@@ -119,20 +140,9 @@ public class UIManager {
             }
         };
 
-        moveCard.setDuration(1);
+        moveCard.setDuration(0.95f);
         moveCard.setInterpolation(Interpolation.exp10);
-
-        Action finishAnimation = new Action() {
-            @Override
-            public boolean act(float delta) {
-                addCardToStack(cardActor);
-                return true;
-            }
-        };
-
-        Action sequence = Actions.sequence(moveCard, finishAnimation);
-        sequence.setTarget(cardActor);
-        return sequence;
+        return moveCard;
     }
 
     public void changeTransparencyOfPlayerGroup(PlayerHandGroup playerHandGroup, float alpha) {
