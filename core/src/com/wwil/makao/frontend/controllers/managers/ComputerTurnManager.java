@@ -9,6 +9,7 @@ import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.frontend.entities.cards.CardActor;
 import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
+import com.wwil.makao.frontend.utils.exceptions.CardNotFoundException;
 import com.wwil.makao.frontend.utils.sound.SoundManager;
 
 import java.util.ArrayList;
@@ -31,14 +32,6 @@ public class ComputerTurnManager extends TurnManager {
         }
         inputManager.turnOnHumanInput();
     }
-
-    //todo:
-    //1. PULL (Dla wszystkich graczy)
-    //  Lista akcji dla Pull (przepis)
-    //2. PUT (
-    //  Lista akcji dla Put (przepis)
-    //3. Sprawdzania czy akcja jest ostatnia
-
 
     private List<Action> getPlayerTurn(PlayReport playReport) {
         PlayerHandGroup handGroup = getHandGroup(playReport.getPlayer());
@@ -88,7 +81,6 @@ public class ComputerTurnManager extends TurnManager {
     @Override
     protected List<Action> putCard(CardActor playedCard, PlayerHandGroup handGroup, boolean alignCards) {
         List<Action> listOfActions = new ArrayList<>();
-        //1. Animacja kładzenia karta
         Action addToStack = uiManager.putCardWithAnimation(playedCard);
         listOfActions.add(addToStack);
 
@@ -100,8 +92,14 @@ public class ComputerTurnManager extends TurnManager {
 
     @Override
     protected void pull(PlayReport playReport, PlayerHandGroup player) {
-        CardActor drawnCardActor = uiManager.getCardActorFactory().createCardActor(playReport.getDrawn());
-        player.addActor(drawnCardActor);
+        if(playReport.getDrawn() == uiManager.getGameDeckGroup().peekCardActor().getCard()){
+            CardActor drawnCardActor = uiManager.getGameDeckGroup().popCardActor();
+            player.addActor(drawnCardActor);
+
+        }
+        else {
+            throw new CardNotFoundException("Backend - Frontend nie są synchronizowane");
+        }
         soundManager.playPull();
     }
 }

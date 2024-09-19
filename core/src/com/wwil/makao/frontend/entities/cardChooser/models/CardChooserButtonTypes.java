@@ -3,15 +3,15 @@ package com.wwil.makao.frontend.entities.cardChooser.models;
 import com.wwil.makao.frontend.utils.params.GUIparams;
 
 public enum CardChooserButtonTypes {
-    RANK_LEFT(GUIparams.CHOOSER_WINDOW_X_POS+57, GUIparams.CHOOSER_WINDOW_Y_POS+239,
+    RANK_LEFT(GUIparams.CHOOSER_WINDOW_POS.x + 57, GUIparams.CHOOSER_WINDOW_POS.y + 239,
             GUIparams.ARROW_BUTTON_WIDTH, GUIparams.ARROW_BUTTON_HEIGHT, 180),
-    RANK_RIGHT(GUIparams.CHOOSER_WINDOW_X_POS+242, GUIparams.CHOOSER_WINDOW_Y_POS+176,
+    RANK_RIGHT(GUIparams.CHOOSER_WINDOW_POS.x + 242, GUIparams.CHOOSER_WINDOW_POS.y + 176,
             GUIparams.ARROW_BUTTON_WIDTH, GUIparams.ARROW_BUTTON_HEIGHT, 0),
-    SUIT_LEFT(GUIparams.CHOOSER_WINDOW_X_POS+57, GUIparams.CHOOSER_WINDOW_Y_POS+96,
+    SUIT_LEFT(GUIparams.CHOOSER_WINDOW_POS.x + 57, GUIparams.CHOOSER_WINDOW_POS.y + 96,
             GUIparams.ARROW_BUTTON_WIDTH, GUIparams.ARROW_BUTTON_HEIGHT, 180),
-    SUIT_RIGHT(GUIparams.CHOOSER_WINDOW_X_POS+242, GUIparams.CHOOSER_WINDOW_Y_POS+33,
+    SUIT_RIGHT(GUIparams.CHOOSER_WINDOW_POS.x + 242, GUIparams.CHOOSER_WINDOW_POS.y + 33,
             GUIparams.ARROW_BUTTON_WIDTH, GUIparams.ARROW_BUTTON_HEIGHT, 0),
-    PUT(GUIparams.PUT_X_POS,GUIparams.PUT_Y_POS,GUIparams.PUT_WIDTH,GUIparams.PUT_HEIGHT,0);
+    PUT(GUIparams.PUT_POS.x, GUIparams.PUT_POS.y, GUIparams.PUT_WIDTH, GUIparams.PUT_HEIGHT, 0);
     private final float posX;
     private final float posY;
     private final float width;

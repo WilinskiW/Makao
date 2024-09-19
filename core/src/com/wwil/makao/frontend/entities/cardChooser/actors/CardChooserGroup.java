@@ -27,8 +27,8 @@ public class CardChooserGroup extends Group {
         this.displayCard = new CardActor(null);
         assignElementsToGroup();
         this.arrowButtons = createArrows();
-        displayCard.setPosition(GUIparams.CHOOSER_CARD_X_POS, GUIparams.CHOOSER_CARD_Y_POS);
-        setBounds(GUIparams.CHOOSER_WINDOW_X_POS, GUIparams.CHOOSER_WINDOW_Y_POS,
+        displayCard.setPosition(GUIparams.CHOOSER_CARD_POS.x, GUIparams.CHOOSER_WINDOW_POS.y);
+        setBounds(GUIparams.CHOOSER_WINDOW_POS.x, GUIparams.CHOOSER_WINDOW_POS.y,
                 GUIparams.CHOOSER_WINDOW_WIDTH, GUIparams.CHOOSER_WINDOW_HEIGHT);
         this.setVisible(false);
     }

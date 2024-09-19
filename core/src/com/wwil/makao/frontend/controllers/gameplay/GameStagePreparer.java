@@ -5,6 +5,7 @@ import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
 import com.wwil.makao.backend.model.card.Suit;
 import com.wwil.makao.frontend.entities.cards.CardActorFactory;
+import com.wwil.makao.frontend.entities.cards.GameDeckGroup;
 import com.wwil.makao.frontend.entities.gameButtons.MakaoButton;
 import com.wwil.makao.frontend.utils.params.CardsAlignmentParams;
 import com.wwil.makao.frontend.utils.params.GUIparams;
@@ -33,11 +34,21 @@ public class GameStagePreparer {
     }
 
     public void execute() {
+        prepareGameDeckGroup();
         prepareStackCardsGroup();
         prepareGameButtons();
         prepareHandGroups();
         prepareCardChooser();
         prepareTextLabel();
+    }
+
+    private void prepareGameDeckGroup() {
+        GameDeckGroup gameDeckGroup = new GameDeckGroup(backend.getGameDeck());
+        gameDeckGroup.getGameDeck().getCards()
+                .forEach(card -> gameDeckGroup.addActor(cardActorFactory.createCardActor(card)));
+        stage.addActor(gameDeckGroup);
+        uiManager.setGameDeckGroup(gameDeckGroup);
+        gameDeckGroup.setPosition(GUIparams.WIDTH / 2f + 300, GUIparams.HEIGHT / 2f);
     }
 
     private void prepareStackCardsGroup() {
@@ -95,6 +106,7 @@ public class GameStagePreparer {
 
         for (Card card : handGroup.getPlayer().getCards()) {
             CardActor cardActor = cardActorFactory.createCardActor(card);
+            cardActor.setUpSideDown(GUIparams.HIDE_COMPUTER_CARD);
             handGroup.addActor(cardActor);
         }
     }

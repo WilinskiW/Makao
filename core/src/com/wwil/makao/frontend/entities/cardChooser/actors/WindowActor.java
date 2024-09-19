@@ -14,7 +14,7 @@ public class WindowActor extends Actor {
     public WindowActor() {
         this.windowTexture = new TextureRegion
                 (new Texture(Gdx.files.internal("assets/windows/CardChooserWindow.png")));
-        setBounds(GUIparams.CHOOSER_WINDOW_X_POS, GUIparams.CHOOSER_WINDOW_Y_POS,
+        setBounds(GUIparams.CHOOSER_WINDOW_POS.x, GUIparams.CHOOSER_WINDOW_POS.y,
                 GUIparams.CHOOSER_WINDOW_WIDTH, GUIparams.CHOOSER_WINDOW_HEIGHT);
     }
 

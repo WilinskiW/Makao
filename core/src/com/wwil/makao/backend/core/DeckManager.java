@@ -6,25 +6,25 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class DeckManager {
-    private final LinkedList<Card> gameDeck;
+    private final GameDeck gameDeck;
     private final Stack stack;
 
     DeckManager() {
-        this.gameDeck = createCardsToGameDeck();
+        this.gameDeck = new GameDeck(createCardsForGameDeck());
         this.stack = new Stack();
         //todo zmnienic po testach
 //        stack.addCardToStack(getStartStackCard());
         stack.addCardToStack(new Card(Rank.FIVE, Suit.SPADE));
     }
 
-    private LinkedList<Card> createCardsToGameDeck() {
+    private LinkedList<Card> createCardsForGameDeck() {
         LinkedList<Card> cards = new CardFactory().createCards();
         Collections.shuffle(cards);
         return cards;
     }
 
     private Card getStartStackCard() {
-        for (Card card : gameDeck) {
+        for (Card card : gameDeck.getCards()) {
             if (card.getRank().getAbility().equals(Ability.NONE)) {
                 return card;
             }
@@ -46,6 +46,9 @@ public class DeckManager {
 
     public Card peekStackCard() {
         return stack.peekCard();
+    }
+    public List<Card> getGameDeckCards(){
+        return gameDeck.getCards();
     }
 
     public Card getLastNonShadowCard(){
@@ -72,15 +75,15 @@ public class DeckManager {
 
 
     public Card takeCardFromGameDeck() {
-        if (gameDeck.isEmpty()) {
+        if (gameDeck.getCards().isEmpty()) {
             refreshGameDeck();
         }
-        return gameDeck.pollLast();
+        return gameDeck.getCards().pollLast();
     }
 
     public void refreshGameDeck() {
         Card stackCard = stack.pollLast();
-        gameDeck.addAll(getStackCards(stackCard));
+        gameDeck.getCards().addAll(getStackCards(stackCard));
         stack.getCards().clear();
         stack.addCardToStack(stackCard);
     }
@@ -92,5 +95,9 @@ public class DeckManager {
                 .collect(Collectors.toList());
         cards.remove(lastStackCard);
         return cards;
+    }
+
+    public GameDeck getGameDeck() {
+        return gameDeck;
     }
 }

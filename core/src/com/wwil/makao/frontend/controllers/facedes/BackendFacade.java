@@ -1,5 +1,6 @@
 package com.wwil.makao.frontend.controllers.facedes;
 
+import com.wwil.makao.backend.core.GameDeck;
 import com.wwil.makao.backend.core.MakaoBackend;
 import com.wwil.makao.backend.gameplay.actions.Play;
 import com.wwil.makao.backend.gameplay.actions.RoundReport;
@@ -30,5 +31,9 @@ public class BackendFacade {
 
     public Card getStackCard(){
         return backend.getDeckManager().peekStackCard();
+    }
+
+    public GameDeck getGameDeck(){
+        return backend.getDeckManager().getGameDeck();
     }
 }

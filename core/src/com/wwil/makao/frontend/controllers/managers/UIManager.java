@@ -11,12 +11,8 @@ import com.wwil.makao.frontend.controllers.gameplay.GameController;
 import com.wwil.makao.frontend.controllers.gameplay.GameStagePreparer;
 import com.wwil.makao.frontend.controllers.gameplay.GameplayScreen;
 import com.wwil.makao.frontend.entities.cardChooser.actors.CardChooserGroup;
-import com.wwil.makao.frontend.entities.cards.CardActor;
-import com.wwil.makao.frontend.entities.cards.CardActorFactory;
-import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
-import com.wwil.makao.frontend.entities.cards.StackCardsGroup;
+import com.wwil.makao.frontend.entities.cards.*;
 import com.wwil.makao.frontend.entities.gameButtons.GameButton;
-import com.wwil.makao.frontend.utils.sound.SoundManager;
 import com.wwil.makao.frontend.utils.text.ReportToTextConverter;
 import com.wwil.makao.frontend.utils.text.TextContainer;
 
@@ -25,7 +21,8 @@ import java.util.List;
 
 public class UIManager {
     private final GameController controller;
-    private GameplayScreen gameplayScreen;
+    private final GameplayScreen gameplayScreen;
+    private GameDeckGroup gameDeckGroup;
     private final StackCardsGroup stackCardsGroup;
     private final CardActorFactory cardActorFactory;
     private final List<PlayerHandGroup> handGroups;
@@ -71,6 +68,7 @@ public class UIManager {
         textContainer.setText(newText);
     }
 
+    //todo przenieść do player hand group
     public void positionCardInGroup(PlayerHandGroup human, CardActor chosenCard) {
         if (!human.getChildren().isEmpty()) {
             chosenCard.beLastInGroup();
@@ -153,6 +151,14 @@ public class UIManager {
 
     public GameplayScreen getGameplayScreen() {
         return gameplayScreen;
+    }
+
+    public GameDeckGroup getGameDeckGroup() {
+        return gameDeckGroup;
+    }
+
+    public void setGameDeckGroup(GameDeckGroup gameDeckGroup) {
+        this.gameDeckGroup = gameDeckGroup;
     }
 
     public StackCardsGroup getStackCardsGroup() {

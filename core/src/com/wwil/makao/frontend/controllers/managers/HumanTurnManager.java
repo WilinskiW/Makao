@@ -3,6 +3,7 @@ package com.wwil.makao.frontend.controllers.managers;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.wwil.makao.backend.gameplay.actions.PlayReport;
 import com.wwil.makao.backend.gameplay.actions.RoundReport;
+import com.wwil.makao.frontend.utils.exceptions.CardNotFoundException;
 import com.wwil.makao.frontend.utils.sound.SoundManager;
 import com.wwil.makao.frontend.entities.cards.CardActor;
 import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
@@ -85,10 +86,15 @@ public class HumanTurnManager extends TurnManager {
 
     @Override
     protected void pull(PlayReport playReport, PlayerHandGroup player) {
-        CardActor drawnCardActor = uiManager.getCardActorFactory().createCardActor(playReport.getDrawn());
-        player.addActor(drawnCardActor);
-        inputManager.attachDragAndDrop(drawnCardActor);
-        inputManager.setChosenCardActor(drawnCardActor);
+        if(playReport.getDrawn() == uiManager.getGameDeckGroup().peekCardActor().getCard()){
+            CardActor drawnCardActor = uiManager.getGameDeckGroup().popCardActor();
+            player.addActor(drawnCardActor);
+            inputManager.attachDragAndDrop(drawnCardActor);
+            inputManager.setChosenCardActor(drawnCardActor);
+        }
+        else {
+            throw new CardNotFoundException("Backend - Frontend are not synchronized");
+        }
         soundManager.playPull();
     }
 }

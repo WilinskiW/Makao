@@ -23,7 +23,7 @@ public class CardActor extends Actor {
         this.frontSide = frontSide;
         this.backSide = new TextureRegion
                 (new TextureAtlas("cards/classicFrontCard.atlas").findRegion("blankCardGray"));
-        this.isUpSideDown = GUIparams.HIDE_COMPUTER_CARD;
+        this.isUpSideDown = true;
         this.card = card;
         setBounds(0, 0, GUIparams.CARD_WIDTH, GUIparams.CARD_HEIGHT);
     }
