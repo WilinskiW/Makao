@@ -111,12 +111,13 @@ public class UIManager {
     }
 
     public Action putCardWithAnimation(CardActor cardActor, PlayerHandGroup handGroup) {
-        MoveToAction moveCard = getMoveToAction(cardActor);
+        MoveToAction moveCard = getMoveToAction(cardActor, stackCardsGroup.getX(), stackCardsGroup.getY());
 
         Action finishAnimation = new Action() {
             @Override
             public boolean act(float delta) {
                 addCardToStack(cardActor);
+                cardActor.setUpSideDown(false);
                 controller.getSoundManager().playPut();
                 endGameIfPlayerWon(handGroup);
                 return true;
@@ -128,26 +129,46 @@ public class UIManager {
         return sequence;
     }
 
-    public void endGameIfPlayerWon(PlayerHandGroup handGroup) {
-        if (handGroup.getPlayer().checkIfPlayerHaveNoCards() && handGroup.getChildren().isEmpty()) {
-            changeToEndingScreen(handGroup.getPlayer().toString());
-        }
-    }
-
-    private MoveToAction getMoveToAction(CardActor cardActor) {
+    private MoveToAction getMoveToAction(CardActor cardActor, float targetX, float targetY) {
         MoveToAction moveCard = new MoveToAction() {
             @Override
             protected void begin() {
                 cardActor.leaveGroup(); //startowa pozycja karty przed animacją
                 super.begin(); //zaczytanie pozycji karty do animacji
-                cardActor.setUpSideDown(false);
-                setPosition(stackCardsGroup.getX(), stackCardsGroup.getY());
+                setPosition(targetX, targetY);
             }
         };
 
         moveCard.setDuration(0.95f);
         moveCard.setInterpolation(Interpolation.exp10);
         return moveCard;
+    }
+
+    public void endGameIfPlayerWon(PlayerHandGroup handGroup) {
+        if (handGroup.getPlayer().checkIfPlayerHaveNoCards() && handGroup.getChildren().isEmpty()) {
+            changeToEndingScreen(handGroup.getPlayer().toString());
+        }
+        //todo boolean w TurnManager hasPlayerWon
+        //If yes -> UIManager.changeToEndingScreen
+    }
+
+    public Action pullCardWithAnimation(PlayerHandGroup handGroup){
+        CardActor pulledCard = gameDeckGroup.peekCardActor();
+        MoveToAction moveCard = getMoveToAction(pulledCard, handGroup.getX(), handGroup.getY());
+
+        Action finishAnimation = new Action() {
+            @Override
+            public boolean act(float delta) {
+                pulledCard.setUpSideDown(false);
+                handGroup.addActor(pulledCard);
+                controller.getSoundManager().playPull();
+                return true;
+            }
+        };
+
+        Action sequence = Actions.sequence(moveCard, finishAnimation);
+        sequence.setTarget(pulledCard);
+        return sequence;
     }
 
     public void changeTransparencyOfPlayerGroup(PlayerHandGroup playerHandGroup, float alpha) {

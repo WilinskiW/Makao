@@ -24,7 +24,7 @@ public class ComputerTurnManager extends TurnManager {
     public void show(RoundReport roundReport) {
         final List<PlayReport> computerPlayReports = roundReport.getComputerPlayReports(humanHand().getPlayer());
         for (PlayReport playReport : computerPlayReports) {
-            if (playReport.getPlay().getAction() == ActionType.PUT) {
+            if (playReport.getPlay().getAction() == ActionType.PUT || playReport.getPlay().getAction() == ActionType.PULL) {
                 actionManager.playActions(getPlayerTurn(playReport));
             } else {
                 processComputerTurn(playReport, getHandGroup(playReport.getPlayer()));
@@ -39,6 +39,7 @@ public class ComputerTurnManager extends TurnManager {
     }
 
     private List<Action> processComputerTurn(PlayReport playReport, PlayerHandGroup playerHand) {
+        uiManager.changeText(playReport);
         switch (playReport.getPlay().getAction()) {
             case END:
                 endTurn();
@@ -47,10 +48,8 @@ public class ComputerTurnManager extends TurnManager {
                 CardActor cardActor = getCardActor(playReport, playerHand);
                 return putCard(cardActor, playerHand, !cardActor.getCard().isShadow());
             case PULL:
-                pull(playReport, playerHand);
-                break;
+                return pull(playReport, playerHand);
         }
-        uiManager.changeText(playReport);
         return null;
     }
 
@@ -87,18 +86,5 @@ public class ComputerTurnManager extends TurnManager {
         listOfActions.add(aligningAction);
 
         return listOfActions;
-    }
-
-    @Override
-    protected void pull(PlayReport playReport, PlayerHandGroup player) {
-        if(playReport.getDrawn() == uiManager.getGameDeckGroup().peekCardActor().getCard()){
-            CardActor drawnCardActor = uiManager.getGameDeckGroup().popCardActor();
-            player.addActor(drawnCardActor);
-
-        }
-        else {
-            throw new CardNotFoundException("Backend - Frontend nie są synchronizowane");
-        }
-        soundManager.playPull();
     }
 }

@@ -27,7 +27,7 @@ public class HumanTurnManager extends TurnManager {
                 useCard(currentPlayReport);
                 break;
             case PULL:
-                pull(currentPlayReport, humanHand());
+                actionManager.playActions(pull(currentPlayReport, humanHand()));
                 break;
             case MAKAO:
                 informMakao();
@@ -86,16 +86,7 @@ public class HumanTurnManager extends TurnManager {
     }
 
     @Override
-    protected void pull(PlayReport playReport, PlayerHandGroup player) {
-        if(playReport.getDrawn() == uiManager.getGameDeckGroup().peekCardActor().getCard()){
-            CardActor drawnCardActor = uiManager.getGameDeckGroup().popCardActor();
-            player.addActor(drawnCardActor);
-            inputManager.attachDragAndDrop(drawnCardActor);
-            inputManager.setChosenCardActor(drawnCardActor);
-        }
-        else {
-            throw new CardNotFoundException("Backend - Frontend are not synchronized");
-        }
-        soundManager.playPull();
+    protected List<Action> pull(PlayReport playReport, PlayerHandGroup handGroup) {
+        return super.pull(playReport, handGroup);
     }
 }

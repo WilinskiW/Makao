@@ -5,8 +5,10 @@ import com.wwil.makao.backend.gameplay.actions.PlayReport;
 import com.wwil.makao.backend.gameplay.actions.RoundReport;
 import com.wwil.makao.frontend.entities.cards.CardActor;
 import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
+import com.wwil.makao.frontend.utils.exceptions.CardNotFoundException;
 import com.wwil.makao.frontend.utils.sound.SoundManager;
 
+import java.util.Collections;
 import java.util.List;
 
 public abstract class TurnManager {
@@ -42,7 +44,14 @@ public abstract class TurnManager {
         return action;
     }
 
-    abstract protected void pull(PlayReport playReport, PlayerHandGroup handGroup);
+    protected List<Action> pull(PlayReport playReport, PlayerHandGroup handGroup){
+        if(playReport.getDrawn() == uiManager.getGameDeckGroup().peekCardActor().getCard()){
+            return Collections.singletonList(uiManager.pullCardWithAnimation(handGroup));
+        }
+        else {
+            throw new CardNotFoundException("Backend - Frontend are not synchronized");
+        }
+    }
 
     protected void informMakao() {
         uiManager.getMakaoButton().setActive(false);

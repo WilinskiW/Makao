@@ -42,7 +42,7 @@ public class InputManager {
 
     private void updateDragAndDropState(State state) {
         if (state.isFocusDrawnCard() && state.isPutActive()) {
-            dragAndDropManager.focusRescueCard(chosenCardActor);
+           // dragAndDropManager.focusRescueCard(chosenCardActor);
         } else if (state.isPutActive()) {
             dragAndDropManager.startListening();
             uiManager.changeTransparencyOfPlayerGroup(uiManager.getHumanHandGroup(), 1f);
