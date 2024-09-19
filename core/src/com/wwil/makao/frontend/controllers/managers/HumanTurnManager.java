@@ -74,6 +74,7 @@ public class HumanTurnManager extends TurnManager {
         uiManager.addCardToStack(playedCard);
         playedCard.clearListeners();
         soundManager.playPut();
+        uiManager.endGameIfPlayerWon(player);
         return null;
     }
 

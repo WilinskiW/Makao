@@ -44,12 +44,6 @@ public abstract class TurnManager {
 
     abstract protected void pull(PlayReport playReport, PlayerHandGroup handGroup);
 
-    void endIfPlayerWon(PlayerHandGroup handGroup) {
-        if (handGroup.getPlayer().checkIfPlayerHaveNoCards() && handGroup.getChildren().isEmpty()) {
-            uiManager.changeToEndingScreen(handGroup.getPlayer().toString());
-        }
-    }
-
     protected void informMakao() {
         uiManager.getMakaoButton().setActive(false);
     }

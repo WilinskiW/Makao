@@ -103,21 +103,22 @@ public class UIManager {
     }
 
     public void addCardToStack(CardActor cardActor) {
-        if(cardActor.getCard().isShadow()){
+        if (cardActor.getCard().isShadow()) {
             cardActor.setColor(Color.GRAY);
         }
         cardActor.setUpSideDown(false);
         stackCardsGroup.addActor(cardActor);
     }
 
-    public Action putCardWithAnimation(CardActor cardActor) {
+    public Action putCardWithAnimation(CardActor cardActor, PlayerHandGroup handGroup) {
         MoveToAction moveCard = getMoveToAction(cardActor);
 
         Action finishAnimation = new Action() {
             @Override
             public boolean act(float delta) {
-                controller.getSoundManager().playPut();
                 addCardToStack(cardActor);
+                controller.getSoundManager().playPut();
+                endGameIfPlayerWon(handGroup);
                 return true;
             }
         };
@@ -125,6 +126,12 @@ public class UIManager {
         Action sequence = Actions.sequence(moveCard, finishAnimation);
         sequence.setTarget(cardActor);
         return sequence;
+    }
+
+    public void endGameIfPlayerWon(PlayerHandGroup handGroup) {
+        if (handGroup.getPlayer().checkIfPlayerHaveNoCards() && handGroup.getChildren().isEmpty()) {
+            changeToEndingScreen(handGroup.getPlayer().toString());
+        }
     }
 
     private MoveToAction getMoveToAction(CardActor cardActor) {

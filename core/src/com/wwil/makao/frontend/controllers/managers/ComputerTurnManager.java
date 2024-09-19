@@ -50,7 +50,6 @@ public class ComputerTurnManager extends TurnManager {
                 pull(playReport, playerHand);
                 break;
         }
-        endIfPlayerWon(playerHand);
         uiManager.changeText(playReport);
         return null;
     }
@@ -81,7 +80,7 @@ public class ComputerTurnManager extends TurnManager {
     @Override
     protected List<Action> putCard(CardActor playedCard, PlayerHandGroup handGroup, boolean alignCards) {
         List<Action> listOfActions = new ArrayList<>();
-        Action addToStack = uiManager.putCardWithAnimation(playedCard);
+        Action addToStack = uiManager.putCardWithAnimation(playedCard, handGroup);
         listOfActions.add(addToStack);
 
         Action aligningAction = alignCardsIfNeeded(handGroup, alignCards);
