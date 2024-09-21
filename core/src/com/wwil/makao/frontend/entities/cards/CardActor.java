@@ -25,6 +25,7 @@ public class CardActor extends Actor {
                 (new TextureAtlas("cards/classicFrontCard.atlas").findRegion("blankCardGray"));
         this.isUpSideDown = true;
         this.card = card;
+        this.setOrigin(GUIparams.CARD_WIDTH / 2f, GUIparams.CARD_HEIGHT / 2f);
         setBounds(0, 0, GUIparams.CARD_WIDTH, GUIparams.CARD_HEIGHT);
     }
 
@@ -53,17 +54,18 @@ public class CardActor extends Actor {
 
     public void leaveGroup() {
         Vector2 stageVector = getStageVector();
-        setX(stageVector.x);
-        setY(stageVector.y);
+        int groupSize = getParent().getChildren().size;
         getStage().addActor(this);
+        setX(stageVector.x - groupSize * GUIparams.GAP_BETWEEN_DECK_CARDS);
+        setY(stageVector.y);
     }
 
     public Vector2 getStageVector() {
-        return localToStageCoordinates(new Vector2(getX(),getY()));
+        return localToStageCoordinates(new Vector2(getX(), getY()));
     }
 
-    public void changeTransparency(float alpha){
-        this.setColor(getColor().r,getColor().g,getColor().b,alpha);
+    public void changeTransparency(float alpha) {
+        this.setColor(getColor().r, getColor().g, getColor().b, alpha);
     }
 
     public void changeFrontSide(TextureRegion textureRegion) {
@@ -101,7 +103,7 @@ public class CardActor extends Actor {
     public void beLastInGroup() {
         Actor lastActor = lastParent.getChildren().peek();
         lastParent.addActorAfter(lastActor, this);
-        this.setX(lastActor.getX() + GUIparams.DISTANCE_BETWEEN_CARDS);
+        this.setX(lastActor.getX() + GUIparams.HANDGROUP_CARDS_GAP);
         this.setY(lastActor.getY());
         this.setZIndex(lastActor.getZIndex() + 1);
     }

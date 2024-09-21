@@ -111,7 +111,7 @@ public class UIManager {
     }
 
     public Action putCardWithAnimation(CardActor cardActor, PlayerHandGroup handGroup) {
-        MoveToAction moveCard = getMoveToAction(cardActor, stackCardsGroup.getX(), stackCardsGroup.getY());
+        MoveToAction moveCard = getMoveToAction(cardActor, stackCardsGroup.getX(), stackCardsGroup.getY(), 0.95f);
 
         Action finishAnimation = new Action() {
             @Override
@@ -129,7 +129,7 @@ public class UIManager {
         return sequence;
     }
 
-    private MoveToAction getMoveToAction(CardActor cardActor, float targetX, float targetY) {
+    private MoveToAction getMoveToAction(CardActor cardActor, float targetX, float targetY, float duration) {
         MoveToAction moveCard = new MoveToAction() {
             @Override
             protected void begin() {
@@ -139,7 +139,7 @@ public class UIManager {
             }
         };
 
-        moveCard.setDuration(0.95f);
+        moveCard.setDuration(duration);
         moveCard.setInterpolation(Interpolation.exp10);
         return moveCard;
     }
@@ -154,7 +154,7 @@ public class UIManager {
 
     public Action pullCardWithAnimation(PlayerHandGroup handGroup){
         CardActor pulledCard = gameDeckGroup.peekCardActor();
-        MoveToAction moveCard = getMoveToAction(pulledCard, handGroup.getX(), handGroup.getY());
+        MoveToAction moveCard = getMoveToAction(pulledCard, handGroup.getX(), handGroup.getY(),1f);
 
         Action finishAnimation = new Action() {
             @Override

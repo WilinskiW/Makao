@@ -36,13 +36,13 @@ public class PlayerHandGroup extends Group {
 
     private void placeCardLast(Actor actor) {
         float lastActorX = getChildren().peek().getX();
-        actor.setX(lastActorX + GUIparams.DISTANCE_BETWEEN_CARDS);
+        actor.setX(lastActorX + GUIparams.HANDGROUP_CARDS_GAP);
         setPosition(getX() - cardsAlignment.xMove, getY() - cardsAlignment.yMove);
     }
 
     private void placeCardFirst(Actor actor) {
         float firstActorX = getChildren().first().getX();
-        actor.setX(firstActorX - GUIparams.DISTANCE_BETWEEN_CARDS);
+        actor.setX(firstActorX - GUIparams.HANDGROUP_CARDS_GAP);
         addActorAt(0, actor);
         moveCloserToStartingPosition();
     }
@@ -62,7 +62,7 @@ public class PlayerHandGroup extends Group {
         for (int i = cardIndex + 1; i < getChildren().size; i++) {
             Actor currentActor = getChildren().get(i);
             currentActor.setZIndex(i - 1);
-            currentActor.setX(currentActor.getX() - GUIparams.DISTANCE_BETWEEN_CARDS);
+            currentActor.setX(currentActor.getX() - GUIparams.HANDGROUP_CARDS_GAP);
         }
     }
 

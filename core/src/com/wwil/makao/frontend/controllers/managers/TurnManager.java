@@ -44,11 +44,10 @@ public abstract class TurnManager {
         return action;
     }
 
-    protected List<Action> pull(PlayReport playReport, PlayerHandGroup handGroup){
-        if(playReport.getDrawn() == uiManager.getGameDeckGroup().peekCardActor().getCard()){
+    protected List<Action> pull(PlayReport playReport, PlayerHandGroup handGroup) {
+        if (playReport.getDrawn() == uiManager.getGameDeckGroup().peekCardActor().getCard()) {
             return Collections.singletonList(uiManager.pullCardWithAnimation(handGroup));
-        }
-        else {
+        } else {
             throw new CardNotFoundException("Backend - Frontend are not synchronized");
         }
     }

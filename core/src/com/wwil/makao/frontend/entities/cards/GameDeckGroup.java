@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.wwil.makao.backend.core.GameDeck;
 import com.wwil.makao.backend.model.card.Card;
+import com.wwil.makao.frontend.utils.params.GUIparams;
 
 public class GameDeckGroup extends Group {
     private final GameDeck gameDeck;
@@ -20,7 +21,7 @@ public class GameDeckGroup extends Group {
     public void addActor(Actor actor) {
         if(!getChildren().isEmpty()){
             float lastX = getChildren().peek().getX();
-            actor.setX(lastX + 7);
+            actor.setX(lastX + GUIparams.GAP_BETWEEN_DECK_CARDS);
         }
         super.addActor(actor);
     }
