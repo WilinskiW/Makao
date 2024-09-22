@@ -2,14 +2,12 @@ package com.wwil.makao.frontend.controllers.managers;
 
 
 import com.badlogic.gdx.scenes.scene2d.Action;
-import com.wwil.makao.backend.gameplay.actions.ActionType;
 import com.wwil.makao.backend.gameplay.actions.PlayReport;
 import com.wwil.makao.backend.gameplay.actions.RoundReport;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
 import com.wwil.makao.frontend.entities.cards.CardActor;
 import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
-import com.wwil.makao.frontend.utils.exceptions.CardNotFoundException;
 import com.wwil.makao.frontend.utils.sound.SoundManager;
 
 import java.util.ArrayList;
@@ -22,48 +20,34 @@ public class ComputerTurnManager extends TurnManager {
 
     @Override
     public void show(RoundReport roundReport) {
-        final List<PlayReport> computerPlayReports = roundReport.getComputerPlayReports(humanHand().getPlayer());
+        List<PlayReport> computerPlayReports = roundReport.getComputerPlayReports(humanHand().getPlayer());
         for (PlayReport playReport : computerPlayReports) {
-            if (playReport.getPlay().getAction() == ActionType.PUT || playReport.getPlay().getAction() == ActionType.PULL) {
-                actionManager.playActions(getPlayerTurn(playReport));
-            } else {
-                processComputerTurn(playReport, getHandGroup(playReport.getPlayer()));
+            List<Action> animationSequence = processComputerTurn(playReport, getHandGroup(playReport.getPlayer()));
+            if (animationSequence != null) {
+                actionManager.playActions(animationSequence);
             }
         }
         inputManager.turnOnHumanInput();
     }
 
-    private List<Action> getPlayerTurn(PlayReport playReport) {
-        PlayerHandGroup handGroup = getHandGroup(playReport.getPlayer());
-        return processComputerTurn(playReport, handGroup);
-    }
 
     private List<Action> processComputerTurn(PlayReport playReport, PlayerHandGroup playerHand) {
-        uiManager.changeText(playReport);
         switch (playReport.getPlay().getAction()) {
             case END:
                 endTurn();
-                break;
+                return null;
             case PUT:
-                CardActor cardActor = getCardActor(playReport, playerHand);
-                return putCard(cardActor, playerHand, !cardActor.getCard().isShadow());
+                return putCard(playReport, playerHand);
             case PULL:
                 return pull(playReport, playerHand);
+            default:
+                return null;
         }
-        return null;
     }
 
     @Override
     void endTurn() {
         inputManager.turnOffHumanInput();
-    }
-
-    private CardActor getCardActor(PlayReport playReport, PlayerHandGroup playerHand) {
-        Card cardPlayed = playReport.getPlay().getCardPlayed();
-        if (cardPlayed.isShadow()) {
-            return uiManager.getCardActorFactory().createCardActor(playReport.getPlay().getCardPlayed());
-        }
-        return playerHand.getCardActor(cardPlayed);
     }
 
 
@@ -77,14 +61,24 @@ public class ComputerTurnManager extends TurnManager {
     }
 
     @Override
-    protected List<Action> putCard(CardActor playedCard, PlayerHandGroup handGroup, boolean alignCards) {
+    protected List<Action> putCard(PlayReport playReport, PlayerHandGroup handGroup) {
         List<Action> listOfActions = new ArrayList<>();
-        Action addToStack = uiManager.putCardWithAnimation(playedCard, handGroup);
+        CardActor cardActor = getCardActor(playReport, handGroup);
+
+        Action addToStack = uiManager.putCardWithAnimation(playReport, cardActor, handGroup);
         listOfActions.add(addToStack);
 
-        Action aligningAction = alignCardsIfNeeded(handGroup, alignCards);
+        Action aligningAction = alignCardsIfNeeded(handGroup, !cardActor.getCard().isShadow());
         listOfActions.add(aligningAction);
 
         return listOfActions;
+    }
+
+    private CardActor getCardActor(PlayReport playReport, PlayerHandGroup playerHand) {
+        Card cardPlayed = playReport.getPlay().getCardPlayed();
+        if (cardPlayed.isShadow()) {
+            return uiManager.getCardActorFactory().createCardActor(playReport.getPlay().getCardPlayed());
+        }
+        return playerHand.getCardActor(cardPlayed);
     }
 }

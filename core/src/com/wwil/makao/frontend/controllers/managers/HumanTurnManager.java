@@ -3,11 +3,11 @@ package com.wwil.makao.frontend.controllers.managers;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.wwil.makao.backend.gameplay.actions.PlayReport;
 import com.wwil.makao.backend.gameplay.actions.RoundReport;
-import com.wwil.makao.frontend.utils.exceptions.CardNotFoundException;
-import com.wwil.makao.frontend.utils.sound.SoundManager;
 import com.wwil.makao.frontend.entities.cards.CardActor;
 import com.wwil.makao.frontend.entities.cards.PlayerHandGroup;
+import com.wwil.makao.frontend.utils.sound.SoundManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HumanTurnManager extends TurnManager {
@@ -19,6 +19,7 @@ public class HumanTurnManager extends TurnManager {
     @Override
     public void show(RoundReport report) {
         PlayReport currentPlayReport = report.getHumanLastPlayReport();
+        List<Action> actionToAnimate = new ArrayList<>();
         switch (currentPlayReport.getPlay().getAction()) {
             case END:
                 endTurn();
@@ -27,15 +28,19 @@ public class HumanTurnManager extends TurnManager {
                 useCard(currentPlayReport);
                 break;
             case PULL:
-                actionManager.playActions(pull(currentPlayReport, humanHand()));
+                actionToAnimate.addAll(pull(currentPlayReport, humanHand()));
                 break;
             case MAKAO:
                 informMakao();
                 break;
         }
 
+        if (!actionToAnimate.isEmpty()) {
+            actionManager.playActions(actionToAnimate);
+        }
+
         if (currentPlayReport.getAfterState().isChooserActive() && currentPlayReport.isCardCorrect()) {
-            showCardChooser(inputManager.getChosenCardActor());
+            showCardChooser(currentPlayReport);
         }
 
         inputManager.updateHumanAvailableActions(currentPlayReport.getAfterState());
@@ -51,42 +56,46 @@ public class HumanTurnManager extends TurnManager {
     private void useCard(PlayReport playReport) {
         if (playReport.isCardCorrect()) {
             if (uiManager.getCardChooser().isVisible()) {
-                putCardFromChooser();
+                putCardFromChooser(playReport);
             } else {
-                putCard(inputManager.getChosenCardActor(), humanHand(), true);
+                putCard(playReport, humanHand());
             }
-        } else if(!playReport.getAfterState().isChooserActive()) {
+        } else if (!playReport.getAfterState().isChooserActive()) {
             uiManager.positionCardInGroup(humanHand(), inputManager.getChosenCardActor());
         }
     }
 
-    private void putCardFromChooser() {
+    private void putCardFromChooser(PlayReport playReport) {
         uiManager.getCardChooser().setVisibility(false);
-        putCard(inputManager.getChosenCardActor(), humanHand(), false);
+        putCard(playReport, humanHand());
     }
 
 
     @Override
-    protected List<Action> putCard(CardActor playedCard, PlayerHandGroup player, boolean alignCards) {
-        if(player.getPlayer().hasOneCard()){
+    protected List<Action> putCard(PlayReport playReport, PlayerHandGroup player) {
+        if (player.getPlayer().hasOneCard()) {
             uiManager.getMakaoButton().setActive(true);
         }
-        uiManager.addCardToStack(playedCard);
-        playedCard.clearListeners();
+        uiManager.addCardToStack(inputManager.getChosenCardActor());
+        inputManager.getChosenCardActor().clearListeners();
         soundManager.playPut();
         uiManager.endGameIfPlayerWon(player);
         return null;
     }
 
-    private void showCardChooser(CardActor cardPlayed) {
+    private void showCardChooser(PlayReport playReport) {
         CardActor stackCard = uiManager.getStackCardsGroup().peekBeforeLastCardActor();
-        putCard(cardPlayed, humanHand(), false);
+        putCard(playReport, humanHand());
         uiManager.getCardChooser().setVisibility(true);
-        uiManager.getCardChooser().getManager().setDisplayCard(stackCard, cardPlayed);
+        uiManager.getCardChooser().getManager().setDisplayCard(stackCard, inputManager.getChosenCardActor());
     }
 
     @Override
     protected List<Action> pull(PlayReport playReport, PlayerHandGroup handGroup) {
+        CardActor cardActor = uiManager.getGameDeckGroup().peekCardActor();
+        inputManager.attachDragAndDrop(cardActor);
+        inputManager.setChosenCardActor(cardActor);
+
         return super.pull(playReport, handGroup);
     }
 }

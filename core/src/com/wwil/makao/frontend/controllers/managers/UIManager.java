@@ -110,14 +110,15 @@ public class UIManager {
         stackCardsGroup.addActor(cardActor);
     }
 
-    public Action putCardWithAnimation(CardActor cardActor, PlayerHandGroup handGroup) {
-        MoveToAction moveCard = getMoveToAction(cardActor, stackCardsGroup.getX(), stackCardsGroup.getY(), 0.95f);
+    public Action putCardWithAnimation(PlayReport playReport, CardActor cardActor, PlayerHandGroup handGroup) {
+        MoveToAction moveCard = getMoveToAction(cardActor, stackCardsGroup.getX(), stackCardsGroup.getY(), 2f);
 
         Action finishAnimation = new Action() {
             @Override
             public boolean act(float delta) {
                 addCardToStack(cardActor);
                 cardActor.setUpSideDown(false);
+                changeText(playReport);
                 controller.getSoundManager().playPut();
                 endGameIfPlayerWon(handGroup);
                 return true;
@@ -152,15 +153,16 @@ public class UIManager {
         //If yes -> UIManager.changeToEndingScreen
     }
 
-    public Action pullCardWithAnimation(PlayerHandGroup handGroup){
+    public Action pullCardWithAnimation(PlayReport playReport, PlayerHandGroup handGroup) {
         CardActor pulledCard = gameDeckGroup.peekCardActor();
-        MoveToAction moveCard = getMoveToAction(pulledCard, handGroup.getX(), handGroup.getY(),1f);
+        MoveToAction moveCard = getMoveToAction(pulledCard, handGroup.getX(), handGroup.getY(), 1f);
 
         Action finishAnimation = new Action() {
             @Override
             public boolean act(float delta) {
                 pulledCard.setUpSideDown(false);
                 handGroup.addActor(pulledCard);
+                changeText(playReport);
                 controller.getSoundManager().playPull();
                 return true;
             }

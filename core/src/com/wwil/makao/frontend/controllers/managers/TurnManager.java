@@ -28,7 +28,7 @@ public abstract class TurnManager {
 
     abstract void endTurn();
 
-    abstract protected List<Action> putCard(CardActor playedCard, PlayerHandGroup player, boolean alignCards);
+    abstract protected List<Action> putCard(PlayReport playReport, PlayerHandGroup handGroup);
 
     Action alignCardsIfNeeded(PlayerHandGroup handGroup, boolean alignCards) {
         Action action = new Action() {
@@ -46,7 +46,7 @@ public abstract class TurnManager {
 
     protected List<Action> pull(PlayReport playReport, PlayerHandGroup handGroup) {
         if (playReport.getDrawn() == uiManager.getGameDeckGroup().peekCardActor().getCard()) {
-            return Collections.singletonList(uiManager.pullCardWithAnimation(handGroup));
+            return Collections.singletonList(uiManager.pullCardWithAnimation(playReport, handGroup));
         } else {
             throw new CardNotFoundException("Backend - Frontend are not synchronized");
         }

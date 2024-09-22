@@ -2,9 +2,9 @@ package com.wwil.makao.frontend.controllers.managers;
 
 import com.badlogic.gdx.Gdx;
 import com.wwil.makao.backend.states.State;
-import com.wwil.makao.frontend.utils.dragAndDrop.DragAndDropManager;
 import com.wwil.makao.frontend.controllers.gameplay.GameController;
 import com.wwil.makao.frontend.entities.cards.CardActor;
+import com.wwil.makao.frontend.utils.dragAndDrop.DragAndDropManager;
 
 public class InputManager {
     private final UIManager uiManager;
@@ -42,7 +42,7 @@ public class InputManager {
 
     private void updateDragAndDropState(State state) {
         if (state.isFocusDrawnCard() && state.isPutActive()) {
-           // dragAndDropManager.focusRescueCard(chosenCardActor);
+            dragAndDropManager.focusRescueCard(chosenCardActor);
         } else if (state.isPutActive()) {
             dragAndDropManager.startListening();
             uiManager.changeTransparencyOfPlayerGroup(uiManager.getHumanHandGroup(), 1f);
