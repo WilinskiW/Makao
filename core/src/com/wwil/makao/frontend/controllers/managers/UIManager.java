@@ -4,8 +4,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
+import com.badlogic.gdx.scenes.scene2d.actions.RotateToAction;
 import com.wwil.makao.backend.gameplay.actions.PlayReport;
 import com.wwil.makao.frontend.controllers.gameplay.GameController;
 import com.wwil.makao.frontend.controllers.gameplay.GameStagePreparer;
@@ -106,18 +108,18 @@ public class UIManager {
         if (cardActor.getCard().isShadow()) {
             cardActor.setColor(Color.GRAY);
         }
-        cardActor.setUpSideDown(false);
+        cardActor.setUpsideDown(false);
         stackCardsGroup.addActor(cardActor);
     }
 
     public Action putCardWithAnimation(PlayReport playReport, CardActor cardActor, PlayerHandGroup handGroup) {
-        MoveToAction moveCard = getMoveToAction(cardActor, stackCardsGroup.getX(), stackCardsGroup.getY(), 2f);
+        Action moveCard = getMoveToAction(cardActor, stackCardsGroup, 5f);
 
         Action finishAnimation = new Action() {
             @Override
             public boolean act(float delta) {
                 addCardToStack(cardActor);
-                cardActor.setUpSideDown(false);
+                cardActor.setUpsideDown(false);
                 changeText(playReport);
                 controller.getSoundManager().playPut();
                 endGameIfPlayerWon(handGroup);
@@ -130,19 +132,30 @@ public class UIManager {
         return sequence;
     }
 
-    private MoveToAction getMoveToAction(CardActor cardActor, float targetX, float targetY, float duration) {
-        MoveToAction moveCard = new MoveToAction() {
+    private Action getMoveToAction(CardActor cardActor, Group targetGroup, float duration) {
+
+        Action init = new Action() {
             @Override
-            protected void begin() {
+            public boolean act(float delta) {
                 cardActor.leaveGroup(); //startowa pozycja karty przed animacją
-                super.begin(); //zaczytanie pozycji karty do animacji
-                setPosition(targetX, targetY);
+                return true;
             }
         };
 
+        // Rotacja karty
+        RotateToAction rotateCard = new RotateToAction();
+        rotateCard.setRotation(targetGroup.getRotation());
+        rotateCard.setDuration(duration);
+        rotateCard.setInterpolation(Interpolation.exp10);
+
+        //Ruch karty
+        MoveToAction moveCard = new MoveToAction();
+        moveCard.setPosition(targetGroup.getX(), targetGroup.getY());
         moveCard.setDuration(duration);
         moveCard.setInterpolation(Interpolation.exp10);
-        return moveCard;
+
+
+        return Actions.parallel(init, rotateCard, moveCard);
     }
 
     public void endGameIfPlayerWon(PlayerHandGroup handGroup) {
@@ -155,13 +168,14 @@ public class UIManager {
 
     public Action pullCardWithAnimation(PlayReport playReport, PlayerHandGroup handGroup) {
         CardActor pulledCard = gameDeckGroup.peekCardActor();
-        MoveToAction moveCard = getMoveToAction(pulledCard, handGroup.getX(), handGroup.getY(), 1f);
+        Action moveCard = getMoveToAction(pulledCard, handGroup, 1f);
 
         Action finishAnimation = new Action() {
             @Override
             public boolean act(float delta) {
-                pulledCard.setUpSideDown(false);
+                pulledCard.setUpsideDown(false);
                 handGroup.addActor(pulledCard);
+                pulledCard.setRotation(pulledCard.getParent().getRotation());
                 changeText(playReport);
                 controller.getSoundManager().playPull();
                 return true;
@@ -172,6 +186,7 @@ public class UIManager {
         sequence.setTarget(pulledCard);
         return sequence;
     }
+
 
     public void changeTransparencyOfPlayerGroup(PlayerHandGroup playerHandGroup, float alpha) {
         for (CardActor cardActor : playerHandGroup.getCardActors()) {

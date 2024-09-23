@@ -48,7 +48,7 @@ public class PlayMaker {
 
     private boolean wantToReport() {
         Random random = new Random();
-        return random.nextInt(100) < RuleParams.CHANCE_FO_REPORT_FAIL_MAKAO;
+        return random.nextInt(100) < RuleParams.CHANCE_TO_REPORT_FAIL_MAKAO;
     }
 
     private Human getHumanPlayer() {

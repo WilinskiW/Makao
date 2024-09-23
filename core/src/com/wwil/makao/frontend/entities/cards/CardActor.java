@@ -54,10 +54,12 @@ public class CardActor extends Actor {
 
     public void leaveGroup() {
         Vector2 stageVector = getStageVector();
+        float rotation = getParent().getRotation();
         int groupSize = getParent().getChildren().size;
         getStage().addActor(this);
         setX(stageVector.x - groupSize * GUIparams.GAP_BETWEEN_DECK_CARDS);
         setY(stageVector.y);
+        setRotation(rotation);
     }
 
     public Vector2 getStageVector() {
@@ -72,8 +74,8 @@ public class CardActor extends Actor {
         setFrontSide(textureRegion);
     }
 
-    public void setUpSideDown(boolean upSideDown) {
-        isUpSideDown = upSideDown;
+    public void setUpsideDown(boolean upsideDown) {
+        isUpSideDown = upsideDown;
     }
 
     public void setFrontSide(TextureRegion frontSide) {

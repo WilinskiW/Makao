@@ -4,6 +4,7 @@ import com.wwil.makao.backend.model.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 //Zebranie wszystkich ruchów graczy w jeden obiekt
 public class RoundReport {
@@ -13,10 +14,10 @@ public class RoundReport {
         playReports.add(playReport);
     }
 
-    public List<PlayReport> getComputerPlayReports(Player humanPlayer) {
+    public List<PlayReport> getComputerPlayReports() {
         List<PlayReport> computerPlayReports = new ArrayList<>();
         for (PlayReport playReport : playReports) {
-            if (playReport.getPlayer() != humanPlayer) {
+            if (!playReport.getPlayer().isHuman()) {
                 computerPlayReports.add(playReport);
             }
         }

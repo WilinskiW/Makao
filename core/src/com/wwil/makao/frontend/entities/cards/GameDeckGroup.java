@@ -12,25 +12,20 @@ public class GameDeckGroup extends Group {
     public GameDeckGroup(GameDeck gameDeck) {
         this.gameDeck = gameDeck;
         CardActorFactory cardActorFactory = new CardActorFactory();
-        for(Card card : gameDeck.getCards()){
-            cardActorFactory.createCardActor(card).setUpSideDown(true);
+        for (Card card : gameDeck.getCards()) {
+            cardActorFactory.createCardActor(card).setUpsideDown(true);
         }
     }
 
     @Override
     public void addActor(Actor actor) {
-        if(!getChildren().isEmpty()){
+        if (!getChildren().isEmpty()) {
             float lastX = getChildren().peek().getX();
             actor.setX(lastX + GUIparams.GAP_BETWEEN_DECK_CARDS);
         }
         super.addActor(actor);
     }
-
-    public CardActor popCardActor(){
-        return (CardActor) getChildren().pop();
-    }
-
-    public CardActor peekCardActor(){
+    public CardActor peekCardActor() {
         return (CardActor) getChildren().peek();
     }
 

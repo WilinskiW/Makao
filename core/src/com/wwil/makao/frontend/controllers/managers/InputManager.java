@@ -18,7 +18,7 @@ public class InputManager {
     }
 
     public void attachDragAndDrop(CardActor drawnCardActor) {
-        drawnCardActor.setUpSideDown(false);
+        drawnCardActor.setUpsideDown(false);
         dragAndDropManager.prepareDragAndDrop(drawnCardActor);
     }
 
