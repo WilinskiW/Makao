@@ -15,7 +15,7 @@ public class CardActor extends Actor {
     private Card card;
     private TextureRegion frontSide;
     private TextureRegion backSide;
-    private boolean isUpSideDown;
+    private boolean isUpsideDown;
     private Group lastParent;
     private Vector3 lastPositionBeforeRemove = null;
 
@@ -23,7 +23,7 @@ public class CardActor extends Actor {
         this.frontSide = frontSide;
         this.backSide = new TextureRegion
                 (new TextureAtlas("cards/classicFrontCard.atlas").findRegion("blankCardGray"));
-        this.isUpSideDown = true;
+        this.isUpsideDown = true;
         this.card = card;
         this.setOrigin(GUIparams.CARD_WIDTH / 2f, GUIparams.CARD_HEIGHT / 2f);
         setBounds(0, 0, GUIparams.CARD_WIDTH, GUIparams.CARD_HEIGHT);
@@ -41,7 +41,7 @@ public class CardActor extends Actor {
         batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
 
         TextureRegion currentCardSide;
-        if (backSide != null && isUpSideDown) {
+        if (backSide != null && isUpsideDown) {
             currentCardSide = backSide;
         } else {
             currentCardSide = frontSide;
@@ -54,12 +54,10 @@ public class CardActor extends Actor {
 
     public void leaveGroup() {
         Vector2 stageVector = getStageVector();
-        float rotation = getParent().getRotation();
         int groupSize = getParent().getChildren().size;
         getStage().addActor(this);
         setX(stageVector.x - groupSize * GUIparams.GAP_BETWEEN_DECK_CARDS);
         setY(stageVector.y);
-        setRotation(rotation);
     }
 
     public Vector2 getStageVector() {
@@ -75,7 +73,7 @@ public class CardActor extends Actor {
     }
 
     public void setUpsideDown(boolean upsideDown) {
-        isUpSideDown = upsideDown;
+        isUpsideDown = upsideDown;
     }
 
     public void setFrontSide(TextureRegion frontSide) {

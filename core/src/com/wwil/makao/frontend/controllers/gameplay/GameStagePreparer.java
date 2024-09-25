@@ -125,14 +125,14 @@ public class GameStagePreparer {
             case 2:
                 backend.getPlayerList().get(index).getCards().clear();
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.SIX, Suit.DIAMOND));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.SEVEN, Suit.SPADE));
+//                backend.getPlayerList().get(index).getCards().add(new Card(Rank.SEVEN, Suit.SPADE));
                 break;
             case 3:
                 backend.getPlayerList().get(index).getCards().clear();
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.TWO, Suit.SPADE));
+//                backend.getPlayerList().get(index).getCards().add(new Card(Rank.TWO, Suit.SPADE));
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.SEVEN, Suit.CLUB));
                 backend.getPlayerList().get(index).getCards().add(new Card(Rank.SIX, Suit.CLUB));
-                backend.getPlayerList().get(index).getCards().add(new Card(Rank.FIVE, Suit.DIAMOND));
+//                backend.getPlayerList().get(index).getCards().add(new Card(Rank.FIVE, Suit.DIAMOND));
                 break;
         }
     }
