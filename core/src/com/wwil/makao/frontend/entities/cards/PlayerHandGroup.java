@@ -2,9 +2,8 @@ package com.wwil.makao.frontend.entities.cards;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.utils.Align;
-import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.player.Player;
+import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.frontend.utils.params.CardsAlignmentParams;
 import com.wwil.makao.frontend.utils.params.GUIparams;
 
@@ -13,44 +12,44 @@ import java.util.List;
 
 public class PlayerHandGroup extends Group {
     private final Player player;
-    private final CardsAlignmentParams cardsAlignment;
+    private CardsAlignmentParams alignment;
 
-    public PlayerHandGroup(Player player, CardsAlignmentParams cardsAlignment) {
+    public PlayerHandGroup(Player player) {
         this.player = player;
-        this.cardsAlignment = cardsAlignment;
+        this.alignment = alignment;
     }
 
     @Override
     public void addActor(Actor actor) {
+        if (!getChildren().isEmpty()) {
+            chooseWhereCardShouldBe(actor);
+        }
         super.addActor(actor);
-        setOrigin(Align.center);
-        alignCards();
-        setRotation(cardsAlignment.getRotation());
     }
 
-    private void alignCards() {
-        int cardCount = getChildren().size;
-        float totalWidth = (cardCount - 1) * GUIparams.HANDGROUP_CARDS_GAP; //odejmujemy dobraną kartę
-
-        for (int i = 0; i < cardCount; i++) {
-            Actor card = getChildren().get(i);
-
-            // Przesuwamy karty z talii do lewej od środka
-            float newX = -(totalWidth / 2f) + (i * GUIparams.HANDGROUP_CARDS_GAP);
-            card.setPosition(newX, 0);
-
-            // Reset rotacji
-            card.setRotation(0);
+    private void chooseWhereCardShouldBe(Actor actor) {
+        if (getChildren().size % 2 == 1) {
+            placeCardFirst(actor);
+        } else {
+            placeCardLast(actor);
         }
+    }
 
-        setSize(totalWidth, GUIparams.CARD_HEIGHT);
+    private void placeCardLast(Actor actor) {
+        float lastActorX = getChildren().peek().getX();
+        actor.setX(lastActorX + GUIparams.HANDGROUP_CARDS_GAP);
+        setPosition(getX() - alignment.xMove, getY() - alignment.yMove);
+    }
 
-        // Ustawienie origin na środek po rozłożeniu kart
-        this.setOrigin(getWidth() / 2, getHeight() / 2);
+    private void placeCardFirst(Actor actor) {
+        float firstActorX = getChildren().first().getX();
+        actor.setX(firstActorX - GUIparams.HANDGROUP_CARDS_GAP);
+        addActorAt(0, actor);
+        moveCloserToStartingPosition();
     }
 
     public void moveCloserToStartingPosition() {
-        this.setPosition(this.getX() + cardsAlignment.xMove, this.getY() + cardsAlignment.yMove);
+        this.setPosition(this.getX() + alignment.xMove, this.getY() + alignment.yMove);
     }
 
     @Override
@@ -88,5 +87,9 @@ public class PlayerHandGroup extends Group {
             cardActors.add(cardActor);
         }
         return cardActors;
+    }
+
+    public void setCardsAlignment(CardsAlignmentParams alignment) {
+        this.alignment = alignment;
     }
 }

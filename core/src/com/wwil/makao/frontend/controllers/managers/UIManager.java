@@ -185,10 +185,10 @@ public class UIManager {
         Vector2 newLocalPosition = handGroup.stageToLocalCoordinates(stagePosition);
 
         // Ustaw kartę w nowej grupie na odpowiedniej pozycji (tej samej co miała na scenie)
-        pulledCard.setPosition(newLocalPosition.x, newLocalPosition.y);
+        pulledCard.setPosition(newLocalPosition.x - groupSize * GUIparams.GAP_BETWEEN_DECK_CARDS, newLocalPosition.y);
 
         // Animacja ruchu karty do docelowej pozycji
-        Action moveCard = getMovementAction(groupPosition, 5f);
+        Action moveCard = getMovementAction(groupPosition, 1f);
 
         // Końcowe akcje po animacji
         Action finishAnimation = new Action() {
