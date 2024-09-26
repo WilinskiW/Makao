@@ -3,7 +3,6 @@ package com.wwil.makao.frontend.entities.cards;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.wwil.makao.backend.core.DeckManager;
 
 public class StackCardsGroup extends Group {
 
@@ -27,9 +26,9 @@ public class StackCardsGroup extends Group {
     }
 
     public CardActor peekBeforeLastCardActor() {
-        try{
+        try {
             return (CardActor) getChildren().get(getChildren().size - 2);
-        }catch (IndexOutOfBoundsException e){
+        } catch (IndexOutOfBoundsException e) {
             return (CardActor) getChildren().get(getChildren().size - 1);
         }
     }

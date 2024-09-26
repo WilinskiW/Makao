@@ -16,7 +16,6 @@ public class PlayerHandGroup extends Group {
 
     public PlayerHandGroup(Player player) {
         this.player = player;
-        this.alignment = alignment;
     }
 
     @Override
