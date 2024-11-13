@@ -4,9 +4,9 @@ import com.wwil.makao.backend.gameplay.actions.Action;
 import com.wwil.makao.backend.gameplay.actions.Play;
 import com.wwil.makao.backend.gameplay.actions.PlayReport;
 import com.wwil.makao.backend.gameplay.management.PlayExecutor;
+import com.wwil.makao.backend.gameplay.management.PlayerManager;
 import com.wwil.makao.backend.gameplay.management.RoundManager;
 import com.wwil.makao.backend.model.player.Player;
-import com.wwil.makao.backend.gameplay.management.PlayerManager;
 
 public class ComputerTurnManager {
     private final PlayMaker playMaker;
@@ -24,19 +24,24 @@ public class ComputerTurnManager {
     public void manageComputerTurn() {
         Player currentPlayer = playerManager.getCurrentPlayer();
         while (true) {
-            Play play = playMaker.generatePlay(currentPlayer);
-            PlayReport playReport = playExecutor.createPlayReport(currentPlayer, play);
-            roundManager.getRoundReport().addPlayRaport(playReport);
+            PlayReport report = generatePlayReport(currentPlayer);
 
-            if (play.getAction() == Action.MAKAO) {
+            if (report.getPlay().getAction() == Action.MAKAO) {
                 playerManager.getPlayerComebackHandler().saveCurrentIndexBeforeMakao();
                 playerManager.goToHumanPlayer();
                 break;
             }
 
-            if (play.getAction() == Action.END || currentPlayer.checkIfPlayerHaveNoCards()) {
+            if (report.getPlay().getAction() == Action.END || currentPlayer.checkIfPlayerHaveNoCards()) {
                 break;
             }
         }
+    }
+
+    private PlayReport generatePlayReport(Player currentPlayer) {
+        Play play = playMaker.generatePlay(currentPlayer);
+        PlayReport playReport = playExecutor.createPlayReport(currentPlayer, play);
+        roundManager.getRoundReport().addPlayRaport(playReport);
+        return playReport;
     }
 }

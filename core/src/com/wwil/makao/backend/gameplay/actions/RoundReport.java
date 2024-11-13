@@ -14,13 +14,9 @@ public class RoundReport {
     }
 
     public List<PlayReport> getComputerPlayReports(Player humanPlayer) {
-        List<PlayReport> computerPlayReports = new ArrayList<>();
-        for (PlayReport playReport : playReports) {
-            if (playReport.getPlayer() != humanPlayer) {
-                computerPlayReports.add(playReport);
-            }
-        }
-        return computerPlayReports;
+        return playReports.stream()
+                .filter(report -> report.getPlayer() != humanPlayer)
+                .toList();
     }
 
     public PlayReport getHumanLastPlayReport() {

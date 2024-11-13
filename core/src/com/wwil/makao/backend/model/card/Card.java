@@ -22,6 +22,10 @@ public class Card {
         return this.suit == other.suit;
     }
 
+    public boolean matchesSuit(Suit suit){
+        return this.suit == suit;
+    }
+
     public Rank getRank() {
         return rank;
     }

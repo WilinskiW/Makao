@@ -5,6 +5,7 @@ import com.wwil.makao.backend.gameplay.management.GameStateManager;
 import com.wwil.makao.backend.model.card.Ability;
 import com.wwil.makao.backend.model.card.Card;
 import com.wwil.makao.backend.model.card.Rank;
+import com.wwil.makao.backend.model.card.Suit;
 
 public class CardValidator {
     private final GameStateManager gameStateManager;
@@ -28,7 +29,9 @@ public class CardValidator {
     }
 
     private boolean isValidForMultiplePut(Card chosenCard) {
-        return chosenCard.matchesRank(gameStateManager.getCardsPlayedInTurn().get(0));
+        return chosenCard.matchesRank(gameStateManager.getCardsPlayedInTurn().get(0))
+                && !(chosenCard.matchesRank(Rank.K) && chosenCard.matchesSuit(Suit.CLUB))
+                && !(chosenCard.matchesRank(Rank.K) && chosenCard.matchesSuit(Suit.DIAMOND));
     }
     private boolean isRightForDemand(Card chosenCard){
         return chosenCard.matchesRank(Rank.J)

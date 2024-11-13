@@ -23,7 +23,6 @@ import java.util.List;
 public class UIManager {
     private final GameController controller;
     private GameplayScreen gameplayScreen;
-    private EndingScreen endingScreen;
     private final StackCardsGroup stackCardsGroup;
     private final CardActorFactory cardActorFactory;
     private final List<PlayerHandGroup> handGroups;
