@@ -19,6 +19,36 @@
 - **Gradle**
 - **Game Library:** LibGDX
 
+## Installation
+> [!IMPORTANT]
+> This game was developed for 1080p. Game screen is not rensponsive so play on maximize screen.
+
+### 1. Clone the Repository
+
+Start by cloning the repository to your local machine:
+```bash
+git clone https://github.com/WilinskiW/Makao.git
+cd Makao
+```
+#### Set Up the Project
+Ensure you have Java 8 or later installed on your machine. If not, download and install it.
+You will also need Gradle installed. If you don't have Gradle installed, follow the installation instructions on the Gradle website.
+
+#### Build the Project
+```bash
+./gradlew build
+```
+This will compile the game and generate the necessary files for execution.
+
+#### Run project
+Run `DesktopLauncher.main()` located in `desktop/src/com/wil/makao/DesktopLauncher.java`
+
+### 2. Install compile game
+> [!NOTE]
+> You don't need JVM install on your computer.
+
+**Download zip:** [Google Drive - Makao.zip](https://drive.google.com/drive/u/2/folders/1Ad6CjdYH7H4gRes2nDK84m96wEBWDWEv)
+
 ---
 
 ## Game Rules
